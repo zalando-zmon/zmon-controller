@@ -2,6 +2,14 @@
 ZMON Controller
 ===============
 
+.. image:: https://travis-ci.org/zalando/zmon-controller.svg?branch=master
+   :target: https://travis-ci.org/zalando/zmon-controller
+   :alt: Build Status
+
+.. image:: https://readthedocs.org/projects/zmon/badge/?version=latest
+   :target: https://readthedocs.org/projects/zmon/?badge=latest
+   :alt: Documentation Status
+
 Building:
 
 .. code-block:: bash
