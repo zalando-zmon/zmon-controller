@@ -1,8 +1,10 @@
 <span class="start-stop">
-    <strong ng-show="!refreshing">PAUSED</strong>
-    <button title="{{ refreshing ? 'Pause refreshing' : 'Resume refreshing' }}">
-        <i class="fa fa-fw fa-play" ng-if='!refreshing' ng-click="startRefreshCallback()"></i>
-        <i class="fa fa-fw fa-pause" ng-if='refreshing' ng-click="stopRefreshCallback()"></i>
+    <strong ng-hide="refreshing">PAUSED</strong>
+    <button title="Pause refreshing" ng-if='!refreshing' ng-click="startRefreshCallback()">
+        <i class="fa fa-fw fa-play"></i>
+    </button>
+    <button title="Resume refreshing" ng-if='refreshing' ng-click="stopRefreshCallback()">
+        <i class="fa fa-fw fa-pause"></i>
     </button>
 </span>
 

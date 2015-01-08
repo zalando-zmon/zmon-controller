@@ -46,6 +46,7 @@
     <script src="lib/piwik/piwik.min.js?time=${buildTime}" charset="utf-8"></script>
     <script src="lib/angulartics/angulartics.min.js?time=${buildTime}" charset="utf-8"></script>
     <script src="lib/angulartics/angulartics-piwik.min.js?time=${buildTime}" charset="utf-8"></script>
+    <script src="lib/angular-debounce/angular-debounce.js?time=${buildTime}" charset="utf-8"></script>
     <script src="lib/select2/select2.min.js?time=${buildTime}" charset="utf-8"></script>
     <script src="lib/colorhash/colorhash.js?time=${buildTime}" charset="utf-8"></script>
 </head>

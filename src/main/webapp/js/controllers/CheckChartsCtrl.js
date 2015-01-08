@@ -264,9 +264,11 @@ angular.module('zmon2App').controller('CheckChartsCtrl', ['$scope', '$routeParam
 
             params.start_date.setDate(params.start_date.getDate() -1);
 
+            $scope.chartOptionsHour.xaxis.timeformat = "%H:%M";
             if ($scope.useDateRange) {
                 params.start_date = new Date($scope.dates.startDate);
                 params.end_date = new Date($scope.dates.endDate);
+                $scope.chartOptionsHour.xaxis.timeformat = "%d.%m";
             }
 
             params.end_date.setHours(params.end_date.getHours() - 1);
@@ -349,6 +351,11 @@ angular.module('zmon2App').controller('CheckChartsCtrl', ['$scope', '$routeParam
 
         // Sort chart data according to their labels
         var sortChartData = function(data) {
+
+            if (typeof data === 'undefined') {
+                return [];
+            }
+
             return data.sort(function(a, b) {
                 if (typeof a.label === 'undefined' || typeof b.label === 'undefined') {
                     return 0;
@@ -524,7 +531,7 @@ angular.module('zmon2App').controller('CheckChartsCtrl', ['$scope', '$routeParam
         var formatDate = function(d) {
             var f = '';
             f = [ d.getFullYear(), d.getMonth()+1, d.getDate()  ].join('-');
-            f += ' ' + d.getHours() + ':' + d.getMinutes();
+            f += 'T' + d.getHours() + ':' + d.getMinutes();
             return f;
         };
 

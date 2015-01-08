@@ -1,11 +1,13 @@
 angular.module('zmon2App', [
     //'ngCookies',
-    'LocalStorageModule',
     // 'ngResource',
     'ngSanitize',
     'ngRoute',
+    'LocalStorageModule',
     'ui.bootstrap',
-    'angulartics','angulartics.piwik'
+    'angulartics',
+    'angulartics.piwik',
+    'debounce'
 ])
     .config(['$routeProvider', '$compileProvider',
         function($routeProvider, $compileProvider) {
