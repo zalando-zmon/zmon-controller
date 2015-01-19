@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<testsuites>
-<testsuite name="Testing dashboard features" errors="0" tests="1" failures="0" time="2.204" timestamp="2015-01-15T17:34:53">
-  <testcase classname="Testing dashboard features" name="should display the search form" time="2.202"></testcase>
-</testsuite>
-</testsuites>

@@ -1,5 +1,6 @@
 /.idea
 *.iml
+.*.un~
 /out
 /.idea_modules
 /.settings
@@ -13,3 +14,4 @@ eventlog.log*
 config-service.json
 src/main/webapp/test/ci/*.xml
 src/main/webapp/node_modules/
+src/main/webapp/tests/acceptance/result/
