@@ -61,10 +61,10 @@
                         </div>
                         <label for="inp-metrics-sampling" class="col-sm-2">Sampling</label>
                         <div class="col-sm-2">
-                                <input type="text" id="inp-metrics-sampling" name="metrics-sampling" class="form-control" ng-model="aggregation.sampling.value" required model-change-blur />
+                                <input type="text" id="inp-metrics-sampling" name="metrics-sampling" class="form-control" ng-model="aggregation.sampling.value" model-change-blur />
                         </div>
                         <div class="col-sm-2">
-                                <select ng-model="aggregation.sampling.unit" ng-options="unit for unit in availableAggregatorUnits" required></select>
+                                <select ng-model="aggregation.sampling.unit" ng-options="unit for unit in availableAggregatorUnits"></select>
                         </div>
                     </div>
                     <div ng-if="!aggregators.length">

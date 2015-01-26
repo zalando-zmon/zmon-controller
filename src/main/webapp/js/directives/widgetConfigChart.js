@@ -65,7 +65,7 @@ angular.module('zmon2App').directive('widgetConfigChart', ['$compile', '$log', '
                 scope.$watch('aggregators', function() {
                     if (typeof scope.aggregators !== 'undefined' && scope.aggregators.length) {
                         var a = scope.aggregators[0];
-                        if (a.name && a.sampling.value && a.sampling.unit) {
+                        if (a.name && (a.unit || a.sampling.unit)) {
                             options.metrics[0].aggregators = scope.aggregators;
                         }
                     }
