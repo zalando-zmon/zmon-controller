@@ -226,18 +226,6 @@ public class HistoryServiceImpl implements HistoryService {
         return date.getTime() / 1000;
     }
 
-    /*
-    private Activity createActivity(final Event event) {
-        final Activity activity = new Activity();
-        activity.setTime(dateToSeconds(event.getTime()));
-        activity.setTypeId(event.getTypeId());
-        activity.setTypeName(event.getTypeName());
-        activity.setAttributes(event.getAttributes());
-
-        return activity;
-    }
-    */
-
     private ActivityDiff createActivityDiff(final HistoryEntry entry, final ZMonEventType eventType) {
         return fillActivityDiff(new ActivityDiff(), entry, eventType);
     }
