@@ -1,5 +1,6 @@
 package de.zalando.zmon.service.impl;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -7,6 +8,15 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import de.zalando.zmon.appconfig.ZMonServiceConfig;
+import de.zalando.zmon.event.Event;
+import org.apache.http.client.fluent.Executor;
+import org.apache.http.client.fluent.Request;
+import org.apache.http.entity.ContentType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.stereotype.Service;
@@ -36,6 +46,8 @@ public class HistoryServiceImpl implements HistoryService {
 
     private static final int DEFAULT_HISTORY_LIMIT = 50;
 
+    private final static List<Event> EMPTY_LIST = new ArrayList<>(0);
+
     private static final Comparator<Activity> ACTIVITY_TIME_COMPARATOR = new Comparator<Activity>() {
 
         @Override
@@ -44,11 +56,18 @@ public class HistoryServiceImpl implements HistoryService {
         }
     };
 
+    private final static Logger LOG = LoggerFactory.getLogger(HistoryServiceImpl.class);
+
     @Autowired
     private CheckDefinitionSProcService checkDefinitionSProc;
 
     @Autowired
     private AlertDefinitionSProcService alertDefinitionSProc;
+
+    @Autowired
+    private ZMonServiceConfig zmonConfig;
+
+    private ObjectMapper mapper = new ObjectMapper();
 
     @Override
     public List<Activity> getHistory(final int alertDefinitionId, final Integer limit, final Long from, final Long to) {
@@ -63,6 +82,29 @@ public class HistoryServiceImpl implements HistoryService {
                 Collections.singletonList(alertDefinitionId));
 
         if (!definitions.isEmpty()) {
+            final Executor executor = Executor.newInstance();
+
+            final String eventLogService = "http://" + zmonConfig.getEventLogHost()  + ":" + zmonConfig.getEventLogPort() + "/";
+
+            List<Event> eventsByAlertId = EMPTY_LIST;
+            List<Event> eventsByCheckId = EMPTY_LIST;
+
+            try {
+                String query = "?types=212995,212996,212997,212998,213252,213253&key=alertId&value="+alertDefinitionId;
+                final String r = executor.execute(Request.Get(query)).returnContent().asString();
+                eventsByAlertId = mapper.readValue(r, new TypeReference<List<Event>>(){});
+            } catch (IOException e) {
+                LOG.error("Failed to load events by alertId", e);
+            }
+
+            try {
+                String query = "?types=213254,213255,213256,213257&key=checkId&value="+definitions.get(0).getCheckDefinitionId();
+                final String r = executor.execute(Request.Get(query)).returnContent().asString();
+                eventsByCheckId = mapper.readValue(r, new TypeReference<List<Event>>(){});
+            } catch (IOException e) {
+                LOG.error("Failed to load events by checkId", e);
+            }
+
             /*
             final List<Event> eventsByCheckId = eventLogService.getEventsForUseCaseExtended(ZMON_BY_CHECK_ID_USE_CASE,
                     Collections.singletonList(String.valueOf(definitions.get(0).getCheckDefinitionId())), fromMillis,
@@ -70,16 +112,23 @@ public class HistoryServiceImpl implements HistoryService {
 
             final List<Event> eventsByAlertId = eventLogService.getEventsForUseCaseExtended(ZMON_BY_ALERT_ID_USE_CASE,
                     Collections.singletonList(String.valueOf(alertDefinitionId)), fromMillis, toMillis, realLimit);
-                    
+            */
 
             history = mergeEvents(realLimit, eventsByCheckId, eventsByAlertId);
-            */
         }
 
         return history;
     }
 
-    /*
+    private Activity createActivity(final Event event) {
+        final Activity activity = new Activity();
+        activity.setTime(dateToSeconds(event.getTime()));
+        activity.setTypeId(event.getTypeId());
+        activity.setTypeName(event.getTypeName());
+        activity.setAttributes(event.getAttributes());
+        return activity;
+    }
+
     private List<Activity> mergeEvents(final Integer limit, final List<Event> eventsByCheckId,
             final List<Event> eventsByAlertId) {
 
@@ -108,7 +157,6 @@ public class HistoryServiceImpl implements HistoryService {
 
         return history;
     }
-    */
 
     @Override
     public List<ActivityDiff> getCheckDefinitionHistory(final int checkDefinitionId, final Integer limit,
