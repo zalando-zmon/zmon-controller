@@ -39,7 +39,7 @@
 </div>
 
 <div class="panel panel-default details" ng-class="{'panel-collapsed': !showDetails}">
-    <div class="panel-heading panel-toggle" ng-click="showDetails = !showDetails"><i class="fa fa-fw fa-toggle-{{ showDetails ? 'up' : 'down' }}"></i> Details</div>
+    <div class="panel-heading panel-toggle" ng-click="showDetails = !showDetails" data-test="details"><i class="fa fa-fw fa-toggle-{{ showDetails ? 'up' : 'down' }}"></i> Details</div>
     <div class="panel-body">
         <dl class="dl-horizontal">
             <dt ng-if="AlertDetailsCtrl.checkDefinition.potential_impact" >Potential Impact</dt>
@@ -53,7 +53,7 @@
             <dt ng-if="AlertDetailsCtrl.alertDefinition.parent_id">Inherits from</dt>
             <dd ng-if="AlertDetailsCtrl.alertDefinition.parent_id"><a href="/#/alert-details/{{AlertDetailsCtrl.alertDefinition.parent_id}}">{{AlertDetailsCtrl.parentAlertDefinition.name || "(no name)"}}</a>, ID: <a href="/#/alert-details/{{AlertDetailsCtrl.alertDefinition.parent_id}}">{{AlertDetailsCtrl.alertDefinition.parent_id}}</a></dd>
             <dt>Check Name, ID, History</dt>
-            <dd><a href="#/check-definitions/view/{{AlertDetailsCtrl.checkDefinition.id}}">{{AlertDetailsCtrl.checkDefinition.name}}</a>, ID: {{AlertDetailsCtrl.checkDefinition.id}}, <a href="#/history?check_definition_id={{AlertDetailsCtrl.checkDefinition.id}}">History</a></dd>
+            <dd><a href="#/check-definitions/view/{{AlertDetailsCtrl.checkDefinition.id}}">{{AlertDetailsCtrl.checkDefinition.name}}</a>, ID: {{AlertDetailsCtrl.checkDefinition.id}}, <a href="#/history?check_definition_id={{AlertDetailsCtrl.checkDefinition.id}}" data-test="history">History</a></dd>
             <dt>Check Team</dt>
             <dd>{{AlertDetailsCtrl.checkDefinition.owning_team}}</dd>
             <dt>Check Command</dt>
@@ -99,7 +99,7 @@
                                     <span class="input-group-btn">
                                         <button class="btn btn-primary"><i class="fa fa-fw fa-search"></i></button>
                                     </span>
-                                    <input class="form-control alert-details-search" placeholder="Filter entities"  type="text" ng-model="alertDetailsSearch" autofocus />
+                                    <input class="form-control alert-details-search" placeholder="Filter entities"  type="text" ng-model="alertDetailsSearch" autofocus data-test="search"/>
                                 </div>
                             </div>
                         </form>
@@ -176,7 +176,7 @@
             <tab heading="History" select="AlertDetailsCtrl.fetchHistoryLastNDays(1)">
                 <div class="zmon-controls">
                     Events from <em>{{AlertDetailsCtrl.historyFromInEpochSeconds * 1000 | date:'medium'}}</em> till now
-                    <button class="btn" ng-class="{'active-page': AlertDetailsCtrl.activeHistoryButton['1']}" ng-click="AlertDetailsCtrl.fetchHistoryLastNDays(1)">Last day</button>
+                    <button class="btn" ng-class="{'active-page': AlertDetailsCtrl.activeHistoryButton['1']}" ng-click="AlertDetailsCtrl.fetchHistoryLastNDays(1)" data-test="lastDayButton">Last day</button>
                     <button class="btn" ng-class="{'active-page': AlertDetailsCtrl.activeHistoryButton['7']}" ng-click="AlertDetailsCtrl.fetchHistoryLastNDays(7)">Last 7 days</button>
                     <button class="btn" ng-class="{'active-page': AlertDetailsCtrl.activeHistoryButton['14']}" ng-click="AlertDetailsCtrl.fetchHistoryLastNDays(14)">Last 14 days</button>
                     <button class="btn" ng-class="{'active-page': AlertDetailsCtrl.activeHistoryButton['-1']}" ng-click="AlertDetailsCtrl.fetchOneMoreWeekOfHistory()">+1 week</button>

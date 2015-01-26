@@ -41,10 +41,10 @@
                         <% } %>
                     </div>
                 <% } %>
-                <input name="j_username" type="text" class="form-control" placeholder="Username (LDAP)" required="" autofocus="">
-                <input name="j_password" type="password" class="form-control" placeholder="Password" required="">
+                <input name="j_username" type="text" class="form-control" placeholder="Username (LDAP)" data-test="username" required="" autofocus="">
+                <input name="j_password" type="password" class="form-control" placeholder="Password" data-test="password" required="">
                 <input name="next_page" type="hidden" value="<c:out value="${param.next_page}"/>">
-                <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+                <button class="btn btn-lg btn-primary btn-block" type="submit" data-test="login">Sign in</button>
             </form>
         </div>
     </div>

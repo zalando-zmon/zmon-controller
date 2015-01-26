@@ -13,7 +13,7 @@
                         <span class="input-group-btn">
                             <button class="btn"><i class="fa fa-fw fa-search"></i></button>
                         </span>
-                        <input class="form-control" placeholder="Filter alerts"  type="text" ng-model="alertSearch" autofocus />
+                        <input class="form-control" placeholder="Filter alerts" type="text" ng-model="alertSearch" data-test="search" autofocus />
                     </div>
                 </div>
             </form>
@@ -22,7 +22,7 @@
         <div class="col-md-4 text-right">
 
             <div class="dashboard-tags-container">
-                <button class="btn" click-outside="closeTagsEditPopup()" title="Tags" ng-click="toggleTagsEditPopup()">
+                <button class="btn" click-outside="closeTagsEditPopup()" title="Tags" ng-click="toggleTagsEditPopup()" data-test="tagsButton">
                     <i class="fa fa-fw fa-tags"></i> {{dashboardTags.length || 0}}
                 </button>
                 <div ng-if="tagsEditOpen" class="dashboard-tags popover">
@@ -37,7 +37,7 @@
 
             <button id="alerts-in-downtime-toggle-button" class="btn" title="Show/Hide Alerts in Downtime" ng-show="alertsInDowntime.length" ng-click="toggleAlertsWithAllDowntime()"><i class="fa fa-flag" ng-hide="showAlertsWithAllEntitiesInDowntime"></i><i class="fa fa-flag-o" ng-show="showAlertsWithAllEntitiesInDowntime"></i> {{ alertsInDowntime.length }}</button>
             <button id="widgets-toggle-button" class="btn" ng-show="widgetsConf.length" ng-click="showWidgets = !showWidgets" title="Toggle widgets panel"><i class="fa fa-fw fa-toggle-{{ showWidgets ? 'up' : 'down' }}"></i> {{ showWidgets ? 'Hide' : 'Show' }} Widgets</button>
-            <button class="btn" ng-click="toggleCompactView()" title="Toggle default / compact view"><i class="fa fa-fw" ng-class="{'fa-columns': !compact, 'fa-bars': compact}"></i></button>
+            <button class="btn" ng-click="toggleCompactView()" title="Toggle default / compact view" data-test="compact"><i class="fa fa-fw" ng-class="{'fa-columns': !compact, 'fa-bars': compact}"></i></button>
             <button ng-show="dashboardId" class="btn" ng-click="configureWidgets()" title="Configure widgets"><i class="fa fa-fw fa-gear"></i></button>
         </div>
     </div>

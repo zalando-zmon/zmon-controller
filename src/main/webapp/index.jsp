@@ -117,7 +117,7 @@
                                 <span class="caret"></span>
                             </button>
                             <ul class="dropdown-menu" role="menu">
-                                <li><a href="logout">Logout</a></li>
+                                <li><a href="logout" data-test="logout">Logout</a></li>
                             </ul>
                        </span>
                     </security:authorize>
