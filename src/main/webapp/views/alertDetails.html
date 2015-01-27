@@ -65,7 +65,7 @@
             <dt>Parameters</dt>
             <dd class="text-muted" ng-if="AlertDetailsCtrl.alertDefinition.parameters == null">(no parameters)</dd>
             <dd ng-repeat="(name, parameter) in AlertDetailsCtrl.alertDefinition.parameters">
-                {{name}} = {{parameter.value}}
+                {{name}} = {{parameter.value}} - {{parameter.comment}}
             </dd>
             <dt>Entities Filter</dt>
             <dd><span class="text-muted" ng-show="AlertDetailsCtrl.alertDefinition.entities.length === 0">(no entities)</span>
