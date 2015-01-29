@@ -144,6 +144,7 @@
 <script src="js/filters/downtimeReasons.js?time=${buildTime}"></script>
 <script src="js/filters/inDisplayedGroup.js?time=${buildTime}"></script>
 <script src="js/filters/encodeUri.js?time=${buildTime}"></script>
+<script src="js/filters/tooltipCapture.js?time=${buildTime}"></script>
 <script src="js/directives/priority.js?time=${buildTime}"></script>
 <script src="js/directives/status.js?time=${buildTime}"></script>
 <script src="js/directives/chart.js?time=${buildTime}"></script>

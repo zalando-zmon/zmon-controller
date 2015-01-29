@@ -37,7 +37,7 @@ angular.module('zmon2App').filter('prettify', function() {
                 return value.toString();
 
             }
-            
+
             if (value.length <= length) {
                 // It's a string but shorter than max allowed length; no truncate; return intact;
                 return value;

@@ -132,12 +132,11 @@
                                 <td>{{entityInstance.result.ts|datetime}} ({{AlertDetailsCtrl.timeAgo(entityInstance.result.ts)}} ago)</td>
                                 <td><div class="text-right" title="{{entityInstance.result.worker}}">{{entityInstance.result.td * 1000|timespan}}</div></td>
                                 <td>
-                                    <div class="ellipsis" expand>{{entityInstance.result.value}}
+                                    <div tooltip-html-unsafe="{{ entityInstance.result.value | tooltipCapture }}" tooltip-placement="top" tooltip-trigger="click">{{entityInstance.result.value | prettify}}
                                         <div ng-if="entityInstance.isAlertInDowntime == true">
                                             {{entityInstance.result.downtimes | downtimeReasons}}
                                         </div>
                                     </div>
-
                                 </td>
                                 <td>{{entityInstance.result.captures}}</td>
                             </tr>

@@ -916,6 +916,15 @@ a.non-href-anchor
     border-left: 13px solid #464646;
 }
 
+ul.capture-tooltip
+{
+    list-style: none;
+    text-align: left;
+    padding: 5px;
+    white-space: nowrap;
+}
+
+
 /* Input fields placeholder text color */
 
 ::-webkit-input-placeholder { /* WebKit browsers */

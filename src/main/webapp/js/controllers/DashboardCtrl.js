@@ -231,22 +231,6 @@ angular.module('zmon2App').controller('DashboardCtrl', ['$scope', '$log', '$rout
             );
         };
 
-        $scope.tooltipCapture = function(value, entity) {
-            if (typeof value === 'undefined') {
-                return '';
-            }
-
-            if (typeof value === 'object') {
-                var args = [];
-                _.each(value, function(v, k) {
-                    args.push('<li>' + k + ' = ' + v + '</li>');
-                });
-                value = '<ul style="unstyled; width:300px; text-align:left;">' + args.join('') + '</ul>';
-                return "value for " + entity + ":" + value;
-            }
-        };
-
-
         var loadCheckResults = function(alert) {
 
             // only get graphs for first entities
