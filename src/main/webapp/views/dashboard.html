@@ -63,7 +63,7 @@
             <h1><span class="fa fa-exclamation-triangle" title="Check execution for all entities that are in ALERT state now resulted in an exception!" ng-show="{{alertInstance.inException}}" /><a ng-href="#/alert-details/{{alertInstance.alert_definition.id}}">{{alertInstance.message}}</a> <span ng-if="alertInstance.numEntitiesNotInDowntimeNow > 1">({{alertInstance.numEntitiesNotInDowntimeNow}})</span></h1>
             <span ng-show="!compact" ng-repeat="entityInstance in truncateNonDowntimeEntities(alertInstance.entities)">
                 <span ng-if="$index != 0">, </span>
-                <span popover="value for {{entityInstance.entity}}: {{entityInstance.result.value}}" popover-placement="right"> {{entityInstance.entity}} ({{entityInstance.result.captures.dashboard ? entityInstance.result.captures.dashboard : entityInstance.result.value | prettify}}) </span>
+                <span tooltip-html-unsafe="{{tooltipCapture(entityInstance.result.value, entityInstance.entity)}}" tooltip-placement="right" tooltip-trigger="click"> {{entityInstance.entity}} ({{entityInstance.result.value | prettify}}) </span>
             </span>
             <span ng-show="!compact" ng-if="nonDowntimeEntitiesAreTruncated(alertInstance.entities)">
                 <a ng-click="alertInstance.expanded = true" ng-if="!alertInstance.expanded" class="non-href-anchor">More...</a>

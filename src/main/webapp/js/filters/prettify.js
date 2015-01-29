@@ -19,11 +19,12 @@ angular.module('zmon2App').filter('prettify', function() {
 
             // Convert to string in case of object
             if (typeof value === 'object') {
-                v = [];
+                var args = [];
                 _.each(value, function(v, k) {
-                    v.push(k + ' = ' + v);
+                    args.push(k + ' = ' + v);
                 });
-                value = v.join();
+                value = args.join(', ');
+
             } else if (typeof value === 'number') {
 
                 // It's a number; if integer return as is,
