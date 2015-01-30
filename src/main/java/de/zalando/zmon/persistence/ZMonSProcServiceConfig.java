@@ -36,4 +36,10 @@ public class ZMonSProcServiceConfig {
     public ZMonSProcService getZMonSProcService() {
         return SProcProxyBuilder.build(dataSourceProvider, ZMonSProcService.class);
     }
+
+    @Bean(autowire = Autowire.BY_TYPE)
+    public EntitySProcService getEntitySprocService() {
+        return SProcProxyBuilder.build(dataSourceProvider, EntitySProcService.class);
+    }
+
 }
