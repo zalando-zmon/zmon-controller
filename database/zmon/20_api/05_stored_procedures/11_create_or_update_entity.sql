@@ -12,4 +12,4 @@ BEGIN
        AND (e_data->'team')::text = ((entity_data::jsonb)->'team')::text;
   END;
 END;
-$$ LANGUAGE PLPGSQL;
+$$ LANGUAGE PLPGSQL VOLATILE SECURITY DEFINER;
