@@ -6,6 +6,10 @@ ZMON Controller
    :target: https://travis-ci.org/zalando/zmon-controller
    :alt: Build Status
 
+.. image:: https://coveralls.io/repos/zalando/zmon-controller/badge.svg
+   :target: https://coveralls.io/r/zalando/zmon-controller
+   :alt: Coverage Status
+
 .. image:: https://readthedocs.org/projects/zmon/badge/?version=latest
    :target: https://readthedocs.org/projects/zmon/?badge=latest
    :alt: Documentation Status
