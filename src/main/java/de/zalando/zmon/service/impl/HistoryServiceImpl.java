@@ -91,7 +91,7 @@ public class HistoryServiceImpl implements HistoryService {
 
             try {
                 String query = "?types=212995,212996,212997,212998,213252,213253&key=alertId&value="+alertDefinitionId;
-                final String r = executor.execute(Request.Get(query)).returnContent().asString();
+                final String r = executor.execute(Request.Get(eventLogService+query)).returnContent().asString();
                 eventsByAlertId = mapper.readValue(r, new TypeReference<List<Event>>(){});
             } catch (IOException e) {
                 LOG.error("Failed to load events by alertId", e);
@@ -99,20 +99,11 @@ public class HistoryServiceImpl implements HistoryService {
 
             try {
                 String query = "?types=213254,213255,213256,213257&key=checkId&value="+definitions.get(0).getCheckDefinitionId();
-                final String r = executor.execute(Request.Get(query)).returnContent().asString();
+                final String r = executor.execute(Request.Get(eventLogService+query)).returnContent().asString();
                 eventsByCheckId = mapper.readValue(r, new TypeReference<List<Event>>(){});
             } catch (IOException e) {
                 LOG.error("Failed to load events by checkId", e);
             }
-
-            /*
-            final List<Event> eventsByCheckId = eventLogService.getEventsForUseCaseExtended(ZMON_BY_CHECK_ID_USE_CASE,
-                    Collections.singletonList(String.valueOf(definitions.get(0).getCheckDefinitionId())), fromMillis,
-                    toMillis, realLimit);
-
-            final List<Event> eventsByAlertId = eventLogService.getEventsForUseCaseExtended(ZMON_BY_ALERT_ID_USE_CASE,
-                    Collections.singletonList(String.valueOf(alertDefinitionId)), fromMillis, toMillis, realLimit);
-            */
 
             history = mergeEvents(realLimit, eventsByCheckId, eventsByAlertId);
         }
