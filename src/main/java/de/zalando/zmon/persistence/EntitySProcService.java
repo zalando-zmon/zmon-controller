@@ -20,4 +20,7 @@ public interface EntitySProcService {
 
     @SProcCall
     List<String> getEntities(@SProcParam String filter);
+
+    @SProcCall
+    List<String> deleteEntity(@SProcParam String id, @SProcParam List<String> teams);
 }

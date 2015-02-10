@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.Writer;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -79,7 +80,7 @@ public class EntityApi {
 
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/{id}/", method = RequestMethod.GET)
     public void getEntity(@PathVariable(value = "id") String id, final Writer writer,
                           final HttpServletResponse response) {
         List<String> entities = entitySprocs.getEntityById(id);
@@ -91,5 +92,15 @@ public class EntityApi {
         catch(IOException ex) {
 
         }
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    @RequestMapping(value = "/{id}/", method = RequestMethod.DELETE)
+    public int deleteEntity(@PathVariable(value = "id") String id) {
+        List<String> teams = new ArrayList<>();
+        teams.addAll(authService.getTeams());
+        List<String> ids = entitySprocs.deleteEntity(id, teams);
+        return ids.size();
     }
 }
