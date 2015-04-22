@@ -100,7 +100,19 @@ public class EntityApi {
     public int deleteEntity(@PathVariable(value = "id") String id) {
         List<String> teams = new ArrayList<>();
         teams.addAll(authService.getTeams());
+        LOG.info("Deleting entity {} from user {} with teams {}", id, authService.getUserName(), teams);
         List<String> ids = entitySprocs.deleteEntity(id, teams);
         return ids.size();
     }
+    
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    @RequestMapping(value = "/", method = RequestMethod.DELETE)
+    public int deleteEntityByQuery(@RequestParam(value = "id") String id) {
+        List<String> teams = new ArrayList<>();
+        teams.addAll(authService.getTeams());
+        LOG.info("Deleting entity {} from user {} with teams {}", id, authService.getUserName(), teams);
+        List<String> ids = entitySprocs.deleteEntity(id, teams);
+        return ids.size();
+    }  
 }
