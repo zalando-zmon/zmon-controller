@@ -280,7 +280,6 @@ public class AlertServiceImpl implements AlertService {
             redisPool.returnResource(jedis);
         }
         long end = System.currentTimeMillis();
-        LOG.info("Time taken for {} defs: {}", definitions.size(), end - start);
     }
 
     @Override
