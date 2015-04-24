@@ -94,7 +94,7 @@ public class HistoryServiceImpl implements HistoryService {
                 final String r = executor.execute(Request.Get(eventLogService+query)).returnContent().asString();
                 eventsByAlertId = mapper.readValue(r, new TypeReference<List<Event>>(){});
             } catch (IOException e) {
-                LOG.error("Failed to load events by alertId", e);
+                LOG.error("Failed to load events by alertId from {}", eventLogService, e);
             }
 
             try {
@@ -102,7 +102,7 @@ public class HistoryServiceImpl implements HistoryService {
                 final String r = executor.execute(Request.Get(eventLogService+query)).returnContent().asString();
                 eventsByCheckId = mapper.readValue(r, new TypeReference<List<Event>>(){});
             } catch (IOException e) {
-                LOG.error("Failed to load events by checkId", e);
+                LOG.error("Failed to load events by checkId {}", eventLogService, e);
             }
 
             history = mergeEvents(realLimit, eventsByCheckId, eventsByAlertId);
