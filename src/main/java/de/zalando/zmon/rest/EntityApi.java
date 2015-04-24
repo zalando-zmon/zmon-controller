@@ -1,5 +1,6 @@
 package de.zalando.zmon.rest;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.zalando.zmon.exception.ZMonRuntimeException;
 import de.zalando.zmon.persistence.EntitySProcService;
@@ -39,8 +40,8 @@ public class EntityApi {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     @RequestMapping(value = "/", method = RequestMethod.PUT)
-    public void addEntity(@RequestBody Map<String,String> entity) {
-        if(!entity.containsKey("team") || !authService.getTeams().contains(entity.get("team"))) {
+    public void addEntity(@RequestBody JsonNode entity) {
+        if(!entity.has("team") || !authService.getTeams().contains(entity.get("team").textValue())) {
             throw new ZMonRuntimeException("Entity Team does not match any of your Teams! " + authService.getTeams());
         }
 
@@ -74,7 +75,7 @@ public class EntityApi {
             writer.write("]");
         }
         catch(IOException ex) {
-
+            LOG.error("", ex);
         }
     }
 
@@ -90,7 +91,7 @@ public class EntityApi {
             }
         }
         catch(IOException ex) {
-
+            LOG.error("", ex);
         }
     }
 
