@@ -32,7 +32,7 @@ public class ZMonControllerService extends AbstractZMonController {
     private static final String TEAMS = "teams";
 
     // views
-    private static final String INDEX = "/index.jsp";
+    private static final String INDEX = "index";
 
     @Autowired
     private ZMonAuthorityService authorityService;
