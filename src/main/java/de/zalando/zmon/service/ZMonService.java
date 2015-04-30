@@ -22,6 +22,8 @@ public interface ZMonService {
 
     List<String> getAllTeams();
 
+    List<CheckDefinition> getCheckDefinitionsById(final int id);
+
     CheckDefinitions getCheckDefinitions(@Nullable DefinitionStatus status);
 
     List<CheckDefinition> getCheckDefinitions(@Nullable DefinitionStatus status, List<Integer> checkDefinitionIds);

@@ -184,6 +184,11 @@ public class ZMonServiceImpl implements ZMonService {
     }
 
     @Override
+    public List<CheckDefinition> getCheckDefinitionsById(final int id) {
+        return checkDefinitionSProc.getCheckDefinitions(null, Arrays.asList(id));
+    }
+
+    @Override
     public CheckDefinitionsDiff getCheckDefinitionsDiff(final Long snapshotId) {
         return CheckDefinitionsDiffFactory.create(checkDefinitionSProc.getCheckDefinitionsDiff(snapshotId));
 
