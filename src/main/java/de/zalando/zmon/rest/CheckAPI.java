@@ -40,7 +40,6 @@ public class CheckAPI {
         return service.getCheckDefinitionsDiff(snapshotId);
     }
 
-
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     @RequestMapping(value = "/all-active-alert-definitions", method = RequestMethod.GET)
