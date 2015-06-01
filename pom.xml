@@ -93,9 +93,9 @@
                         <configuration>
                             <artifactItems>
                                     <artifactItem>
-                                    <groupId>de.zalando</groupId>
-                                    <artifactId>zmon-grafana</artifactId>
-                                    <version>1.5</version>
+                                    <groupId>org.zalando</groupId>
+                                    <artifactId>grafana</artifactId>
+                                    <version>0.1</version>
                                     <type>zip</type>
                                     <overWrite>false</overWrite>
                                     <outputDirectory>${project.build.directory}/zmon-controller-1.0.1-SNAPSHOT</outputDirectory>
