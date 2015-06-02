@@ -13,7 +13,7 @@ import java.util.List;
 public interface EntitySProcService {
 
     @SProcCall
-    void createOrUpdateEntity(@SProcParam String data, @SProcParam String teamName, @SProcParam String userName);
+    String createOrUpdateEntity(@SProcParam String data, @SProcParam String teamName, @SProcParam String userName);
 
     @SProcCall
     List<String> getEntityById(@SProcParam String id);

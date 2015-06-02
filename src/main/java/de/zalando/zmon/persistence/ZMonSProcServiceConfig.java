@@ -42,4 +42,8 @@ public class ZMonSProcServiceConfig {
         return SProcProxyBuilder.build(dataSourceProvider, EntitySProcService.class);
     }
 
+    @Bean(autowire = Autowire.BY_TYPE)
+    public GrafanaDashboardSprocService getGrafanaSprocService() {
+        return SProcProxyBuilder.build(dataSourceProvider, GrafanaDashboardSprocService.class);
+    }
 }

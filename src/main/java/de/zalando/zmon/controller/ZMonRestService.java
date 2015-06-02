@@ -12,6 +12,13 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletResponse;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import de.zalando.zmon.exception.ZMonException;
+import de.zalando.zmon.persistence.GrafanaDashboardSprocService;
+import de.zalando.zmon.security.ZMonAuthorityService;
 import org.apache.http.client.fluent.Executor;
 import org.apache.http.client.fluent.Request;
 import org.apache.http.entity.ContentType;
@@ -37,11 +44,7 @@ import org.springframework.http.ResponseEntity;
 
 import org.springframework.stereotype.Controller;
 
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.DoubleNode;
@@ -145,6 +148,48 @@ public class ZMonRestService extends AbstractZMonController {
         writer.write(r);
     }
 
+    @ResponseBody
+    @RequestMapping(value = "kairosDBtags", method = RequestMethod.POST, produces = "application/json")
+    public void kairosDBtags(@RequestBody(required = true) final JsonNode node, final Writer writer,
+                             final HttpServletResponse response) throws IOException {
+
+        response.setContentType("application/json");
+
+        if ( !kairosDBConfig.isEnabled() ) {
+            writer.write("");
+            return;
+        }
+
+        final Executor executor = Executor.newInstance();
+
+        final String kairosDBURL = "http://" + kairosDBConfig.getHost() + ":" + kairosDBConfig.getPort()
+                + "/api/v1/datapoints/query/tags";
+
+        final String r = executor.execute(Request.Post(kairosDBURL).useExpectContinue().bodyString(node.toString(),
+                ContentType.APPLICATION_JSON)).returnContent().asString();
+
+        writer.write(r);
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "kairosDBmetrics", method = RequestMethod.GET, produces = "application/json")
+    public void kairosDBmetrics(final Writer writer, final HttpServletResponse response) throws IOException {
+
+        response.setContentType("application/json");
+
+        if ( !kairosDBConfig.isEnabled() ) {
+            writer.write("");
+            return;
+        }
+
+        final String kairosDBURL = "http://" + kairosDBConfig.getHost() + ":" + kairosDBConfig.getPort()
+                + "/api/v1/metricnames";
+
+        final String r = Request.Get(kairosDBURL).useExpectContinue().execute().returnContent().asString();
+
+        writer.write(r);
+    }
+
     @RequestMapping(value = "retrieveCheckStatistics", method = RequestMethod.GET)
     public ResponseEntity<CheckHistoryResult> retrieveCheckStatistics(
             @RequestParam(value = "check_id", required = true) final int checkId,
@@ -184,7 +229,7 @@ public class ZMonRestService extends AbstractZMonController {
         }
 
         final QueryMetric metric = builder.addMetric("zmon.check." + checkId)
-                                          .addTag("entity", entityId.replace(":", "_").replace("@", "_")).addGrouper(
+                                          .addTag("entity", entityId.replace(":", "_").replace("[","_").replace("]","_").replace("@", "_")).addGrouper(
                                               new TagGrouper("key"));
 
         if ("hours".equals(aggregateUnit)) {
@@ -249,5 +294,95 @@ public class ZMonRestService extends AbstractZMonController {
         } finally {
             client.shutdown();
         }
+    }
+
+    @Autowired
+    GrafanaDashboardSprocService grafanaService;
+
+    @Autowired
+    ZMonAuthorityService authService;
+
+    @Autowired
+    ObjectMapper mapper;
+
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    @RequestMapping(value = "grafana/{id}", method = RequestMethod.PUT)
+    public void putDashboard(@PathVariable(value="id") String id, @RequestBody JsonNode grafanaData) throws ZMonException, JsonProcessingException {
+        String title = grafanaData.get("title").asText();
+        String dashboard = grafanaData.get("dashboard").asText();
+
+        LOG.info("dashboard: {} {}", title, dashboard);
+        grafanaService.createOrUpdateGrafanaDashboard(id, title, dashboard, authService.getUserName());
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    @RequestMapping(value = "grafana/{id}", method = RequestMethod.GET)
+    public JsonNode getDashboard(@PathVariable(value="id") String id) throws ZMonException {
+        List<GrafanaDashboardSprocService.GrafanaDashboard> dashboards = grafanaService.getGrafanaDashboard(id);
+        if(dashboards.isEmpty()) {
+            LOG.info("no dashboard found for id {}", id);
+            return null;
+        }
+
+        ObjectNode node = mapper.createObjectNode();
+        ObjectNode sourceNode = mapper.createObjectNode();
+
+        node.put("found", true);
+        node.put("_type", "dashboard");
+        node.put("_id", id);
+        node.put("_source", sourceNode);
+        sourceNode.put("title", dashboards.get(0).title);
+        sourceNode.put("tags", mapper.createArrayNode());
+        sourceNode.put("dashboard", dashboards.get(0).dashboard);
+
+        return node;
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    @RequestMapping(value = "grafana/_search", method = RequestMethod.POST)
+    public JsonNode getDashboards(@RequestBody JsonNode grafanaSearch) throws ZMonException {
+        ObjectNode r = mapper.createObjectNode();
+        ObjectNode hits = mapper.createObjectNode();
+        ObjectNode facets = mapper.createObjectNode();
+        ObjectNode facetsTags = mapper.createObjectNode();
+        ArrayNode facetsTagsTerms = mapper.createArrayNode();
+        ArrayNode hitsHits = mapper.createArrayNode();
+        List<GrafanaDashboardSprocService.GrafanaDashboard> dashboards = grafanaService.getGrafanaDashboards();
+
+        for(GrafanaDashboardSprocService.GrafanaDashboard d : dashboards) {
+
+            ObjectNode hit = mapper.createObjectNode();
+            ObjectNode source = mapper.createObjectNode();
+
+            hit.put("_id", d.id);
+            hit.put("_type", "dashboard");
+            hit.put("_source", source);
+
+            source.put("dashboard","");
+            source.put("tags", mapper.createArrayNode());
+            source.put("title", d.title);
+            source.put("user", d.user);
+            source.put("group", d.user);
+
+            hitsHits.add(hit);
+
+        }
+
+        facetsTags.put("_type", "terms");
+        facetsTags.put("missing", 0);
+        facetsTags.put("other", 0);
+        facetsTags.put("total", hitsHits.size());
+        facetsTags.put("terms", facetsTagsTerms);
+        facets.put("tags", facetsTags);
+        hits.put("total", dashboards.size());
+        hits.put("hits", hitsHits);
+        r.put("hits", hits);
+        r.put("facets", facets);
+        r.put("timed_out", false);
+
+        return r;
     }
 }
