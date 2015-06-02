@@ -71,11 +71,11 @@ define(['settings'], function(Settings) {
       datasources: {
         kairosdb: {
           type: 'kairosdb',
-          url: "https://zmon2.zalando.net",
+          url: "https://localhost",
         },
         elasticsearch: {
           type: 'elasticsearch',
-          url: "https://zmon2.zalando.net/rest",
+          url: "https://localhost/rest",
           index: 'grafana',
           grafanaDB: true,
         }
