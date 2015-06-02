@@ -95,6 +95,11 @@
                             <i class="fa fa-question-circle fa-lg"></i>
                         </a>
                     </span>
+                    <span class="app-status">
+                        <a title="Grafana" target="_blank" href="/grafana/">
+                            <i class="fa fa-fw fa-bar-chart-o fa-lg"></i>
+                        </a>
+                    </span>
                     <security:authorize access="isAnonymous()">
                         <span class="auth">
                             <a class="auth-action" ng-href="/login.jsp">Log in</a>
