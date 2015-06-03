@@ -42,6 +42,7 @@ import de.zalando.zmon.redis.ResponseHolder;
 import de.zalando.zmon.service.ZMonService;
 import de.zalando.zmon.util.DBUtil;
 
+import org.xerial.snappy.Snappy;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.Pipeline;
@@ -198,7 +199,7 @@ public class ZMonServiceImpl implements ZMonService {
     public CheckDefinition createOrUpdateCheckDefinition(final CheckDefinitionImport checkDefinition) {
         Preconditions.checkNotNull(checkDefinition);
         LOG.info("Saving check definition '{}' from team '{}'", checkDefinition.getName(),
-            checkDefinition.getOwningTeam());
+                checkDefinition.getOwningTeam());
 
         final CheckDefinitionImportResult operationResult = checkDefinitionSProc.createOrUpdateCheckDefinition(
                 checkDefinition);
@@ -364,10 +365,17 @@ public class ZMonServiceImpl implements ZMonService {
     private String getEntityPropertiesFromRedis() {
         final Jedis jedis = redisPool.getResource();
         try {
-            return jedis.get(RedisPattern.entityProperties());
+            try {
+                byte[] bs = jedis.get(RedisPattern.entityProperties().getBytes());
+                return new String(Snappy.uncompress(bs), "UTF-8");
+            }
+            catch( IOException ex) {
+                LOG.error("Failed retrieving auto complete properties");
+            }
         } finally {
             redisPool.returnResource(jedis);
         }
+        return null;
     }
 
     private List<CheckResults> buildCheckResults(final List<ResponseHolder<String, List<String>>> results) {
