@@ -367,6 +367,7 @@ public class ZMonServiceImpl implements ZMonService {
         try {
             try {
                 byte[] bs = jedis.get(RedisPattern.entityProperties().getBytes());
+                if(null==bs) return null;
                 return new String(Snappy.uncompress(bs), "UTF-8");
             }
             catch( IOException ex) {
