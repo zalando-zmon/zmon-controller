@@ -350,6 +350,11 @@ public class ZMonServiceImpl implements ZMonService {
     public JsonNode getEntityProperties() {
         final String json = getEntityPropertiesFromRedis();
         try {
+            if(null==json) {
+                // scheduler-ng currently does not populate this
+                return mapper.createObjectNode();
+            }
+
             return mapper.readTree(json);
         } catch (final IOException e) {
             throw new SerializationException("Could not read JSON: " + json, e);
