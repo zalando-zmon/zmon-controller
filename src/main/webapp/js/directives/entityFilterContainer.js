@@ -49,7 +49,7 @@ angular.module('zmon2App').directive('entityFilterContainer', ['$compile', '$log
                 var getEntityFilterConfig = function(type) {
                     var entityFilter = { type: type };
                     _.each(scope.entityFilterTypes, function(filter) {
-                        if (filter.type === type) {
+                        if (filter.type[0] === type[0]) {
                             entityFilter = filter;
                         }
                     });

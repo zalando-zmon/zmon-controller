@@ -61,7 +61,6 @@ var TrialRunCtrl = function ($scope, $interval, timespanFilter, localStorageServ
                 try {
                     config[key] = JSON.parse(config[key]);
                 } catch (e) {
-
                 }
             });
 
@@ -172,9 +171,13 @@ var TrialRunCtrl = function ($scope, $interval, timespanFilter, localStorageServ
     $scope.$watch('alert', function () {
         // Clean up previous blob and create new one
         window.URL.revokeObjectURL($scope.blob);
-        $scope.blob = new Blob([trc.buildYAMLContent()], {
-            type: 'text/plain'
-        });
+        try {
+            $scope.blob = new Blob([trc.buildYAMLContent()], {
+                type: 'text/plain'
+            });
+        } catch (e) {
+            console.log('Failed to create blob. Probably empty content?');
+        }
         $scope.yamlBlobUrl = window.URL.createObjectURL($scope.blob);
         updateUrlParameters();
     }, true);
@@ -395,6 +398,7 @@ var TrialRunCtrl = function ($scope, $interval, timespanFilter, localStorageServ
 
         var content = jsyaml.safeDump(alert);
         content += "command: |\n  " + $scope.alert.check_command.split('\n').join('\n  ');
+        content += "\nowning_team: " + UserInfoService.get().teams.split(',')[0];
         content += "\n# OPTIONAL FIELDS\n#technical_details: Optional Technical Details\n#potential_analysis: Optional Potential analysis\n#potential_impact: Optional potential impact\n#potential_solution: Optional potential solution";
         return  content;
     };
