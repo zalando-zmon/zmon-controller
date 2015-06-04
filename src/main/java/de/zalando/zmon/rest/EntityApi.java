@@ -41,9 +41,11 @@ public class EntityApi {
     @ResponseBody
     @RequestMapping(value = "/", method = RequestMethod.PUT)
     public void addEntity(@RequestBody JsonNode entity) {
-        if(!entity.has("team") || !authService.getTeams().contains(entity.get("team").textValue())) {
+        /*
+        if(entity.has("team") && !authService.getTeams().contains(entity.get("team").textValue())) {
             throw new ZMonRuntimeException("Entity Team does not match any of your Teams! " + authService.getTeams());
         }
+        */
 
         try {
             String data = mapper.writeValueAsString(entity);
