@@ -307,7 +307,7 @@ public class ZMonRestService extends AbstractZMonController {
 
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    @RequestMapping(value = "grafana/{id}", method = RequestMethod.PUT)
+    @RequestMapping(value = "grafana/dashboard/{id}", method = RequestMethod.PUT)
     public void putDashboard(@PathVariable(value="id") String id, @RequestBody JsonNode grafanaData) throws ZMonException, JsonProcessingException {
         String title = grafanaData.get("title").asText();
         String dashboard = grafanaData.get("dashboard").asText();
@@ -318,7 +318,7 @@ public class ZMonRestService extends AbstractZMonController {
 
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    @RequestMapping(value = "grafana/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "grafana/dashboard/{id}", method = RequestMethod.GET)
     public JsonNode getDashboard(@PathVariable(value="id") String id) throws ZMonException {
         List<GrafanaDashboardSprocService.GrafanaDashboard> dashboards = grafanaService.getGrafanaDashboard(id);
         if(dashboards.isEmpty()) {
@@ -342,7 +342,7 @@ public class ZMonRestService extends AbstractZMonController {
 
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    @RequestMapping(value = "grafana/_search", method = RequestMethod.POST)
+    @RequestMapping(value = "grafana/dashboard/_search", method = RequestMethod.POST)
     public JsonNode getDashboards(@RequestBody JsonNode grafanaSearch) throws ZMonException {
         ObjectNode r = mapper.createObjectNode();
         ObjectNode hits = mapper.createObjectNode();
