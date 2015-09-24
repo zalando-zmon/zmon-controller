@@ -49,7 +49,7 @@ angular.module('zmon2App').directive('entityFilterContainer', ['$compile', '$log
                 var getEntityFilterConfig = function(type) {
                     var entityFilter = { type: type };
                     _.each(scope.entityFilterTypes, function(filter) {
-                        if (filter.type[0] === type[0]) {
+                        if (filter.type[0] === type) {
                             entityFilter = filter;
                         }
                     });
@@ -68,7 +68,12 @@ angular.module('zmon2App').directive('entityFilterContainer', ['$compile', '$log
                 };
 
                 scope.$watch('entityFilterTypes', function(){
-                    scope.availableEntityFilterTypes = _.pluck(scope.entityFilterTypes, 'type');
+                    scope.availableEntityFilterTypes = _.map(_.pluck(scope.entityFilterTypes, 'type'), function(t) {
+                        if (t === 'GLOBAL')
+                            return t;
+                        else
+                            return t[0];
+                    }, []);
                 }, true);
 
                 scope.$watch('formEntityFilters', function() {
