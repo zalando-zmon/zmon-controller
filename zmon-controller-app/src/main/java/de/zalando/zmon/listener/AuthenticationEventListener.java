@@ -21,7 +21,7 @@ public class AuthenticationEventListener implements ApplicationListener<Abstract
         if (event instanceof AuthenticationSuccessEvent) {
 
             // log success event as info
-            LOG.info("User [{}] successfully authenticated", event.getAuthentication().getName());
+            LOG.debug("User [{}] successfully authenticated", event.getAuthentication().getName());
         } else if (event instanceof AbstractAuthenticationFailureEvent) {
 
             LOG.warn("User [{}] authentication failed: [{}]", event.getAuthentication().getName(),

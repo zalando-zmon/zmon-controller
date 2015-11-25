@@ -30,6 +30,7 @@ import de.zalando.zmon.security.ZMonAuthorityService;
 import de.zalando.zmon.service.DashboardService;
 
 @Controller
+@RequestMapping(value="/rest")
 public class DashboardController extends AbstractZMonController {
 
     @Autowired
@@ -38,7 +39,7 @@ public class DashboardController extends AbstractZMonController {
     @Autowired
     private ZMonAuthorityService authorityService;
 
-    @RequestMapping(value = "dashboard", method = RequestMethod.GET)
+    @RequestMapping(value = "/dashboard", method = RequestMethod.GET)
     public ResponseEntity<DashboardAuth> getDashboard(@RequestParam(value = "id", required = true) final int id) {
 
         final List<Dashboard> dashboards = service.getDashboards(Lists.newArrayList(id));
@@ -50,12 +51,12 @@ public class DashboardController extends AbstractZMonController {
     }
 
     @ResponseBody
-    @RequestMapping(value = "deleteDashboard", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/deleteDashboard", method = RequestMethod.DELETE)
     public void deleteDashboard(@RequestParam(value = "id", required = true) final int id) throws ZMonException {
         this.service.deleteDashboard(id);
     }
 
-    @RequestMapping(value = "allDashboards", method = RequestMethod.GET)
+    @RequestMapping(value = "/allDashboards", method = RequestMethod.GET)
     public ResponseEntity<List<DashboardAuth>> getAllDashboards() {
 
         List<DashboardAuth> response = Collections.emptyList();
@@ -72,7 +73,7 @@ public class DashboardController extends AbstractZMonController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "updateDashboard", method = RequestMethod.POST)
+    @RequestMapping(value = "/updateDashboard", method = RequestMethod.POST)
     public ResponseEntity<Integer> updateDashboard(@Valid
             @RequestBody(required = true)
             final Dashboard dashboard) throws ZMonException {

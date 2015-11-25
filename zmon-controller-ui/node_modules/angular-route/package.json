@@ -1,0 +1,55 @@
+{
+  "name": "angular-route",
+  "version": "1.3.8",
+  "description": "AngularJS router module",
+  "main": "angular-route.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/angular/angular.js.git"
+  },
+  "keywords": [
+    "angular",
+    "framework",
+    "browser",
+    "router",
+    "client-side"
+  ],
+  "author": {
+    "name": "Angular Core Team",
+    "email": "angular-core+npm@google.com"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/angular/angular.js/issues"
+  },
+  "homepage": "http://angularjs.org",
+  "gitHead": "b1cdc8bf8349ad5e317f4473f2bd3ae6fce0c7a5",
+  "_id": "angular-route@1.3.8",
+  "_shasum": "de97f4250e0aa0292c36badc8a4f1b318241b43d",
+  "_from": "angular-route@1.3.8",
+  "_npmVersion": "2.0.2",
+  "_nodeVersion": "0.10.26",
+  "_npmUser": {
+    "name": "angularcore",
+    "email": "angular-core+npm@google.com"
+  },
+  "maintainers": [
+    {
+      "name": "mljsimone",
+      "email": "mljsimone@gmail.com"
+    },
+    {
+      "name": "angularcore",
+      "email": "angular-core+npm@google.com"
+    }
+  ],
+  "dist": {
+    "shasum": "de97f4250e0aa0292c36badc8a4f1b318241b43d",
+    "tarball": "http://registry.npmjs.org/angular-route/-/angular-route-1.3.8.tgz"
+  },
+  "directories": {},
+  "_resolved": "https://registry.npmjs.org/angular-route/-/angular-route-1.3.8.tgz"
+}

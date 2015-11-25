@@ -6,15 +6,11 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.stereotype.Service;
 
 import com.google.common.base.Preconditions;
 import com.google.common.primitives.Ints;
-
-import de.zalando.eventlog.EventLogger;
 
 import de.zalando.zmon.domain.Dashboard;
 import de.zalando.zmon.event.ZMonEventType;
@@ -28,7 +24,7 @@ public class DashboardServiceImpl implements DashboardService {
 
     private static final Logger LOG = LoggerFactory.getLogger(DashboardServiceImpl.class);
 
-    private static final EventLogger EVENT_LOG = EventLogger.getLogger(DashboardServiceImpl.class);
+//    private static final EventLogger EVENT_LOG = EventLogger.getLogger(DashboardServiceImpl.class);
 
     private static final Comparator<Dashboard> DASHBOARD_ID_COMPARATOR = new Comparator<Dashboard>() {
 
@@ -37,6 +33,9 @@ public class DashboardServiceImpl implements DashboardService {
             return Ints.compare(o1.getId(), o2.getId());
         }
     };
+    
+    @Autowired
+    private NoOpEventLog eventLog;
 
     @Autowired
     private DashboardSProcService dashboardSProc;
@@ -66,7 +65,7 @@ public class DashboardServiceImpl implements DashboardService {
                                                               .throwExceptionOnFailure();
         final Dashboard entity = result.getEntity();
 
-        EVENT_LOG.log(dashboard.getId() == null ? ZMonEventType.DASHBOARD_CREATED : ZMonEventType.DASHBOARD_UPDATED,
+        eventLog.log(dashboard.getId() == null ? ZMonEventType.DASHBOARD_CREATED : ZMonEventType.DASHBOARD_UPDATED,
             entity.getId(), entity.getName(), entity.getWidgetConfiguration(), entity.getAlertTeams(),
             entity.getViewMode(), entity.getEditOption(), entity.getSharedTeams(), entity.getLastModifiedBy());
 

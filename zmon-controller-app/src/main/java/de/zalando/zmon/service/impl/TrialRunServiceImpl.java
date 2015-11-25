@@ -1,22 +1,21 @@
 package de.zalando.zmon.service.impl;
 
 import java.io.IOException;
-
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
-
+import org.springframework.dao.DataAccessException;
+import org.springframework.data.redis.connection.RedisConnection;
+import org.springframework.data.redis.core.RedisCallback;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import com.google.common.base.Preconditions;
-
-import de.zalando.eventlog.EventLogger;
 
 import de.zalando.zmon.domain.TrialRunRequest;
 import de.zalando.zmon.domain.TrialRunResults;
@@ -24,7 +23,6 @@ import de.zalando.zmon.event.ZMonEventType;
 import de.zalando.zmon.exception.SerializationException;
 import de.zalando.zmon.redis.RedisPattern;
 import de.zalando.zmon.service.TrialRunService;
-
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.Pipeline;
@@ -33,16 +31,22 @@ import redis.clients.jedis.Response;
 @Service
 public class TrialRunServiceImpl implements TrialRunService {
 
-    private static final EventLogger EVENT_LOG = EventLogger.getLogger(TrialRunServiceImpl.class);
+//    private static final EventLogger EVENT_LOG = EventLogger.getLogger(TrialRunServiceImpl.class);
 
     // expiration time in seconds
     private static final int TRIAL_RUN_EXPIRATION_TIME = 300;
 
     @Autowired
     private JedisPool redisPool;
+    
+//    @Autowired
+//    private RedisTemplate<String,String> redisTemplate;
 
     @Autowired
     private ObjectMapper mapper;
+    
+    @Autowired
+    private NoOpEventLog eventLog;
 
     @Override
     public String scheduleTrialRun(final TrialRunRequest request) {
@@ -55,6 +59,19 @@ public class TrialRunServiceImpl implements TrialRunService {
             final String json = mapper.writeValueAsString(request);
 
             final Jedis jedis = redisPool.getResource();
+            
+            // TODO, instead of using 'Jedis' directly
+//            redisTemplate.executePipelined(new RedisCallback<Void>() {
+//
+//				@Override
+//				public Void doInRedis(RedisConnection connection) throws DataAccessException {
+//					connection.hSet(RedisPattern.trialRunQueue().getBytes(), id.getBytes(), json.getBytes());
+//					connection.expire(RedisPattern.trialRunQueue().getBytes(), TRIAL_RUN_EXPIRATION_TIME);
+//					connection.publish(RedisPattern.trialRunChannel().getBytes(), id.getBytes());
+//					// sync will be done by template ?
+//					return null;
+//				}
+//			});
             try {
                 final Pipeline p = jedis.pipelined();
 
@@ -75,7 +92,7 @@ public class TrialRunServiceImpl implements TrialRunService {
             throw new SerializationException("Could not write JSON: " + request, e);
         }
 
-        EVENT_LOG.log(ZMonEventType.TRIAL_RUN_SCHEDULED, request.getCheckCommand(), request.getAlertCondition(),
+        eventLog.log(ZMonEventType.TRIAL_RUN_SCHEDULED, request.getCheckCommand(), request.getAlertCondition(),
             request.getEntities(), request.getPeriod(), request.getCreatedBy());
 
         return id;

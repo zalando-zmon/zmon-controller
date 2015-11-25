@@ -1,25 +1,27 @@
 package de.zalando.zmon.service.impl;
 
 import java.io.IOException;
-
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.stereotype.Service;
+import org.xerial.snappy.Snappy;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-
 import com.google.common.base.Preconditions;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.SetMultimap;
-
-import de.zalando.eventlog.EventLogger;
 
 import de.zalando.zmon.diff.CheckDefinitionsDiffFactory;
 import de.zalando.zmon.domain.AlertDefinition;
@@ -41,8 +43,6 @@ import de.zalando.zmon.redis.RedisPattern;
 import de.zalando.zmon.redis.ResponseHolder;
 import de.zalando.zmon.service.ZMonService;
 import de.zalando.zmon.util.DBUtil;
-
-import org.xerial.snappy.Snappy;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.Pipeline;
@@ -68,7 +68,7 @@ import redis.clients.jedis.Response;
 @Service
 public class ZMonServiceImpl implements ZMonService {
 
-    private static final EventLogger EVENT_LOG = EventLogger.getLogger(ZMonServiceImpl.class);
+//    private static final EventLogger EVENT_LOG = EventLogger.getLogger(ZMonServiceImpl.class);
 
     private static final Logger LOG = LoggerFactory.getLogger(ZMonServiceImpl.class);
 
@@ -88,6 +88,9 @@ public class ZMonServiceImpl implements ZMonService {
 
     @Autowired
     protected ObjectMapper mapper;
+    
+    @Autowired
+    private NoOpEventLog eventLog;
 
     @Override
     public ExecutionStatus getStatus() {
@@ -176,16 +179,19 @@ public class ZMonServiceImpl implements ZMonService {
             teamList.add(DBUtil.prefix(team));
         }
 
+        LOG.info("for status : {}, teamList : {}", status, teamList.toString());
         return checkDefinitionSProc.getCheckDefinitionsByOwningTeam(status, teamList);
     }
 
     @Override
     public CheckDefinitions getCheckDefinitions(final DefinitionStatus status) {
+    	LOG.info("for status : {}", status);
         return checkDefinitionSProc.getAllCheckDefinitions(status);
     }
 
     @Override
     public List<CheckDefinition> getCheckDefinitionsById(final int id) {
+    	LOG.info("for id : {}", id);
         return checkDefinitionSProc.getCheckDefinitions(null, Arrays.asList(id));
     }
 
@@ -205,7 +211,7 @@ public class ZMonServiceImpl implements ZMonService {
                 checkDefinition);
         final CheckDefinition result = operationResult.getEntity();
 
-        EVENT_LOG.log(operationResult.isNewEntity() ? ZMonEventType.CHECK_DEFINITION_CREATED
+        eventLog.log(operationResult.isNewEntity() ? ZMonEventType.CHECK_DEFINITION_CREATED
                                                     : ZMonEventType.CHECK_DEFINITION_UPDATED, result.getId(),
             result.getEntities(), result.getCommand(), result.getLastModifiedBy());
 
@@ -223,7 +229,7 @@ public class ZMonServiceImpl implements ZMonService {
         final CheckDefinition checkDefinition = checkDefinitionSProc.deleteCheckDefinition(userName, name, owningTeam);
 
         if (checkDefinition != null) {
-            EVENT_LOG.log(ZMonEventType.CHECK_DEFINITION_DELETED, checkDefinition.getId(),
+            eventLog.log(ZMonEventType.CHECK_DEFINITION_DELETED, checkDefinition.getId(),
                 checkDefinition.getEntities(), checkDefinition.getCommand(), userName);
         }
     }

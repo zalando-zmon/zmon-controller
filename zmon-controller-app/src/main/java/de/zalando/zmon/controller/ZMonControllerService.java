@@ -12,6 +12,7 @@ import com.google.common.base.Joiner;
 
 import de.zalando.zmon.security.ZMonAuthorityService;
 
+@Deprecated
 @Controller
 public class ZMonControllerService extends AbstractZMonController {
 

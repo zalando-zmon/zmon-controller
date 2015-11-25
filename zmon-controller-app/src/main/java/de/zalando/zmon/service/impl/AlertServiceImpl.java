@@ -1,7 +1,6 @@
 package de.zalando.zmon.service.impl;
 
 import java.io.IOException;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -18,22 +17,17 @@ import javax.annotation.Nullable;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-
-import de.zalando.eventlog.EventLogger;
 
 import de.zalando.zmon.diff.AlertDefinitionsDiffFactory;
 import de.zalando.zmon.domain.Alert;
@@ -56,7 +50,6 @@ import de.zalando.zmon.service.AlertService;
 import de.zalando.zmon.util.DBUtil;
 import de.zalando.zmon.util.NamedMessageFormatter;
 import de.zalando.zmon.util.Numbers;
-
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.Pipeline;
@@ -67,7 +60,7 @@ public class AlertServiceImpl implements AlertService {
 
     private static final Logger LOG = LoggerFactory.getLogger(AlertServiceImpl.class);
 
-    private static final EventLogger EVENT_LOG = EventLogger.getLogger(AlertServiceImpl.class);
+//    private static final EventLogger EVENT_LOG = EventLogger.getLogger(AlertServiceImpl.class);
 
     private static final String ENTITIES_PLACEHOLDER = "entities";
     private static final String CAPTURES_KEY = "captures";
@@ -86,6 +79,10 @@ public class AlertServiceImpl implements AlertService {
                 return input.getId();
             }
         };
+
+        
+    @Autowired
+    private NoOpEventLog eventLog;
 
     @Autowired
     protected AlertDefinitionSProcService alertDefinintionSProc;
@@ -108,7 +105,7 @@ public class AlertServiceImpl implements AlertService {
         final AlertDefinition result = operationResult.getEntity();
 
         // TODO save inherited data to eventlog, or the diff?
-        EVENT_LOG.log(alertDefinition.getId() == null ? ZMonEventType.ALERT_DEFINITION_CREATED
+        eventLog.log(alertDefinition.getId() == null ? ZMonEventType.ALERT_DEFINITION_CREATED
                                                       : ZMonEventType.ALERT_DEFINITION_UPDATED, result.getId(),
             result.getEntities(), result.getCondition(), result.getLastModifiedBy());
 
@@ -124,7 +121,7 @@ public class AlertServiceImpl implements AlertService {
         final AlertDefinition alertDefinition = operationResult.getEntity();
 
         if (alertDefinition != null) {
-            EVENT_LOG.log(ZMonEventType.ALERT_DEFINITION_DELETED, alertDefinition.getId(),
+            eventLog.log(ZMonEventType.ALERT_DEFINITION_DELETED, alertDefinition.getId(),
                 alertDefinition.getEntities(), alertDefinition.getCondition(), authorityService.getUserName());
         }
 
@@ -351,7 +348,7 @@ public class AlertServiceImpl implements AlertService {
 
         final AlertComment result = this.alertDefinintionSProc.addAlertComment(comment).getEntity();
 
-        EVENT_LOG.log(ZMonEventType.ALERT_COMMENT_CREATED, result.getId(), result.getComment(),
+        eventLog.log(ZMonEventType.ALERT_COMMENT_CREATED, result.getId(), result.getComment(),
             result.getAlertDefinitionId(), result.getEntityId(), result.getCreatedBy());
 
         return result;
@@ -369,7 +366,7 @@ public class AlertServiceImpl implements AlertService {
         final AlertComment comment = alertDefinintionSProc.deleteAlertComment(id);
 
         if (comment != null) {
-            EVENT_LOG.log(ZMonEventType.ALERT_COMMENT_REMOVED, comment.getId(), comment.getComment(),
+            eventLog.log(ZMonEventType.ALERT_COMMENT_REMOVED, comment.getId(), comment.getComment(),
                 comment.getAlertDefinitionId(), comment.getEntityId(), comment.getCreatedBy());
         }
     }
@@ -410,7 +407,7 @@ public class AlertServiceImpl implements AlertService {
             redisPool.returnResource(jedis);
         }
 
-        EVENT_LOG.log(ZMonEventType.INSTANTANEOUS_ALERT_EVALUATION_SCHEDULED, alertDefinitionId,
+        eventLog.log(ZMonEventType.INSTANTANEOUS_ALERT_EVALUATION_SCHEDULED, alertDefinitionId,
             authorityService.getUserName());
     }
 

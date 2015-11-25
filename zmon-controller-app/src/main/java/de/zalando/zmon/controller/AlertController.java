@@ -9,13 +9,9 @@ import java.util.Set;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
-
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-
 import org.springframework.stereotype.Controller;
-
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -35,6 +31,7 @@ import de.zalando.zmon.security.ZMonAuthorityService;
 import de.zalando.zmon.service.AlertService;
 
 @Controller
+@RequestMapping(value="/rest")
 public class AlertController extends AbstractZMonController {
 
     @Autowired
@@ -43,7 +40,7 @@ public class AlertController extends AbstractZMonController {
     @Autowired
     private ZMonAuthorityService authorityService;
 
-    @RequestMapping(value = "allAlerts", method = RequestMethod.GET)
+    @RequestMapping(value = "/allAlerts", method = RequestMethod.GET)
     public ResponseEntity<List<Alert>> getAllAlerts(
             @RequestParam(value = "team", required = false) final Set<String> teams,
             @RequestParam(value = "tags", required = false) final Set<String> tags) {
@@ -53,14 +50,14 @@ public class AlertController extends AbstractZMonController {
         return new ResponseEntity<>(alerts, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "alertsById", method = RequestMethod.GET)
+    @RequestMapping(value = "/alertsById", method = RequestMethod.GET)
     public ResponseEntity<List<Alert>> getAlertsById(
             @RequestParam(value = "id", required = true) final Set<Integer> ids) {
 
         return new ResponseEntity<>(service.getAllAlertsById(ids), HttpStatus.OK);
     }
 
-    @RequestMapping(value = "alertDetails", method = RequestMethod.GET)
+    @RequestMapping(value = "/alertDetails", method = RequestMethod.GET)
     public ResponseEntity<Alert> getAlert(@RequestParam(value = "alert_id", required = true) final Integer alertId) {
         final Alert alert = service.getAlert(alertId);
 
@@ -68,7 +65,7 @@ public class AlertController extends AbstractZMonController {
                              : new ResponseEntity<>(alert, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "alertDefinitions", method = RequestMethod.GET)
+    @RequestMapping(value = "/alertDefinitions", method = RequestMethod.GET)
     public ResponseEntity<List<AlertDefinitionAuth>> getAllAlertDefinitions(
             @RequestParam(value = "team", required = false) final Set<String> teams) {
         List<AlertDefinitionAuth> response = Collections.emptyList();
@@ -92,7 +89,7 @@ public class AlertController extends AbstractZMonController {
                 authorityService.hasDeleteAlertDefinitionPermission(def));
     }
 
-    @RequestMapping(value = "alertDefinition", method = RequestMethod.GET)
+    @RequestMapping(value = "/alertDefinition", method = RequestMethod.GET)
     public ResponseEntity<AlertDefinitionAuth> getAlertDefinition(
             @RequestParam(value = "id", required = true) final int id) {
 
@@ -105,7 +102,7 @@ public class AlertController extends AbstractZMonController {
         return new ResponseEntity<>(resolveAlertDefinitionAuth(def), HttpStatus.OK);
     }
 
-    @RequestMapping(value = "alertDefinitionNode", method = RequestMethod.GET)
+    @RequestMapping(value = "/alertDefinitionNode", method = RequestMethod.GET)
     public ResponseEntity<AlertDefinitionAuth> getAlertDefinitionNode(
             @RequestParam(value = "id", required = true) final int id) {
 
@@ -117,7 +114,7 @@ public class AlertController extends AbstractZMonController {
         return new ResponseEntity<>(resolveAlertDefinitionAuth(node), HttpStatus.OK);
     }
 
-    @RequestMapping(value = "alertDefinitionChildren", method = RequestMethod.GET)
+    @RequestMapping(value = "/alertDefinitionChildren", method = RequestMethod.GET)
     public ResponseEntity<List<AlertDefinitionAuth>> getAlertDefinitionChildren(
             @RequestParam(value = "id", required = true) final int id) {
 
@@ -134,7 +131,7 @@ public class AlertController extends AbstractZMonController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "updateAlertDefinition", method = RequestMethod.POST)
+    @RequestMapping(value = "/updateAlertDefinition", method = RequestMethod.POST)
     public ResponseEntity<AlertDefinitionAuth> updateAlertDefinition(
             @Valid
             @RequestBody(required = true)
@@ -150,13 +147,13 @@ public class AlertController extends AbstractZMonController {
     }
 
     @ResponseBody
-    @RequestMapping(value = "deleteAlertDefinition", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/deleteAlertDefinition", method = RequestMethod.DELETE)
     public void deleteAlertDefinition(@RequestParam(value = "id", required = true) final int id) throws ZMonException {
         authorityService.verifyDeleteAlertDefinitionPermission(id);
         service.deleteAlertDefinition(id);
     }
 
-    @RequestMapping(value = "comment", method = RequestMethod.POST)
+    @RequestMapping(value = "/comment", method = RequestMethod.POST)
     public ResponseEntity<AlertCommentAuth> addComment(@Valid
             @RequestBody(required = true)
             final AlertComment comment) throws ZMonException {
@@ -171,7 +168,7 @@ public class AlertController extends AbstractZMonController {
                     authorityService.hasDeleteCommentPermission(comment)), HttpStatus.OK);
     }
 
-    @RequestMapping(value = "comments", method = RequestMethod.GET)
+    @RequestMapping(value = "/comments", method = RequestMethod.GET)
     public ResponseEntity<List<AlertCommentAuth>> getComments(
             @RequestParam(value = "alert_definition_id", required = true) final int alertDefinitionId,
             @RequestParam(value = "limit", defaultValue = "20") final int limit,
@@ -188,20 +185,20 @@ public class AlertController extends AbstractZMonController {
     }
 
     @ResponseBody
-    @RequestMapping(value = "deleteComment", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/deleteComment", method = RequestMethod.DELETE)
     public void deleteComment(@RequestParam(value = "id", required = true) final int id) throws ZMonException {
         authorityService.verifyDeleteCommentPermission(id);
         service.deleteAlertComment(id);
     }
 
     @ResponseBody
-    @RequestMapping(value = "forceAlertEvaluation", method = RequestMethod.POST)
+    @RequestMapping(value = "/forceAlertEvaluation", method = RequestMethod.POST)
     public void forceAlertEvaluation(@Valid @RequestBody final InstantaneousAlertEvaluationRequest request) {
         authorityService.verifyInstantaneousAlertEvaluationPermission();
         service.forceAlertEvaluation(request.getAlertDefinitionId());
     }
 
-    @RequestMapping(value = "allTags", method = RequestMethod.GET)
+    @RequestMapping(value = "/allTags", method = RequestMethod.GET)
     public ResponseEntity<List<String>> getAllTags() {
         return new ResponseEntity<>(service.getAllTags(), HttpStatus.OK);
     }

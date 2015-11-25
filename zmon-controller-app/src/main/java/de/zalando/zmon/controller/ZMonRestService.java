@@ -63,6 +63,7 @@ import org.kairosdb.client.builder.DataFormatException;
 import org.kairosdb.client.response.grouping.TagGroupResult;
 
 @Controller
+@RequestMapping(value="/rest")
 public class ZMonRestService extends AbstractZMonController {
 
     private static final Logger LOG = LoggerFactory.getLogger(ZMonRestService.class);
@@ -73,17 +74,17 @@ public class ZMonRestService extends AbstractZMonController {
     @Autowired
     private KairosDBConfig kairosDBConfig;
 
-    @RequestMapping(value = "status", method = RequestMethod.GET)
+    @RequestMapping(value = "/status", method = RequestMethod.GET)
     public ResponseEntity<ExecutionStatus> getStatus() {
         return new ResponseEntity<>(service.getStatus(), HttpStatus.OK);
     }
 
-    @RequestMapping(value = "allTeams", method = RequestMethod.GET)
+    @RequestMapping(value = "/allTeams", method = RequestMethod.GET)
     public ResponseEntity<List<String>> getAllTeams() {
         return new ResponseEntity<>(service.getAllTeams(), HttpStatus.OK);
     }
 
-    @RequestMapping(value = "checkDefinitions", method = RequestMethod.GET)
+    @RequestMapping(value = "/checkDefinitions", method = RequestMethod.GET)
     public ResponseEntity<List<CheckDefinition>> getAllCheckDefinitions(
             @RequestParam(value = "team", required = false) final Set<String> teams) {
         final List<CheckDefinition> defs = teams == null ? service.getCheckDefinitions(null).getCheckDefinitions()
@@ -92,7 +93,7 @@ public class ZMonRestService extends AbstractZMonController {
         return new ResponseEntity<>(defs, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "checkDefinition", method = RequestMethod.GET)
+    @RequestMapping(value = "/checkDefinition", method = RequestMethod.GET)
     public ResponseEntity<CheckDefinition> getCheckDefinition(
             @RequestParam(value = "check_id", required = true) final int checkId) {
 
@@ -104,7 +105,7 @@ public class ZMonRestService extends AbstractZMonController {
         return new ResponseEntity<>(checkDefinitions.get(0), HttpStatus.OK);
     }
 
-    @RequestMapping(value = "checkResults", method = RequestMethod.GET)
+    @RequestMapping(value = "/checkResults", method = RequestMethod.GET)
     public ResponseEntity<List<CheckResults>> getCheckResults(
             @RequestParam(value = "check_id", required = true) final int checkId,
             @RequestParam(value = "entity", required = false) final String entity,
@@ -113,20 +114,20 @@ public class ZMonRestService extends AbstractZMonController {
         return new ResponseEntity<>(service.getCheckResults(checkId, entity, limit), HttpStatus.OK);
     }
 
-    @RequestMapping(value = "checkAlertResults", method = RequestMethod.GET)
+    @RequestMapping(value = "/checkAlertResults", method = RequestMethod.GET)
     public ResponseEntity<List<CheckResults>> getCheckAlertResults(
             @RequestParam(value = "alert_id", required = true) final int alertId,
             @RequestParam(value = "limit", defaultValue = "20") final int limit) {
         return new ResponseEntity<>(service.getCheckAlertResults(alertId, limit), HttpStatus.OK);
     }
 
-    @RequestMapping(value = "entityProperties", method = RequestMethod.GET)
+    @RequestMapping(value = "/entityProperties", method = RequestMethod.GET)
     public ResponseEntity<JsonNode> getEntityProperties() {
         return new ResponseEntity<>(service.getEntityProperties(), HttpStatus.OK);
     }
 
     @ResponseBody
-    @RequestMapping(value = "kairosDBPost", method = RequestMethod.POST, produces = "application/json")
+    @RequestMapping(value = "/kairosDBPost", method = RequestMethod.POST, produces = "application/json")
     public void kairosDBPost(@RequestBody(required = true) final JsonNode node, final Writer writer,
             final HttpServletResponse response) throws IOException {
 
@@ -149,7 +150,7 @@ public class ZMonRestService extends AbstractZMonController {
     }
 
     @ResponseBody
-    @RequestMapping(value = "kairosDBtags", method = RequestMethod.POST, produces = "application/json")
+    @RequestMapping(value = "/kairosDBtags", method = RequestMethod.POST, produces = "application/json")
     public void kairosDBtags(@RequestBody(required = true) final JsonNode node, final Writer writer,
                              final HttpServletResponse response) throws IOException {
 
@@ -172,7 +173,7 @@ public class ZMonRestService extends AbstractZMonController {
     }
 
     @ResponseBody
-    @RequestMapping(value = "kairosDBmetrics", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "/kairosDBmetrics", method = RequestMethod.GET, produces = "application/json")
     public void kairosDBmetrics(final Writer writer, final HttpServletResponse response) throws IOException {
 
         response.setContentType("application/json");
@@ -190,7 +191,7 @@ public class ZMonRestService extends AbstractZMonController {
         writer.write(r);
     }
 
-    @RequestMapping(value = "retrieveCheckStatistics", method = RequestMethod.GET)
+    @RequestMapping(value = "/retrieveCheckStatistics", method = RequestMethod.GET)
     public ResponseEntity<CheckHistoryResult> retrieveCheckStatistics(
             @RequestParam(value = "check_id", required = true) final int checkId,
             @RequestParam(value = "entity_id", required = true) final String entityId,
@@ -307,7 +308,7 @@ public class ZMonRestService extends AbstractZMonController {
 
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    @RequestMapping(value = "grafana/dashboard/{id}", method = RequestMethod.PUT)
+    @RequestMapping(value = "/grafana/dashboard/{id}", method = RequestMethod.PUT)
     public void putDashboard(@PathVariable(value="id") String id, @RequestBody JsonNode grafanaData) throws ZMonException, JsonProcessingException {
         String title = grafanaData.get("title").asText();
         String dashboard = grafanaData.get("dashboard").asText();
@@ -318,7 +319,7 @@ public class ZMonRestService extends AbstractZMonController {
 
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    @RequestMapping(value = "grafana/dashboard/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/grafana/dashboard/{id}", method = RequestMethod.GET)
     public JsonNode getDashboard(@PathVariable(value="id") String id) throws ZMonException {
         List<GrafanaDashboardSprocService.GrafanaDashboard> dashboards = grafanaService.getGrafanaDashboard(id);
         if(dashboards.isEmpty()) {
@@ -342,7 +343,7 @@ public class ZMonRestService extends AbstractZMonController {
 
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    @RequestMapping(value = "grafana/dashboard/_search", method = RequestMethod.POST)
+    @RequestMapping(value = "/grafana/dashboard/_search", method = RequestMethod.POST)
     public JsonNode getDashboards(@RequestBody JsonNode grafanaSearch) throws ZMonException {
         ObjectNode r = mapper.createObjectNode();
         ObjectNode hits = mapper.createObjectNode();

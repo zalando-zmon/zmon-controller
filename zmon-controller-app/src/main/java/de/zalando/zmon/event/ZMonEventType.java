@@ -4,9 +4,7 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 
-import de.zalando.eventlog.EventType;
-
-public enum ZMonEventType implements EventType {
+public enum ZMonEventType /*implements EventType*/ {
 
     // worker events
     ALERT_STARTED(0x34001, "checkId", "alertId", "value"),
@@ -43,17 +41,17 @@ public enum ZMonEventType implements EventType {
         this.fieldNames = Lists.newArrayList(fieldNames);
     }
 
-    @Override
+//    @Override
     public String getName() {
         return name();
     }
 
-    @Override
+//    @Override
     public int getId() {
         return id;
     }
 
-    @Override
+//    @Override
     public List<String> getFieldNames() {
         return fieldNames;
     }

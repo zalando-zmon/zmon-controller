@@ -1,0 +1,43 @@
+spring:
+  application:
+    name: ZMON
+
+  redis:
+    host: ${REDIS_HOST:localhost}
+    port: ${REDIS_PORT:38086}
+    pool:
+      max-active: 8
+      max-idle: 8
+      min-idle: 0
+      max-wait: -1
+
+  mail:
+    host: ${zmon.report.mail.host}
+    port: ${zmon.report.mail.port}
+    protocol: ${zmon.report.mail.protocol}
+
+  thymeleaf:
+    cache: false
+    mode: LEGACYHTML5
+
+security:
+  user:
+    name: admin
+    password: admin
+    role:
+      - ADMIN
+
+server:
+    port: 8443
+    ssl:
+        key-store: classpath:keystore.p12
+        key-store-type: PKCS12
+        key-store-password: mypassword
+        key-alias: tomcat
+
+#
+# only needed when 'zmon-zauth-integration' is in pom.xml
+#
+zauth:
+    clientId: clientId
+    clientSecret: 'client-secret' # we use 'ticks' here, because 'clientSecret' sometimes contains 'yaml-sensitive-tokens'

@@ -1,7 +1,6 @@
 package de.zalando.zmon.service.impl;
 
 import java.io.IOException;
-
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -13,20 +12,15 @@ import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import com.google.common.base.Preconditions;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-
-import de.zalando.eventlog.EventLogger;
 
 import de.zalando.zmon.domain.DefinitionStatus;
 import de.zalando.zmon.domain.DowntimeDetails;
@@ -40,7 +34,6 @@ import de.zalando.zmon.redis.ResponseHolder;
 import de.zalando.zmon.rest.DowntimeGroup;
 import de.zalando.zmon.service.DowntimeService;
 import de.zalando.zmon.util.Numbers;
-
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.Pipeline;
@@ -51,18 +44,20 @@ public class DowntimeServiceImpl implements DowntimeService {
 
     private static final Logger LOG = LoggerFactory.getLogger(DowntimeServiceImpl.class);
 
-    private static final EventLogger EVENT_LOG = EventLogger.getLogger(DowntimeServiceImpl.class);
+//    private static final EventLogger EVENT_LOG = EventLogger.getLogger(DowntimeServiceImpl.class);
 
     private final JedisPool redisPool;
     private final ObjectMapper mapper;
     private final AlertDefinitionSProcService alertDefinintionSProc;
+    private final NoOpEventLog eventLog;
 
     @Autowired
     public DowntimeServiceImpl(final JedisPool redisPool, final ObjectMapper mapper,
-            final AlertDefinitionSProcService alertDefinintionSProc) {
+            final AlertDefinitionSProcService alertDefinintionSProc, NoOpEventLog eventLog) {
         this.redisPool = Preconditions.checkNotNull(redisPool, "redisPool");
         this.mapper = Preconditions.checkNotNull(mapper, "mapper");
         this.alertDefinintionSProc = Preconditions.checkNotNull(alertDefinintionSProc, "alertDefinintionSProc");
+        this.eventLog = eventLog;
     }
 
     @Override
@@ -197,7 +192,7 @@ public class DowntimeServiceImpl implements DowntimeService {
 
         // only log events at the end of the transaction
         for (final DowntimeDetails details : newDowntimes) {
-            EVENT_LOG.log(ZMonEventType.DOWNTIME_SCHEDULED, details.getAlertDefinitionId(), details.getEntity(),
+            eventLog.log(ZMonEventType.DOWNTIME_SCHEDULED, details.getAlertDefinitionId(), details.getEntity(),
                 details.getStartTime(), details.getEndTime(), details.getCreatedBy(), details.getComment());
         }
 
@@ -422,7 +417,7 @@ public class DowntimeServiceImpl implements DowntimeService {
 
             // and finnally publish an event after returning the connection
             for (final DowntimeDetails details : deleted) {
-                EVENT_LOG.log(ZMonEventType.DOWNTIME_REMOVED, details.getAlertDefinitionId(), details.getEntity(),
+                eventLog.log(ZMonEventType.DOWNTIME_REMOVED, details.getAlertDefinitionId(), details.getEntity(),
                     details.getStartTime(), details.getEndTime(), details.getCreatedBy(), details.getComment());
             }
 

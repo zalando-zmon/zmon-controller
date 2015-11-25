@@ -1,20 +1,20 @@
 package de.zalando.zmon.service.impl;
 
-import de.zalando.eventlog.EventLogger;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import de.zalando.zmon.event.ZMonEventType;
 import de.zalando.zmon.rest.ZmonGroup;
 import de.zalando.zmon.rest.ZmonGroupMember;
 import de.zalando.zmon.security.ZMonAuthorityService;
 import de.zalando.zmon.service.GroupService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * Created by jmussler on 11/11/14.
@@ -24,8 +24,11 @@ public class GroupServiceImpl implements GroupService {
 
     private final JedisPool redisPool;
     protected final ZMonAuthorityService authorityService;
+    
+    @Autowired
+    private NoOpEventLog eventLog;
 
-    private static final EventLogger EVENT_LOG = EventLogger.getLogger(AlertServiceImpl.class);
+//    private static final EventLogger EVENT_LOG = EventLogger.getLogger(AlertServiceImpl.class);
 
     public void createGroupIfNotExists(Jedis jedis, String groupId) {
         jedis.hsetnx("zmon:groups", groupId, groupId);
@@ -58,7 +61,7 @@ public class GroupServiceImpl implements GroupService {
     public long clearActive(String groupId) {
         Jedis jedis = redisPool.getResource();
         try {
-            EVENT_LOG.log(ZMonEventType.GROUP_MODIFIED, authorityService.getUserName(), "clear-active", groupId);
+            eventLog.log(ZMonEventType.GROUP_MODIFIED, authorityService.getUserName(), "clear-active", groupId);
             jedis.del(getActiveKey(groupId));
             return 0;
         }
@@ -74,7 +77,7 @@ public class GroupServiceImpl implements GroupService {
             ZmonGroup g = getGroup(groupId);
 
             if(g.members.contains(memberId)) {
-                EVENT_LOG.log(ZMonEventType.GROUP_MODIFIED, authorityService.getUserName(), "activate", groupId, memberId);
+                eventLog.log(ZMonEventType.GROUP_MODIFIED, authorityService.getUserName(), "activate", groupId, memberId);
                 return jedis.sadd(getActiveKey(groupId), memberId);
             }
             return -1;
@@ -88,7 +91,7 @@ public class GroupServiceImpl implements GroupService {
     public long removeFromActive(String groupId, String memberId) {
         Jedis jedis = redisPool.getResource();
         try {
-            EVENT_LOG.log(ZMonEventType.GROUP_MODIFIED, authorityService.getUserName(), "remove-active", groupId, memberId);
+            eventLog.log(ZMonEventType.GROUP_MODIFIED, authorityService.getUserName(), "remove-active", groupId, memberId);
             return jedis.srem(getActiveKey(groupId), memberId);
         }
         finally {
@@ -101,7 +104,7 @@ public class GroupServiceImpl implements GroupService {
     public long addPhone(String memberId, String phone) {
         Jedis jedis = redisPool.getResource();
         try {
-            EVENT_LOG.log(ZMonEventType.GROUP_MODIFIED, authorityService.getUserName(), "add-phone", null, memberId, phone);
+            eventLog.log(ZMonEventType.GROUP_MODIFIED, authorityService.getUserName(), "add-phone", null, memberId, phone);
             return jedis.sadd(getMemberPhoneKey(memberId),phone);
         }
         finally {
@@ -117,7 +120,7 @@ public class GroupServiceImpl implements GroupService {
     public long removePhone(String memberId, String phone) {
         Jedis jedis = redisPool.getResource();
         try {
-            EVENT_LOG.log(ZMonEventType.GROUP_MODIFIED, authorityService.getUserName(), "remove-phone", null, memberId, phone);
+            eventLog.log(ZMonEventType.GROUP_MODIFIED, authorityService.getUserName(), "remove-phone", null, memberId, phone);
             return jedis.srem(getMemberPhoneKey(memberId),phone);
         }
         finally {

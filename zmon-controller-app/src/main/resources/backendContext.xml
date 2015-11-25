@@ -9,7 +9,7 @@
         <property name="locations">
             <list>
                 <value>classpath:db_api_version.properties</value>
-                <value>classpath:application.properties</value>
+                <value>classpath:zmon.properties</value>
                 <value>classpath:security.properties</value>
             </list>
         </property>
@@ -20,11 +20,11 @@
 
     <context:annotation-config />
 
-    <import resource="spring/jmx.xml" />
-    <import resource="spring/security.xml" />
+    <!-- <import resource="spring/jmx.xml" /> -->
+    <!-- <import resource="spring/security.xml" /> -->
     <import resource="spring/persistence.xml"/>
-    <import resource="spring/redis.xml"/>
+    <!-- <import resource="spring/redis.xml"/> -->
     <import resource="spring/mvc.xml"/>
-    <import resource="spring/cxf.xml"/>
-    <import resource="spring/mail.xml"/>
+    <!-- <import resource="spring/cxf.xml"/> -->
+    <!-- <import resource="spring/mail.xml"/> -->
 </beans>
