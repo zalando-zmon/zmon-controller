@@ -17,5 +17,5 @@ src/main/webapp/node_modules/
 src/main/webapp/tests/acceptance/result/
 
 application-local.yml
-somepath/credentials/user.json
-somepath/credentials/client.json
+zmon-controller-it/somepath/credentials/user.json
+zmon-controller-it/somepath/credentials/client.json
