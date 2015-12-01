@@ -1,0 +1,12 @@
+
+tokens:
+    accessTokenUri: https://auth.example.com/oauth2/access_token?realm=testing
+    credentialsDirectory: ${user.dir}/somepath/credentials
+    exposeClientCredentialProvider: false
+
+    # but these also need to be configured, otherwise component can not be started
+    token-configuration-list:
+        - tokenId: zmon
+          scopes:
+              - zmon.read_all
+              - zmon.write_all

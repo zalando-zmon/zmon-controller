@@ -26,6 +26,9 @@ security:
     password: admin
     role:
       - ADMIN
+  oauth2:
+    resource:
+      userInfoUri: https://auth.zalando.com/am/oauth2/tokeninfo
 
 server:
     port: 8443

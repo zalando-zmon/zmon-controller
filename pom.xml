@@ -113,5 +113,6 @@
     	<module>zmon-controller-ui</module>
     	<module>zmon-controller-app</module>
     	<module>zmon-zauth-integration</module>
+    	<module>zmon-controller-it</module>
     </modules>
 </project>

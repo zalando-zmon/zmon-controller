@@ -15,3 +15,7 @@ config-service.json
 src/main/webapp/test/ci/*.xml
 src/main/webapp/node_modules/
 src/main/webapp/tests/acceptance/result/
+
+application-local.yml
+somepath/credentials/user.json
+somepath/credentials/client.json
