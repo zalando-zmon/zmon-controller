@@ -28,7 +28,7 @@ security:
       - ADMIN
   oauth2:
     resource:
-      userInfoUri: https://auth.zalando.com/am/oauth2/tokeninfo
+      userInfoUri: https://auth.example.com/oauth2/tokeninfo
 
 server:
     port: 8443
