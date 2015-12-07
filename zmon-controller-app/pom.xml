@@ -9,9 +9,17 @@
 	<artifactId>zmon-controller</artifactId>
 
 	<dependencies>
-		<dependency>
+		<!--
+			<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>zmon-zauth-integration</artifactId>
+			<version>${project.version}</version>
+			</dependency>
+		-->
+
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>zmon-github-integration</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 
@@ -69,8 +77,8 @@
 			<artifactId>thymeleaf-extras-springsecurity4</artifactId>
 		</dependency>
 		<dependency>
-		    <groupId>com.github.mxab.thymeleaf.extras</groupId>
-		    <artifactId>thymeleaf-extras-data-attribute</artifactId>
+			<groupId>com.github.mxab.thymeleaf.extras</groupId>
+			<artifactId>thymeleaf-extras-data-attribute</artifactId>
 		</dependency>
 		<!-- Frontend -->
 		<dependency>
@@ -154,7 +162,7 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-		<!-- <dependency> <groupId>de.zalando</groupId> <artifactId>eventlog</artifactId> 
+		<!-- <dependency> <groupId>de.zalando</groupId> <artifactId>eventlog</artifactId>
 			<version>1.0.8</version> </dependency> -->
 		<!-- Validation -->
 		<dependency>
@@ -167,9 +175,9 @@
 			<artifactId>hibernate-validator</artifactId>
 		</dependency>
 		<!-- Soap web services -->
-		<!-- <dependency> <groupId>org.apache.cxf</groupId> <artifactId>cxf-rt-frontend-jaxws</artifactId> 
-			<version>2.7.5</version> </dependency> <dependency> <groupId>org.apache.cxf</groupId> 
-			<artifactId>cxf-rt-transports-http</artifactId> <version>2.7.5</version> 
+		<!-- <dependency> <groupId>org.apache.cxf</groupId> <artifactId>cxf-rt-frontend-jaxws</artifactId>
+			<version>2.7.5</version> </dependency> <dependency> <groupId>org.apache.cxf</groupId>
+			<artifactId>cxf-rt-transports-http</artifactId> <version>2.7.5</version>
 			</dependency> -->
 		<dependency>
 			<groupId>org.xerial.snappy</groupId>

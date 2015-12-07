@@ -1,14 +1,14 @@
-package de.zalando.zauth.zmon.config;
+package org.zalando.zmon.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
- * Only for this example. Not official part of the lib. Could be done this way.
- *
+ * 
  * @author jbellmann
+ *
  */
-@ConfigurationProperties(prefix = "zauth")
-public class ZAuthProperties {
+@ConfigurationProperties(prefix = "zmon.oauth2.sso")
+public class ZmonOAuth2Properties {
 
 	private String clientId;
 
@@ -18,7 +18,7 @@ public class ZAuthProperties {
 		return clientId;
 	}
 
-	public void setClientId(final String clientId) {
+	public void setClientId(String clientId) {
 		this.clientId = clientId;
 	}
 
@@ -26,7 +26,7 @@ public class ZAuthProperties {
 		return clientSecret;
 	}
 
-	public void setClientSecret(final String clientSecret) {
+	public void setClientSecret(String clientSecret) {
 		this.clientSecret = clientSecret;
 	}
 

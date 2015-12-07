@@ -1,4 +1,4 @@
-package de.zalando.zauth.zmon.config;
+package org.zalando.github.zmon.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
@@ -7,14 +7,17 @@ import org.springframework.social.config.annotation.EnableSocial;
 import org.springframework.social.connect.ConnectionFactoryLocator;
 import org.springframework.social.connect.UsersConnectionRepository;
 import org.springframework.social.connect.mem.InMemoryUsersConnectionRepository;
-import org.springframework.social.zauth.config.AbstractZAuthSocialConfigurer;
+import org.zalando.github.zmon.service.AccountConnectionSignupService;
 import org.zalando.zmon.config.ZmonOAuth2Properties;
 
-import de.zalando.zauth.zmon.service.AccountConnectionSignupService;
-
+/**
+ * 
+ * @author jbellmann
+ *
+ */
 @Configuration
 @EnableSocial
-public class SocialConfig extends AbstractZAuthSocialConfigurer {
+public class SocialConfig extends AbstractGithubSocialConfigurer {
 
 	@Autowired
 	private ZmonOAuth2Properties zmonOAuth2Properties;

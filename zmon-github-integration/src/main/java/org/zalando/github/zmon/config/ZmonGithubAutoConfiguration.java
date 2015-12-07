@@ -1,4 +1,4 @@
-package de.zalando.zauth.zmon.config;
+package org.zalando.github.zmon.config;
 
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -12,12 +12,12 @@ import org.zalando.zmon.config.ZmonOAuth2Properties;
  *
  */
 @Configuration
-@EnableConfigurationProperties({ ZmonOAuth2Properties.class })
-@Import({SecurityConfig.class, SocialConfig.class})
-public class ZauthAutoConfiguration {
-	
+@EnableConfigurationProperties({ZmonOAuth2Properties.class})
+@Import({ SecurityConfig.class, SocialConfig.class })
+public class ZmonGithubAutoConfiguration {
+
 	@Bean
-	public SigninController signinController(){
+	public SigninController signinController() {
 		return new SigninController();
 	}
 }

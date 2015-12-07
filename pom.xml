@@ -114,5 +114,7 @@
     	<module>zmon-controller-app</module>
     	<module>zmon-zauth-integration</module>
     	<module>zmon-controller-it</module>
+    	<module>zmon-github-integration</module>
+    	<module>zmon-security-common</module>
     </modules>
 </project>

@@ -37,10 +37,3 @@ server:
         key-store-type: PKCS12
         key-store-password: mypassword
         key-alias: tomcat
-
-#
-# only needed when 'zmon-zauth-integration' is in pom.xml
-#
-zauth:
-    clientId: clientId
-    clientSecret: 'client-secret' # we use 'ticks' here, because 'clientSecret' sometimes contains 'yaml-sensitive-tokens'
