@@ -1,4 +1,4 @@
-package de.zalando.zauth.zmon.config;
+package org.zalando.zmon.security;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,13 +15,13 @@ import org.springframework.util.Assert;
  * @author jbellmann
  *
  */
-class ZmonResourceServerConfigurer extends ResourceServerConfigurerAdapter {
+public class ZmonResourceServerConfigurer extends ResourceServerConfigurerAdapter {
 
 	private final Logger logger = LoggerFactory.getLogger(ZmonResourceServerConfigurer.class);
 
 	private final ResourceServerTokenServices resourceServerTokenServices;
 
-	ZmonResourceServerConfigurer(ResourceServerTokenServices resourceServerTokenServices) {
+	public ZmonResourceServerConfigurer(ResourceServerTokenServices resourceServerTokenServices) {
 		Assert.notNull(resourceServerTokenServices, "'ResourceServerTokenService' should never be null");
 		this.resourceServerTokenServices = resourceServerTokenServices;
 	}
@@ -38,15 +38,22 @@ class ZmonResourceServerConfigurer extends ResourceServerConfigurerAdapter {
 	public void configure(final HttpSecurity http) throws Exception {
 		logger.info("CONFIGURE OAUTH ...");
 		// J-
-		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED).and().requestMatchers()
-				.antMatchers("/api/v1/**").and().authorizeRequests().antMatchers(HttpMethod.GET, "/api/v1/**")
-				.access("#oauth2.hasScope('uid') or #oauth2.hasScope('zmon.read_all')")
+		http
+			.sessionManagement()
+				.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
+		.and()
+			.requestMatchers()
+				.antMatchers("/api/v1/**")
+		.and()
+			.authorizeRequests()
+				.antMatchers(HttpMethod.GET, "/api/v1/**")
+					.access("#oauth2.hasScope('uid') or #oauth2.hasScope('zmon.read_all')")
 				.antMatchers(HttpMethod.POST, "/api/v1/**")
-				.access("#oauth2.hasScope('uid') or #oauth2.hasScope('zmon.write_all')")
+					.access("#oauth2.hasScope('uid') or #oauth2.hasScope('zmon.write_all')")
 				.antMatchers(HttpMethod.PUT, "/api/v1/**")
-				.access("#oauth2.hasScope('uid') or #oauth2.hasScope('zmon.write_all')")
+					.access("#oauth2.hasScope('uid') or #oauth2.hasScope('zmon.write_all')")
 				.antMatchers(HttpMethod.DELETE, "/api/v1/**")
-				.access("#oauth2.hasScope('uid') or #oauth2.hasScope('zmon.write_all')");
+					.access("#oauth2.hasScope('uid') or #oauth2.hasScope('zmon.write_all')");
 
 		// J+
 		logger.info("CONFIGURE OAUTH, DONE");

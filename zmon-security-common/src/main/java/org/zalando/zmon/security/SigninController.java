@@ -1,4 +1,4 @@
-package org.zalando.github.zmon.config;
+package org.zalando.zmon.security;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;

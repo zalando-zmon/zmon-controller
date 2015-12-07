@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.zalando.zmon.config.ZmonOAuth2Properties;
+import org.zalando.zmon.security.SigninController;
 
 /**
  * 
@@ -12,8 +13,8 @@ import org.zalando.zmon.config.ZmonOAuth2Properties;
  *
  */
 @Configuration
-@EnableConfigurationProperties({ZmonOAuth2Properties.class})
-@Import({ SecurityConfig.class, SocialConfig.class })
+@EnableConfigurationProperties({ ZmonOAuth2Properties.class })
+@Import({ GithubSecurityConfig.class, GithubSocialConfigurer.class })
 public class ZmonGithubAutoConfiguration {
 
 	@Bean

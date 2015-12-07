@@ -10,11 +10,16 @@ import org.springframework.social.connect.mem.InMemoryUsersConnectionRepository;
 import org.springframework.social.zauth.config.AbstractZAuthSocialConfigurer;
 import org.zalando.zmon.config.ZmonOAuth2Properties;
 
-import de.zalando.zauth.zmon.service.AccountConnectionSignupService;
+import de.zalando.zauth.zmon.service.ZauthAccountConnectionSignupService;
 
+/**
+ * 
+ * @author jbellmann
+ *
+ */
 @Configuration
 @EnableSocial
-public class SocialConfig extends AbstractZAuthSocialConfigurer {
+public class ZauthSocialConfigurer extends AbstractZAuthSocialConfigurer {
 
 	@Autowired
 	private ZmonOAuth2Properties zmonOAuth2Properties;
@@ -28,7 +33,7 @@ public class SocialConfig extends AbstractZAuthSocialConfigurer {
 
 		// for the example 'InMemory' is ok, but could be also JDBC or custom
 		InMemoryUsersConnectionRepository repository = new InMemoryUsersConnectionRepository(connectionFactoryLocator);
-		repository.setConnectionSignUp(new AccountConnectionSignupService(userDetailsManager));
+		repository.setConnectionSignUp(new ZauthAccountConnectionSignupService(userDetailsManager));
 		return repository;
 	}
 

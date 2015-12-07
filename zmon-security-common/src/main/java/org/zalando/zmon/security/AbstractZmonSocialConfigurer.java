@@ -1,4 +1,4 @@
-package org.zalando.github.zmon.config;
+package org.zalando.zmon.security;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -8,19 +8,19 @@ import org.springframework.social.config.annotation.ConnectionFactoryConfigurer;
 import org.springframework.social.config.annotation.SocialConfigurer;
 import org.springframework.social.connect.ConnectionFactoryLocator;
 import org.springframework.social.connect.UsersConnectionRepository;
-import org.springframework.social.github.security.GitHubAuthenticationService;
 import org.springframework.social.security.AuthenticationNameUserIdSource;
 import org.springframework.social.security.SocialAuthenticationServiceRegistry;
+import org.springframework.social.security.provider.SocialAuthenticationService;
 
 /**
  * 
  * @author jbellmann
  *
  */
-public abstract class AbstractGithubSocialConfigurer implements SocialConfigurer {
-
-    private final Logger log = LoggerFactory.getLogger(AbstractGithubSocialConfigurer.class);
-
+public abstract class AbstractZmonSocialConfigurer implements SocialConfigurer {
+	
+	private final Logger log = LoggerFactory.getLogger(AbstractZmonSocialConfigurer.class);
+	
     @Override
     public void addConnectionFactories(final ConnectionFactoryConfigurer connectionFactoryConfigurer,
             final Environment environment) {
@@ -30,7 +30,6 @@ public abstract class AbstractGithubSocialConfigurer implements SocialConfigurer
 
     @Override
     public UserIdSource getUserIdSource() {
-
         return new AuthenticationNameUserIdSource();
     }
 
@@ -49,12 +48,12 @@ public abstract class AbstractGithubSocialConfigurer implements SocialConfigurer
 
             SocialAuthenticationServiceRegistry registry = (SocialAuthenticationServiceRegistry)
                 connectionFactoryLocator;
-            registry.addAuthenticationService(new GitHubAuthenticationService(getClientId(), getClientSecret()));
+            registry.addAuthenticationService(buildAuthenticationService());
         }
 
         return doGetUsersConnectionRepository(connectionFactoryLocator);
     }
-
+    
     protected abstract UsersConnectionRepository doGetUsersConnectionRepository(
             ConnectionFactoryLocator connectionFactoryLocator);
 
@@ -69,4 +68,7 @@ public abstract class AbstractGithubSocialConfigurer implements SocialConfigurer
     protected int getClientSecretIdSubstringCount() {
         return 4;
     }
+    
+    protected abstract SocialAuthenticationService<?> buildAuthenticationService();
+
 }

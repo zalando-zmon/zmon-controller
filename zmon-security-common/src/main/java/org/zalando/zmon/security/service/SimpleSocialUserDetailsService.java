@@ -1,4 +1,4 @@
-package de.zalando.zauth.zmon.service;
+package org.zalando.zmon.security.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
