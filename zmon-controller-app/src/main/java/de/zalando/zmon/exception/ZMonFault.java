@@ -1,5 +1,6 @@
 package de.zalando.zmon.exception;
 
+@Deprecated
 public class ZMonFault extends ZMonException {
 
     private static final long serialVersionUID = 1L;
