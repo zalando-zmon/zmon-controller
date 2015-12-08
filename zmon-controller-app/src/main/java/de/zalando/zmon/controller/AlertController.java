@@ -27,7 +27,7 @@ import de.zalando.zmon.domain.AlertDefinition;
 import de.zalando.zmon.domain.AlertDefinitionAuth;
 import de.zalando.zmon.domain.InstantaneousAlertEvaluationRequest;
 import de.zalando.zmon.exception.ZMonException;
-import de.zalando.zmon.security.legacy.DefaultZMonAuthorityService;
+import de.zalando.zmon.security.legacy.DefaultZMonPermissionService;
 import de.zalando.zmon.service.AlertService;
 
 @Controller
@@ -38,7 +38,7 @@ public class AlertController extends AbstractZMonController {
     private AlertService service;
 
     @Autowired
-    private DefaultZMonAuthorityService authorityService;
+    private DefaultZMonPermissionService authorityService;
 
     @RequestMapping(value = "/allAlerts", method = RequestMethod.GET)
     public ResponseEntity<List<Alert>> getAllAlerts(

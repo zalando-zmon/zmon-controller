@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import com.google.common.base.Preconditions;
 
 import de.zalando.zmon.controller.AbstractZMonController;
-import de.zalando.zmon.security.legacy.DefaultZMonAuthorityService;
+import de.zalando.zmon.security.legacy.DefaultZMonPermissionService;
 import de.zalando.zmon.service.DowntimeService;
 import de.zalando.zmon.validation.DowntimeValidator;
 
@@ -32,7 +32,7 @@ import de.zalando.zmon.validation.DowntimeValidator;
 public class DowntimesApi extends AbstractZMonController {
 
     private final DowntimeService downtimeService;
-    private final DefaultZMonAuthorityService authorityService;
+    private final DefaultZMonPermissionService authorityService;
     private final DowntimeValidator downtimeValidator;
 
     @InitBinder
@@ -41,7 +41,7 @@ public class DowntimesApi extends AbstractZMonController {
     }
 
     @Autowired
-    public DowntimesApi(final DowntimeService downtimeService, final DefaultZMonAuthorityService authorityService,
+    public DowntimesApi(final DowntimeService downtimeService, final DefaultZMonPermissionService authorityService,
             final DowntimeValidator downtimeValidator) {
         this.downtimeService = Preconditions.checkNotNull(downtimeService, "downtimeService");
         this.authorityService = Preconditions.checkNotNull(authorityService, "authorityService");

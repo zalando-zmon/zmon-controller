@@ -25,7 +25,7 @@ import de.zalando.zmon.controller.AbstractZMonController;
 import de.zalando.zmon.domain.AlertDefinition;
 import de.zalando.zmon.exception.CheckDefinitionNotActiveException;
 import de.zalando.zmon.exception.ZMonException;
-import de.zalando.zmon.security.legacy.DefaultZMonAuthorityService;
+import de.zalando.zmon.security.legacy.DefaultZMonPermissionService;
 import de.zalando.zmon.service.AlertService;
 
 /**
@@ -39,10 +39,10 @@ public class AlertDefinitionsApi extends AbstractZMonController {
 
     private final AlertService service;
 
-    private final DefaultZMonAuthorityService authorityService;
+    private final DefaultZMonPermissionService authorityService;
 
     @Autowired
-    public AlertDefinitionsApi(final AlertService alertService, final DefaultZMonAuthorityService authorityService) {
+    public AlertDefinitionsApi(final AlertService alertService, final DefaultZMonPermissionService authorityService) {
         this.service = Preconditions.checkNotNull(alertService, "alertService is null");
         this.authorityService = Preconditions.checkNotNull(authorityService, "authorityService is null");
     }

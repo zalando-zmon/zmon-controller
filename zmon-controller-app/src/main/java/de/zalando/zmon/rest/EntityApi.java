@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.zalando.zmon.exception.ZMonRuntimeException;
 import de.zalando.zmon.persistence.EntitySProcService;
-import de.zalando.zmon.security.legacy.DefaultZMonAuthorityService;
+import de.zalando.zmon.security.legacy.DefaultZMonPermissionService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +36,7 @@ public class EntityApi {
     ObjectMapper mapper;
 
     @Autowired
-    DefaultZMonAuthorityService authService;
+    DefaultZMonPermissionService authService;
 
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody

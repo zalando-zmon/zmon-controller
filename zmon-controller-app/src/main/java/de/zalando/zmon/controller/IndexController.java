@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.google.common.base.Joiner;
 
-import de.zalando.zmon.security.legacy.DefaultZMonAuthorityService;
+import de.zalando.zmon.security.legacy.DefaultZMonPermissionService;
 
 /**
  * 
@@ -34,7 +34,7 @@ public class IndexController {
     private static final String TEAMS = "teams";
     
     @Autowired
-    private DefaultZMonAuthorityService authorityService;
+    private DefaultZMonPermissionService authorityService;
 
 	@RequestMapping(value={"/index","/"})
 	public String index(Model model){
