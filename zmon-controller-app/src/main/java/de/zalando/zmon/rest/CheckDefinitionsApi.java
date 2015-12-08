@@ -5,7 +5,7 @@ import de.zalando.zmon.controller.AbstractZMonController;
 import de.zalando.zmon.domain.CheckDefinition;
 import de.zalando.zmon.domain.CheckDefinitionImport;
 import de.zalando.zmon.exception.ZMonException;
-import de.zalando.zmon.security.ZMonAuthorityService;
+import de.zalando.zmon.security.DefaultZMonAuthorityService;
 import de.zalando.zmon.service.ZMonService;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,10 +21,10 @@ public class CheckDefinitionsApi extends AbstractZMonController {
 
     private final ZMonService zMonService;
 
-    private final ZMonAuthorityService authorityService;
+    private final DefaultZMonAuthorityService authorityService;
 
     @Autowired
-    public CheckDefinitionsApi(final ZMonService zMonService, final ZMonAuthorityService authorityService) {
+    public CheckDefinitionsApi(final ZMonService zMonService, final DefaultZMonAuthorityService authorityService) {
         this.zMonService = Preconditions.checkNotNull(zMonService, "zMonService is null");
         this.authorityService = Preconditions.checkNotNull(authorityService, "authorityService is null");
     }

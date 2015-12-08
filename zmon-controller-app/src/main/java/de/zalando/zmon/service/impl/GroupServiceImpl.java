@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 import de.zalando.zmon.event.ZMonEventType;
 import de.zalando.zmon.rest.ZmonGroup;
 import de.zalando.zmon.rest.ZmonGroupMember;
-import de.zalando.zmon.security.ZMonAuthorityService;
+import de.zalando.zmon.security.DefaultZMonAuthorityService;
 import de.zalando.zmon.service.GroupService;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
@@ -23,7 +23,7 @@ import redis.clients.jedis.JedisPool;
 public class GroupServiceImpl implements GroupService {
 
     private final JedisPool redisPool;
-    protected final ZMonAuthorityService authorityService;
+    protected final DefaultZMonAuthorityService authorityService;
     
     @Autowired
     private NoOpEventLog eventLog;
@@ -160,7 +160,7 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Autowired
-    public GroupServiceImpl(JedisPool pool, ZMonAuthorityService authorityService) {
+    public GroupServiceImpl(JedisPool pool, DefaultZMonAuthorityService authorityService) {
         this.redisPool = pool;
         this.authorityService = authorityService;
     }

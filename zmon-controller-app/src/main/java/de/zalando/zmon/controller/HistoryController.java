@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import de.zalando.zmon.domain.Activity;
 import de.zalando.zmon.domain.ActivityDiff;
 import de.zalando.zmon.domain.HistoryReport;
-import de.zalando.zmon.security.ZMonAuthorityService;
+import de.zalando.zmon.security.DefaultZMonAuthorityService;
 import de.zalando.zmon.service.HistoryService;
 
 @Controller
@@ -26,7 +26,7 @@ public class HistoryController extends AbstractZMonController {
     private HistoryService historyService;
 
     @Autowired
-    private ZMonAuthorityService authorityService;
+    private DefaultZMonAuthorityService authorityService;
 
     @RequestMapping(value = "alertHistory", method = RequestMethod.GET)
     public ResponseEntity<List<Activity>> getHistory(

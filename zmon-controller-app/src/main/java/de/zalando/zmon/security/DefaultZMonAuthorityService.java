@@ -28,7 +28,7 @@ import de.zalando.zmon.persistence.AlertDefinitionSProcService;
 import de.zalando.zmon.persistence.DashboardSProcService;
 
 @Service
-public class ZMonAuthorityService {
+public class DefaultZMonAuthorityService {
 
     private static final Function<ZMonAuthority, Boolean> TRIAL_RUN_PERMISSION_FUNCTION =
 
