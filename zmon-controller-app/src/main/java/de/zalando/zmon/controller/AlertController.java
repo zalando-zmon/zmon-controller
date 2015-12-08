@@ -27,7 +27,7 @@ import de.zalando.zmon.domain.AlertDefinition;
 import de.zalando.zmon.domain.AlertDefinitionAuth;
 import de.zalando.zmon.domain.InstantaneousAlertEvaluationRequest;
 import de.zalando.zmon.exception.ZMonException;
-import de.zalando.zmon.security.DefaultZMonAuthorityService;
+import de.zalando.zmon.security.legacy.DefaultZMonAuthorityService;
 import de.zalando.zmon.service.AlertService;
 
 @Controller

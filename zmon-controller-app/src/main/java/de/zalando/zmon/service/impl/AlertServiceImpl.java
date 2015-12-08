@@ -45,7 +45,7 @@ import de.zalando.zmon.persistence.AlertDefinitionOperationResult;
 import de.zalando.zmon.persistence.AlertDefinitionSProcService;
 import de.zalando.zmon.redis.RedisPattern;
 import de.zalando.zmon.redis.ResponseHolder;
-import de.zalando.zmon.security.DefaultZMonAuthorityService;
+import de.zalando.zmon.security.legacy.DefaultZMonAuthorityService;
 import de.zalando.zmon.service.AlertService;
 import de.zalando.zmon.util.DBUtil;
 import de.zalando.zmon.util.NamedMessageFormatter;

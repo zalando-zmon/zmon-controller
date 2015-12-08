@@ -10,7 +10,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.google.common.base.Joiner;
 
-import de.zalando.zmon.security.DefaultZMonAuthorityService;
+import de.zalando.zmon.security.legacy.DefaultZMonAuthorityService;
 
 @Deprecated
 @Controller

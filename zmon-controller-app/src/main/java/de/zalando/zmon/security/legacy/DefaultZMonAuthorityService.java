@@ -1,4 +1,4 @@
-package de.zalando.zmon.security;
+package de.zalando.zmon.security.legacy;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -26,6 +26,7 @@ import de.zalando.zmon.domain.DefinitionStatus;
 import de.zalando.zmon.exception.ZMonAuthorizationException;
 import de.zalando.zmon.persistence.AlertDefinitionSProcService;
 import de.zalando.zmon.persistence.DashboardSProcService;
+import de.zalando.zmon.security.ZMonAuthority;
 
 @Service
 public class DefaultZMonAuthorityService {

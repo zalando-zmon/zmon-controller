@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import de.zalando.zmon.domain.Activity;
 import de.zalando.zmon.domain.ActivityDiff;
 import de.zalando.zmon.domain.HistoryReport;
-import de.zalando.zmon.security.DefaultZMonAuthorityService;
+import de.zalando.zmon.security.legacy.DefaultZMonAuthorityService;
 import de.zalando.zmon.service.HistoryService;
 
 @Controller

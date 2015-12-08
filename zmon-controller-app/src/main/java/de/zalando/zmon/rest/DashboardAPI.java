@@ -7,7 +7,7 @@ import de.zalando.zmon.domain.Dashboard;
 import de.zalando.zmon.domain.EditOption;
 import de.zalando.zmon.exception.ZMonException;
 import de.zalando.zmon.rest.domain.DashboardRest;
-import de.zalando.zmon.security.DefaultZMonAuthorityService;
+import de.zalando.zmon.security.legacy.DefaultZMonAuthorityService;
 import de.zalando.zmon.service.DashboardService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
