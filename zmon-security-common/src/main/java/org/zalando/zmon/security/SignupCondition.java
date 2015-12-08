@@ -8,10 +8,10 @@ import org.springframework.social.connect.Connection;
  * @author jbellmann
  *
  */
-public interface SignupCondition {
+public interface SignupCondition<T> {
 	
 	boolean matches(Connection<?> connection);
 
-	boolean supports(Class<?> clazz);
+	boolean supportsConnection(Connection<?> connection);
 
 }
