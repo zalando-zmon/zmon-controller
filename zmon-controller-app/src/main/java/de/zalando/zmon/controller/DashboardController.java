@@ -26,7 +26,7 @@ import de.zalando.zmon.domain.Dashboard;
 import de.zalando.zmon.domain.DashboardAuth;
 import de.zalando.zmon.domain.EditOption;
 import de.zalando.zmon.exception.ZMonException;
-import de.zalando.zmon.security.ZMonAuthorityService;
+import de.zalando.zmon.security.legacy.DefaultZMonAuthorityService;
 import de.zalando.zmon.service.DashboardService;
 
 @Controller
@@ -37,7 +37,7 @@ public class DashboardController extends AbstractZMonController {
     private DashboardService service;
 
     @Autowired
-    private ZMonAuthorityService authorityService;
+    private DefaultZMonAuthorityService authorityService;
 
     @RequestMapping(value = "/dashboard", method = RequestMethod.GET)
     public ResponseEntity<DashboardAuth> getDashboard(@RequestParam(value = "id", required = true) final int id) {

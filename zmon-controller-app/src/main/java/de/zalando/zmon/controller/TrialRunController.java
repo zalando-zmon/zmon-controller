@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import de.zalando.zmon.domain.TrialRunRequest;
 import de.zalando.zmon.domain.TrialRunResults;
-import de.zalando.zmon.security.ZMonAuthorityService;
+import de.zalando.zmon.security.legacy.DefaultZMonAuthorityService;
 import de.zalando.zmon.service.TrialRunService;
 
 @Controller
@@ -31,7 +31,7 @@ public class TrialRunController extends AbstractZMonController {
     private TrialRunService trialRunService;
 
     @Autowired
-    private ZMonAuthorityService authorityService;
+    private DefaultZMonAuthorityService authorityService;
 
     @RequestMapping(value = "scheduleTrialRun", method = RequestMethod.POST)
     public ResponseEntity<Map<String, String>> scheduleTrial(

@@ -7,6 +7,7 @@ import com.google.common.collect.ImmutableSet;
 
 import de.zalando.zmon.domain.AlertDefinition;
 import de.zalando.zmon.domain.DefinitionStatus;
+import de.zalando.zmon.security.authority.ZMonLeadAuthority;
 
 public class ZMonLeadAuthorityTest {
 

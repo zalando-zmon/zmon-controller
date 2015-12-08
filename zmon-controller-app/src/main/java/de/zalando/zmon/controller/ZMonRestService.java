@@ -18,7 +18,8 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import de.zalando.zmon.exception.ZMonException;
 import de.zalando.zmon.persistence.GrafanaDashboardSprocService;
-import de.zalando.zmon.security.ZMonAuthorityService;
+import de.zalando.zmon.security.legacy.DefaultZMonAuthorityService;
+
 import org.apache.http.client.fluent.Executor;
 import org.apache.http.client.fluent.Request;
 import org.apache.http.entity.ContentType;
@@ -301,7 +302,7 @@ public class ZMonRestService extends AbstractZMonController {
     GrafanaDashboardSprocService grafanaService;
 
     @Autowired
-    ZMonAuthorityService authService;
+    DefaultZMonAuthorityService authService;
 
     @Autowired
     ObjectMapper mapper;

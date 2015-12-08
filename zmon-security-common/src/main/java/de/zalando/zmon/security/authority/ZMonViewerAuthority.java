@@ -1,4 +1,4 @@
-package de.zalando.zmon.security;
+package de.zalando.zmon.security.authority;
 
 import java.util.Set;
 
@@ -10,85 +10,85 @@ import de.zalando.zmon.domain.AlertComment;
 import de.zalando.zmon.domain.AlertDefinition;
 import de.zalando.zmon.domain.Dashboard;
 
-public class ZMonAdminAuthority extends AbstractZMonAuthority {
+public class ZMonViewerAuthority extends AbstractZMonAuthority {
 
     private static final long serialVersionUID = 1L;
 
     public static final GrantedAuthorityFactory FACTORY = new GrantedAuthorityFactory() {
         @Override
         public GrantedAuthority create(final String username, final Set<String> projects) {
-            return new ZMonAdminAuthority(username, ImmutableSet.copyOf(projects));
+            return new ZMonViewerAuthority(username, ImmutableSet.copyOf(projects));
         }
     };
 
-    public ZMonAdminAuthority(final String username, final ImmutableSet<String> teams) {
-        super(username, teams);
+    public ZMonViewerAuthority(final String userName, final ImmutableSet<String> teams) {
+        super(userName, teams);
     }
 
     @Override
     public boolean hasTrialRunPermission() {
-        return true;
+        return false;
     }
 
     @Override
     public boolean hasAddCommentPermission() {
-        return true;
+        return false;
     }
 
     @Override
     public boolean hasDeleteCommentPermission(final AlertComment comment) {
-        return true;
+        return false;
     }
 
     @Override
     public boolean hasScheduleDowntimePermission() {
-        return true;
+        return false;
     }
 
     @Override
     public boolean hasDeleteDowntimePermission() {
-        return true;
+        return false;
     }
 
     @Override
     public boolean hasAddDashboardPermission() {
-        return true;
+        return false;
     }
 
     @Override
     public boolean hasEditDashboardPermission(final Dashboard dashboard) {
-        return true;
+        return false;
     }
 
     @Override
     public boolean hasDashboardEditModePermission(final Dashboard dashboard) {
-        return true;
+        return false;
     }
 
     @Override
     public boolean hasAddAlertDefinitionPermission() {
-        return true;
+        return false;
     }
 
     @Override
     public boolean hasAddAlertDefinitionPermission(final AlertDefinition alertDefinition) {
-        return true;
+        return false;
     }
 
     @Override
     public boolean hasEditAlertDefinitionPermission(final AlertDefinition alertDefinition) {
-        return true;
+        return false;
     }
 
     @Override
     public boolean hasUpdateAlertDefinitionPermission(final AlertDefinition currentAlertDefinition,
             final AlertDefinition newAlertDefinitionDefinition) {
-        return true;
+        return false;
     }
 
     @Override
     public boolean hasDeleteAlertDefinitionPermission(final AlertDefinition alertDefinition) {
-        return true;
+        return false;
     }
 
     @Override
@@ -98,11 +98,12 @@ public class ZMonAdminAuthority extends AbstractZMonAuthority {
 
     @Override
     public boolean hasInstantaneousAlertEvaluationPermission() {
-        return true;
+        return false;
     }
 
     @Override
     protected ZMonRole getZMonRole() {
-        return ZMonRole.ADMIN;
+        return ZMonRole.VIEWER;
     }
+
 }

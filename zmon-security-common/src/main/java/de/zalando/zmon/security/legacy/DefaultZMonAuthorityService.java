@@ -1,18 +1,16 @@
-package de.zalando.zmon.security;
+package de.zalando.zmon.security.legacy;
+
+import static de.zalando.zmon.security.legacy.AuthorityFunctions.TRIAL_RUN_PERMISSION_FUNCTION;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import javax.annotation.Nonnull;
-
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-
 import org.springframework.stereotype.Service;
 
 import com.google.common.base.Function;
@@ -26,81 +24,10 @@ import de.zalando.zmon.domain.DefinitionStatus;
 import de.zalando.zmon.exception.ZMonAuthorizationException;
 import de.zalando.zmon.persistence.AlertDefinitionSProcService;
 import de.zalando.zmon.persistence.DashboardSProcService;
+import de.zalando.zmon.security.authority.ZMonAuthority;
 
 @Service
-public class ZMonAuthorityService {
-
-    private static final Function<ZMonAuthority, Boolean> TRIAL_RUN_PERMISSION_FUNCTION =
-
-        new Function<ZMonAuthority, Boolean>() {
-            @Override
-            public Boolean apply(@Nonnull final ZMonAuthority input) {
-                return input.hasTrialRunPermission();
-            }
-        };
-
-    private static final Function<ZMonAuthority, Boolean> ADD_COMMENT_PERMISSION_FUNCTION =
-
-        new Function<ZMonAuthority, Boolean>() {
-            @Override
-            public Boolean apply(@Nonnull final ZMonAuthority input) {
-                return input.hasAddCommentPermission();
-            }
-        };
-
-    private static final Function<ZMonAuthority, Boolean> ADD_ALERT_DEFINITION_PERMISSION_FUNCTION =
-
-        new Function<ZMonAuthority, Boolean>() {
-            @Override
-            public Boolean apply(@Nonnull final ZMonAuthority input) {
-                return input.hasAddAlertDefinitionPermission();
-            }
-        };
-
-    private static final Function<ZMonAuthority, Boolean> SCHEDULE_DOWNTIME_PERMISSION_FUNCTION =
-
-        new Function<ZMonAuthority, Boolean>() {
-            @Override
-            public Boolean apply(@Nonnull final ZMonAuthority input) {
-                return input.hasScheduleDowntimePermission();
-            }
-        };
-
-    private static final Function<ZMonAuthority, Boolean> DELETE_DOWNTIME_PERMISSION_FUNCTION =
-
-        new Function<ZMonAuthority, Boolean>() {
-            @Override
-            public Boolean apply(@Nonnull final ZMonAuthority input) {
-                return input.hasDeleteDowntimePermission();
-            }
-        };
-
-    private static final Function<ZMonAuthority, Boolean> ADD_DASHBOARD_PERMISSION_FUNCTION =
-
-        new Function<ZMonAuthority, Boolean>() {
-            @Override
-            public Boolean apply(@Nonnull final ZMonAuthority input) {
-                return input.hasAddDashboardPermission();
-            }
-        };
-
-    private static final Function<ZMonAuthority, Boolean> HISTORY_REPORT_ACCESS_FUNCTION =
-
-        new Function<ZMonAuthority, Boolean>() {
-            @Override
-            public Boolean apply(@Nonnull final ZMonAuthority input) {
-                return input.hasHistoryReportAccess();
-            }
-        };
-
-    private static final Function<ZMonAuthority, Boolean> INSTANTANEOUS_ALERT_EVALUATION_FUNCTION =
-
-        new Function<ZMonAuthority, Boolean>() {
-            @Override
-            public Boolean apply(@Nonnull final ZMonAuthority input) {
-                return input.hasInstantaneousAlertEvaluationPermission();
-            }
-        };
+public class DefaultZMonAuthorityService {
 
     private static final String ANONYMOUS_USER = "anonymousUser";
 
@@ -153,7 +80,7 @@ public class ZMonAuthorityService {
     }
 
     public boolean hasAddCommentPermission() {
-        return hasAnyAuthority(ADD_COMMENT_PERMISSION_FUNCTION);
+        return hasAnyAuthority(AuthorityFunctions.ADD_COMMENT_PERMISSION_FUNCTION);
     }
 
     public void verifyAddCommentPermission() {
@@ -166,12 +93,7 @@ public class ZMonAuthorityService {
     public boolean hasDeleteCommentPermission(final AlertComment comment) {
         Preconditions.checkNotNull(comment, "comment");
 
-        return hasAnyAuthority(new Function<ZMonAuthority, Boolean>() {
-                    @Override
-                    public Boolean apply(final ZMonAuthority input) {
-                        return input.hasDeleteCommentPermission(comment);
-                    }
-                });
+        return hasAnyAuthority(new HasDeleteCommentPermission(comment));
     }
 
     public void verifyDeleteCommentPermission(final int commentId) {
@@ -184,29 +106,19 @@ public class ZMonAuthorityService {
     }
 
     public boolean hasAddAlertDefinitionPermission() {
-        return hasAnyAuthority(ADD_ALERT_DEFINITION_PERMISSION_FUNCTION);
+        return hasAnyAuthority(AuthorityFunctions.ADD_ALERT_DEFINITION_PERMISSION_FUNCTION);
     }
 
     public boolean hasEditAlertDefinitionPermission(final AlertDefinition alertDefinition) {
         Preconditions.checkNotNull(alertDefinition, "alertDefinition");
 
-        return hasAnyAuthority(new Function<ZMonAuthority, Boolean>() {
-                    @Override
-                    public Boolean apply(final ZMonAuthority input) {
-                        return input.hasEditAlertDefinitionPermission(alertDefinition);
-                    }
-                }) && alertDefinition.getStatus() != DefinitionStatus.DELETED;
+        return hasAnyAuthority(new HasEditAlertDefinitionPermission(alertDefinition)) && alertDefinition.getStatus() != DefinitionStatus.DELETED;
     }
 
     public boolean hasDeleteAlertDefinitionPermission(final AlertDefinition alertDefinition) {
         Preconditions.checkNotNull(alertDefinition, "alertDefinition");
 
-        return hasAnyAuthority(new Function<ZMonAuthority, Boolean>() {
-                    @Override
-                    public Boolean apply(final ZMonAuthority input) {
-                        return input.hasDeleteAlertDefinitionPermission(alertDefinition);
-                    }
-                });
+        return hasAnyAuthority(new HasDeleteAlertDefinitionPermission(alertDefinition));
     }
 
     public void verifyDeleteAlertDefinitionPermission(final int alertDefinitionId) {
@@ -224,24 +136,14 @@ public class ZMonAuthorityService {
 
         boolean isAllowed = false;
         if (alertDefinition.getId() == null) {
-            isAllowed = hasAnyAuthority(new Function<ZMonAuthority, Boolean>() {
-                        @Override
-                        public Boolean apply(final ZMonAuthority input) {
-                            return input.hasAddAlertDefinitionPermission(alertDefinition);
-                        }
-                    });
+            isAllowed = hasAnyAuthority(new HasAddAlertDefinitionPermission(alertDefinition));
         } else {
 
             // that's an update... load current alert definition
             final List<AlertDefinition> definitions = alertDefinitionSProc.getAlertDefinitions(null,
                     Collections.singletonList(alertDefinition.getId()));
 
-            isAllowed = definitions.size() == 1 && hasAnyAuthority(new Function<ZMonAuthority, Boolean>() {
-                            @Override
-                            public Boolean apply(final ZMonAuthority input) {
-                                return input.hasUpdateAlertDefinitionPermission(definitions.get(0), alertDefinition);
-                            }
-                        });
+            isAllowed = definitions.size() == 1 && hasAnyAuthority(new HasUpdateAlertDefinitionPermission(alertDefinition));
         }
 
         if (!isAllowed) {
@@ -251,7 +153,7 @@ public class ZMonAuthorityService {
     }
 
     public boolean hasScheduleDowntimePermission() {
-        return hasAnyAuthority(SCHEDULE_DOWNTIME_PERMISSION_FUNCTION);
+        return hasAnyAuthority(AuthorityFunctions.SCHEDULE_DOWNTIME_PERMISSION_FUNCTION);
     }
 
     public void verifyScheduleDowntimePermission() {
@@ -262,7 +164,7 @@ public class ZMonAuthorityService {
     }
 
     public boolean hasDeleteDowntimePermission() {
-        return hasAnyAuthority(DELETE_DOWNTIME_PERMISSION_FUNCTION);
+        return hasAnyAuthority(AuthorityFunctions.DELETE_DOWNTIME_PERMISSION_FUNCTION);
     }
 
     public void verifyDeleteDowntimePermission() {
@@ -273,29 +175,19 @@ public class ZMonAuthorityService {
     }
 
     public boolean hasAddDashboardPermission() {
-        return hasAnyAuthority(ADD_DASHBOARD_PERMISSION_FUNCTION);
+        return hasAnyAuthority(AuthorityFunctions.ADD_DASHBOARD_PERMISSION_FUNCTION);
     }
 
     public boolean hasEditDashboardPermission(final Dashboard dashboard) {
         Preconditions.checkNotNull(dashboard, "dashboard");
 
-        return hasAnyAuthority(new Function<ZMonAuthority, Boolean>() {
-                    @Override
-                    public Boolean apply(final ZMonAuthority input) {
-                        return input.hasEditDashboardPermission(dashboard);
-                    }
-                });
+        return hasAnyAuthority(new HasEditDashboardPermission(dashboard));
     }
 
     public boolean hasDashboardEditModePermission(final Dashboard dashboard) {
         Preconditions.checkNotNull(dashboard, "dashboard");
 
-        return hasAnyAuthority(new Function<ZMonAuthority, Boolean>() {
-                    @Override
-                    public Boolean apply(final ZMonAuthority input) {
-                        return input.hasDashboardEditModePermission(dashboard);
-                    }
-                });
+        return hasAnyAuthority(new HasDashboardEditModePermission(dashboard));
     }
 
     public void verifyEditDashboardPermission(final Dashboard dashboard) {
@@ -317,7 +209,7 @@ public class ZMonAuthorityService {
     }
 
     public boolean hasHistoryReportAccess() {
-        return hasAnyAuthority(HISTORY_REPORT_ACCESS_FUNCTION);
+        return hasAnyAuthority(AuthorityFunctions.HISTORY_REPORT_ACCESS_FUNCTION);
     }
 
     public void verifyHistoryReportAccess() {
@@ -328,7 +220,7 @@ public class ZMonAuthorityService {
     }
 
     public boolean hasInstantaneousAlertEvaluationPermission() {
-        return hasAnyAuthority(INSTANTANEOUS_ALERT_EVALUATION_FUNCTION);
+        return hasAnyAuthority(AuthorityFunctions.INSTANTANEOUS_ALERT_EVALUATION_FUNCTION);
     }
 
     public void verifyInstantaneousAlertEvaluationPermission() {

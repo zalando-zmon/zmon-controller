@@ -9,6 +9,11 @@
 	<artifactId>zmon-controller</artifactId>
 
 	<dependencies>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>zmon-domain</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 		<!--
 			<dependency>
 			<groupId>${project.groupId}</groupId>

@@ -1,4 +1,4 @@
-package de.zalando.zmon.security;
+package de.zalando.zmon.security.authority;
 
 public enum ZMonRole {
 

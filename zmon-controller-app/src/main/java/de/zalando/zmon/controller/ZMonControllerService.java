@@ -10,7 +10,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.google.common.base.Joiner;
 
-import de.zalando.zmon.security.ZMonAuthorityService;
+import de.zalando.zmon.security.legacy.DefaultZMonAuthorityService;
 
 @Deprecated
 @Controller
@@ -36,7 +36,7 @@ public class ZMonControllerService extends AbstractZMonController {
     private static final String INDEX = "/index.jsp";
 
     @Autowired
-    private ZMonAuthorityService authorityService;
+    private DefaultZMonAuthorityService authorityService;
 
     @RequestMapping(value = "index.html", method = RequestMethod.GET)
     public ModelAndView index() {
