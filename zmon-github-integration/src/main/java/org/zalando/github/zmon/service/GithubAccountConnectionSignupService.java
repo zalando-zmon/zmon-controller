@@ -5,6 +5,8 @@ import org.springframework.social.connect.Connection;
 import org.springframework.social.github.api.GitHub;
 import org.zalando.zmon.security.service.AccountConnectionSignupService;
 
+import de.zalando.zmon.security.AuthorityService;
+
 /**
  * 
  * @author jbellmann
@@ -12,8 +14,8 @@ import org.zalando.zmon.security.service.AccountConnectionSignupService;
  */
 public class GithubAccountConnectionSignupService extends AccountConnectionSignupService {
 
-	public GithubAccountConnectionSignupService(UserDetailsManager userDetailsManager) {
-		super(userDetailsManager);
+	public GithubAccountConnectionSignupService(UserDetailsManager userDetailsManager, AuthorityService authorityService) {
+		super(userDetailsManager, authorityService);
 	}
 
 	@Override

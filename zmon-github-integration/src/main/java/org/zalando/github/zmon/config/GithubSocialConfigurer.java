@@ -15,6 +15,8 @@ import org.zalando.zmon.config.ZmonOAuth2Properties;
 import org.zalando.zmon.security.AbstractZmonSocialConfigurer;
 import org.zalando.zmon.security.service.AccountConnectionSignupService;
 
+import de.zalando.zmon.security.AuthorityService;
+
 /**
  * 
  * @author jbellmann
@@ -31,6 +33,9 @@ public class GithubSocialConfigurer extends AbstractZmonSocialConfigurer {
 
 	@Autowired
 	private UserDetailsManager userDetailsManager;
+	
+	@Autowired
+	private AuthorityService authorityService;
 
 	@Override
 	protected UsersConnectionRepository doGetUsersConnectionRepository(
@@ -40,7 +45,7 @@ public class GithubSocialConfigurer extends AbstractZmonSocialConfigurer {
 		InMemoryUsersConnectionRepository repository = new InMemoryUsersConnectionRepository(connectionFactoryLocator);
 
 		//
-		repository.setConnectionSignUp(new AccountConnectionSignupService(userDetailsManager));
+		repository.setConnectionSignUp(new AccountConnectionSignupService(userDetailsManager, authorityService));
 		return repository;
 	}
 
