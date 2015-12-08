@@ -4,7 +4,7 @@ import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 
 import de.zalando.zmon.domain.AlertDefinition;
-import de.zalando.zmon.security.ZMonAuthority;
+import de.zalando.zmon.security.authority.ZMonAuthority;
 
 /**
  * Base for {@link AlertDefinition}-funcitons.

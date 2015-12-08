@@ -4,7 +4,7 @@ import javax.annotation.Nonnull;
 
 import com.google.common.base.Function;
 
-import de.zalando.zmon.security.ZMonAuthority;
+import de.zalando.zmon.security.authority.ZMonAuthority;
 
 /**
  * Extracted to increase readability.

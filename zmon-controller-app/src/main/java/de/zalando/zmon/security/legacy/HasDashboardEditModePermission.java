@@ -1,7 +1,7 @@
 package de.zalando.zmon.security.legacy;
 
 import de.zalando.zmon.domain.Dashboard;
-import de.zalando.zmon.security.ZMonAuthority;
+import de.zalando.zmon.security.authority.ZMonAuthority;
 
 class HasDashboardEditModePermission extends DashBoardPermission {
 

@@ -10,6 +10,7 @@ import de.zalando.zmon.domain.AlertDefinition;
 import de.zalando.zmon.domain.Dashboard;
 import de.zalando.zmon.domain.DefinitionStatus;
 import de.zalando.zmon.domain.EditOption;
+import de.zalando.zmon.security.authority.ZMonUserAuthority;
 
 public class ZMonUserAuthorityTest {
 

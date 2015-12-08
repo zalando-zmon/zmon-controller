@@ -23,6 +23,14 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 
+import de.zalando.zmon.security.authority.GrantedAuthorityFactory;
+import de.zalando.zmon.security.authority.ZMonAdminAuthority;
+import de.zalando.zmon.security.authority.ZMonApiReaderAuthority;
+import de.zalando.zmon.security.authority.ZMonApiWriterAuthority;
+import de.zalando.zmon.security.authority.ZMonLeadAuthority;
+import de.zalando.zmon.security.authority.ZMonUserAuthority;
+import de.zalando.zmon.security.authority.ZMonViewerAuthority;
+
 public class ZMonLdapAuthoritiesPopulator implements LdapAuthoritiesPopulator {
 
     private static final String TEAM_CAPTURE_TOKEN = "team";

@@ -24,7 +24,7 @@ import de.zalando.zmon.domain.DefinitionStatus;
 import de.zalando.zmon.exception.ZMonAuthorizationException;
 import de.zalando.zmon.persistence.AlertDefinitionSProcService;
 import de.zalando.zmon.persistence.DashboardSProcService;
-import de.zalando.zmon.security.ZMonAuthority;
+import de.zalando.zmon.security.authority.ZMonAuthority;
 
 @Service
 public class DefaultZMonAuthorityService {
