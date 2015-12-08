@@ -11,6 +11,7 @@ import org.springframework.social.zauth.config.AbstractZAuthSocialConfigurer;
 import org.zalando.zmon.config.ZmonOAuth2Properties;
 
 import de.zalando.zauth.zmon.service.ZauthAccountConnectionSignupService;
+import de.zalando.zmon.security.AuthorityService;
 
 /**
  * 
@@ -26,6 +27,9 @@ public class ZauthSocialConfigurer extends AbstractZAuthSocialConfigurer {
 
 	@Autowired
 	private UserDetailsManager userDetailsManager;
+	
+	@Autowired
+	private AuthorityService authorityService;
 
 	@Override
 	protected UsersConnectionRepository doGetUsersConnectionRepository(
@@ -33,7 +37,7 @@ public class ZauthSocialConfigurer extends AbstractZAuthSocialConfigurer {
 
 		// for the example 'InMemory' is ok, but could be also JDBC or custom
 		InMemoryUsersConnectionRepository repository = new InMemoryUsersConnectionRepository(connectionFactoryLocator);
-		repository.setConnectionSignUp(new ZauthAccountConnectionSignupService(userDetailsManager));
+		repository.setConnectionSignUp(new ZauthAccountConnectionSignupService(userDetailsManager, authorityService));
 		return repository;
 	}
 
