@@ -7,7 +7,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import de.zalando.zmon.exception.ZMonException;
 import de.zalando.zmon.persistence.GrafanaDashboardSprocService;
-import de.zalando.zmon.security.legacy.DefaultZMonPermissionService;
+import de.zalando.zmon.security.permission.DefaultZMonPermissionService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -1,11 +1,11 @@
-package de.zalando.zmon.security.legacy;
+package de.zalando.zmon.security.permission;
 
 import de.zalando.zmon.domain.AlertDefinition;
 import de.zalando.zmon.security.authority.ZMonAuthority;
 
-class HasAddAlertDefinitionPermission extends AlertDefinitionPermission {
+class HasUpdateAlertDefinitionPermission extends AlertDefinitionPermission {
 
-	HasAddAlertDefinitionPermission(AlertDefinition alertDefinition) {
+	HasUpdateAlertDefinitionPermission(AlertDefinition alertDefinition) {
 		super(alertDefinition);
 	}
 

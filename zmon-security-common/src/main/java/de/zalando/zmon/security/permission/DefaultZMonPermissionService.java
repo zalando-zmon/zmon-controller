@@ -1,6 +1,6 @@
-package de.zalando.zmon.security.legacy;
+package de.zalando.zmon.security.permission;
 
-import static de.zalando.zmon.security.legacy.AuthorityFunctions.TRIAL_RUN_PERMISSION_FUNCTION;
+import static de.zalando.zmon.security.permission.AuthorityFunctions.TRIAL_RUN_PERMISSION_FUNCTION;
 
 import java.util.Collection;
 import java.util.Collections;

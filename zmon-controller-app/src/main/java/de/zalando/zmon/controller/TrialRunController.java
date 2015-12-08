@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import de.zalando.zmon.domain.TrialRunRequest;
 import de.zalando.zmon.domain.TrialRunResults;
-import de.zalando.zmon.security.legacy.DefaultZMonPermissionService;
+import de.zalando.zmon.security.permission.DefaultZMonPermissionService;
 import de.zalando.zmon.service.TrialRunService;
 
 @Controller

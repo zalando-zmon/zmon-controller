@@ -1,4 +1,4 @@
-package de.zalando.zmon.security.legacy;
+package de.zalando.zmon.security.permission;
 
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;

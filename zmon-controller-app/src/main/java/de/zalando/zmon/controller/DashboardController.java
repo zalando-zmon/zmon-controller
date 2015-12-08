@@ -26,7 +26,7 @@ import de.zalando.zmon.domain.Dashboard;
 import de.zalando.zmon.domain.DashboardAuth;
 import de.zalando.zmon.domain.EditOption;
 import de.zalando.zmon.exception.ZMonException;
-import de.zalando.zmon.security.legacy.DefaultZMonPermissionService;
+import de.zalando.zmon.security.permission.DefaultZMonPermissionService;
 import de.zalando.zmon.service.DashboardService;
 
 @Controller

@@ -25,7 +25,7 @@ import de.zalando.zmon.controller.AbstractZMonController;
 import de.zalando.zmon.domain.AlertDefinition;
 import de.zalando.zmon.exception.CheckDefinitionNotActiveException;
 import de.zalando.zmon.exception.ZMonException;
-import de.zalando.zmon.security.legacy.DefaultZMonPermissionService;
+import de.zalando.zmon.security.permission.DefaultZMonPermissionService;
 import de.zalando.zmon.service.AlertService;
 
 /**

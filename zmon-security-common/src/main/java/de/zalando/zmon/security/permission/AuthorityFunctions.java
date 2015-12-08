@@ -1,4 +1,4 @@
-package de.zalando.zmon.security.legacy;
+package de.zalando.zmon.security.permission;
 
 import javax.annotation.Nonnull;
 

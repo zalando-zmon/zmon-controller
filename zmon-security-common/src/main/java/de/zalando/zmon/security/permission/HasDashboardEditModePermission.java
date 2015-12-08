@@ -1,4 +1,4 @@
-package de.zalando.zmon.security.legacy;
+package de.zalando.zmon.security.permission;
 
 import de.zalando.zmon.domain.Dashboard;
 import de.zalando.zmon.security.authority.ZMonAuthority;

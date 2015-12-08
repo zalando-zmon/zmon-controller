@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import com.google.common.base.Preconditions;
 
 import de.zalando.zmon.controller.AbstractZMonController;
-import de.zalando.zmon.security.legacy.DefaultZMonPermissionService;
+import de.zalando.zmon.security.permission.DefaultZMonPermissionService;
 import de.zalando.zmon.service.DowntimeService;
 import de.zalando.zmon.validation.DowntimeValidator;
 

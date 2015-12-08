@@ -5,7 +5,7 @@ import de.zalando.zmon.controller.AbstractZMonController;
 import de.zalando.zmon.domain.CheckDefinition;
 import de.zalando.zmon.domain.CheckDefinitionImport;
 import de.zalando.zmon.exception.ZMonException;
-import de.zalando.zmon.security.legacy.DefaultZMonPermissionService;
+import de.zalando.zmon.security.permission.DefaultZMonPermissionService;
 import de.zalando.zmon.service.ZMonService;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
