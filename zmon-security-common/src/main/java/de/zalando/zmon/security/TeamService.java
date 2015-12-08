@@ -3,7 +3,7 @@ package de.zalando.zmon.security;
 import java.util.Set;
 
 /**
- * Teams-Lookup.
+ * Get all teams of an user.
  * 
  * @author jbellmann
  *
