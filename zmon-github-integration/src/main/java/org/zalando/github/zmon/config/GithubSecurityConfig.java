@@ -55,9 +55,9 @@ public class GithubSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Override
 	protected void configure(final HttpSecurity http) throws Exception {
 
-		http.formLogin().loginPage("/signin").failureUrl("/signin?param.error=bad_credentials").permitAll().and()
+		http.formLogin().loginPage("/signin").failureUrl("/signin?error=bad_credentials").permitAll().and()
 				.logout().logoutUrl("/logout").deleteCookies("JSESSIONID")
-				.logoutSuccessUrl("/signin?param.logout=logout").permitAll().and().authorizeRequests()
+				.logoutSuccessUrl("/signin?logout=true").permitAll().and().authorizeRequests()
 				.antMatchers("/**").authenticated().and().rememberMe().and().apply(new SpringSocialConfigurer()).and()
 				.csrf().disable();
 	}

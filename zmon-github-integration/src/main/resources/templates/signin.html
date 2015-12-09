@@ -18,9 +18,12 @@
     <body>
 
         <div class="container">
-            <h2>Signin page</h2>
+           	<p class="u-success" th:if="${param.logout}">
+                You have been logged out.
+            </p>
+            <h2>Signin via GitHub.com</h2>
 
-			<a class="btn btn-default" href="#" th:href="@{/auth/github}" role="button">SIGNIN</a>
+			<a class="btn btn-default" href="#" th:href="@{/auth/github}" role="button">CLICK ME</a>
         </div><!-- /.container -->
 
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
