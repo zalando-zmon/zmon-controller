@@ -37,6 +37,9 @@ public abstract class GithubSignupCondition extends AbstractSignupCondition<GitH
 	}
 
 	public static GithubSignupCondition and(List<GithubSignupCondition> conditions) {
+		if(conditions.isEmpty()){
+			return new PredicateSignupConditionAdapter(Predicates.alwaysTrue());
+		}
 		return new PredicateSignupConditionAdapter(Predicates.and(filter(conditions, notNull())));
 	}
 

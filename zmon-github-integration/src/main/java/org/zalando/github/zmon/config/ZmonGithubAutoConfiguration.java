@@ -4,6 +4,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.zalando.github.zmon.security.GithubSignupConditionProperties;
 import org.zalando.zmon.config.ZmonOAuth2Properties;
 import org.zalando.zmon.security.SigninController;
 
@@ -13,8 +14,8 @@ import org.zalando.zmon.security.SigninController;
  *
  */
 @Configuration
-@EnableConfigurationProperties({ ZmonOAuth2Properties.class })
-@Import({ GithubSecurityConfig.class, GithubSocialConfigurer.class })
+@EnableConfigurationProperties({ ZmonOAuth2Properties.class, GithubSignupConditionProperties.class })
+@Import({ GithubSecurityConfig.class, GithubSocialConfigurer.class, GithubAccountConnectionSignupConfig.class, GithubSignupConditionsConfig.class })
 public class ZmonGithubAutoConfiguration {
 
 	@Bean

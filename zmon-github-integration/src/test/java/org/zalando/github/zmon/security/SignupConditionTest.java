@@ -3,6 +3,7 @@ package org.zalando.github.zmon.security;
 import java.util.List;
 
 import org.assertj.core.api.Assertions;
+import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.springframework.social.connect.Connection;
@@ -20,8 +21,16 @@ import com.google.common.collect.Lists;
  */
 public class SignupConditionTest {
 
-	private List<String> allowedUsers = Lists.newArrayList("kmeier", "rruessel");
 	private List<String> allowedGroups = Lists.newArrayList();
+	
+	private GithubSignupConditionProperties signupProperties;
+	
+	@Before
+	public void setUp(){
+		signupProperties = new GithubSignupConditionProperties();
+		signupProperties.setAllowedOrgas(Lists.newArrayList("zalando", "zalando-stups"));
+		signupProperties.setAllowedUsers(Lists.newArrayList("kmeier", "rruessel"));
+	}
 
 	@Test
 	public void allowedUsers() {
@@ -33,7 +42,7 @@ public class SignupConditionTest {
 		Mockito.when(github.userOperations()).thenReturn(userOperations);
 		Mockito.when(userOperations.getProfileId()).thenReturn("kmeier").thenReturn("rwrong");
 
-		IsAllowedUserSignupCondition condition = new IsAllowedUserSignupCondition(allowedUsers);
+		IsAllowedUserSignupCondition condition = new IsAllowedUserSignupCondition(signupProperties);
 		Assertions.assertThat(condition.supportsConnection(connection));
 		Assertions.assertThat(condition.matches(connection)).isTrue();
 		Assertions.assertThat(condition.matches(connection)).isFalse();
@@ -64,7 +73,7 @@ public class SignupConditionTest {
 		Mockito.when(github.userOperations()).thenReturn(userOperations);
 		Mockito.when(userOperations.getProfileId()).thenReturn("kmeier");
 
-		IsAllowedUserSignupCondition allowedUserCondition = new IsAllowedUserSignupCondition(allowedUsers);
+		IsAllowedUserSignupCondition allowedUserCondition = new IsAllowedUserSignupCondition(signupProperties);
 		IsInGroupSignupCondition inGroupCondition = new IsInGroupSignupCondition(allowedGroups);
 		Predicate<GitHub> predicate = Predicates.and(allowedUserCondition, inGroupCondition);
 		Assertions.assertThat(predicate.apply(github)).isTrue();

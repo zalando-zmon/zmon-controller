@@ -36,6 +36,11 @@ public class AccountConnectionSignupService implements ConnectionSignUp {
 	@Override
 	public String execute(final Connection<?> connection) {
 
+		if (!passesSignupConditions(connection)) {
+			// returning 'null' fails the login-process
+			return null;
+		}
+
 		// hwo to use api
 		String login = getLoginFromConnection(connection);
 
@@ -43,7 +48,6 @@ public class AccountConnectionSignupService implements ConnectionSignUp {
 		org.springframework.social.connect.UserProfile profile = connection.fetchUserProfile();
 
 		String username = profile.getUsername();
-
 
 		Collection<? extends GrantedAuthority> authorities = authorityService.getAuthorities(username);
 
@@ -56,6 +60,10 @@ public class AccountConnectionSignupService implements ConnectionSignUp {
 		userDetailsManager.createUser(user);
 
 		return username;
+	}
+
+	protected boolean passesSignupConditions(Connection<?> connection) {
+		return true;
 	}
 
 	protected String getLoginFromConnection(final Connection<?> connection) {
