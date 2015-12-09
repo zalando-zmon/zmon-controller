@@ -6,7 +6,7 @@
 		<artifactId>zmon-controller-parent</artifactId>
 		<version>1.0.1-SNAPSHOT</version>
 	</parent>
-	<artifactId>zmon-domain</artifactId>
+	<artifactId>zmon-common</artifactId>
 
 	<dependencies>
 		<dependency>

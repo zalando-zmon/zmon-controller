@@ -117,7 +117,7 @@
 		<module>zmon-controller-it</module>
 		<module>zmon-github-integration</module>
 		<module>zmon-security-common</module>
-		<module>zmon-domain</module>
+		<module>zmon-common</module>
 	</modules>
 
 	<repositories>
