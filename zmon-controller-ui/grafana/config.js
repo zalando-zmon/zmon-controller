@@ -71,11 +71,11 @@ define(['settings'], function(Settings) {
       datasources: {
         kairosdb: {
           type: 'kairosdb',
-          url: "http://localhost:8443",
+          url: "https://localhost:8443",
         },
         elasticsearch: {
           type: 'elasticsearch',
-          url: "http://localhost:8443/rest",
+          url: "https://localhost:8443/rest",
           index: 'grafana',
           grafanaDB: true,
         }
