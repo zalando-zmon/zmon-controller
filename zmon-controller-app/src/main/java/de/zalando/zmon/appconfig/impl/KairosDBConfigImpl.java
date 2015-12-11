@@ -1,7 +1,10 @@
 package de.zalando.zmon.appconfig.impl;
 
-import de.zalando.zmon.appconfig.KairosDBConfig;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
+
+import de.zalando.zmon.appconfig.KairosDBConfig;
 
 /**
  * FIXME: hardcoded config for Vagrant box
@@ -11,19 +14,26 @@ import org.springframework.stereotype.Service;
 @Service
 public class KairosDBConfigImpl implements KairosDBConfig {
 
-    @Override
-    public String getHost() {
-        return "localhost";
-    }
+	private final Environment environment;
 
-    @Override
-    public Integer getPort() {
-        return 8083;
-    }
+	@Autowired
+	public KairosDBConfigImpl(Environment environment) {
+		this.environment = environment;
+	}
 
-    @Override
-    public Boolean isEnabled() {
-        return true;
-    }
-    
+	@Override
+	public String getHost() {
+		return environment.getProperty("zmon.kairosdb.host", "localhost");
+	}
+
+	@Override
+	public Integer getPort() {
+		return environment.getProperty("zmon.kairosdb.port", Integer.class, 38083);
+	}
+
+	@Override
+	public Boolean isEnabled() {
+		return environment.getProperty("zmon.kairosdb.isEnabled", Boolean.class, true);
+	}
+
 }
