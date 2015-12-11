@@ -5,6 +5,8 @@
 ```
 git clone https://github.com/zalando/zmon-controller.git
 
+cd zmon-controller
+
 git checkout bootMeUp
 
 ./mvnw clean install
