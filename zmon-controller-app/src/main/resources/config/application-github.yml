@@ -20,8 +20,10 @@ zmon:
       client-secret: 31ef34a9fa0542ec2ac743a4a81962a71483d5c1
   signup:
     github:
-      allowed-users:
-        - jbellmann
+      # Specify users who are authorized to log in
+      # Empty list allows all users to log in
+      allowed-users: []
+      # Specify organizations who are authorized to log in
       allowed-orgas:
         - zalando
         - zalando-stups
