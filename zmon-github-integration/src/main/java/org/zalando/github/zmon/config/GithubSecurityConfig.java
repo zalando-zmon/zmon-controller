@@ -20,6 +20,7 @@ import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.social.security.SocialUserDetailsService;
 import org.springframework.social.security.SpringSocialConfigurer;
+import org.zalando.github.zmon.service.GithubResourceServerTokenServices;
 import org.zalando.zmon.security.ZmonResourceServerConfigurer;
 import org.zalando.zmon.security.service.SimpleSocialUserDetailsService;
 
@@ -80,6 +81,6 @@ public class GithubSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Bean
 	public ResourceServerConfigurer zmonResourceServerConfigurer() {
-		return new ZmonResourceServerConfigurer(new DefaultTokenServices());
+		return new ZmonResourceServerConfigurer(new GithubResourceServerTokenServices());
 	}
 }
