@@ -21,3 +21,5 @@ Make sure the provided Vagrant-Box is up and all services are running.
 java -Dspring.profiles.active=github -jar zmon-controller-app/target/zmon-controller-1.0.1-SNAPSHOT.jar
 
 ```
+
+Now point your browser to https://localhost:8443/
