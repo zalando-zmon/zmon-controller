@@ -4,69 +4,75 @@ import java.util.Collection;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.provisioning.UserDetailsManager;
+
 import org.springframework.social.connect.Connection;
 import org.springframework.social.connect.ConnectionSignUp;
+import org.springframework.social.connect.UserProfile;
+
 import org.springframework.util.Assert;
 
 import de.zalando.zmon.security.AuthorityService;
 
 /**
- * 
- * @author jbellmann
- *
+ * @author  jbellmann
  */
 public class AccountConnectionSignupService implements ConnectionSignUp {
 
-	private final Logger LOG = LoggerFactory.getLogger(AccountConnectionSignupService.class);
+    private final Logger LOG = LoggerFactory.getLogger(AccountConnectionSignupService.class);
 
-	private final UserDetailsManager userDetailsManager;
-	private final AuthorityService authorityService;
+    private final UserDetailsManager userDetailsManager;
+    private final AuthorityService authorityService;
 
-	public AccountConnectionSignupService(final UserDetailsManager userDetailsManager,
-			AuthorityService authorityService) {
-		Assert.notNull(userDetailsManager, "'userDetailsManager' should never be null");
-		Assert.notNull(authorityService, "'authorityService' should never be null");
-		this.userDetailsManager = userDetailsManager;
-		this.authorityService = authorityService;
-	}
+    public AccountConnectionSignupService(final UserDetailsManager userDetailsManager,
+            final AuthorityService authorityService) {
+        Assert.notNull(userDetailsManager, "'userDetailsManager' should never be null");
+        Assert.notNull(authorityService, "'authorityService' should never be null");
+        this.userDetailsManager = userDetailsManager;
+        this.authorityService = authorityService;
+    }
 
-	@Override
-	public String execute(final Connection<?> connection) {
+    @Override
+    public String execute(final Connection<?> connection) {
 
-		if (!passesSignupConditions(connection)) {
-			// returning 'null' fails the login-process
-			return null;
-		}
+        if (!passesSignupConditions(connection)) {
 
-		// hwo to use api
-		String login = getLoginFromConnection(connection);
+            // returning 'null' fails the login-process
+            return null;
+        }
 
-		// or use more generic
-		org.springframework.social.connect.UserProfile profile = connection.fetchUserProfile();
+        // hwo to use api
+        final String login = getLoginFromConnection(connection);
 
-		String username = profile.getUsername();
+        // or use more generic
+        final UserProfile profile = connection.fetchUserProfile();
 
-		Collection<? extends GrantedAuthority> authorities = authorityService.getAuthorities(username);
+        final String username = profile.getUsername();
 
-		if (authorities.isEmpty()) {
-			return null;
-		}
-		// we create an new user
-		LOG.info("Created user with id: " + username);
-		User user = new User(username, "", authorities);
-		userDetailsManager.createUser(user);
+        final Collection<? extends GrantedAuthority> authorities = authorityService.getAuthorities(username);
 
-		return username;
-	}
+        if (authorities.isEmpty()) {
+            LOG.info("Configure environment variable ZMON_AUTHORITIES_SIMPLE_USERS as * or {}", username);
+            return null;
+        }
 
-	protected boolean passesSignupConditions(Connection<?> connection) {
-		return true;
-	}
+        // we create an new user
+        LOG.info("Created user with id: {} ", username);
 
-	protected String getLoginFromConnection(final Connection<?> connection) {
-		return "not_found";
-	}
+        final User user = new User(username, "", authorities);
+        userDetailsManager.createUser(user);
+
+        return username;
+    }
+
+    protected boolean passesSignupConditions(final Connection<?> connection) {
+        return true;
+    }
+
+    protected String getLoginFromConnection(final Connection<?> connection) {
+        return "not_found";
+    }
 }

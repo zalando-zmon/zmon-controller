@@ -17,7 +17,7 @@ git checkout bootMeUp
 Make sure the provided Vagrant-Box is up and all services are running.
 
 ```
-
+export ZMON_AUTHORITIES_SIMPLE_USERS=*
 java -Dspring.profiles.active=github -jar zmon-controller-app/target/zmon-controller-1.0.1-SNAPSHOT.jar
 
 ```
