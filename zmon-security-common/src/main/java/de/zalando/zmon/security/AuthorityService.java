@@ -6,12 +6,13 @@ import org.springframework.security.core.GrantedAuthority;
 
 /**
  * Get all {@link GrantedAuthority}s for an user.
- * 
- * @author jbellmann
  *
+ * @author  jbellmann
  */
 public interface AuthorityService {
-	
-	Collection<? extends GrantedAuthority> getAuthorities(String username);
+
+    String ALL_AUTHORIZED = "*";
+
+    Collection<? extends GrantedAuthority> getAuthorities(String username);
 
 }
