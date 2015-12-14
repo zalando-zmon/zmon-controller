@@ -26,6 +26,7 @@ public class GithubResourceServerTokenServices implements ResourceServerTokenSer
     public OAuth2Authentication loadAuthentication(String accessToken) throws AuthenticationException, InvalidTokenException {
         GitHubTemplate tpl = new GitHubTemplate(accessToken);
 
+        // TODO: Important: we need to check the GitHub user's organization etc to comply with out configured "SignupConditions"
 
         UsernamePasswordAuthenticationToken user = new UsernamePasswordAuthenticationToken(tpl.userOperations().getProfileId(), "N/A", AuthorityUtils.commaSeparatedStringToAuthorityList("ROLE_USER"));
         //user.setDetails(map);
