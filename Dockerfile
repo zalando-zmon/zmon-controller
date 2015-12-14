@@ -1,7 +1,8 @@
-FROM tomcat:8-jre8
+FROM registry.opensource.zalan.do/stups/openjdk:8u66-b17-1-8
 
-RUN rm -fr /usr/local/tomcat/webapps/*
+EXPOSE 8080
 
-ADD setenv.sh /usr/local/tomcat/bin/setenv.sh
+COPY zmon-controller-app/target/zmon-controller-1.0.1-SNAPSHOT.jar /zmon-controller.jar
+COPY target/scm-source.json /
 
-ADD target/zmon-controller-1.0.1-SNAPSHOT.war /usr/local/tomcat/webapps/ROOT.war
+CMD java $JAVA_OPTS $(java-dynamic-memory-opts) -jar /zmon-controller.jar
