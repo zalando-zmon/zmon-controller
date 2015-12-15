@@ -1,0 +1,5 @@
+zmon:
+  oauth2:
+    sso:
+      client-id: d843ddae9fe32bdaab
+      client-secret: 31ef34a9fa0542ec2ac743a4a81962a71483d5c1
