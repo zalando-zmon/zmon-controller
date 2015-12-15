@@ -21,3 +21,5 @@ zmon-controller-it/somepath/credentials/user.json
 zmon-controller-it/somepath/credentials/client.json
 
 .factorypath
+
+client.json

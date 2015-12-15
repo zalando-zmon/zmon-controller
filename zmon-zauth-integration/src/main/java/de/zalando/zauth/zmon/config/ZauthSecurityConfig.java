@@ -108,6 +108,7 @@ public class ZauthSecurityConfig extends WebSecurityConfigurerAdapter {
             if (map.get("realm") != null) {
                 String realm = (String) map.get("realm");
                 if ("services".equals(realm)) {
+                    // HJ: why? this looks wrong..
                     return realm;
                 }
             }
