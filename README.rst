@@ -32,6 +32,16 @@ Make sure the provided Vagrant-Box is up and all services are running.
 
 Now point your browser to https://localhost:8443/
 
+Running Unit and Database Tests
+===============================
+
+This will require Docker and automatically starts a local PostgreSQL database:
+
+.. code-block:: bash
+
+    $ ./test.sh
+
+
 Building the Docker Image
 =========================
 
