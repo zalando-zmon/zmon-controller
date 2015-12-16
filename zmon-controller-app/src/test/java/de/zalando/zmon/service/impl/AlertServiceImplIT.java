@@ -3,6 +3,7 @@ package de.zalando.zmon.service.impl;
 import java.util.Collections;
 import java.util.List;
 
+import com.google.common.collect.Lists;
 import de.zalando.zmon.config.TestConfiguration;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -86,7 +87,7 @@ public class AlertServiceImplIT {
         newAlertDefinition.setCheckDefinitionId(newCheckDefinition.getId());
         newAlertDefinition = alertService.createOrUpdateAlertDefinition(newAlertDefinition);
 
-        final List<AlertDefinition> alertDefinitions = alertService.getAllAlertDefinitions();
+        final List<AlertDefinition> alertDefinitions = alertService.getAlertDefinitions(newAlertDefinition.getStatus(), Lists.newArrayList(newAlertDefinition.getId()));
 
         MatcherAssert.assertThat(alertDefinitions,
             Matchers.contains(AlertDefinitionIsEqual.equalTo(newAlertDefinition)));
@@ -353,10 +354,14 @@ public class AlertServiceImplIT {
 
         alertDefinition = alertService.createOrUpdateAlertDefinition(alertDefinition);
 
+        List<AlertDefinition> alertDefinitions = alertService.getAlertDefinitions(alertDefinition.getStatus(), Lists.newArrayList(alertDefinition.getId()));
+
+        MatcherAssert.assertThat(alertDefinitions, Matchers.hasSize(1));
+
         // delete the alert definition
         alertService.deleteAlertDefinition(alertDefinition.getId());
 
-        final List<AlertDefinition> alertDefinitions = alertService.getAllAlertDefinitions();
+        alertDefinitions = alertService.getAlertDefinitions(alertDefinition.getStatus(), Lists.newArrayList(alertDefinition.getId()));
 
         MatcherAssert.assertThat(alertDefinitions, Matchers.hasSize(0));
     }
