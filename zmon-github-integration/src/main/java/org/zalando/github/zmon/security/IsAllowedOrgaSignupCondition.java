@@ -20,7 +20,7 @@ public class IsAllowedOrgaSignupCondition extends GithubSignupCondition {
 
     @Override
     public boolean matches(final GitHub api) {
-        log.info("Check for Orga ...");
+        log.info("Check for Organizations ...");
         if (signupProperties.getAllowedOrgas().isEmpty()) {
             return false;
         }
