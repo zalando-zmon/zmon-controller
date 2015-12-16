@@ -51,7 +51,7 @@ public class SimpleAuthorityService implements AuthorityService {
 
         if (authority != null) {
             result = Lists.newArrayList(authority);
-            log.info("USER {} HAS AUTHORITY WITH ROLE {} AND TEAMS {}", username, authority.getAuthority(),
+            log.info("User {} has authority with role {} and teams {}", username, authority.getAuthority(),
                 authority.getTeams());
         }
 
