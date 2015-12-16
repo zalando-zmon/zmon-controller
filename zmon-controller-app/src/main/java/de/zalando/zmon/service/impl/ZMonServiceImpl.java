@@ -1,38 +1,13 @@
 package de.zalando.zmon.service.impl;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.xerial.snappy.Snappy;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.SetMultimap;
-
 import de.zalando.zmon.diff.CheckDefinitionsDiffFactory;
-import de.zalando.zmon.domain.AlertDefinition;
-import de.zalando.zmon.domain.CheckDefinition;
-import de.zalando.zmon.domain.CheckDefinitionImport;
-import de.zalando.zmon.domain.CheckDefinitions;
-import de.zalando.zmon.domain.CheckDefinitionsDiff;
-import de.zalando.zmon.domain.CheckResults;
-import de.zalando.zmon.domain.DefinitionStatus;
-import de.zalando.zmon.domain.ExecutionStatus;
-import de.zalando.zmon.domain.WorkerQueue;
+import de.zalando.zmon.domain.*;
 import de.zalando.zmon.event.ZMonEventType;
 import de.zalando.zmon.exception.SerializationException;
 import de.zalando.zmon.persistence.AlertDefinitionSProcService;
@@ -43,10 +18,18 @@ import de.zalando.zmon.redis.RedisPattern;
 import de.zalando.zmon.redis.ResponseHolder;
 import de.zalando.zmon.service.ZMonService;
 import de.zalando.zmon.util.DBUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.xerial.snappy.Snappy;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.Pipeline;
 import redis.clients.jedis.Response;
+
+import java.io.IOException;
+import java.util.*;
 
 // TODO remove CheckDefinitionImport and use CheckDefinition with optional id
 // TODO convert mandatory types into native types (Integer -> int...)

@@ -309,6 +309,23 @@
                                 </configuration>
                             </execution>
                             <execution>
+                                <id>drop-schemas-database1</id>
+                                <phase>process-test-resources</phase>
+                                <goals>
+                                    <goal>execute</goal>
+                                </goals>
+                                <configuration>
+                                    <driver>org.postgresql.Driver</driver>
+                                    <sqlCommand>
+                                        DROP EXTENSION IF EXISTS hstore CASCADE;
+                                        CREATE EXTENSION hstore;
+                                        DROP SCHEMA IF EXISTS zzm_api CASCADE;
+                                        DROP SCHEMA IF EXISTS zzm_data CASCADE;
+                                    </sqlCommand>
+                                    <onError>continue</onError>
+                                </configuration>
+                            </execution>
+                            <execution>
                                 <id>create-data</id>
                                 <phase>process-test-resources</phase>
                                 <goals>
@@ -319,7 +336,7 @@
                                     <keepFormat>true</keepFormat>
                                     <orderFile>ascending</orderFile>
                                     <fileset>
-                                        <basedir>${basedir}</basedir>
+                                        <basedir>../</basedir>
                                         <includes>
                                             <include>database/zmon/**/*.sql</include>
                                             <include>database/*.sql</include>
