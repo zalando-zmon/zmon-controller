@@ -1,5 +1,5 @@
-angular.module('zmon2App').controller('DashboardDefinitionCtrl', ['$scope', 'localStorageService', '$routeParams', '$location', 'MainAlertService', 'CommunicationService', 'FeedbackMessageService', 'APP_CONST', 'UserInfoService',
-    function($scope, localStorageService, $routeParams, $location, MainAlertService, CommunicationService, FeedbackMessageService, APP_CONST, UserInfoService) {
+angular.module('zmon2App').controller('DashboardDefinitionCtrl', ['$scope', 'localStorageService', '$routeParams', '$location', '$modal','MainAlertService', 'CommunicationService', 'FeedbackMessageService', 'APP_CONST', 'UserInfoService',
+    function($scope, localStorageService, $routeParams, $location, $modal,MainAlertService, CommunicationService, FeedbackMessageService, APP_CONST, UserInfoService) {
 
         var STORAGE_KEY = 'dashboardId';
 
@@ -28,12 +28,35 @@ angular.module('zmon2App').controller('DashboardDefinitionCtrl', ['$scope', 'loc
             localStorageService.add(STORAGE_KEY, dashboardID);
         };
 
-        $scope.deleteDashboard = function(dashboardID) {
-            CommunicationService.getAllDashboards().then(
-                function(data) {
-                    $scope.dashboardDefinitions = data;
-                }
-            );
+        
+        $scope.showDeleteDashboardModal = function($id,$name) {
+
+            // Delete dashboard modal
+            var deleteDashboardModalInstance = $modal.open({
+                templateUrl: '/templates/deleteDashboardModal.html',
+                controller: deleteDashboardModalCtrl,
+                backdrop: false
+
+            });
+
+            deleteDashboardModalInstance.result.then(
+                function() {
+                    CommunicationService.deleteDashboard($id).then(function() {
+                        $location.path('/dashboards');
+                    });
+                });
+        };
+
+
+        var deleteDashboardModalCtrl = function($scope, $modalInstance) {
+
+            $scope.delete = function() {
+                $modalInstance.close();
+            };
+
+            $scope.cancel = function() {
+                $modalInstance.dismiss();
+            };
         };
     }
 
