@@ -4,6 +4,9 @@ jdk:
 addons:
     postgresql: "9.4"
 
+script:
+  - mvn clean verify -Pintegration-test
+
 after_success:
   - mvn clean test jacoco:report coveralls:report
 

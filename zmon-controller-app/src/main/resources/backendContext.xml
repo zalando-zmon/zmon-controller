@@ -10,7 +10,6 @@
             <list>
                 <value>classpath:db_api_version.properties</value>
                 <value>classpath:zmon.properties</value>
-                <value>classpath:security.properties</value>
             </list>
         </property>
     </bean>
@@ -20,8 +19,6 @@
 
     <context:annotation-config />
 
-
-    <!-- <import resource="spring/security.xml" /> -->
     <import resource="spring/mvc.xml"/>
 
 </beans>

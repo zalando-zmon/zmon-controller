@@ -26,6 +26,8 @@ Make sure the provided Vagrant-Box is up and all services are running.
     $ ./mvnw clean install
     $ export SPRING_PROFILES_ACTIVE=github     # use GitHub auth
     $ export ZMON_AUTHORITIES_SIMPLE_ADMINS=*  # everybody is admin!
+    $ export REDIS_PORT=38086                  # use Redis in Vagrant box
+    $ export POSTGRES_URL=jdbc:postgresql://localhost:38088/local_zmon_db
     $ java -jar zmon-controller-app/target/zmon-controller-1.0.1-SNAPSHOT.jar
 
 Now point your browser to https://localhost:8443/
