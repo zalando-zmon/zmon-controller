@@ -30,7 +30,7 @@ import de.zalando.zmon.security.permission.DefaultZMonPermissionService;
 import de.zalando.zmon.service.DashboardService;
 
 @Controller
-@RequestMapping(value="/rest")
+@RequestMapping(value = "/rest")
 public class DashboardController extends AbstractZMonController {
 
     @Autowired
