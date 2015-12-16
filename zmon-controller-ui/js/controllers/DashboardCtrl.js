@@ -3,11 +3,11 @@ angular.module('zmon2App').controller('DashboardCtrl', ['$scope', '$log', '$rout
 
         $scope.dashboardId = $routeParams.dashboardId || localStorageService.get('dashboardId');
 
-        if (!$routeParams.dashboardId && $scope.dashboardId) {
+/*        if (!$routeParams.dashboardId && $scope.dashboardId) {
             var p = '/dashboards/view/' + $scope.dashboardId;
             return $location.path(p);
         }
-
+*/
         $scope.DashboardCtrl = this;
 
         // Set in parent scope which page is active for the menu styling
