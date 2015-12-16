@@ -11,6 +11,13 @@ spring:
       min-idle: 0
       max-wait: -1
 
+  datasource:
+    driverClassName: org.postgresql.Driver
+    url: ${POSTGRES_URL:jdbc:postgresql://localhost:38088/local_zmon_db}
+    username: ${POSTGRES_USERNAME:postgres}
+    password: ${POSTGRES_PASSWORD:postgres}
+    initSQL: "SET search_path to zzm_api${zzm_api_version}, public;"
+
   mail:
     host: ${zmon.report.mail.host}
     port: ${zmon.report.mail.port}

@@ -14,7 +14,6 @@ import de.zalando.sprocwrapper.proxy.SProcProxyBuilder;
 public class ZMonSProcServiceConfig {
 
     @Autowired
-    @Qualifier("dataSourceZmonSProcProvider")
     private DataSourceProvider dataSourceProvider;
 
     @Bean(autowire = Autowire.BY_TYPE)
