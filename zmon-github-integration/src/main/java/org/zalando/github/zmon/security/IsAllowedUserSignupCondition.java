@@ -23,7 +23,7 @@ public class IsAllowedUserSignupCondition extends GithubSignupCondition {
 
     @Override
     public boolean matches(final GitHub api) {
-        log.info("CHECK FOR USER ...");
+        log.info("Check for user ...");
 
         if (signupProperties.getAllowedUsers().isEmpty()) {
             return false;
@@ -34,7 +34,7 @@ public class IsAllowedUserSignupCondition extends GithubSignupCondition {
         }
 
         final String username = api.userOperations().getProfileId();
-        log.info("USER : {}", username);
+        log.info("User : {}", username);
 
         return signupProperties.getAllowedUsers().contains(username);
     }

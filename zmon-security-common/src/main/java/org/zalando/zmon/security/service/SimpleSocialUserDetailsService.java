@@ -2,11 +2,13 @@ package org.zalando.zmon.security.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import org.springframework.dao.DataAccessException;
-import org.springframework.security.core.authority.AuthorityUtils;
+
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+
 import org.springframework.social.security.SocialUser;
 import org.springframework.social.security.SocialUserDetails;
 import org.springframework.social.security.SocialUserDetailsService;
@@ -26,10 +28,10 @@ public class SimpleSocialUserDetailsService implements SocialUserDetailsService 
         DataAccessException {
 
         try {
-            log.info("LOAD USER : {}", username);
+            log.info("Load User : {}", username);
 
             UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-            return new SocialUser(userDetails.getUsername(), "password", AuthorityUtils.createAuthorityList("USER"));
+            return new SocialUser(userDetails.getUsername(), "password", userDetails.getAuthorities());
         } catch (Exception e) {
             e.printStackTrace();
         }
