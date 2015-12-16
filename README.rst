@@ -24,8 +24,9 @@ Make sure the provided Vagrant-Box is up and all services are running.
 .. code-block:: bash
 
     $ ./mvnw clean install
-    $ export ZMON_AUTHORITIES_SIMPLE_USERS=*
-    $ java -Dspring.profiles.active=github -jar zmon-controller-app/target/zmon-controller-1.0.1-SNAPSHOT.jar
+    $ export SPRING_PROFILES_ACTIVE=github     # use GitHub auth
+    $ export ZMON_AUTHORITIES_SIMPLE_ADMINS=*  # everybody is admin!
+    $ java -jar zmon-controller-app/target/zmon-controller-1.0.1-SNAPSHOT.jar
 
 Now point your browser to https://localhost:8443/
 
