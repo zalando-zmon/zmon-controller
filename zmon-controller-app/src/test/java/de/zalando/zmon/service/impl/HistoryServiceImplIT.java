@@ -2,6 +2,7 @@ package de.zalando.zmon.service.impl;
 
 import java.util.List;
 
+import de.zalando.zmon.config.TestConfiguration;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 
@@ -14,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import org.springframework.transaction.annotation.Transactional;
@@ -28,7 +30,8 @@ import de.zalando.zmon.generator.CheckDefinitionImportGenerator;
 import de.zalando.zmon.generator.DataGenerator;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"classpath:backendContextTest.xml"})
+@ContextConfiguration(classes= TestConfiguration.class)
+@TestPropertySource("/test.properties")
 @Transactional
 public class HistoryServiceImplIT {
 

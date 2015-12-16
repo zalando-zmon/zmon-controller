@@ -13,11 +13,13 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import de.zalando.typemapper.annotations.DatabaseField;
 
+import de.zalando.typemapper.annotations.DatabaseType;
 import de.zalando.zmon.adapter.EntityListAdapter;
 import de.zalando.zmon.annotation.ContainsEntityKey;
 import de.zalando.zmon.annotation.NotNullEntity;
 
 @XmlAccessorType(XmlAccessType.NONE)
+@DatabaseType(name = "check_definition_import")
 public class CheckDefinitionImport {
 
     @XmlElement(required = true)

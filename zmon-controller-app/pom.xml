@@ -288,7 +288,8 @@
                         <configuration>
                             <driver>org.postgresql.Driver</driver>
                             <url>jdbc:postgresql://${test.db.host}:${test.db.port}/${test.db.name}</url>
-                            <settingsKey>testdb</settingsKey>
+                            <username>postgres</username>
+                            <password>postgres</password>
                             <skip>${maven.test.skip}</skip>
                         </configuration>
                         <executions>
