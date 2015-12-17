@@ -52,7 +52,7 @@
                 </a>
                 <i ng-hide="def.editable" class="fa fa-fw fa-edit semi-transparent"></i>
 
-                <a ng-show="def.editable" href="#" ng-click="showDeleteDashboardModal(def.id,def.name)">
+                <a ng-show="def.editable" class="clickable" ng-click="showDeleteDashboardModal(def.id,def.name)">
                     <i class="fa fa-fw fa-trash-o" tooltip-html-unsafe="delete" tooltip-placement="right"></i>
                 </a>
                 <i ng-hide="def.editable" class="fa fa-fw fa-trash-o semi-transparent"></i>
