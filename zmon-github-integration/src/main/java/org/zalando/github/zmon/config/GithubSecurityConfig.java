@@ -1,7 +1,10 @@
 package org.zalando.github.zmon.config;
 
 import java.util.ArrayList;
+import java.util.List;
 
+import com.google.common.collect.ImmutableList;
+import de.zalando.zmon.security.AuthorityService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.context.annotation.Bean;
@@ -9,6 +12,7 @@ import org.springframework.context.annotation.Configuration;
 
 import org.springframework.core.annotation.Order;
 
+import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -19,6 +23,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurer;
+import org.springframework.security.oauth2.provider.token.ResourceServerTokenServices;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.provisioning.UserDetailsManager;
 
@@ -28,6 +33,8 @@ import org.springframework.social.security.SpringSocialConfigurer;
 import org.zalando.github.zmon.service.GithubResourceServerTokenServices;
 
 import org.zalando.zmon.security.ZmonResourceServerConfigurer;
+import org.zalando.zmon.security.service.ChainedResourceServerTokenServices;
+import org.zalando.zmon.security.service.PresharedTokensResourceServerTokenServices;
 import org.zalando.zmon.security.service.SimpleSocialUserDetailsService;
 
 /**
@@ -40,6 +47,12 @@ import org.zalando.zmon.security.service.SimpleSocialUserDetailsService;
 @EnableResourceServer
 @Order(2)
 public class GithubSecurityConfig extends WebSecurityConfigurerAdapter {
+
+    @Autowired
+    AuthorityService authorityService;
+
+    @Autowired
+    Environment environment;
 
     @Autowired
     public void configureGlobal(final AuthenticationManagerBuilder auth) throws Exception {
@@ -86,6 +99,9 @@ public class GithubSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Bean
     public ResourceServerConfigurer zmonResourceServerConfigurer() {
-        return new ZmonResourceServerConfigurer(new GithubResourceServerTokenServices());
+        final List<ResourceServerTokenServices> chain = ImmutableList.of(
+                new PresharedTokensResourceServerTokenServices(authorityService, environment),
+                new GithubResourceServerTokenServices(authorityService, environment));
+        return new ZmonResourceServerConfigurer(new ChainedResourceServerTokenServices(chain));
     }
 }

@@ -36,7 +36,7 @@ public class ZmonResourceServerConfigurer extends ResourceServerConfigurerAdapte
 	 */
 	@Override
 	public void configure(final HttpSecurity http) throws Exception {
-		logger.info("CONFIGURE OAUTH ...");
+		logger.info("Configuring OAuth..");
 		// J-
 		http
 			.sessionManagement()
@@ -56,7 +56,6 @@ public class ZmonResourceServerConfigurer extends ResourceServerConfigurerAdapte
 					.access("#oauth2.hasScope('uid') or #oauth2.hasScope('zmon.write_all')");
 
 		// J+
-		logger.info("CONFIGURE OAUTH, DONE");
 	}
 
 }
