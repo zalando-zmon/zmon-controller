@@ -3,6 +3,7 @@ package org.zalando.github.zmon.service;
 import com.google.common.collect.Sets;
 import de.zalando.zmon.security.AuthorityService;
 import org.springframework.core.env.Environment;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
@@ -14,6 +15,7 @@ import org.springframework.security.oauth2.provider.OAuth2Request;
 import org.springframework.security.oauth2.provider.token.ResourceServerTokenServices;
 import org.springframework.social.github.api.GitHubUser;
 import org.springframework.social.github.api.impl.GitHubTemplate;
+import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -39,8 +41,15 @@ public class GithubResourceServerTokenServices implements ResourceServerTokenSer
         GitHubTemplate tpl = new GitHubTemplate(accessToken);
 
         // TODO: Important: we need to check the GitHub user's organization etc to comply with out configured "SignupConditions"
-
-        final String username = tpl.userOperations().getProfileId();
+        String username;
+        try {
+            username = tpl.userOperations().getProfileId();
+        } catch (HttpClientErrorException ex) {
+            if (HttpStatus.UNAUTHORIZED == ex.getStatusCode()) {
+                throw new InvalidTokenException("Invalid GitHub access token");
+            }
+            throw ex;
+        }
         Collection<? extends GrantedAuthority> authorities = authorityService.getAuthorities(username);
 
         UsernamePasswordAuthenticationToken user = new UsernamePasswordAuthenticationToken(username, "N/A", authorities);
