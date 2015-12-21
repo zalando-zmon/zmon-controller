@@ -28,6 +28,7 @@ import de.zalando.zmon.service.DowntimeService;
 import de.zalando.zmon.validation.DowntimeValidator;
 
 @Controller
+@RequestMapping(value="/rest")
 public class DowntimeController extends AbstractZMonController {
 
     @Autowired
@@ -44,7 +45,7 @@ public class DowntimeController extends AbstractZMonController {
         binder.setValidator(downtimeValidator);
     }
 
-    @RequestMapping(value = "scheduleDowntime", method = RequestMethod.POST)
+    @RequestMapping(value = "/scheduleDowntime", method = RequestMethod.POST)
     public ResponseEntity<List<String>> scheduleDowntime(
             @Valid
             @RequestBody(required = true)
@@ -57,14 +58,14 @@ public class DowntimeController extends AbstractZMonController {
     }
 
     @ResponseBody
-    @RequestMapping(value = "deleteDowntimes", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/deleteDowntimes", method = RequestMethod.DELETE)
     public void deleteDowntimes(@RequestParam(value = "downtime_id", required = true) final Set<String> downTimeIds)
         throws ZMonException {
         authorityService.verifyDeleteDowntimePermission();
         service.deleteDowntimes(downTimeIds);
     }
 
-    @RequestMapping(value = "downtimes", method = RequestMethod.GET)
+    @RequestMapping(value = "/downtimes", method = RequestMethod.GET)
     public ResponseEntity<List<DowntimeDetails>> getDowntimes(
             @RequestParam(value = "alert_definition_id", required = false) final Set<Integer> alertDefinitionIds) {
         return new ResponseEntity<>(service.getDowntimes(alertDefinitionIds), HttpStatus.OK);

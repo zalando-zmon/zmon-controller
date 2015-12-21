@@ -20,6 +20,7 @@ import de.zalando.zmon.security.permission.DefaultZMonPermissionService;
 import de.zalando.zmon.service.HistoryService;
 
 @Controller
+@RequestMapping(value="/rest")
 public class HistoryController extends AbstractZMonController {
 
     @Autowired
@@ -28,7 +29,7 @@ public class HistoryController extends AbstractZMonController {
     @Autowired
     private DefaultZMonPermissionService authorityService;
 
-    @RequestMapping(value = "alertHistory", method = RequestMethod.GET)
+    @RequestMapping(value = "/alertHistory", method = RequestMethod.GET)
     public ResponseEntity<List<Activity>> getHistory(
             @RequestParam(value = "alert_definition_id", required = true) final int alertDefinitionId,
             @RequestParam(value = "limit", required = false) final Integer limit,
@@ -38,7 +39,7 @@ public class HistoryController extends AbstractZMonController {
         return new ResponseEntity<>(historyService.getHistory(alertDefinitionId, limit, from, to), HttpStatus.OK);
     }
 
-    @RequestMapping(value = "alertDefinitionHistory", method = RequestMethod.GET)
+    @RequestMapping(value = "/alertDefinitionHistory", method = RequestMethod.GET)
     public ResponseEntity<List<ActivityDiff>> getAlertDefinitionHistory(
             @RequestParam(value = "alert_definition_id", required = true) final int alertDefinitionId,
             @RequestParam(value = "limit", required = false) final Integer limit,
@@ -49,7 +50,7 @@ public class HistoryController extends AbstractZMonController {
                 HttpStatus.OK);
     }
 
-    @RequestMapping(value = "checkDefinitionHistory", method = RequestMethod.GET)
+    @RequestMapping(value = "/checkDefinitionHistory", method = RequestMethod.GET)
     public ResponseEntity<List<ActivityDiff>> getCheckDefinitionHistory(
             @RequestParam(value = "check_definition_id", required = true) final int checkDefinitionId,
             @RequestParam(value = "limit", required = false) final Integer limit,
@@ -60,7 +61,7 @@ public class HistoryController extends AbstractZMonController {
                 HttpStatus.OK);
     }
 
-    @RequestMapping(value = "historyReport", method = RequestMethod.GET)
+    @RequestMapping(value = "/historyReport", method = RequestMethod.GET)
     public ResponseEntity<List<HistoryReport>> getHistoryReport(@RequestParam("team") final String team,
             @RequestParam(value = "responsible_team", required = false) final String responsibleTeam,
             @RequestParam(value = "from", required = false) final Long from,

@@ -23,6 +23,7 @@ import de.zalando.zmon.security.permission.DefaultZMonPermissionService;
 import de.zalando.zmon.service.TrialRunService;
 
 @Controller
+@RequestMapping(value="/rest")
 public class TrialRunController extends AbstractZMonController {
 
     private static final String TRIAL_RUN_ID_KEY = "id";
@@ -33,7 +34,7 @@ public class TrialRunController extends AbstractZMonController {
     @Autowired
     private DefaultZMonPermissionService authorityService;
 
-    @RequestMapping(value = "scheduleTrialRun", method = RequestMethod.POST)
+    @RequestMapping(value = "/scheduleTrialRun", method = RequestMethod.POST)
     public ResponseEntity<Map<String, String>> scheduleTrial(
             @Valid
             @RequestBody(required = true)
@@ -46,7 +47,7 @@ public class TrialRunController extends AbstractZMonController {
                     trialRunService.scheduleTrialRun(request)), HttpStatus.OK);
     }
 
-    @RequestMapping(value = "trialRunResults", method = RequestMethod.GET)
+    @RequestMapping(value = "/trialRunResults", method = RequestMethod.GET)
     public ResponseEntity<TrialRunResults> getTrialResults(
             @RequestParam(value = "id", required = true) final String id) {
 
