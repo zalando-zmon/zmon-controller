@@ -1,0 +1,126 @@
+<h1>Cloud</h1>
+<div class="row">
+    <div class="col-md-12">
+        <h3>
+            <span ng-click="setTeam(null)" class="clickable" style="padding-left:5px;"><a>teams</a></span>
+            <span ng-click="setApp(null)" ng-if="selectedTeam" class="clickable"> > <a>{{selectedTeam}}</a></span>
+            <span ng-click="setEndpoint(null)" ng-if="selectedApplication" class="clickable"> > <a>{{selectedApplication}}</a></span>
+            <span ng-if="selectedEndpoint"> > {{selectedEndpoint}}</span>
+        </h3>
+        <div ng-repeat="team in teams" class="clickable card" ng-hide="selectedTeam" ng-click="setTeam(team.name)">
+            <a><h4>{{team.name}}</h4></a>
+            <div><span class="number">{{team.applications.length}}</span><span class="lbl">apps</span></div>
+            <div><span class="number">{{team.instances.length}}</span><span class="lbl">instances</span></div>
+            <div><span class="number">{{getPublicElbsByTeam(team)}}/{{team.elbs.length}}</span><span class="lbl">Public/ELBs</span></div>
+        </div>
+        <!-- div class="btn-group">
+            <label class="btn btn-success" ng-model="radioModel" uib-btn-radio="'Left'" uncheckable>Left</label>
+            <label class="btn btn-success" ng-model="radioModel" uib-btn-radio="'Middle'" uncheckable>Middle</label>
+            <label class="btn btn-success" ng-model="radioModel" uib-btn-radio="'Right'" uncheckable>Right</label>
+        </div -->
+    </div>
+</div>
+<div class="row" ng-show="selectedTeam && !selectedApplication">
+    <div class="col-md-12">
+
+        <div class="col-md-12 app header-top">
+            <div class="col-md-2">Application</div>
+            <div class="col-md-10">
+                <div class="col-md-3">
+                    <div class="col-md-4 num-header">Instances</div>
+                    <div class="col-md-4 col-md-offset-1 num-header">Requests/min</div>
+                </div>
+                <div class="col-md-2 num-header">Latency(ms)</div>
+                <div class="col-md-7 error">
+                    <ul class="list-unstyled">
+                        <li class="col-md-1 col-md-offset-1 num-header">Error</li>
+                        <li class="col-md-1 col-md-offset-1 num-header">4xx/min</li>
+                        <li class="col-md-1 col-md-offset-1 num-header">5xx/min</li>
+                        <li class="col-md-1 col-md-offset-1 num-header">Latency(ms)</li>
+                        <li class="col-md-1 col-md-offset-1 num-header">Instances</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div ng-repeat="app in teams[selectedTeam].applications | filter:hasMetrics | orderBy:['application_id']" class="app-row clickable" ng-click="showApp(app.application_id, null, true)" class="clickable" ng-class="{'warning':app.results.epercent > 5}">
+            <div class="col-md-2"><h4>{{app.application_id}}</h4></div>
+            <div class="col-md-10">
+                <div class="col-md-3">
+                    <div class="col-md-4 num-container">{{app.instances}}</div>
+                    <div class="col-md-4 col-md-offset-1 num-container">{{app.results.requests}}</div>
+                </div>
+                <div class="col-md-2">
+                    <div class="col-md-6 col-md-offset-3 num-container">{{app.results.rt2XX}}</div>
+                </div>
+                <div class="col-md-7 error">
+                    <ul class="list-unstyled">
+                        <li class="col-md-1 col-md-offset-1 num-container">{{app.results.epercent > 0 ? app.results.epercent : 0}}%</li>
+                        <li class="col-md-1 col-md-offset-1 num-container">{{app.results.r400.toFixed(2)}}</li>
+                        <li class="col-md-1 col-md-offset-1 num-container">{{app.results.r500.toFixed(2)}}</li>
+                        <li class="col-md-1 col-md-offset-1 num-container">{{app.results.rtXXX}}</li>
+                        <li class="col-md-1 col-md-offset-1 num-container">{{app.results.einstances}}</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-12 app-row" ng-hide="trackedApplications"><h4>No tracked applications</h4></div>
+
+        <div class="col-md-12 header-top">
+            <div class="col-md-2">Untracked Applications:</div>
+            <div class="col-md-10">
+                <span ng-repeat="app in teams[selectedTeam].applications | filter:notHasMetrics | orderBy:['application_id']">{{app.application_id}}<em ng-if="!$last">, </em></span>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row" ng-show="selectedTeam && selectedApplication">
+    <div class="col-md-12 header-top" ng-controller="CloudEndpointsCtrl">
+        <div class="col-md-4" ng-hide="loading">
+            <h2>Endpoints</h2>
+            <div id="eps">
+                <ul style="padding:0; list-style:none">
+                    <li ng-repeat="ep in endpoints">
+                         <div class="ep-container">
+                             <div class="ep" style="width:{{ep.width}}%;">
+                                <a class="clickable" ng-click="setEndpoint(ep.url)">{{ep.url}}</a>
+                            </div><div class="ep-metric">{{ep.rate}}/min</div>
+                            <div class="ep-submetrics">min: {{ep.min}}ms max: {{ep.max}}ms 99%: {{ep.p99}}ms</div>
+                         </div>
+                    </li>
+                </ul>
+            </div>
+            <h2>Endpoints by run time</h2>
+            <div id="epsrt">
+                <ul style="padding:0; list-style:none">
+                    <li ng-repeat="ep in endpointsByRuntime">
+                         <div class="ep-container">
+                             <div class="ep" style="width:{{ep.width}}%;">
+                                <a class="clickable" ng-click="setEndpoint(ep.url)">{{ep.url}}</a>
+                            </div><div class="ep-metric">{{ep.rate}}/min</div>
+                            <div class="ep-submetrics">min: {{ep.min}} max: {{ep.max}} 99%: {{ep.p99}}</div>
+                         </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="col-md-8" id="chart" ng-hide="loading">
+            <div id="overview-charts" ng-hide="selectedEndpoint">
+                <h2>rate/min (one minute avg)</h2>
+                <div><svg id="chart_rate" style="width:100%;height:400px;"></svg></div>
+                <h2>errors/min (status!=200)</h2>
+                <div><svg id="chart_error" style="width:100%;height:150px;"></svg></div>
+            </div>
+            <div id="ep-detail-charts" ng-show="selectedEndpoint">
+                <h2>Request rates for status 200</h2>
+                <div><svg id="chart-dt-rate200" style="width:100%;height:300px;"></svg></div>
+                <h2>Request rates other</h2>
+                <div><svg id="chart-dt-rateother" style="width:100%;height:150px;"></svg></div>
+                <h2>Response times for status 200</h2>
+                <div><svg id="chart-dt-rt200" style="width:100%;height:300px;"></svg></div>
+                <h2>Response times for other status</h2>
+                <div><svg id="chart-dt-rtother" style="width:100%;height:200px;"></svg></div>
+            </div>
+        </div>
+    </div>
+</div>

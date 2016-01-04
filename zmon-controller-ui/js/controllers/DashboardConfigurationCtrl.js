@@ -75,14 +75,6 @@ angular.module('zmon2App').controller('DashboardConfigurationCtrl', ['$scope', '
             $location.path('/dashboards');
         };
 
-        $scope.isTagAndTeamMissing = function() {
-            var teams = JSON.parse($scope.teamsJson);
-            if (!$scope.dashboard.tags && teams.length === 0) {
-                return true;
-            }
-            return false;
-        };
-
         $scope.save = function() {
             if ($scope.ddForm.$valid) {
                 try {

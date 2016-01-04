@@ -248,12 +248,12 @@ var TrialRunCtrl = function ($scope, $interval, timespanFilter, localStorageServ
         $scope.alert = lastTrialRun;
     }
     else {
-        $scope.alert = {
+        $scope.alert = _.extend($scope.alert || {}, {
             entities: [],
             entities_exclude: [],
             parameters: [],
             interval: 120
-        };
+        });
     }
 
     // Load values from querystrings.

@@ -8,5 +8,5 @@ angular.module('zmon2App').directive('ngFocus', function($timeout) {
                 }
             }, true);
         }
-    };
+    }
 });

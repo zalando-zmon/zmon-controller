@@ -40,3 +40,8 @@
     color: #d40018;
     border-color: #d40018;
 }
+
+.alert-is-too-old
+{
+    color: blue;
+}

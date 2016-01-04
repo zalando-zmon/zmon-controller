@@ -54,7 +54,8 @@
 
 <div class="zmon-controls row">
     <div class="col-md-8">
-        <a ng-hide="checkDefinition.status === 'DELETED' || checkDefinition.status === 'INACTIVE'" class="btn btn-primary" ng-class="{'disabled': !userInfo['add-alert-def']}" href="#/alert-definitions/add/{{ checkDefinition.id }}"><i class="fa fa-fw fa-plus"></i> Add New Alert Definition</a>
+        <a class="btn btn-primary" ng-hide="!userInfo['add-alert-def'] || checkDefinition.status === 'DELETED' || checkDefinition.status === 'INACTIVE'" href="#/alert-definitions/add/{{ checkDefinition.id }}"><i class="fa fa-fw fa-plus"></i> Add New Alert Definition</a>
+        <a class="btn btn-primary" ng-show="!userInfo['add-alert-def'] || checkDefinition.status === 'DELETED' || checkDefinition.status === 'INACTIVE'" ng-class="{'disabled-fake': !userInfo['add-alert-def'] || checkDefinition.status === 'DELETED' || checkDefinition.status === 'INACTIVE'}" tooltip="Sorry, we can't create Alerts from inactive Checks." tooltip-placement="right"><i class="fa fa-fw fa-plus"></i> Add New Alert Definition</a>
     </div>
     <div class="col-md-4 text-right">
         <form id="searchbar" class="form-inline">

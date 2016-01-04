@@ -264,11 +264,9 @@ angular.module('zmon2App').controller('CheckChartsCtrl', ['$scope', '$routeParam
 
             params.start_date.setDate(params.start_date.getDate() -1);
 
-            $scope.chartOptionsHour.xaxis.timeformat = "%H:%M";
             if ($scope.useDateRange) {
                 params.start_date = new Date($scope.dates.startDate);
                 params.end_date = new Date($scope.dates.endDate);
-                $scope.chartOptionsHour.xaxis.timeformat = "%d.%m";
             }
 
             params.end_date.setHours(params.end_date.getHours() - 1);
@@ -334,28 +332,43 @@ angular.module('zmon2App').controller('CheckChartsCtrl', ['$scope', '$routeParam
 
         // Concatenates chart data for 1-day and custom-date charts
         var mergeChartData = function(c1, c2) {
-            c1 = sortChartData(c1);
-            c2 = sortChartData(c2);
-            _.each(c1, function(cd1, i) {
-                _.each(c2, function(cd2) {
-                    if ((typeof cd1.label === 'undefined' && typeof cd2.label === 'undefined')
-                        || (typeof cd1.label !== 'undefined' && cd1.label === cd2.label)) {
-                        cd1.data = cd1.data.concat(cd2.data);
-                    }
-                });
-                var customDateGap = $scope.dates.endDate - $scope.dates.startDate;
-                cd1.data = normalizeChartData(cd1.data, $scope.useDateRange ? customDateGap : DAY);
+            var data = {};
+
+            _.each(c1, function(cd1) {
+                data[cd1.label] = {
+                    data: cd1.data,
+                    label: cd1.label,
+                    color: cd1.color
+                }
             });
-            return c1;
+
+            _.each(c2, function(cd2) {
+                if (data[cd2.label]) {
+                    data[cd2.label].data = data[cd2.label].data.concat(cd2.data);
+                } else {
+                    data[cd2.label] = {
+                        label: cd2.label,
+                        data: cd2.data,
+                        color: cd2.color
+                    }
+                }
+            });
+
+            var customDateGap = $scope.dates.endDate - $scope.dates.startDate;
+
+            var arr = [];
+            _.each(data, function(d, label) {
+                d.data = normalizeChartData(d.data, $scope.useDateRange ? customDateGap : DAY);
+                arr.push(d);
+            });
+
+            arr = sortChartData(arr);
+
+            return arr;
         };
 
         // Sort chart data according to their labels
         var sortChartData = function(data) {
-
-            if (typeof data === 'undefined') {
-                return [];
-            }
-
             return data.sort(function(a, b) {
                 if (typeof a.label === 'undefined' || typeof b.label === 'undefined') {
                     return 0;
@@ -370,7 +383,7 @@ angular.module('zmon2App').controller('CheckChartsCtrl', ['$scope', '$routeParam
 
         // Normalize chart data to a specific time gap
         var normalizeChartData = function(data, gap) {
-            if (!(data instanceof Array) && data.length !== 0) {
+            if (!(data instanceof Array) || data.length === 0) {
                 return data;
             }
             var first = data[0][0];
@@ -531,7 +544,7 @@ angular.module('zmon2App').controller('CheckChartsCtrl', ['$scope', '$routeParam
         var formatDate = function(d) {
             var f = '';
             f = [ d.getFullYear(), d.getMonth()+1, d.getDate()  ].join('-');
-            f += 'T' + d.getHours() + ':' + d.getMinutes();
+            f += ' ' + d.getHours() + ':' + d.getMinutes();
             return f;
         };
 
@@ -542,8 +555,8 @@ angular.module('zmon2App').controller('CheckChartsCtrl', ['$scope', '$routeParam
                 var entityData = entity.data[i];
                 for (var j = 0; j < entityData.length; j++) {
                     var serie = entityData[j].data;
-                    for (var i = 0; i < serie.length; i++) {
-                        var point = serie[i];
+                    for (var k = 0; k < serie.length; k++) {
+                        var point = serie[k];
                         if (point.length && point[1]) {
                             var p = point[1];
                             points.push(p);

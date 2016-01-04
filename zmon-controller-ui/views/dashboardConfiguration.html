@@ -43,10 +43,10 @@
         </div>
     </div>
 
-    <div class="form-group inp-tags" ng-class="{'has-error': isTagAndTeamMissing() }">
+    <div class="form-group inp-tags" ng-class="{'has-error':  ddForm.submitted && (ddForm.tags.$error.required || ddForm.tags.$error['non-empty-json']) }">
         <label for="inp-tags" class="col-sm-2 control-label">Filter Tags</label>
         <div class="col-sm-10">
-            <input type="hidden" class="form-control" zmon-select multi="true" tags="true" visible="true" placeholder="No Tags selected" width="100%" default="dashboard.tags" data="allTags" select="addTag(selected)" unselect="removeTag(unselected)" ng-required="!isTagAndTeamMissing()"/>
+            <input name="tags" type="hidden" class="form-control" zmon-select multi="true" tags="true" visible="true" placeholder="No Tags selected" width="100%" default="dashboard.tags" data="allTags" select="addTag(selected)" unselect="removeTag(unselected)" ng-model="dashboard.tags" non-empty-json ng-required="teamsJson === '[]'"/>
         </div>
     </div>
 
@@ -66,10 +66,10 @@
         </div>
     </div>
 
-    <div class="form-group" ng-class="{'has-error': invalidFormat || isTagAndTeamMissing() }">
+    <div class="form-group" ng-class="{'has-error': ddForm.submitted && ( ddForm.teams.$error.required || ddForm.teams.$error['valid-json'] || ddForm.teams.$error['non-empty-json']) }">
         <label for="inp-widgets-team" class="col-sm-2 control-label">Alert Teams</label>
         <div class="col-sm-10">
-            <div id="inp-widgets-team" name="widgets-team" class="code-editor" ng-model="teamsJson" json code-editor ng-required="!isTagAndTeamMissing()"></div>
+            <div id="inp-widgets-team" name="teams" class="code-editor" ng-model="teamsJson" json code-editor non-empty-json non-empty-json-if="!!!dashboard.tags" required></div>
         </div>
     </div>
 
@@ -78,7 +78,7 @@
             <button ng-disabled="(mode == 'edit' && !editable) || (mode == 'clone' && !cloneable)" class="btn btn-primary" ng-click="cancel()">
                 <i class="fa fa-fw fa-times" ></i>Cancel
             </button>
-            <button ng-disabled="(mode == 'edit' && !editable) || (mode == 'clone' && !cloneable) || isTagAndTeamMissing()" class="btn btn-warning" ng-click="save()">
+            <button ng-disabled="(mode == 'edit' && !editable) || (mode == 'clone' && !cloneable)" class="btn btn-warning" ng-click="save()">
                 <i class="fa fa-fw fa-save" ></i>Save
             </button>
         </div>

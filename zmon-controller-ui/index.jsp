@@ -15,9 +15,12 @@
     <link rel="stylesheet" type="text/css" href="styles/dashboard.css?t=${buildTime}" />
     <link rel="stylesheet" type="text/css" href="styles/errors.css?t=${buildTime}" />
     <link rel="stylesheet" type="text/css" href="styles/forms.css?t=${buildTime}" />
+    <link rel="stylesheet" type="text/css" href="styles/performance.css?t=${buildTime}" />
+    <link rel="stylesheet" type="text/css" href="styles/cloud.css?t=${buildTime}" />
     <link rel="stylesheet" type="text/css" href="styles/select2/zmon-select2.css?t=${buildTime}" />
     <link rel="stylesheet" type="text/css" href="styles/select2/select2-bootstrap.css?t=${buildTime}" />
     <link rel="stylesheet" type="text/css" href="styles/select2/select2.css?t=${buildTime}" />
+    <link rel="stylesheet" type="text/css" href="styles/nvd3/nv.d3.min.css?t=${buildTime}" />
 
     <script src="lib/stacktrace/stacktrace.js?time=${buildTime}"></script>
     <script src="lib/jquery/jquery.min.js?time=${buildTime}"></script>
@@ -36,6 +39,7 @@
     <script src="lib/flot/jquery.flot.tooltip.min.js?time=${buildTime}"></script>
     <script src="lib/lodash/lodash.min.js?time=${buildTime}"></script>
     <script src="lib/moment/moment.min.js?time=${buildTime}"></script>
+    <script src="lib/d3/d3.min.js?time=${buildTime}"></script>
 
     <script src="lib/raphael/raphael.2.1.0.min.js?time=${buildTime}"></script>
     <script src="lib/justgage/justgage.1.0.1.js?time=${buildTime}"></script>
@@ -49,6 +53,8 @@
     <script src="lib/angular-debounce/angular-debounce.js?time=${buildTime}" charset="utf-8"></script>
     <script src="lib/select2/select2.min.js?time=${buildTime}" charset="utf-8"></script>
     <script src="lib/colorhash/colorhash.js?time=${buildTime}" charset="utf-8"></script>
+    <script src="lib/d3/d3.min.js?time=${buildTime}" chartset="utf-8"></script>
+    <script src="lib/nvd3/build/nv.d3.min.js?time=${buildTime}" chartset="utf-8"></script>
 </head>
 <body ng-class="activePage">
     <div class="loading-indicator" ng-show="IndexCtrl.getLoadingIndicatorState()">
@@ -68,6 +74,7 @@
                     <ul class="nav navbar-nav">
                         <li ng-class="{'active-page': activePage == 'dashboards'}"><a href="#dashboards">Dashboards</a></li>
                         <security:authorize access="isAuthenticated()">
+                            <li ng-class="{'active-page': activePage == 'cloud'}"><a href="#cloud" >Cloud</a></li>
                             <li ng-class="{'active-page': activePage == 'check-definitions'}"><a href="#check-definitions" >Check defs</a></li>
                             <li ng-class="{'active-page': activePage == 'alert-definitions'}"><a href="#alert-definitions" >Alert defs</a></li>
                             <li ng-class="{'active-page': activePage == 'reports'}" ng-show="IndexCtrl.userInfo['history-report-access']"><a href="#reports" >Reports</a></li>
@@ -91,13 +98,18 @@
                         Initializing status...
                     </span>
                     <span class="app-status">
-                        <a title="ZMON Documentation" target="docs" href="http://zmon.readthedocs.org/">
+                        <a title="ZMON Documentation" target="docs" href="https://zmon-internal-doc.stups.zalan.do/">
                             <i class="fa fa-question-circle fa-lg"></i>
                         </a>
                     </span>
                     <span class="app-status">
                         <a title="Grafana" target="_blank" href="/grafana/">
                             <i class="fa fa-fw fa-bar-chart-o fa-lg"></i>
+                        </a>
+                    </span>
+                    <span class="app-status" ng-show="IndexCtrl.showSupportIcon()">
+                        <a title="ZMON Incident Support Page" target="docs" href="/docs/incident-howto.html">
+                            <i class="fa fa-medkit fa-lg"></i>
                         </a>
                     </span>
                     <security:authorize access="isAnonymous()">
@@ -117,12 +129,12 @@
                             data-history-report-access="${hasHistoryReportAccess}"
                             data-instantaneous-alert-evaluation="${hasInstantaneousAlertEvaluationPermission}">
 
-                            <button type="button" class="auth-user btn btn-default dropdown-toggle" data-toggle="dropdown">
+                            <button type="button" class="auth-user btn btn-default dropdown-toggle" data-toggle="dropdown" popover="Team: {{defaultTeam}}" popover-placement="left" popover-trigger="mouseenter">
                                 ${userName}
                                 <span class="caret"></span>
                             </button>
                             <ul class="dropdown-menu" role="menu">
-                                <li><a href="logout" data-test="logout">Logout</a></li>
+                                <li><a href="logout">Logout</a></li>
                             </ul>
                        </span>
                     </security:authorize>
@@ -149,10 +161,11 @@
 <script src="js/filters/downtimeReasons.js?time=${buildTime}"></script>
 <script src="js/filters/inDisplayedGroup.js?time=${buildTime}"></script>
 <script src="js/filters/encodeUri.js?time=${buildTime}"></script>
-<script src="js/filters/tooltipCapture.js?time=${buildTime}"></script>
+<script src="js/filters/awsName.js?time=${buildTime}"></script>
 <script src="js/directives/priority.js?time=${buildTime}"></script>
 <script src="js/directives/status.js?time=${buildTime}"></script>
 <script src="js/directives/chart.js?time=${buildTime}"></script>
+<script src="js/directives/chartd3.js?time=${buildTime}"></script>
 <script src="js/directives/gauge.js?time=${buildTime}"></script>
 <script src="js/directives/trend.js?time=${buildTime}"></script>
 <script src="js/directives/startStop.js?time=${buildTime}"></script>
@@ -181,6 +194,8 @@
 <script src="js/services/PreconditionsService.js?time=${buildTime}"></script>
 <script src="js/services/LoadingIndicatorService.js?time=${buildTime}"></script>
 <script src="js/controllers/DashboardCtrl.js?time=${buildTime}"></script>
+<script src="js/controllers/CloudCtrl.js?time=${buildTime}"></script>
+<script src="js/controllers/CloudEndpointsCtrl.js?time=${buildTime}"></script>
 <script src="js/controllers/AlertDetailsCtrl.js?time=${buildTime}"></script>
 <script src="js/controllers/AlertDefinitionCtrl.js?time=${buildTime}"></script>
 <script src="js/controllers/CheckDefinitionCtrl.js?time=${buildTime}"></script>
@@ -201,6 +216,7 @@
             $scope.checksPerSecond = 0;
             $scope.serviceStatus = {};
             $scope.checkInvocationsCache = {};
+            $scope.defaultTeam = '(no team)';
 
             this.userInfo = UserInfoService.get();
 
@@ -255,21 +271,29 @@
                 // Get workers detailed status.
                 statusHtml += "<div class='workers'><h6>Workers</h6>";
                 var schedulerHtml = "";
+                var dataHtml ="";
 
                 _.each(currentStatus.workers, function(worker) {
-                    if(worker.name.indexOf('s-')!=0) {
-                        statusHtml += "<div>";
-                        statusHtml += "<span class='name'>" + worker.name + "</span>";
-                        statusHtml += "<span class='calls'>" + worker.checksPerSecond.toFixed(2) + "/s</span>";
-                        statusHtml += "<span class='last'> " + worker.lastExecutionTime + "</span>";
-                        statusHtml += "</div>";
-                    }
-                    else {
+                    if (worker.name.startsWith('s-')) {
                         schedulerHtml += "<div>";
                         schedulerHtml += "<span class='name'>" + worker.name.substr(2) + "</span>";
                         schedulerHtml += "<span class='calls'>" + worker.checksPerSecond.toFixed(2) + "/s</span>";
                         schedulerHtml += "<span class='last'> " + worker.lastExecutionTime + "</span>";
                         schedulerHtml += "</div>";
+                    }
+                    else if (worker.name.startsWith('d-')) {
+                        dataHtml += "<div>";
+                        dataHtml += "<span class='name'>" + worker.name.substr(2) + "</span>";
+                        dataHtml += "<span class='calls'>" + worker.checksPerSecond.toFixed(2) + "/s</span>";
+                        dataHtml += "<span class='last'> " + worker.lastExecutionTime + "</span>";
+                        dataHtml += "</div>";
+                    }
+                    else {
+                        statusHtml += "<div>";
+                        statusHtml += "<span class='name'>" + worker.name + "</span>";
+                        statusHtml += "<span class='calls'>" + worker.checksPerSecond.toFixed(2) + "/s</span>";
+                        statusHtml += "<span class='last'> " + worker.lastExecutionTime + "</span>";
+                        statusHtml += "</div>";
                     }
                 });
 
@@ -278,6 +302,11 @@
                 // Get workers detailed status.
                 statusHtml += "<div class='workers'><h6>Schedulers</h6>";
                 statusHtml += schedulerHtml;
+                statusHtml += "</div>";
+
+                // Get workers detailed status.
+                statusHtml += "<div class='workers'><h6>Data Services</h6>";
+                statusHtml += dataHtml;
                 statusHtml += "</div>";
 
                 // Get queues detailed status.
@@ -298,7 +327,7 @@
             };
 
             // Start refreshing workers / queue status.
-            $interval(refreshStatus, 2000);
+            $interval(refreshStatus, 5000);
             refreshStatus();
 
             String.prototype.format = function() {
@@ -318,7 +347,6 @@
                     return value;
                 });
             };
-
         }]);
 </script>
 </html>

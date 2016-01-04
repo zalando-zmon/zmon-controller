@@ -3,11 +3,11 @@ angular.module('zmon2App').controller('DashboardCtrl', ['$scope', '$log', '$rout
 
         $scope.dashboardId = $routeParams.dashboardId || localStorageService.get('dashboardId');
 
-/*        if (!$routeParams.dashboardId && $scope.dashboardId) {
+        if (!$routeParams.dashboardId && $scope.dashboardId) {
             var p = '/dashboards/view/' + $scope.dashboardId;
             return $location.path(p);
         }
-*/
+
         $scope.DashboardCtrl = this;
 
         // Set in parent scope which page is active for the menu styling
@@ -158,7 +158,7 @@ angular.module('zmon2App').controller('DashboardCtrl', ['$scope', '$log', '$rout
                 CommunicationService.getDashboard($scope.dashboardId).then(function(data) {
 
                     // Set default alert teams
-                    if (data.alert_teams.length) {
+                    if (data.alert_teams && data.alert_teams.length) {
                         $scope.team = data.alert_teams.toString();
                         $scope.filter.team = $scope.team;
                     }
@@ -242,10 +242,15 @@ angular.module('zmon2App').controller('DashboardCtrl', ['$scope', '$log', '$rout
             var checkId = alert.alert_definition.check_definition_id;
 
             _.each(entitiesWithChart, function(entity) {
-                CommunicationService.getCheckResults(checkId, entity).then(
+                CommunicationService.getCheckResultsChart(checkId, entity).then(
                     function(response) {
 
-                        $scope.charts[alertId] = MainAlertService.transformResultsToChartData(response)[entity];
+                        // Format to array of objects for d3 processing
+                        var r = [];
+                        _.each(response.values, function(data, key) {
+                            r.push(data);
+                        });
+                        $scope.charts[alertId] = r;
 
                         // Store the response per checkId & per entity; to be used by the widgets
                         // so they don't have to do async getCheckResults() calls each one by itself

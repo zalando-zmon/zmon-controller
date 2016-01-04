@@ -19,12 +19,7 @@ angular.module('zmon2App').filter('prettify', function() {
 
             // Convert to string in case of object
             if (typeof value === 'object') {
-                var args = [];
-                _.each(value, function(v, k) {
-                    args.push(k + ' = ' + v);
-                });
-                value = args.join(', ');
-
+                value = JSON.stringify(value);
             } else if (typeof value === 'number') {
 
                 // It's a number; if integer return as is,
@@ -37,7 +32,7 @@ angular.module('zmon2App').filter('prettify', function() {
                 return value.toString();
 
             }
-
+            
             if (value.length <= length) {
                 // It's a string but shorter than max allowed length; no truncate; return intact;
                 return value;

@@ -631,6 +631,15 @@ angular.module('zmon2App').controller('AlertDetailsCtrl', ['$scope', '$location'
             );
         };
 
+        this.timestampIsOld = function(entity) {
+            var now = new Date()/1000;
+            var interval = $scope.AlertDetailsCtrl.checkDefinition.interval;
+            if ( entity.result.ts < now - 300 && now - entity.result.ts > 3*interval) {
+                return true;
+            }
+            return false;
+        };
+
         /**
          * Returns the content to be displayed for this type of history entry
          * "historyType" is one of:   ALERT_{STARTED|ENDED}, ALERT_ENTITY_{STARTED|ENDED}, DOWNTIME_{STARTED|ENDED}, DOWNTIME_SCHEDULED, TRIAL_RUN_SCHEDULED,

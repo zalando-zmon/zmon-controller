@@ -1,103 +1,42 @@
 {
-    "name": "workflow",
-    "version": "0.0.1",
-    "description": "Angular app workflaw",
-    "author": "Ivan Kamatovic <ivan.kamatovic@zalando.de>",
-    "contributors": [],
-    "repository": {
-        "type": "git",
-        "url": ""
-    },
-    "keywords": ["angular"],
-    "scripts": {
-        "postinstall": "./node_modules/protractor/bin/webdriver-manager update --standalone"
-    },
-    "devDependencies": {
-        "browserify": "6.3.2",
-        "vinyl-source-stream": "1.0.0",
-        "vinyl-buffer": "1.0.0",
-        "browserify-ng-html2js": "0.3.1",
-
-        "gulp": "3.8.10",
-        "gulp-concat": "2.4.1",
-        "gulp-jshint": "1.4.2",
-        "gulp-sourcemaps": "1.2.2",
-        "gulp-uglify": "1.0.1",
-        "gulp-beautify": "1.1.1",
-        "gulp-util": "3.0.1",
-        "gulp-watch": "2.0.0",
-        "gulp-concat": "2.4.2",
-        "gulp-minify-html": "0.1.7",
-        "gulp-ng-html2js": "0.1.8",
-        "pretty-hrtime": "0.2.2",
-        "event-stream": "3.1.7",
-
-        "jasmine-node": "1.14.5",
-        "jasmine-reporters": "1.0.1",
-        "jshint-stylish": "~1.0.0",
-
-        "karma": "0.12.0",
-        "karma-browserstack-launcher": "0.1.1",
-        "karma-chrome-launcher": "0.1.4",
-        "karma-firefox-launcher": "0.1.3",
-        "karma-firefox-launcher": "0.1.3",
-        "karma-phantomjs-launcher": "0.1.4",
-        "karma-jasmine": "0.1.5",
-        "karma-junit-reporter": "0.2.2",
-        "karma-ng-scenario": "0.1.0",
-        "karma-sauce-launcher": "0.2.10",
-        "karma-script-launcher": "0.1.0",
-
-        "protractor": "1.4.0",
-
-        "angular": "1.3.8",
-        "angular-route": "1.3.8",
-        "angular-resource": "1.3.8",
-        "angular-sanitize": "1.3.8",
-        "angular-mocks": "1.3.8",
-
-        "jquery": "2.1.1",
-        "jquery-ui": "1.10.5",
-        "select2": "3.5.1-browserify",
-        "bootstrap": "3.3.1"
-    },
-    "gulpConfiguration": {
-        "build": {
-            "deps": ["html2js"],
-            "bundleName": "zack.bundle.min.js",
-            "entries": ["./application/source/application.js", "./application/source/router.js", "./.tmp/templates.js"],
-            "destination": "./application/dist/",
-            "debug": true,
-            "uglify": true
-        },
-        "watch": {
-            "src": "application/source/**/*"
-        },
-        "test": {
-            "acceptance": {
-                "local": {
-                    "tests": ["./tests/acceptance/**/*.spec.js"],
-                    "config": "./tests/acceptance/local.conf.js",
-                    "address": "http://localhost:8080"
-                },
-                "remote": {
-                    "tests": ["./tests/acceptance/**/*.spec.js"],
-                    "config": "./tests/acceptance/remote.conf.js",
-                    "address": "SERVER_URL"
-                }
-            },
-            "unit": {
-                "local": {
-                    "tests": ["./tests/unit/**/*.spec.js"],
-                    "config": "./tests/unit/local.conf.js",
-                    "address": "http://localhost:8080"
-                },
-                "remote": {
-                    "tests": ["./tests/unit/**/*.spec.js"],
-                    "config": "./tests/unit/remote.conf.js",
-                    "address": "SERVER_URL"
-                }
-            }
-        }
-    }
+  "name": "zmon2",
+  "version": "0.0.1",
+  "description": "",
+  "scripts": {
+    "start": "cd ../../../ && mvn -Djavax.net.ssl.trustStore=${JAVA_HOME}/lib/security/jssecacerts tomcat7:run",
+    "lint": "./node_modules/gulp/bin/gulp.js lint",
+    "test": "./node_modules/gulp/bin/gulp.js protractor",
+    "selenium": "./node_modules/protractor/bin/webdriver-manager update --standalone && ./node_modules/protractor/bin/webdriver-manager start"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://stash.zalando.net/scm/platform/zmon2.git"
+  },
+  "author": "Emanuel Lauria",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://stash.zalando.net/scm/platform/zmon2/issues"
+  },
+  "homepage": "https://stash.zalando.net/scm/platform/zmon2/",
+  "dependencies": {
+    "gulp": "^3.9.0",
+    "jasmine-reporters": "~0.2.1",
+    "protractor": "2.3.0"
+  },
+  "devDependencies": {
+    "eslint": "^1.2.1",
+    "eslint-config-angular": "^0.3.0",
+    "eslint-plugin-angular": "^0.9.0",
+    "gulp-eslint": "^1.0.0",
+    "gulp-protractor": "^1.0.0",
+    "jasmine-core": "^2.3.4",
+    "karma": "^0.13.10",
+    "karma-chrome-launcher": "^0.2.0",
+    "karma-coverage": "^0.5.2",
+    "karma-firefox-launcher": "^0.1.6",
+    "karma-jasmine": "^0.3.6",
+    "karma-phantomjs-launcher": "^0.2.1",
+    "karma-spec-reporter": "0.0.20",
+    "phantomjs": "^1.9.18"
+  }
 }

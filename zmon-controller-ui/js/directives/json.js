@@ -5,9 +5,13 @@
 angular.module('zmon2App').directive('json', function() {
     return {
         require: 'ngModel',
+        scope: {
+            nonEmptyIf: "=nonEmptyJsonIf",
+            model: "=ngModel"
+        },
         link: function(scope, elem, attrs, ctrl) {
-            var value;
-            scope.$watch(attrs.ngModel, function() {
+            var setValidation = function() {
+                var value;
                 // Initially input is considered valid
                 ctrl.$setValidity('valid-json', true);
                 ctrl.$setValidity('non-empty-json', true);
@@ -25,20 +29,20 @@ angular.module('zmon2App').directive('json', function() {
                     // Useful for template alerts.
                     if (value !== '') {
 
-                        JSON.parse(value);
-
-                        // Second check: if the additional 'non-empty-json' attribute is passed, make sure it's not empty JSON
                         var normalizedJsonText = JSON.stringify(JSON.parse(value));
-                        if ('nonEmptyJson' in attrs && (normalizedJsonText === '[]' || normalizedJsonText === '[{}]' || normalizedJsonText === '{}')) {
+
+                        if ('nonEmptyJson' in attrs && scope.nonEmptyIf && (normalizedJsonText === '[]' || normalizedJsonText === '[{}]' || normalizedJsonText === '{}')) {
                             ctrl.$setValidity('non-empty-json', false);
                             return;
                         }
-                    }
+                    };
                 } catch (e) {
                     ctrl.$setValidity('valid-json', false);
                     ctrl.$setValidity('non-empty-json', false);
                 }
-            });
+            };
+            scope.$watch('model', setValidation);
+            scope.$watch('nonEmptyIf', setValidation);
         }
     };
 });

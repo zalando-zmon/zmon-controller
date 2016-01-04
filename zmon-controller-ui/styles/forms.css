@@ -67,7 +67,7 @@
 
 .zmon-data-table th.name-col
 {
-    width: 10%;
+    width: 20%;
 }
 
 .zmon-data-table th.downtime-col
@@ -85,9 +85,10 @@
     width: 8%;
 }
 
-.zmon-data-table th.last-run-col
+.zmon-data-table th.last-run-col,
+.zmon-data-table th.active-since-col
 {
-    width: 8%;
+    width: 200px;
 }
 
 .zmon-data-table th.captures-col

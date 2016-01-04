@@ -8,12 +8,20 @@ angular.module('zmon2App').controller('AlertDefinitionEditCtrl', ['$scope', '$ro
         $scope.entityFilter = {};
         $scope.entityExcludeFilter = {};
         $scope.alertParameters = [];
-        $scope.paramTypes = ['string', 'int', 'boolean', 'date'];
+        $scope.paramTypes = ['string', 'int', 'boolean'];
         $scope.allTags = [];
         $scope.defaultEntitiesFilter = undefined;
         $scope.defaultEntitiesExcludeFilter = undefined;
         $scope.defaultNotifications = undefined;
         var userInfo = UserInfoService.get();
+
+        // Filter out old teams (contain a '/', like Platform/Software, while R.A. teams don't)
+        // and select last one as default
+        $scope.teams = userInfo.teams.split(',') || [];
+        $scope.defaultTeam = _.filter($scope.teams,
+                function(t) {
+                    return t.indexOf('/') === -1;
+                }).slice(-1)[0] || '';
 
         // Entity filter types initialized by default with GLOBAL (which is not provided by backend as separate type) and the rest comes from backend
         $scope.entityFilter.types = [{
@@ -85,10 +93,6 @@ angular.module('zmon2App').controller('AlertDefinitionEditCtrl', ['$scope', '$ro
             {
                 'value': 'bool',
                 'label': 'Boolean'
-            },
-            {
-                'value': 'date',
-                'label': 'Date'
             }
         ];
 
@@ -128,32 +132,38 @@ angular.module('zmon2App').controller('AlertDefinitionEditCtrl', ['$scope', '$ro
         $scope.save = function() {
             if ($scope.adForm.$valid) {
                 try {
+
                     if ($scope.alertDefinition.template && $scope.entityFilter.textEntityFilters === '') {
                         delete $scope.alertDefinition.entities;
                     } else {
                         $scope.alertDefinition.entities = JSON.parse($scope.entityFilter.textEntityFilters);
                     }
+
                     if ($scope.alertDefinition.template && $scope.entityExcludeFilter.textEntityFilters === '') {
                         delete $scope.alertDefinition.entities_exclude;
                     } else {
                         $scope.alertDefinition.entities_exclude = JSON.parse($scope.entityExcludeFilter.textEntityFilters);
                     }
+
                     if ($scope.alertDefinition.template && ($scope.notificationsJson == undefined || $scope.notificationsJson == '')) {
                         delete $scope.alertDefinition.notifications;
                     } else {
                         $scope.alertDefinition.notifications = JSON.parse($scope.notificationsJson);
                     }
+
                     if ($scope.oParams.length === 0) {
                         delete $scope.alertDefinition.parameters;
                     } else {
                         $scope.alertDefinition.parameters = $scope.formParametersObject();
                     }
+
                     var alert = $scope.alertDefinition;
 
                     // Set period to empty string, in case it wasn't defined and its not being inherited.
                     if (typeof alert.period === 'undefined') {
                         alert.period = "";
                     }
+
                     // In case of an inherited alert, only send diff
                     if ($scope.alertDefinition.parent_id || $scope.mode === 'inherit') {
                         alert = $scope.getInheritanceDiff();
@@ -222,8 +232,8 @@ angular.module('zmon2App').controller('AlertDefinitionEditCtrl', ['$scope', '$ro
                     if ($scope.alertDefinition === null) {
                         $scope.alertDefinition = {
                             check_definition_id: $scope.checkDefinition.id,
-                            team: $scope.defaultTeam || "",
-                            responsible_team: $scope.defaultRespTeam || "",
+                            team: $scope.defaultTeam,
+                            responsible_team: $scope.defaultRespTeam,
                             entities: [],
                             entities_exclude: [],
                             notifications: [],
@@ -245,9 +255,6 @@ angular.module('zmon2App').controller('AlertDefinitionEditCtrl', ['$scope', '$ro
                 $scope.alertParameters = [];
                 _.each(_.keys(data.parameters).sort(), function(name) {
                     $scope.oParams.push(name);
-                    if (data.parameters[name].type === 'date') {
-                        data.parameters[name].value = new Date(data.parameters[name].value);
-                    }
                     $scope.alertParameters.push(_.extend({'name': name}, data.parameters[name]));
                 });
 
@@ -374,11 +381,6 @@ angular.module('zmon2App').controller('AlertDefinitionEditCtrl', ['$scope', '$ro
                         }
                         if (param.type === 'float') {
                             val = parseFloat(param.value);
-                        }
-                        if (param.type === 'date') {
-                            var d = new Date(val);
-                            // FIXME Date should be seconds since epoch. Current format is temporary because python implementation needs to be changed to seconds also.
-                            val = d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate() + 'T00:00:00.000Z';
                         }
 
                         parameters[param.name] = {
@@ -616,7 +618,6 @@ angular.module('zmon2App').controller('AlertDefinitionEditCtrl', ['$scope', '$ro
         // Add mode
         if ($scope.checkDefinitionId) {
             $scope.mode = 'add';
-            $scope.defaultTeam = userInfo.teams.split(',')[0];
             $scope.defaultRespTeam = $scope.defaultTeam;
             $scope.defaultEntitiesFilter = [];
             $scope.defaultEntitiesExcludeFilter = [];
@@ -664,7 +665,7 @@ angular.module('zmon2App').controller('AlertDefinitionEditCtrl', ['$scope', '$ro
             $scope.mode = 'clone';
             $scope.getAlertDefinition($scope.cloneFromAlertDefinitionId, function() {
                 delete $scope.alertDefinition.id;
-                $scope.alertDefinition.team = userInfo.teams.split(',')[0] || '';
+                $scope.alertDefinition.team = $scope.defaultTeam;
                 var duplicateCount = 0;
                 while (!CommunicationService.isValidAlertName($scope.alertDefinition.name)) {
                     duplicateCount++;

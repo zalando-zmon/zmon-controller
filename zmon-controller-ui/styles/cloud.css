@@ -1,0 +1,135 @@
+.header-top
+{
+    margin-top: 30px;
+}
+
+/* team view */
+.card
+{
+    float:left;
+    height:180px;
+    width:180px;
+    border:1px solid #ccc;
+    margin:5px;
+    padding:5px;
+    box-shadow: 3px 3px 2px -2px grey;
+}
+
+.card .number
+{
+    font-size: 24px;
+}
+
+.card .lbl
+{
+    font-size: 16px;
+    color: #999;
+    padding-left: 5px;
+}
+
+.card h4
+{
+    border-bottom: 1px solid #eee;
+    padding-bottom: 5px;
+}
+
+/* apps view */
+.app
+{
+    padding-left:10px;
+    padding-right:30px;
+    margin-right:10px;
+    margin-left:10px;
+    overflow:hidden;
+    padding-bottom: 10px;
+}
+
+.app-row
+{
+    padding:10px;
+    margin:10px;
+    margin-top: 0;
+    margin-bottom: 0;
+    overflow:hidden;
+    border-left: 1px solid white;
+    border-right: 1px solid white;
+    border-top:1px solid #eee;
+}
+
+.app-row h4
+{
+    line-height: 35px;
+    margin: 0;
+}
+
+.app-row .num-container
+{
+    height:35px;
+    background-color:#eee;
+    padding:0;
+    line-height:35px;
+    text-align:center;
+}
+
+.card:hover,
+.app-row:hover
+{
+    border: 1px solid #f08532;
+}
+
+.app-row:hover + .app-row {
+    border-top: none;
+}
+
+.app-row:last
+{
+    border-bottom: 1px solid white;
+}
+
+.num-header
+{
+    padding: 0;
+    text-align: center;
+}
+
+.error ul li
+{
+    padding-left: 0;
+}
+
+.warning {
+    color: red;
+}
+/* Performance charts */
+.ep
+{
+    text-align:left;
+    padding: 3px;
+    background-color:#FE9A2E;
+    white-space: nowrap
+}
+
+.ep a
+{
+    color: #000000;
+}
+
+.ep-container
+{
+    display:block;
+    position:relative;
+    padding:2px;
+}
+
+.ep-metric
+{
+    position:absolute;
+    top: 4px;
+    right: 0;
+}
+
+.ep-submetrics
+{
+    font-size:11px
+}
+

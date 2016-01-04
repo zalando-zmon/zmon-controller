@@ -99,6 +99,11 @@ angular.module('zmon2App', [
                     templateUrl: 'views/history.html',
                     controller: 'HistoryCtrl'
                 })
+                .when('/cloud', {
+                    templateUrl: 'views/cloud.html',
+                    controller: 'CloudCtrl',
+                    reloadOnSearch: false
+                })
                 .otherwise({
                     redirectTo: '/'
                 });
@@ -106,7 +111,7 @@ angular.module('zmon2App', [
     ])
 // Add app constants.
 .constant('APP_CONST', {
-    'DASHBOARD_REFRESH_RATE': 3000, //in ms
+    'DASHBOARD_REFRESH_RATE': 5000, //in ms
     'DASHBOARD_WIDGETS_REFRESH_RATE': 10000, //in ms
     'ALERT_DETAILS_REFRESH_RATE': 10000,
     'INFINITE_SCROLL_VISIBLE_ENTITIES_INCREMENT': 50, // increment by this the # of visible items of infinite-scroll

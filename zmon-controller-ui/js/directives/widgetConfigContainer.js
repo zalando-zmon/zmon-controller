@@ -61,14 +61,20 @@ angular.module('zmon2App').directive('widgetConfigContainer', ['$compile', '$log
                         return;
                     }
                     if (formIsVisible) {
-                        return scope.widgets = JSON.parse(scope.widgetsJson);
+                        try {
+                            return scope.widgets = JSON.parse(scope.widgetsJson);
+                        } catch (e) {
+                        }
                     }
                     scope.widgetsJson = angular.toJson(scope.widgets, true);
                 });
 
                 scope.$watch('widgetsJson', function() {
                     if (scope.widgetsJson) {
-                        scope.widgets = JSON.parse(scope.widgetsJson);
+                        try {
+                            scope.widgets = JSON.parse(scope.widgetsJson);
+                        } catch (e) {
+                        }
                     }
                 }, true);
 

@@ -63,7 +63,6 @@ angular.module('zmon2App').controller('AlertDefinitionCtrl', ['$scope', '$window
 
                     // Stop loading indicator!
                     LoadingIndicatorService.stop();
-                    $scope.initialLoading = false;
                 }
             );
         };
@@ -139,7 +138,10 @@ angular.module('zmon2App').controller('AlertDefinitionCtrl', ['$scope', '$window
 
         // Set team filter on load from userInfo
         if (!_.isEmpty(userInfo.teams)) {
-            $scope.teamFilter = userInfo.teams.split(',')[0];
+            $scope.teamFilter = _.filter(userInfo.teams.split(","),
+                function(t) {
+                    return t.indexOf('/') === -1;
+                }).slice(-1)[0] || null;
         }
 
         // Override teamFilter if specified on queryString

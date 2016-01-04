@@ -30,15 +30,16 @@ angular.module('zmon2App').directive('chart', [ '$timeout', '$window', function(
                         tickColor: 'rgba(255,255,255,0.3)',
                         labelWidth: 40,
                         tickFormatter: function(value) {
-                            if (value >= 1000000000) {
+                            if (value >= 1000000000 || value <= -1000000000) {
                                 return (value / 1000000000).toFixed(1) + "G";
                             }
-                            if (value >= 1000000) {
+                            if (value >= 1000000 || value <= -1000000) {
                                 return (value / 1000000).toFixed(1) + "M";
                             }
-                            if (value >= 1000) {
+                            if (value >= 1000 || value <= -1000) {
                                 return (value / 1000).toFixed(1) + "K";
                             }
+
                             return value;
                         },
                         font: {

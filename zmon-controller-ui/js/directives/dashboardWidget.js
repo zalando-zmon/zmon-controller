@@ -167,8 +167,12 @@ angular.module('zmon2App').directive('dashboardWidget', ['CommunicationService',
                                     $scope.values = jsonPath($scope.values, "$." + $scope.config.jsonPath);
                                 }
 
+                                var valuesContainNumbers = $scope.values
+                                                            .map(_.isNumber)
+                                                            .some(_.identity);
+
                                 $scope.lastValue = $scope.values[0];
-                                $scope.maxValue = _.max($scope.values);
+                                $scope.maxValue = valuesContainNumbers ? _.max($scope.values) : $scope.lastValue;
 
                                 if ($scope.config.options.format) {
                                     $scope.maxValue = $scope.config.options.format.format($scope.maxValue);

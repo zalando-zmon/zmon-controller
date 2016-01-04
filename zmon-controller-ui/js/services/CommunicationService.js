@@ -10,13 +10,14 @@ angular.module('zmon2App').factory('CommunicationService', ['$http', '$q', '$log
          */
         service.getAllAlerts = function(filter) {
             var params = {};
+            var timeout = 20000;
             if (filter.team) {
                 params.team = filter.team;
             }
             if (filter.tags) {
                 params.tags = filter.tags;
             }
-            return doHttpCall("GET", "rest/allAlerts", params);
+            return doHttpCall("GET", "rest/allAlerts", params, null, timeout);
         };
 
         /*
@@ -52,6 +53,7 @@ angular.module('zmon2App').factory('CommunicationService', ['$http', '$q', '$log
             var params = {
                 "check_id": checkId
             };
+            var timeout = 5000;
             if (entityId) {
                 PreconditionsService.isNumber(entityId);
                 params.entity = entityId;
@@ -60,7 +62,28 @@ angular.module('zmon2App').factory('CommunicationService', ['$http', '$q', '$log
                 PreconditionsService.isNumber(limitCount);
                 params.limit = limitCount;
             }
-            return doHttpCall("GET", "rest/checkResults", params);
+            return doHttpCall("GET", "rest/checkResults", params, null, timeout);
+        };
+
+        /*
+         * Returns chart data of check results for passed checkId with optional limitCount & entityId filter
+         */
+        service.getCheckResultsChart = function(checkId, entityId, limitCount) {
+            PreconditionsService.isNotEmpty(checkId);
+            PreconditionsService.isNumber(checkId);
+            var params = {
+                "check_id": checkId
+            };
+            var timeout = 5000;
+            if (entityId) {
+                PreconditionsService.isNumber(entityId);
+                params.entity = entityId;
+            }
+            if (limitCount) {
+                PreconditionsService.isNumber(limitCount);
+                params.limit = limitCount;
+            }
+            return doHttpCall("GET", "rest/checkResultsChart", params, null, timeout);
         };
 
         service.getCheckResultsForAlert = function(alertId, limitCount) {
@@ -92,7 +115,26 @@ angular.module('zmon2App').factory('CommunicationService', ['$http', '$q', '$log
         };
 
         service.getKairosResults = function(options) {
-            return doHttpCall("POST", "rest/kairosDBPost", options, null, null);
+            return doHttpCall("POST", "rest/kairosDBPost", options);
+        };
+
+        service.getCloudViewEndpoints = function(params) {
+            return doHttpCall("GET", "rest/cloud-view-endpoints", params);
+        };
+
+        service.getCloudData = function(type) {
+            var t = {
+                type: type
+            };
+            var params = {
+                query: JSON.stringify(t)
+            };
+
+            return doHttpCall("GET", "rest/api/v1/entities/", params);
+        };
+
+        service.getCheckResultsFiltered = function(id, filter) {
+            return doHttpCall("GET", "rest/lastResults/"+id+"/"+filter);
         };
 
         service.getAlertDefinitions = function(team) {
@@ -106,7 +148,7 @@ angular.module('zmon2App').factory('CommunicationService', ['$http', '$q', '$log
                     alertIdCache[item.id] = item.name;
                 });
             };
-            return doHttpCall("GET", "rest/alertDefinitions", params, null, postSuccessProcessing);
+            return doHttpCall("GET", "rest/alertDefinitions", params, null, null, postSuccessProcessing);
         };
 
         service.getAlertDefinition = function(id) {
@@ -119,7 +161,7 @@ angular.module('zmon2App').factory('CommunicationService', ['$http', '$q', '$log
                 alertNameCache[data.name] = 1;
                 alertIdCache[data.id] = data.name;
             };
-            return doHttpCall("GET", "rest/alertDefinition", params, null, postSuccessProcessing);
+            return doHttpCall("GET", "rest/alertDefinition", params, null, null, postSuccessProcessing);
         };
 
         service.getAlertDefinitionNode = function(id) {
@@ -132,7 +174,7 @@ angular.module('zmon2App').factory('CommunicationService', ['$http', '$q', '$log
                 alertNameCache[data.name] = 1;
                 alertIdCache[data.id] = data.name;
             };
-            return doHttpCall("GET", "rest/alertDefinitionNode", params, null, postSuccessProcessing);
+            return doHttpCall("GET", "rest/alertDefinitionNode", params, null, null, postSuccessProcessing);
         };
 
         service.getAlertDefinitionChildren = function(id) {
@@ -165,7 +207,7 @@ angular.module('zmon2App').factory('CommunicationService', ['$http', '$q', '$log
                 });
                 return tags;
             }
-            return doHttpCall("GET", "rest/allTags", null, null, postSuccessProcessing);
+            return doHttpCall("GET", "rest/allTags", null, null, null, postSuccessProcessing);
         };
 
         service.getDashboard = function(id) {
@@ -179,15 +221,6 @@ angular.module('zmon2App').factory('CommunicationService', ['$http', '$q', '$log
 
         service.getAllDashboards = function() {
             return doHttpCall("GET", "rest/allDashboards");
-        };
-
-        service.deleteDashboard = function(id) {
-            PreconditionsService.isNotEmpty(id);
-            PreconditionsService.isNumber(id);
-            var params = {
-                "id": id
-            };
-            return doHttpCall("DELETE", "rest/deleteDashboard", params);
         };
 
         service.getCheckDefinitions = function(team) {
@@ -426,7 +459,7 @@ angular.module('zmon2App').factory('CommunicationService', ['$http', '$q', '$log
          * Covers all http methods; the arg postSuccessProcessing is a function which will receive as single argument
          * the upon success response data in case it needs to go through additional processing before resolving the promise
          */
-        function doHttpCall(httpMethod, endpoint, payload, extraHeaders, postSuccessProcessing) {
+        function doHttpCall(httpMethod, endpoint, payload, extraHeaders, timeout, postSuccessProcessing) {
             PreconditionsService.isNotEmpty(httpMethod);
             PreconditionsService.isHTTPMethod(httpMethod);
             PreconditionsService.isNotEmpty(endpoint);
@@ -457,6 +490,10 @@ angular.module('zmon2App').factory('CommunicationService', ['$http', '$q', '$log
 
             if (extraHeaders) {
                 httpConfig.headers = extraHeaders;
+            }
+
+            if (timeout) {
+                httpConfig.timeout = timeout;
             }
 
             $http(httpConfig).success(function(response, status, headers, config) {

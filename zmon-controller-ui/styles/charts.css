@@ -51,3 +51,29 @@ span.select-boxes
     right: 10px;
     color: #ebb129;
 }
+
+/* d3 charts */
+
+.axis path, .axis line {
+  fill: none;
+  shape-rendering: crispEdges;
+}
+
+.axis text, .ts
+{
+    fill: rgba(220,220,220,0.9);
+    font-size: 13px;
+}
+
+.area
+{
+    fill: rgba(220,220,220,0.4);
+}
+
+.vlines, .hlines
+{
+    stroke: rgb(200,200,200);
+    shape-rendering:crispEdges;
+    stroke-width:2px;
+    stroke-opacity:0.1;
+}
