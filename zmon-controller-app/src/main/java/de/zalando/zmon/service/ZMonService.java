@@ -14,6 +14,7 @@ import de.zalando.zmon.domain.CheckDefinitionsDiff;
 import de.zalando.zmon.domain.CheckResults;
 import de.zalando.zmon.domain.DefinitionStatus;
 import de.zalando.zmon.domain.ExecutionStatus;
+import de.zalando.zmon.rest.domain.CheckChartResult;
 
 // TODO split into multiple services
 public interface ZMonService {
@@ -43,4 +44,8 @@ public interface ZMonService {
     void deleteDetachedCheckDefinitions();
 
     JsonNode getEntityProperties();
+
+    CheckChartResult getChartResults(int checkId, String entity, int limit);
+
+    CheckChartResult getFilteredLastResults(String checkId, String filter, int limit);
 }
