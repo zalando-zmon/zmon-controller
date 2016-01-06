@@ -1,6 +1,8 @@
 package de.zalando.zmon.service.impl;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.NumericNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.base.Preconditions;
@@ -8,6 +10,7 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.SetMultimap;
 import de.zalando.zmon.diff.CheckDefinitionsDiffFactory;
 import de.zalando.zmon.domain.*;
+import de.zalando.zmon.rest.domain.*;
 import de.zalando.zmon.event.ZMonEventType;
 import de.zalando.zmon.exception.SerializationException;
 import de.zalando.zmon.persistence.AlertDefinitionSProcService;
@@ -395,6 +398,111 @@ public class ZMonServiceImpl implements ZMonService {
         }
 
         return checkResults;
+    }
+
+    @Override
+    public CheckChartResult getChartResults(int checkId, String entity, int limit) {
+        CheckChartResult result = new CheckChartResult();
+        final Jedis jedis = redisPool.getResource();
+        List<String> values = null;
+        try {
+             values = jedis.lrange(RedisPattern.checkResult(checkId, entity), 0, limit);
+        } finally {
+            redisPool.returnResource(jedis);
+        }
+
+        if(null==values) {
+            return result;
+        }
+
+        for(String value : values) {
+            try {
+                JsonNode node = mapper.readTree(value);
+                JsonNode v = node.get("value");
+
+                // we only handle one level of result nesting here for now
+                if(v instanceof  ObjectNode) {
+                    Iterator<String> i = v.fieldNames();
+                    while(i.hasNext()) {
+                        String k = i.next();
+                        JsonNode mv = v.get(k);
+
+                        if(mv instanceof NumericNode) {
+                            ArrayNode o = mapper.createArrayNode();
+                            o.add(node.get("ts"));
+                            o.add(mv);
+
+                            List<JsonNode> list = result.values.get(k);
+                            if(null==list) {
+                                list =new ArrayList<>(limit);
+                                result.values.put(k, list);
+                            }
+                            list.add(o);
+                        }
+                    }
+                }
+                else if(v instanceof NumericNode) {
+                    ArrayNode o = mapper.createArrayNode();
+                    o.add(node.get("ts"));
+                    o.add(v);
+
+                    List<JsonNode> list = result.values.get("");
+                    if(null==list) {
+                        list =new ArrayList<>(limit);
+                        result.values.put("", list);
+                    }
+                    list.add(o);
+                }
+
+            } catch (IOException e) {
+
+            }
+        }
+
+        return result;
+    }
+
+    @Override
+    public CheckChartResult getFilteredLastResults(String checkId, String filter, int limit) {
+        Jedis jedis = null;
+        List<ResponseHolder<String,List<String>>> redisResults = new ArrayList<>();
+
+        try {
+            jedis = redisPool.getResource();
+            Set<String> members = jedis.smembers("zmon:checks:"+checkId);
+            Set<String> filteredMembers = new HashSet<>();
+            for(String m : members) {
+                if(m.indexOf(filter) > -1) {
+                    filteredMembers.add(m);
+                }
+            }
+
+            Pipeline p = jedis.pipelined();
+            for(String m : filteredMembers) {
+                redisResults.add(ResponseHolder.create(m, p.lrange("zmon:checks:" + checkId + ":" + m, 0, limit)));
+            }
+            p.sync();
+        }
+        finally {
+            redisPool.returnResource(jedis);
+        }
+
+        CheckChartResult cr = new CheckChartResult();
+
+        for(ResponseHolder<String, List<String>> rh : redisResults) {
+            try {
+                if(null != rh.getResponse().get() && rh.getResponse().get().size()>0) {
+                    List<JsonNode> vs = new ArrayList<>(1);
+                    vs.add(mapper.readTree(rh.getResponse().get().get(0)));
+                    cr.values.put(rh.getKey(), vs);
+                }
+            }
+            catch(IOException e) {
+                LOG.error("Could not read data from redis for {}", rh.getKey());
+            }
+        }
+
+        return cr;
     }
 
 }

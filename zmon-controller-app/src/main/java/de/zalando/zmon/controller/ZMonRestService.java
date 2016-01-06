@@ -59,6 +59,7 @@ import de.zalando.zmon.domain.CheckHistoryGroupResult;
 import de.zalando.zmon.domain.CheckHistoryResult;
 import de.zalando.zmon.domain.CheckResults;
 import de.zalando.zmon.domain.ExecutionStatus;
+import de.zalando.zmon.rest.domain.*;
 import de.zalando.zmon.service.ZMonService;
 import org.kairosdb.client.builder.DataFormatException;
 import org.kairosdb.client.response.grouping.TagGroupResult;
@@ -113,6 +114,14 @@ public class ZMonRestService extends AbstractZMonController {
             @RequestParam(value = "limit", defaultValue = "20") final int limit) {
 
         return new ResponseEntity<>(service.getCheckResults(checkId, entity, limit), HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "checkResultsChart", method = RequestMethod.GET)
+    public ResponseEntity<CheckChartResult> getChartResults(
+            @RequestParam(value = "check_id", required = true) final int checkId,
+            @RequestParam(value = "entity", required = false) final String entity,
+            @RequestParam(value = "limit", defaultValue = "20") final int limit) {
+        return new ResponseEntity<>(service.getChartResults(checkId, entity, limit), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/checkAlertResults", method = RequestMethod.GET)
@@ -386,5 +395,13 @@ public class ZMonRestService extends AbstractZMonController {
         r.put("timed_out", false);
 
         return r;
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    @RequestMapping(value = "lastResults/{checkId}/{filter}", method = RequestMethod.GET)
+    public ResponseEntity<CheckChartResult> getLastResults(@PathVariable(value="checkId") String checkId, @PathVariable(value="filter") String filter, @RequestParam(value="limit", defaultValue="1") int limit) throws ZMonException {
+        CheckChartResult cr = service.getFilteredLastResults(checkId, filter, limit);
+        return new ResponseEntity<>(cr, HttpStatus.OK);
     }
 }
