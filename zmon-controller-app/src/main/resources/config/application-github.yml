@@ -1,8 +1,8 @@
 zmon:
   oauth2:
     sso:
-      client-id: d843ddae9fe32bdaab6c
-      client-secret: 31ef34a9fa0542ec2ac743a4a81962a71483d5c1
+      client-id: YourGitHubClientID
+      client-secret: YourGitHubClientSecret
   signup:
     github:
       # Specify users who are authorized to log in
