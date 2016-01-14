@@ -49,3 +49,8 @@ div.demo:after {
     width: 55px;
   }
 }
+
+a#clickme
+{
+    float: right;
+}
