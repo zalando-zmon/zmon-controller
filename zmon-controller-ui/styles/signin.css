@@ -1,0 +1,56 @@
+div.demo {
+  color: #432B21;
+  text-align: left;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+div.demo:after {
+  overflow: hidden;
+  display: inline-block;
+  vertical-align: bottom;
+  -moz-animation: ellipsis 2s infinite;
+  -webkit-animation:  ellipsis 2s infinite;
+  -o-animation:  ellipsis 2s infinite;
+  animation:  ellipsis 2s infinite;
+  content: "\2026"; /* ascii code for ellipsis */
+}
+@keyframes ellipsis {
+  from {
+    width: 2px;
+  }
+  to {
+    width: 55px;
+  }
+}
+
+@-moz-keyframes ellipsis {
+  from {
+    width: 2px;
+  }
+  to {
+    width: 55px;
+  }
+}
+
+@-webkit-keyframes ellipsis {
+  from {
+    width: 2px;
+  }
+  to {
+    width: 55px;
+  }
+}
+
+@-o-keyframes ellipsis {
+  from {
+    width: 2px;
+  }
+  to {
+    width: 55px;
+  }
+}
+
+a#clickme
+{
+    float: right;
+}
