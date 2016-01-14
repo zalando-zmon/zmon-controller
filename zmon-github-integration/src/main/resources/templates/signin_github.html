@@ -8,25 +8,41 @@
         <meta charset="utf-8" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-
-		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous"></link>
-		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous"></link>
-
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous"></link>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous"></link>
+        <link rel="stylesheet" type="text/css" href="asset/css/zalando-bootstrap.css?t=${buildTime}" />
+        <link rel="stylesheet" type="text/css" href="styles/main.css" />
+        <link rel="stylesheet" type="text/css" href="styles/forms.css" />
+        <link rel="stylesheet" type="text/css" href="styles/signin.css" />
         <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" />
     </head>
 
     <body>
 
-        <div class="container">
-           	<p class="u-success" th:if="${param.logout}">
-                You have been logged out.
-            </p>
-            <h2>Signin via GitHub.com</h2>
+        <div>
+            <nav class="navbar navbar-inverse" role="navigation" id="navi">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="/#/">ZMON 2.0</a>
+                </div>
+            </nav>
 
-			<a class="btn btn-default" href="#" th:href="@{/auth/github}" role="button">CLICK ME</a>
-        </div><!-- /.container -->
+            <div class="container">
+                <form class="form-signin">
+                    <h3 class="redirect-header">Not logged in yet?</h3>
+                    <h5><div class="demo">You will be redirected to Github for authentication, just wait 5 seconds or click to continue</div></h5>
+                    <a id="clickme" class="btn btn-primary" href="#" th:href="@{/auth/github}" role="button">CONTINUE</a>
+                </form>
+            </div><!-- /.container -->
+        </div>
 
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+        <script type="text/javascript">
+            setTimeout(function() {
+                var a = document.getElementById("clickme");
+                a.click();
+            }, 5000);
+        </script>
+
     </body>
 </html>
