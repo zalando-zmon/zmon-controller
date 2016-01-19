@@ -15,14 +15,6 @@ angular.module('zmon2App').controller('AlertDefinitionEditCtrl', ['$scope', '$ro
         $scope.defaultNotifications = undefined;
         var userInfo = UserInfoService.get();
 
-        // Filter out old teams (contain a '/', like Platform/Software, while R.A. teams don't)
-        // and select last one as default
-        $scope.teams = userInfo.teams.split(',') || [];
-        $scope.defaultTeam = _.filter($scope.teams,
-                function(t) {
-                    return t.indexOf('/') === -1;
-                }).slice(-1)[0] || '';
-
         // Entity filter types initialized by default with GLOBAL (which is not provided by backend as separate type) and the rest comes from backend
         $scope.entityFilter.types = [{
             "type": "GLOBAL"

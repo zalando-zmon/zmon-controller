@@ -138,10 +138,7 @@ angular.module('zmon2App').controller('AlertDefinitionCtrl', ['$scope', '$window
 
         // Set team filter on load from userInfo
         if (!_.isEmpty(userInfo.teams)) {
-            $scope.teamFilter = _.filter(userInfo.teams.split(","),
-                function(t) {
-                    return t.indexOf('/') === -1;
-                }).slice(-1)[0] || null;
+            $scope.teamFilter = userInfo.teams.split(',')[0];
         }
 
         // Override teamFilter if specified on queryString
