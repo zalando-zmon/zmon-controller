@@ -1,7 +1,7 @@
 var search = element(by.model('alertDetailsSearch'));
 
 var details = element(by.css('[ng-click="showDetails = !showDetails"]'));
-//var history = element(by.css('[data-test=history]'));
+var history = element(by.css('[heading="History"] a'));
 var detailsContainer = element(by.css('.details .panel-body'));
 
 exports.searchAlert = function(input, cb) {
@@ -18,13 +18,11 @@ exports.openDetails = function(cb) {
     });
 };
 
-/* FIXME
 exports.openHistoryTab = function(cb) {
     history.click().then(function() {
-        ptor.findElements(by.css('[data-test=lastDayButton]')).then(cb);
+        browser.findElements(by.css('[ng-click="AlertDetailsCtrl.fetchHistoryLastNDays(1)"]')).then(cb);
     });
 };
-*/
 
 exports.checkDetails = function(cb) {
     details.click().then(function() {

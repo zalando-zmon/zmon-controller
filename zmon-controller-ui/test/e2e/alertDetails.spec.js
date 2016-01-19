@@ -31,13 +31,11 @@ describe('Testing alert details page', function() {
         });
     });
 
-    /* FIXME
     it('should open history tab', function() {
         alertDetails.openHistoryTab(function(elements) {
             expect(elements.length).toBe(1);
         });
     });
-    */
 
     it('should show all alert details', function() {
         alertDetails.checkDetails(function(details) {
