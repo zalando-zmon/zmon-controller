@@ -13,7 +13,7 @@ gulp.task('lint', function() {
 
 gulp.task('protractor', function() {
     return gulp
-            .src(['./tests/acceptance/*.spec.js'])
+            .src(['./test/e2e/*.spec.js'])
             .pipe(protractor({
                 configFile: 'test/protractor.config.js'
             }))
@@ -22,7 +22,7 @@ gulp.task('protractor', function() {
 
 gulp.task('karma', function(done) {
     new Server({
-        configFile: __dirname + '/test/karma.config.js',
+        configFile: __dirname + '/tests/karma.config.js',
         singleRun: true
     }, function() { done(); }).start();
 });
