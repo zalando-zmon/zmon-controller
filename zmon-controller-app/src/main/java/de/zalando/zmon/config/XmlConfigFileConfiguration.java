@@ -13,7 +13,6 @@ import org.springframework.context.annotation.PropertySource;
 @Configuration
 @PropertySource("classpath:/db_api_version.properties")
 @PropertySource("classpath:/zmon.properties")
-@ImportResource({"backendContext.xml"})
+@ImportResource({"classpath:/backendContext.xml"})
 public class XmlConfigFileConfiguration {
-
 }
