@@ -1,5 +1,3 @@
-var ptor = protractor.getInstance();
-
 var headerScheduleDowntimesCheckbox = element(by.id('select-all-schedule-downtimes'));
 
 var checkedheaderScheduleDowntimesCheckbox = element.all(by.id('.select-all-schedule-downtimes:checked'));
@@ -38,7 +36,10 @@ exports.uncheckFirstScheduleDowntimeCheckbox = function(cb) {
 
 exports.openSetDowntimesModal = function(cb) {
     headerScheduleDowntimesCheckbox.click().then(function() {
-        setDowntimesButton.click().then(cb(setDowntimesModal.isDisplayed()));
+        setDowntimesButton.click().then(function() {
+            browser.driver.sleep(1000);
+            cb(setDowntimesModal.isDisplayed());
+        });
     });
 };
 
@@ -50,7 +51,7 @@ exports.create1hDowntime = function(cb) {
             setDowntimeModalByDurationReasonTextarea.sendKeys('reason for 1h downtime');
             setDowntimeModalOKButton.click().then(function() {
                 var ready = false;
-                ptor.wait(function() {
+                browser.wait(function() {
                     downtimesTabHeader.getText().then(function(text) {
                         if (text === 'Downtimes (1)') {
                             ready = true;
@@ -69,7 +70,7 @@ exports.deleteAllDowntimes = function(cb) {
         headerDeleteDowntimesCheckbox.click().then(function() {
             deleteDowntimesButton.click().then(function() {
                 var ready = false;
-                ptor.wait(function() {
+                browser.wait(function() {
                     downtimesTabHeader.getText().then(function(text) {
                         if (text === 'Downtimes (0)') {
                             ready = true;

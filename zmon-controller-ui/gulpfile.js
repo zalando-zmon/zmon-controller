@@ -13,7 +13,7 @@ gulp.task('lint', function() {
 
 gulp.task('protractor', function() {
     return gulp
-            .src(['./test/e2e/*.spec.js'])
+            .src(['./tests/acceptance/*.spec.js'])
             .pipe(protractor({
                 configFile: 'test/protractor.config.js'
             }))

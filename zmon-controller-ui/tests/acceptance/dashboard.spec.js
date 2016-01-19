@@ -1,11 +1,16 @@
-var ptor = protractor.getInstance();
-
 var dashboard = require('./behaviours/dashboard.behaviour');
+var auth = require('./behaviours/auth.behaviour');
 
 describe('Testing dashboard features', function() {
 
     beforeEach(function() {
         browser.get('#/dashboards/view/1');
+    });
+
+    it('User should be logged in', function() {
+        auth.login(function(loggedIn) {
+            expect(loggedIn).toBe(true);
+        });
     });
 
     it('should show only one alert', function() {

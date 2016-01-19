@@ -17,7 +17,7 @@ exports.config = {
     // specs: ['./e2e/**/*.spec.js'],
 
     // URL of project
-    baseUrl: 'http://localhost:8080/',
+    baseUrl: 'https://localhost:8443',
 
     // Options to be passed to Jasmine-node.
     jasmineNodeOpts: {

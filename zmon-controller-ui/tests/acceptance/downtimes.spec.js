@@ -32,12 +32,5 @@ describe('Testing downtimes', function() {
             expect(modalDisplayed).toBe(true);
         });
     });
-
-    it('User should be logged out', function() {
-        auth.logout(function(loggedOut) {
-            expect(loggedOut).toBe(true);
-        });
-    });
-
 });
 

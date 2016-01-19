@@ -3,7 +3,6 @@
   "version": "0.0.1",
   "description": "",
   "scripts": {
-    "start": "cd ../../../ && mvn -Djavax.net.ssl.trustStore=${JAVA_HOME}/lib/security/jssecacerts tomcat7:run",
     "lint": "./node_modules/gulp/bin/gulp.js lint",
     "test": "./node_modules/gulp/bin/gulp.js protractor",
     "selenium": "./node_modules/protractor/bin/webdriver-manager update --standalone && ./node_modules/protractor/bin/webdriver-manager start"
