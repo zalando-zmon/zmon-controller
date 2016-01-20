@@ -10,9 +10,9 @@ angular.module('zmon2App').controller('AlertDefinitionEditCtrl', ['$scope', '$ro
         $scope.alertParameters = [];
         $scope.paramTypes = ['string', 'int', 'boolean'];
         $scope.allTags = [];
-        $scope.defaultEntitiesFilter = undefined;
-        $scope.defaultEntitiesExcludeFilter = undefined;
-        $scope.defaultNotifications = undefined;
+        $scope.defaultEntitiesFilter = [];
+        $scope.defaultEntitiesExcludeFilter = [];
+        $scope.defaultNotifications = [];
         var userInfo = UserInfoService.get();
 
         // Entity filter types initialized by default with GLOBAL (which is not provided by backend as separate type) and the rest comes from backend
