@@ -1,5 +1,5 @@
-angular.module('zmon2App').controller('DashboardCtrl', ['$scope', '$log', '$routeParams', 'localStorageService', '$location', 'MainAlertService', 'CommunicationService', 'DowntimesService', 'LoadingIndicatorService', 'APP_CONST',
-    function($scope, $log, $routeParams, localStorageService, $location, MainAlertService, CommunicationService, DowntimesService, LoadingIndicatorService, APP_CONST) {
+angular.module('zmon2App').controller('DashboardCtrl', ['$scope', '$log', '$routeParams', 'localStorageService', '$window', '$location', 'MainAlertService', 'CommunicationService', 'DowntimesService', 'APP_CONST',
+    function($scope, $log, $routeParams, localStorageService, $window, $location, MainAlertService, CommunicationService, DowntimesService, APP_CONST) {
 
         $scope.dashboardId = $routeParams.dashboardId || localStorageService.get('dashboardId');
 

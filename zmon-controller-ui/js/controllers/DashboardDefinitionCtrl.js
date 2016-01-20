@@ -1,5 +1,5 @@
-angular.module('zmon2App').controller('DashboardDefinitionCtrl', ['$scope', 'localStorageService', '$routeParams', '$location', 'MainAlertService', 'CommunicationService', 'FeedbackMessageService', 'APP_CONST', 'UserInfoService',
-    function($scope, localStorageService, $routeParams, $location, MainAlertService, CommunicationService, FeedbackMessageService, APP_CONST, UserInfoService) {
+angular.module('zmon2App').controller('DashboardDefinitionCtrl', ['$scope', 'localStorageService', '$location', 'MainAlertService', 'CommunicationService', 'UserInfoService',
+    function($scope, localStorageService, $location, MainAlertService, CommunicationService, UserInfoService) {
 
         var STORAGE_KEY = 'dashboardId';
 

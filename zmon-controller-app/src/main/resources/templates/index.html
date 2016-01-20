@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html ng-app="zmon2App" ng-controller="IndexCtrl"
-	xmlns:th="http://www.thymeleaf.org"
-	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
-	xmlns:data="https://github.com/mxab/thymeleaf-extras-data-attribute">
+    xmlns:th="http://www.thymeleaf.org"
+    xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+    xmlns:data="https://github.com/mxab/thymeleaf-extras-data-attribute">
 <head>
     <meta charset="utf-8"></meta>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"></meta>
@@ -107,7 +107,7 @@
                         </a>
                     </span>
                     <span sec:authorize="isAnonymous()" class="auth">
-                    	<a class="auth-action" ng-href="/login.jsp">Log in</a>
+                        <a class="auth-action" ng-href="/login.jsp">Log in</a>
                     </span>
                     <span sec:authorize="isAuthenticated()" class="auth"
                         data:user="${userName}"
