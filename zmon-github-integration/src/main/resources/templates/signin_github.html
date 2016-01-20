@@ -28,9 +28,15 @@
 
             <div class="container">
                 <form class="form-signin">
-                    <h3 class="redirect-header">Not logged in yet?</h3>
-                    <h5><div class="demo">You will be redirected to Github for authentication, just wait 5 seconds or click to continue</div></h5>
-                    <a id="clickme" class="btn btn-primary" href="#" th:href="@{/auth/github}" role="button">CONTINUE</a>
+                    <div th:if="${param.logout}">
+                        <h3 class="redirect-header">You have been logged out</h3>
+                        <h5><div class="demo">Want to log in again? click <a href="/signin">here</a>.</div></h5>
+                    </div>
+                    <div th:if="!${param.logout}">
+                        <h3 class="redirect-header">Not logged in yet?</h3>
+                        <h5><div class="demo">You will be redirected to Github for authentication, just wait 5 seconds or click to continue</div></h5>
+                        <a id="clickme" class="btn btn-primary" href="#" th:href="@{/auth/github}" role="button">CONTINUE</a>
+                    </div>
                 </form>
             </div><!-- /.container -->
         </div>
@@ -40,7 +46,9 @@
         <script type="text/javascript">
             setTimeout(function() {
                 var a = document.getElementById("clickme");
-                a.click();
+                if (document.location.search.indexOf('logout') === -1) {
+                    a.click();
+                }
             }, 5000);
         </script>
 
