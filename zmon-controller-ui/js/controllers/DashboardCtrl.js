@@ -46,7 +46,7 @@ angular.module('zmon2App').controller('DashboardCtrl', ['$scope', '$log', '$rout
                 $scope.toggleCompactView(isCompact);
 
                 // If no showWidgets is set on local storage, check if dashboard has widgets and show them by default.
-                if ($scope.showWidgets === null) {
+                if ($scope.showWidgets === null && $scope.widgetsConf) {
                     $scope.showWidgets = ($scope.widgetsConf.length > 0);
                 }
             });
