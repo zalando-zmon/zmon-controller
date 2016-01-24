@@ -39,6 +39,8 @@ public interface ZMonService {
 
     CheckDefinition createOrUpdateCheckDefinition(CheckDefinitionImport checkDefinition);
 
+    void deleteCheckDefinition(CheckDefinitionImport checkDefinition);
+
     void deleteCheckDefinition(String userName, String name, String owningTeam);
 
     void deleteDetachedCheckDefinitions();

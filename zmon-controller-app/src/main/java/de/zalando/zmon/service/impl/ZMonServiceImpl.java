@@ -205,12 +205,17 @@ public class ZMonServiceImpl implements ZMonService {
     }
 
     @Override
+    public void deleteCheckDefinition(final CheckDefinitionImport checkDefinition) {
+        deleteCheckDefinition(checkDefinition.getLastModifiedBy(), checkDefinition.getName(), checkDefinition.getOwningTeam());
+    }
+
+    @Override
     public void deleteCheckDefinition(final String userName, final String name, final String owningTeam) {
         Preconditions.checkNotNull(userName);
         Preconditions.checkNotNull(name);
         Preconditions.checkNotNull(owningTeam);
 
-        LOG.info("Deleting check definition with name {} and team {}", name, owningTeam);
+        LOG.info("Deleting check definition with name '{}' and team '{}'", name, owningTeam);
 
         final CheckDefinition checkDefinition = checkDefinitionSProc.deleteCheckDefinition(userName, name, owningTeam);
 
