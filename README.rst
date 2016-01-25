@@ -21,8 +21,6 @@ Please use the `main ZMON repository`_ to start a Vagrant demo box.
 
 Make sure the provided Vagrant-Box is up and all services are running.
 
-Update your GitHub ``client-id`` and ``client-secret`` in ``zmon-controller-app/src/main/config/application-github.yml``.
-
 .. code-block:: bash
 
     $ ./mvnw clean install
