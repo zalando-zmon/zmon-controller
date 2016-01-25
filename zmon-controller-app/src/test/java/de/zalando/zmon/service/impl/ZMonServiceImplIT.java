@@ -17,7 +17,6 @@ import org.junit.runner.RunWith;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -246,6 +245,25 @@ public class ZMonServiceImplIT {
 
         MatcherAssert.assertThat(allCheckDefinitionsAfter.getCheckDefinitions(),
             Matchers.not(Matchers.hasItem(CheckDefinitionIsEqual.equalTo(newCheckDefinition))));
+    }
+
+    @Test
+    public void testDeleteExistingCheckDefinition() throws Exception {
+
+        // create a new check
+        final CheckDefinitionImport newCheckDefinitionImport = checkImportGenerator.generate();
+        final CheckDefinition newCheckDefinition = service.createOrUpdateCheckDefinition(newCheckDefinitionImport);
+        newCheckDefinition.setStatus(DefinitionStatus.DELETED);
+
+        // delete the check definition
+        service.deleteCheckDefinition(newCheckDefinitionImport);
+
+        // test if the check definition is available
+        final List<CheckDefinition> checkDefinitions = service.getCheckDefinitions(null,
+                Collections.singletonList(newCheckDefinition.getId()));
+
+        MatcherAssert.assertThat(checkDefinitions,
+                Matchers.contains(CheckDefinitionIsEqual.equalTo(newCheckDefinition)));
     }
 
     @Test

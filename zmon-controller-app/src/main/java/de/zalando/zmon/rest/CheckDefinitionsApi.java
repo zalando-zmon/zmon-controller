@@ -39,6 +39,14 @@ public class CheckDefinitionsApi extends AbstractZMonController {
         return zMonService.createOrUpdateCheckDefinition(checkDefinition);
     }
 
+    @RequestMapping(method = RequestMethod.DELETE)
+    @ResponseStatus(HttpStatus.OK)
+    public void deleteCheckDef(@Valid @RequestBody(required = true)
+            final CheckDefinitionImport checkDefinition) throws ZMonException {
+
+        zMonService.deleteCheckDefinition(checkDefinition);
+    }
+
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
