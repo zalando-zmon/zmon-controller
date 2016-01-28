@@ -33,3 +33,6 @@ server:
 zmon:
     eventlog:
         url: http://localhost:8081/
+    kairosdb:
+        enabled: true
+        url: http://localhost:38083/

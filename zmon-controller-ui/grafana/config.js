@@ -3,7 +3,7 @@
 // must be set before Grafana is run for the first time.
 
 define(['settings'], function(Settings) {
-  
+
 
   return new Settings({
 
@@ -71,11 +71,11 @@ define(['settings'], function(Settings) {
       datasources: {
         kairosdb: {
           type: 'kairosdb',
-          url: "http://localhost:38080",
+          url: document.location.origin,
         },
         elasticsearch: {
           type: 'elasticsearch',
-          url: "http://localhost:38080/rest",
+          url: document.location.origin + "/rest",
           index: 'grafana',
           grafanaDB: true,
         }

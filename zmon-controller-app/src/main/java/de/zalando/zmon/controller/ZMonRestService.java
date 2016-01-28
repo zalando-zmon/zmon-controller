@@ -16,6 +16,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import de.zalando.zmon.config.KairosDBProperties;
 import de.zalando.zmon.exception.ZMonException;
 import de.zalando.zmon.persistence.GrafanaDashboardSprocService;
 import de.zalando.zmon.security.permission.DefaultZMonPermissionService;
@@ -74,7 +75,7 @@ public class ZMonRestService extends AbstractZMonController {
     private ZMonService service;
 
     @Autowired
-    private KairosDBConfig kairosDBConfig;
+    private KairosDBProperties kairosDBProperties;
 
     @RequestMapping(value = "/status", method = RequestMethod.GET)
     public ResponseEntity<ExecutionStatus> getStatus() {
@@ -143,15 +144,14 @@ public class ZMonRestService extends AbstractZMonController {
 
         response.setContentType("application/json");
 
-        if ( !kairosDBConfig.isEnabled() ) {
+        if ( !kairosDBProperties.isEnabled() ) {
             writer.write("");
             return;
         }
 
         final Executor executor = Executor.newInstance();
 
-        final String kairosDBURL = "http://" + kairosDBConfig.getHost() + ":" + kairosDBConfig.getPort()
-                + "/api/v1/datapoints/query";
+        final String kairosDBURL = kairosDBProperties.getUrl() + "/api/v1/datapoints/query";
 
         final String r = executor.execute(Request.Post(kairosDBURL).useExpectContinue().bodyString(node.toString(),
                                          ContentType.APPLICATION_JSON)).returnContent().asString();
@@ -166,15 +166,14 @@ public class ZMonRestService extends AbstractZMonController {
 
         response.setContentType("application/json");
 
-        if ( !kairosDBConfig.isEnabled() ) {
+        if ( !kairosDBProperties.isEnabled() ) {
             writer.write("");
             return;
         }
 
         final Executor executor = Executor.newInstance();
 
-        final String kairosDBURL = "http://" + kairosDBConfig.getHost() + ":" + kairosDBConfig.getPort()
-                + "/api/v1/datapoints/query/tags";
+        final String kairosDBURL = kairosDBProperties.getUrl()  + "/api/v1/datapoints/query/tags";
 
         final String r = executor.execute(Request.Post(kairosDBURL).useExpectContinue().bodyString(node.toString(),
                 ContentType.APPLICATION_JSON)).returnContent().asString();
@@ -188,13 +187,12 @@ public class ZMonRestService extends AbstractZMonController {
 
         response.setContentType("application/json");
 
-        if ( !kairosDBConfig.isEnabled() ) {
+        if ( !kairosDBProperties.isEnabled() ) {
             writer.write("");
             return;
         }
 
-        final String kairosDBURL = "http://" + kairosDBConfig.getHost() + ":" + kairosDBConfig.getPort()
-                + "/api/v1/metricnames";
+        final String kairosDBURL = kairosDBProperties.getUrl()  + "/api/v1/metricnames";
 
         final String r = Request.Get(kairosDBURL).useExpectContinue().execute().returnContent().asString();
 
@@ -215,7 +213,7 @@ public class ZMonRestService extends AbstractZMonController {
             @RequestParam(value = "end_date", required = false) final Long endDate) throws URISyntaxException,
         IOException {
 
-        if ( !kairosDBConfig.isEnabled() ) {
+        if ( !kairosDBProperties.isEnabled() ) {
             return new ResponseEntity<>(new CheckHistoryResult(),HttpStatus.METHOD_NOT_ALLOWED);
         }
 
@@ -251,7 +249,7 @@ public class ZMonRestService extends AbstractZMonController {
             metric.addAggregator(AggregatorFactory.createAverageAggregator(aggregate, TimeUnit.MINUTES));
         }
 
-        final HttpClient client = new HttpClient("http://" + kairosDBConfig.getHost() + ":" + kairosDBConfig.getPort());
+        final HttpClient client = new HttpClient(kairosDBProperties.getUrl().toString());
         try {
             final Long queryStart = System.currentTimeMillis();
             final QueryResponse response = client.query(builder);
