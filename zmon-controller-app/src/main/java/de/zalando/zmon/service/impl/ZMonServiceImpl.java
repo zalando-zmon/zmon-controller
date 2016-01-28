@@ -165,19 +165,16 @@ public class ZMonServiceImpl implements ZMonService {
             teamList.add(DBUtil.prefix(team));
         }
 
-        LOG.info("for status : {}, teamList : {}", status, teamList.toString());
         return checkDefinitionSProc.getCheckDefinitionsByOwningTeam(status, teamList);
     }
 
     @Override
     public CheckDefinitions getCheckDefinitions(final DefinitionStatus status) {
-    	LOG.info("for status : {}", status);
         return checkDefinitionSProc.getAllCheckDefinitions(status);
     }
 
     @Override
     public List<CheckDefinition> getCheckDefinitionsById(final int id) {
-    	LOG.info("for id : {}", id);
         return checkDefinitionSProc.getCheckDefinitions(null, Arrays.asList(id));
     }
 

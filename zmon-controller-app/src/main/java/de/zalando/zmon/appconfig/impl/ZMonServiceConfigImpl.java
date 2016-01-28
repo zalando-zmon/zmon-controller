@@ -15,13 +15,4 @@ public class ZMonServiceConfigImpl implements ZMonServiceConfig {
         return false;
     }
 
-    @Override
-    public int getEventLogPort() {
-        return 8081;
-    }
-
-    @Override
-    public String getEventLogHost() {
-        return "localhost";
-    }
 }
