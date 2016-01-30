@@ -1,4 +1,4 @@
-# Installation and running tests (ZMON 2.0)
+# Installation and running tests (ZMON)
 
 ## INSTALLATION (common for Protractor e2e + Karma Unit tests)
 
