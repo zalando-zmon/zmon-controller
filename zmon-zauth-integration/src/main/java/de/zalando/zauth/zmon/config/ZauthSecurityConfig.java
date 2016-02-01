@@ -53,8 +53,7 @@ public class ZauthSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(final WebSecurity web) throws Exception {
-        web.ignoring().antMatchers("/logo.png", "/favicon.ico", "/static-resources/**", "/asset/**", "/styles/**",
-            "/css/**", "/js/**");
+        web.ignoring().antMatchers("/logo.png", "/favicon.ico", "/asset/**", "/styles/**", "/js/**");
     }
 
     @Override

@@ -58,7 +58,7 @@ import redis.clients.jedis.Pipeline;
 @Service
 public class AlertServiceImpl implements AlertService {
 
-    private static final Logger LOG = LoggerFactory.getLogger(AlertServiceImpl.class);
+    private final Logger log = LoggerFactory.getLogger(AlertServiceImpl.class);
 
 //    private static final EventLogger EVENT_LOG = EventLogger.getLogger(AlertServiceImpl.class);
 
@@ -114,7 +114,7 @@ public class AlertServiceImpl implements AlertService {
 
     @Override
     public AlertDefinition deleteAlertDefinition(final int id) throws ZMonException {
-        LOG.info("Deleting alert definition with id '{}'", id);
+        log.info("Deleting alert definition with id '{}'", id);
 
         final AlertDefinitionOperationResult operationResult = alertDefinintionSProc.deleteAlertDefinition(id)
                                                                                     .throwExceptionOnFailure();
@@ -344,7 +344,7 @@ public class AlertServiceImpl implements AlertService {
     @Override
     public AlertComment addComment(final AlertComment comment) throws ZMonException {
         Preconditions.checkNotNull(comment, "comment");
-        LOG.info("Adding new comment to alert definition '{}'", comment.getAlertDefinitionId());
+        log.info("Adding new comment to alert definition '{}'", comment.getAlertDefinitionId());
 
         final AlertComment result = this.alertDefinintionSProc.addAlertComment(comment).getEntity();
 
@@ -361,7 +361,7 @@ public class AlertServiceImpl implements AlertService {
 
     @Override
     public void deleteAlertComment(final int id) {
-        LOG.info("Deleting comment with id '{}'", id);
+        log.info("Deleting comment with id '{}'", id);
 
         final AlertComment comment = alertDefinintionSProc.deleteAlertComment(id);
 

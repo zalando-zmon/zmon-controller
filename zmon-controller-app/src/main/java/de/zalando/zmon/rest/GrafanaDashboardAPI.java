@@ -36,7 +36,7 @@ public class GrafanaDashboardAPI {
     @Autowired
     ObjectMapper mapper;
 
-    private static Logger LOG = LoggerFactory.getLogger(GrafanaDashboardAPI.class);
+    private Logger log = LoggerFactory.getLogger(GrafanaDashboardAPI.class);
 
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
@@ -45,7 +45,7 @@ public class GrafanaDashboardAPI {
         String title = grafanaData.get("title").asText();
         String dashboard = mapper.writeValueAsString(grafanaData.get("dashboard"));
 
-        LOG.info("dashboard: {} {}", title, dashboard);
+        log.info("Saving Grafana dashboard \"{}\"..", title);
         grafanaService.createOrUpdateGrafanaDashboard(id, title, dashboard, authService.getUserName());
     }
 
@@ -55,7 +55,7 @@ public class GrafanaDashboardAPI {
     public JsonNode getDashboard(@PathVariable(value="id") String id) throws ZMonException, IOException {
         List<GrafanaDashboardSprocService.GrafanaDashboard> dashboards = grafanaService.getGrafanaDashboard(id);
         if(dashboards.isEmpty()) {
-            LOG.info("no dashboard found for id {}", id);
+            log.info("No Grafana dashboard found for id {}", id);
             return null;
         }
 

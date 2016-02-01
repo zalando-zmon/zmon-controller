@@ -54,7 +54,6 @@ import com.fasterxml.jackson.databind.node.LongNode;
 
 import com.google.common.collect.Lists;
 
-import de.zalando.zmon.appconfig.KairosDBConfig;
 import de.zalando.zmon.domain.CheckDefinition;
 import de.zalando.zmon.domain.CheckHistoryGroupResult;
 import de.zalando.zmon.domain.CheckHistoryResult;
@@ -69,7 +68,7 @@ import org.kairosdb.client.response.grouping.TagGroupResult;
 @RequestMapping(value="/rest")
 public class ZMonRestService extends AbstractZMonController {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ZMonRestService.class);
+    private final Logger log = LoggerFactory.getLogger(ZMonRestService.class);
 
     @Autowired
     private ZMonService service;
@@ -255,10 +254,11 @@ public class ZMonRestService extends AbstractZMonController {
             final QueryResponse response = client.query(builder);
             final Long queryEnd = System.currentTimeMillis();
 
-            LOG.info("Querying kairosdb for check/entity {}/{} in {}ms aggregate: {} {} range: {} - {}", checkId,
-                entityId, queryEnd - queryStart, aggregate, aggregateUnit,
-                builder.getStartAbsolute() != null ? builder.getStartAbsolute() : builder.getStartRelative(),
-                builder.getEndAbsolute() != null ? builder.getEndAbsolute() : builder.getEndRelative());
+            // TODO: consider changing the log level to DEBUG here, not sure why we need INFO..
+            log.info("Querying KairosDB for check/entity {}/{} in {}ms aggregate: {} {} range: {} - {}", checkId,
+                    entityId, queryEnd - queryStart, aggregate, aggregateUnit,
+                    builder.getStartAbsolute() != null ? builder.getStartAbsolute() : builder.getStartRelative(),
+                    builder.getEndAbsolute() != null ? builder.getEndAbsolute() : builder.getEndRelative());
 
             final CheckHistoryResult r = new CheckHistoryResult();
             r.entityId = entityId;
@@ -321,7 +321,7 @@ public class ZMonRestService extends AbstractZMonController {
         String title = grafanaData.get("title").asText();
         String dashboard = grafanaData.get("dashboard").asText();
 
-        LOG.info("dashboard: {} {}", title, dashboard);
+        log.info("Saving Grafana dashboard \"{}\"..", title);
         grafanaService.createOrUpdateGrafanaDashboard(id, title, dashboard, authService.getUserName());
     }
 
@@ -331,7 +331,7 @@ public class ZMonRestService extends AbstractZMonController {
     public JsonNode getDashboard(@PathVariable(value="id") String id) throws ZMonException {
         List<GrafanaDashboardSprocService.GrafanaDashboard> dashboards = grafanaService.getGrafanaDashboard(id);
         if(dashboards.isEmpty()) {
-            LOG.info("no dashboard found for id {}", id);
+            log.info("No Grafana dashboard found for id {}", id);
             return null;
         }
 

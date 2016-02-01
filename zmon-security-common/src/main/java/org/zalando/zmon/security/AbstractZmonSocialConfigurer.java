@@ -13,17 +13,15 @@ import org.springframework.social.security.SocialAuthenticationServiceRegistry;
 import org.springframework.social.security.provider.SocialAuthenticationService;
 
 /**
- * 
  * @author jbellmann
- *
  */
 public abstract class AbstractZmonSocialConfigurer implements SocialConfigurer {
-	
-	private final Logger log = LoggerFactory.getLogger(AbstractZmonSocialConfigurer.class);
-	
+
+    private final Logger log = LoggerFactory.getLogger(AbstractZmonSocialConfigurer.class);
+
     @Override
     public void addConnectionFactories(final ConnectionFactoryConfigurer connectionFactoryConfigurer,
-            final Environment environment) {
+                                       final Environment environment) {
         // we do not add the 'connectionFactory' here
         // because of registering it in #getUsersConnectionRepository below
     }
@@ -39,21 +37,21 @@ public abstract class AbstractZmonSocialConfigurer implements SocialConfigurer {
 
         // this is hacky, but didn't found out how to do these configuration without it
         if (connectionFactoryLocator instanceof SocialAuthenticationServiceRegistry) {
-        	
-        	if(log.isDebugEnabled()){        		
-        		log.debug("Initialize ConnectionFactory with key {} and secret {}",
-        				getClientId().substring(0, getClientIdSubstringLenght()),
-        				getClientSecret().substring(0, getClientSecretIdSubstringCount()));
-        	}
+
+            if (log.isDebugEnabled()) {
+                log.debug("Initialize ConnectionFactory with key {} and secret {}",
+                        getClientId().substring(0, getClientIdSubstringLenght()),
+                        getClientSecret().substring(0, getClientSecretIdSubstringCount()));
+            }
 
             SocialAuthenticationServiceRegistry registry = (SocialAuthenticationServiceRegistry)
-                connectionFactoryLocator;
+                    connectionFactoryLocator;
             registry.addAuthenticationService(buildAuthenticationService());
         }
 
         return doGetUsersConnectionRepository(connectionFactoryLocator);
     }
-    
+
     protected abstract UsersConnectionRepository doGetUsersConnectionRepository(
             ConnectionFactoryLocator connectionFactoryLocator);
 
@@ -68,7 +66,7 @@ public abstract class AbstractZmonSocialConfigurer implements SocialConfigurer {
     protected int getClientSecretIdSubstringCount() {
         return 4;
     }
-    
+
     protected abstract SocialAuthenticationService<?> buildAuthenticationService();
 
 }

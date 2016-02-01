@@ -40,7 +40,7 @@ import org.zalando.zmon.security.service.SimpleSocialUserDetailsService;
 /**
  * Nothing to add here.
  *
- * @author  jbellmann
+ * @author jbellmann
  */
 @Configuration
 @EnableWebSecurity
@@ -62,8 +62,7 @@ public class GithubSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(final WebSecurity web) throws Exception {
-        web.ignoring().antMatchers("/logo.png", "/favicon.ico", "/static-resources/**", "/asset/**", "/styles/**",
-            "/css/**", "/js/**");
+        web.ignoring().antMatchers("/logo.png", "/favicon.ico", "/asset/**", "/styles/**", "/js/**");
     }
 
     @Override
@@ -77,9 +76,9 @@ public class GithubSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(final HttpSecurity http) throws Exception {
 
         http.formLogin().loginPage("/signin").failureUrl("/signin?error=bad_credentials").permitAll().and().logout()
-            .logoutUrl("/logout").deleteCookies("JSESSIONID").logoutSuccessUrl("/signin?logout=true").permitAll().and()
-            .authorizeRequests().antMatchers("/**").authenticated().and().rememberMe().and()
-            .apply(new SpringSocialConfigurer()).and().csrf().disable();
+                .logoutUrl("/logout").deleteCookies("JSESSIONID").logoutSuccessUrl("/signin?logout=true").permitAll().and()
+                .authorizeRequests().antMatchers("/**").authenticated().and().rememberMe().and()
+                .apply(new SpringSocialConfigurer()).and().csrf().disable();
     }
     // J+
 

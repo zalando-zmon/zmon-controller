@@ -17,7 +17,7 @@ import org.springframework.util.Assert;
  */
 public class ZmonResourceServerConfigurer extends ResourceServerConfigurerAdapter {
 
-	private final Logger logger = LoggerFactory.getLogger(ZmonResourceServerConfigurer.class);
+	private final Logger log = LoggerFactory.getLogger(ZmonResourceServerConfigurer.class);
 
 	private final ResourceServerTokenServices resourceServerTokenServices;
 
@@ -36,7 +36,7 @@ public class ZmonResourceServerConfigurer extends ResourceServerConfigurerAdapte
 	 */
 	@Override
 	public void configure(final HttpSecurity http) throws Exception {
-		logger.info("Configuring OAuth..");
+		log.info("Configuring OAuth..");
 		// J-
 		http
 			.sessionManagement()
