@@ -26,7 +26,8 @@ angular.module('zmon2App').controller('CloudCtrl', ['$scope', '$interval', '$loc
         // fetch interval id
         var fetchInterval = null;
 
-        var INTERVAL = 900000;
+        // 5min polling interval
+        var INTERVAL = 300000;
 
         // returns entity name for a given appId
         var getEntityName = function(appId, teamId) {

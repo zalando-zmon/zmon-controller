@@ -1,23 +1,35 @@
 <h1>Cloud</h1>
 <div class="row">
     <div class="col-md-12">
-        <h3>
-            <span ng-click="setTeam(null)" class="clickable" style="padding-left:5px;"><a>teams</a></span>
-            <span ng-click="setApp(null)" ng-if="selectedTeam" class="clickable"> > <a>{{selectedTeam}}</a></span>
-            <span ng-click="setEndpoint(null)" ng-if="selectedApplication" class="clickable"> > <a>{{selectedApplication}}</a></span>
-            <span ng-if="selectedEndpoint"> > {{selectedEndpoint}}</span>
-        </h3>
-        <div ng-repeat="team in teams" class="clickable card" ng-hide="selectedTeam" ng-click="setTeam(team.name)">
-            <a><h4>{{team.name}}</h4></a>
-            <div><span class="number">{{team.applications.length}}</span><span class="lbl">apps</span></div>
-            <div><span class="number">{{team.instances.length}}</span><span class="lbl">instances</span></div>
-            <div><span class="number">{{getPublicElbsByTeam(team)}}/{{team.elbs.length}}</span><span class="lbl">Public/ELBs</span></div>
+        <div class="row">
+            <div class="col-md-10">
+                <h3>
+                    <span ng-click="setTeam(null)" class="clickable" style="padding-left:5px;"><a>teams</a></span>
+                    <span ng-click="setApp(null)" ng-if="selectedTeam" class="clickable"> > <a>{{selectedTeam}}</a></span>
+                    <span ng-click="setEndpoint(null)" ng-if="selectedApplication" class="clickable"> > <a>{{selectedApplication}}</a></span>
+                    <span ng-if="selectedEndpoint"> > {{selectedEndpoint}}</span>
+                </h3>
+            </div>
+            <!-- div class="col-md-2">
+                <label>Timespan:
+                    <div class="btn-group" ng-if="selectedApplication">
+                        <label class="btn btn-default" ng-class="{'btn-primary':timespan === 30}" ng-model="radioModel" uib-btn-radio="30'" ng-click="setTimespan(30)" uncheckable>30'</label>
+                        <label class="btn btn-default" ng-class="{'btn-primary':timespan === 60}"  ng-model="radioModel" uib-btn-radio="60'" ng-click="setTimespan(60)"  uncheckable>60'</label>
+                        <label class="btn btn-default" ng-class="{'btn-primary':timespan === 120}"  ng-model="radioModel" uib-btn-radio="120'" ng-click="setTimespan(120)" uncheckable>120'</label>
+                    </div>
+                </label>
+            </div-->
         </div>
-        <!-- div class="btn-group">
-            <label class="btn btn-success" ng-model="radioModel" uib-btn-radio="'Left'" uncheckable>Left</label>
-            <label class="btn btn-success" ng-model="radioModel" uib-btn-radio="'Middle'" uncheckable>Middle</label>
-            <label class="btn btn-success" ng-model="radioModel" uib-btn-radio="'Right'" uncheckable>Right</label>
-        </div -->
+        <div class="row">
+            <div class="col-md-12">
+                <div ng-repeat="team in teams" class="clickable card" ng-hide="selectedTeam" ng-click="setTeam(team.name)">
+                    <a><h4>{{team.name}}</h4></a>
+                    <div><span class="number">{{team.applications.length}}</span><span class="lbl">apps</span></div>
+                    <div><span class="number">{{team.instances.length}}</span><span class="lbl">instances</span></div>
+                    <div><span class="number">{{getPublicElbsByTeam(team)}}/{{team.elbs.length}}</span><span class="lbl">Public/ELBs</span></div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 <div class="row" ng-show="selectedTeam && !selectedApplication">
