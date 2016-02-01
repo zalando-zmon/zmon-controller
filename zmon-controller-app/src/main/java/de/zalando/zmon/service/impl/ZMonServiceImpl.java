@@ -56,7 +56,7 @@ public class ZMonServiceImpl implements ZMonService {
 
 //    private static final EventLogger EVENT_LOG = EventLogger.getLogger(ZMonServiceImpl.class);
 
-    private static final Logger LOG = LoggerFactory.getLogger(ZMonServiceImpl.class);
+    private final Logger log = LoggerFactory.getLogger(ZMonServiceImpl.class);
 
     private static final long MAX_ACTIVE_WORKER_TIMESTAMP_MILLIS_AGO = 24 * 1000;
 
@@ -165,19 +165,16 @@ public class ZMonServiceImpl implements ZMonService {
             teamList.add(DBUtil.prefix(team));
         }
 
-        LOG.info("for status : {}, teamList : {}", status, teamList.toString());
         return checkDefinitionSProc.getCheckDefinitionsByOwningTeam(status, teamList);
     }
 
     @Override
     public CheckDefinitions getCheckDefinitions(final DefinitionStatus status) {
-    	LOG.info("for status : {}", status);
         return checkDefinitionSProc.getAllCheckDefinitions(status);
     }
 
     @Override
     public List<CheckDefinition> getCheckDefinitionsById(final int id) {
-    	LOG.info("for id : {}", id);
         return checkDefinitionSProc.getCheckDefinitions(null, Arrays.asList(id));
     }
 
@@ -190,7 +187,7 @@ public class ZMonServiceImpl implements ZMonService {
     @Override
     public CheckDefinition createOrUpdateCheckDefinition(final CheckDefinitionImport checkDefinition) {
         Preconditions.checkNotNull(checkDefinition);
-        LOG.info("Saving check definition '{}' from team '{}'", checkDefinition.getName(),
+        log.info("Saving check definition '{}' from team '{}'", checkDefinition.getName(),
                 checkDefinition.getOwningTeam());
 
         final CheckDefinitionImportResult operationResult = checkDefinitionSProc.createOrUpdateCheckDefinition(
@@ -210,7 +207,7 @@ public class ZMonServiceImpl implements ZMonService {
         Preconditions.checkNotNull(name);
         Preconditions.checkNotNull(owningTeam);
 
-        LOG.info("Deleting check definition with name {} and team {}", name, owningTeam);
+        log.info("Deleting check definition with name {} and team {}", name, owningTeam);
 
         final CheckDefinition checkDefinition = checkDefinitionSProc.deleteCheckDefinition(userName, name, owningTeam);
 
@@ -222,7 +219,7 @@ public class ZMonServiceImpl implements ZMonService {
 
     @Override
     public void deleteDetachedCheckDefinitions() {
-        LOG.info("Deleting detached check definitions");
+        log.info("Deleting detached check definitions");
 
         List<Integer> checkIds = Collections.emptyList();
         final List<CheckDefinition> deletedChecks = checkDefinitionSProc.deleteDetachedCheckDefinitions();
@@ -233,7 +230,7 @@ public class ZMonServiceImpl implements ZMonService {
             }
         }
 
-        LOG.info("Detached check definitions: {}", checkIds);
+        log.info("Detached check definitions: {}", checkIds);
     }
 
     @Override
@@ -363,7 +360,7 @@ public class ZMonServiceImpl implements ZMonService {
                 return new String(Snappy.uncompress(bs), "UTF-8");
             }
             catch( IOException ex) {
-                LOG.error("Failed retrieving auto complete properties");
+                log.error("Failed retrieving auto complete properties");
             }
         } finally {
             redisPool.returnResource(jedis);
@@ -498,7 +495,7 @@ public class ZMonServiceImpl implements ZMonService {
                 }
             }
             catch(IOException e) {
-                LOG.error("Could not read data from redis for {}", rh.getKey());
+                log.error("Could not read data from redis for {}", rh.getKey());
             }
         }
 

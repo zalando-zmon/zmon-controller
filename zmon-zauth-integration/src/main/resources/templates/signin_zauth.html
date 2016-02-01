@@ -22,7 +22,7 @@
         <div>
             <nav class="navbar navbar-inverse" role="navigation" id="navi">
                 <div class="navbar-header">
-                    <a class="navbar-brand" href="/#/">ZMON 2.0</a>
+                    <a class="navbar-brand" href="/#/">ZMON</a>
                 </div>
             </nav>
 
@@ -35,7 +35,7 @@
                     <div th:if="!${param.logout}">
                         <h3 class="redirect-header">Not logged in yet?</h3>
                         <h5><div class="demo">You will be redirected to Zalando for authentication, just wait 5 seconds or click to continue</div></h5>
-                        <a id="clickme" class="btn btn-primary" href="#" th:href="@{/auth/github}" role="button">CONTINUE</a>
+                        <a id="clickme" class="btn btn-primary" href="#" th:href="@{/auth/zauth}" role="button">CONTINUE</a>
                     </div>
                 </form>
             </div><!-- /.container -->

@@ -11,6 +11,7 @@ import java.util.List;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.zalando.zmon.appconfig.ZMonServiceConfig;
+import de.zalando.zmon.config.EventLogProperties;
 import de.zalando.zmon.event.Event;
 import org.apache.http.client.fluent.Executor;
 import org.apache.http.client.fluent.Request;
@@ -67,6 +68,9 @@ public class HistoryServiceImpl implements HistoryService {
     @Autowired
     private ZMonServiceConfig zmonConfig;
 
+    @Autowired
+    private EventLogProperties eventLogProperties;
+
     private ObjectMapper mapper = new ObjectMapper();
 
     @Override
@@ -84,7 +88,7 @@ public class HistoryServiceImpl implements HistoryService {
         if (!definitions.isEmpty()) {
             final Executor executor = Executor.newInstance();
 
-            final String eventLogService = "http://" + zmonConfig.getEventLogHost()  + ":" + zmonConfig.getEventLogPort() + "/";
+            final String eventLogService = eventLogProperties.getUrl().toString();
 
             List<Event> eventsByAlertId = EMPTY_LIST;
             List<Event> eventsByCheckId = EMPTY_LIST;

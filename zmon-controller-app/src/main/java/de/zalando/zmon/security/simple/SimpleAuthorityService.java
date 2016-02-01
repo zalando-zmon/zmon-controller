@@ -21,7 +21,7 @@ import de.zalando.zmon.security.authority.ZMonLeadAuthority;
 import de.zalando.zmon.security.authority.ZMonUserAuthority;
 
 /**
- * @author  jbellmann
+ * @author jbellmann
  */
 public class SimpleAuthorityService implements AuthorityService {
 
@@ -51,8 +51,8 @@ public class SimpleAuthorityService implements AuthorityService {
 
         if (authority != null) {
             result = Lists.newArrayList(authority);
-            log.info("User {} has authority with role {} and teams {}", username, authority.getAuthority(),
-                authority.getTeams());
+            log.info("User {} has authority {} and teams {}", username, authority.getAuthority(),
+                    authority.getTeams());
         }
 
         return result;

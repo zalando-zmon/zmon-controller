@@ -2,7 +2,6 @@ package de.zalando.zmon.rest;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.zalando.zmon.exception.ZMonRuntimeException;
 import de.zalando.zmon.persistence.EntitySProcService;
 import de.zalando.zmon.security.permission.DefaultZMonPermissionService;
 
@@ -18,7 +17,6 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by jmussler on 1/28/15.
@@ -27,7 +25,7 @@ import java.util.Map;
 @RequestMapping("/api/v1/entities")
 public class EntityApi {
 
-    private static final Logger LOG = LoggerFactory.getLogger(EntityApi.class);
+    private final Logger log = LoggerFactory.getLogger(EntityApi.class);
 
     @Autowired
     EntitySProcService entitySprocs;
@@ -53,7 +51,7 @@ public class EntityApi {
             entitySprocs.createOrUpdateEntity(data, "", authService.getUserName());
         }
         catch(IOException ex) {
-            LOG.error("Entity not serializable", ex);
+            log.error("Entity not serializable", ex);
         }
     }
 
@@ -78,7 +76,7 @@ public class EntityApi {
             writer.write("]");
         }
         catch(IOException ex) {
-            LOG.error("", ex);
+            log.error("", ex);
         }
     }
 
@@ -94,7 +92,7 @@ public class EntityApi {
             }
         }
         catch(IOException ex) {
-            LOG.error("", ex);
+            log.error("", ex);
         }
     }
 
@@ -104,7 +102,7 @@ public class EntityApi {
     public int deleteEntity(@PathVariable(value = "id") String id) {
         List<String> teams = new ArrayList<>();
         teams.addAll(authService.getTeams());
-        LOG.info("Deleting entity {} from user {} with teams {}", id, authService.getUserName(), teams);
+        log.info("Deleting entity {} from user {} with teams {}", id, authService.getUserName(), teams);
         List<String> ids = entitySprocs.deleteEntity(id, teams);
         return ids.size();
     }
@@ -115,7 +113,7 @@ public class EntityApi {
     public int deleteEntityByQuery(@RequestParam(value = "id") String id) {
         List<String> teams = new ArrayList<>();
         teams.addAll(authService.getTeams());
-        LOG.info("Deleting entity {} from user {} with teams {}", id, authService.getUserName(), teams);
+        log.info("Deleting entity {} from user {} with teams {}", id, authService.getUserName(), teams);
         List<String> ids = entitySprocs.deleteEntity(id, teams);
         return ids.size();
     }  

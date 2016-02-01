@@ -18,17 +18,17 @@ import org.springframework.util.Assert;
 import de.zalando.zmon.security.AuthorityService;
 
 /**
- * @author  jbellmann
+ * @author jbellmann
  */
 public class AccountConnectionSignupService implements ConnectionSignUp {
 
-    private final Logger LOG = LoggerFactory.getLogger(AccountConnectionSignupService.class);
+    private final Logger log = LoggerFactory.getLogger(AccountConnectionSignupService.class);
 
     private final UserDetailsManager userDetailsManager;
     private final AuthorityService authorityService;
 
     public AccountConnectionSignupService(final UserDetailsManager userDetailsManager,
-            final AuthorityService authorityService) {
+                                          final AuthorityService authorityService) {
         Assert.notNull(userDetailsManager, "'userDetailsManager' should never be null");
         Assert.notNull(authorityService, "'authorityService' should never be null");
         this.userDetailsManager = userDetailsManager;
@@ -55,12 +55,12 @@ public class AccountConnectionSignupService implements ConnectionSignUp {
         final Collection<? extends GrantedAuthority> authorities = authorityService.getAuthorities(username);
 
         if (authorities.isEmpty()) {
-            LOG.info("Configure environment variable ZMON_AUTHORITIES_SIMPLE_USERS as * or {}", username);
+            log.info("Configure environment variable ZMON_AUTHORITIES_SIMPLE_USERS as * or {}", username);
             return null;
         }
 
         // we create an new user
-        LOG.info("Created user with id: {} ", username);
+        log.info("Creating user {}..", username);
 
         final User user = new User(username, "", authorities);
         userDetailsManager.createUser(user);

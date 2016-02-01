@@ -16,6 +16,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import de.zalando.zmon.config.KairosDBProperties;
 import de.zalando.zmon.exception.ZMonException;
 import de.zalando.zmon.persistence.GrafanaDashboardSprocService;
 import de.zalando.zmon.security.permission.DefaultZMonPermissionService;
@@ -53,7 +54,6 @@ import com.fasterxml.jackson.databind.node.LongNode;
 
 import com.google.common.collect.Lists;
 
-import de.zalando.zmon.appconfig.KairosDBConfig;
 import de.zalando.zmon.domain.CheckDefinition;
 import de.zalando.zmon.domain.CheckHistoryGroupResult;
 import de.zalando.zmon.domain.CheckHistoryResult;
@@ -68,13 +68,13 @@ import org.kairosdb.client.response.grouping.TagGroupResult;
 @RequestMapping(value="/rest")
 public class ZMonRestService extends AbstractZMonController {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ZMonRestService.class);
+    private final Logger log = LoggerFactory.getLogger(ZMonRestService.class);
 
     @Autowired
     private ZMonService service;
 
     @Autowired
-    private KairosDBConfig kairosDBConfig;
+    private KairosDBProperties kairosDBProperties;
 
     @RequestMapping(value = "/status", method = RequestMethod.GET)
     public ResponseEntity<ExecutionStatus> getStatus() {
@@ -143,15 +143,14 @@ public class ZMonRestService extends AbstractZMonController {
 
         response.setContentType("application/json");
 
-        if ( !kairosDBConfig.isEnabled() ) {
+        if ( !kairosDBProperties.isEnabled() ) {
             writer.write("");
             return;
         }
 
         final Executor executor = Executor.newInstance();
 
-        final String kairosDBURL = "http://" + kairosDBConfig.getHost() + ":" + kairosDBConfig.getPort()
-                + "/api/v1/datapoints/query";
+        final String kairosDBURL = kairosDBProperties.getUrl() + "/api/v1/datapoints/query";
 
         final String r = executor.execute(Request.Post(kairosDBURL).useExpectContinue().bodyString(node.toString(),
                                          ContentType.APPLICATION_JSON)).returnContent().asString();
@@ -166,15 +165,14 @@ public class ZMonRestService extends AbstractZMonController {
 
         response.setContentType("application/json");
 
-        if ( !kairosDBConfig.isEnabled() ) {
+        if ( !kairosDBProperties.isEnabled() ) {
             writer.write("");
             return;
         }
 
         final Executor executor = Executor.newInstance();
 
-        final String kairosDBURL = "http://" + kairosDBConfig.getHost() + ":" + kairosDBConfig.getPort()
-                + "/api/v1/datapoints/query/tags";
+        final String kairosDBURL = kairosDBProperties.getUrl()  + "/api/v1/datapoints/query/tags";
 
         final String r = executor.execute(Request.Post(kairosDBURL).useExpectContinue().bodyString(node.toString(),
                 ContentType.APPLICATION_JSON)).returnContent().asString();
@@ -188,13 +186,12 @@ public class ZMonRestService extends AbstractZMonController {
 
         response.setContentType("application/json");
 
-        if ( !kairosDBConfig.isEnabled() ) {
+        if ( !kairosDBProperties.isEnabled() ) {
             writer.write("");
             return;
         }
 
-        final String kairosDBURL = "http://" + kairosDBConfig.getHost() + ":" + kairosDBConfig.getPort()
-                + "/api/v1/metricnames";
+        final String kairosDBURL = kairosDBProperties.getUrl()  + "/api/v1/metricnames";
 
         final String r = Request.Get(kairosDBURL).useExpectContinue().execute().returnContent().asString();
 
@@ -215,7 +212,7 @@ public class ZMonRestService extends AbstractZMonController {
             @RequestParam(value = "end_date", required = false) final Long endDate) throws URISyntaxException,
         IOException {
 
-        if ( !kairosDBConfig.isEnabled() ) {
+        if ( !kairosDBProperties.isEnabled() ) {
             return new ResponseEntity<>(new CheckHistoryResult(),HttpStatus.METHOD_NOT_ALLOWED);
         }
 
@@ -251,16 +248,17 @@ public class ZMonRestService extends AbstractZMonController {
             metric.addAggregator(AggregatorFactory.createAverageAggregator(aggregate, TimeUnit.MINUTES));
         }
 
-        final HttpClient client = new HttpClient("http://" + kairosDBConfig.getHost() + ":" + kairosDBConfig.getPort());
+        final HttpClient client = new HttpClient(kairosDBProperties.getUrl().toString());
         try {
             final Long queryStart = System.currentTimeMillis();
             final QueryResponse response = client.query(builder);
             final Long queryEnd = System.currentTimeMillis();
 
-            LOG.info("Querying kairosdb for check/entity {}/{} in {}ms aggregate: {} {} range: {} - {}", checkId,
-                entityId, queryEnd - queryStart, aggregate, aggregateUnit,
-                builder.getStartAbsolute() != null ? builder.getStartAbsolute() : builder.getStartRelative(),
-                builder.getEndAbsolute() != null ? builder.getEndAbsolute() : builder.getEndRelative());
+            // TODO: consider changing the log level to DEBUG here, not sure why we need INFO..
+            log.info("Querying KairosDB for check/entity {}/{} in {}ms aggregate: {} {} range: {} - {}", checkId,
+                    entityId, queryEnd - queryStart, aggregate, aggregateUnit,
+                    builder.getStartAbsolute() != null ? builder.getStartAbsolute() : builder.getStartRelative(),
+                    builder.getEndAbsolute() != null ? builder.getEndAbsolute() : builder.getEndRelative());
 
             final CheckHistoryResult r = new CheckHistoryResult();
             r.entityId = entityId;
@@ -323,7 +321,7 @@ public class ZMonRestService extends AbstractZMonController {
         String title = grafanaData.get("title").asText();
         String dashboard = grafanaData.get("dashboard").asText();
 
-        LOG.info("dashboard: {} {}", title, dashboard);
+        log.info("Saving Grafana dashboard \"{}\"..", title);
         grafanaService.createOrUpdateGrafanaDashboard(id, title, dashboard, authService.getUserName());
     }
 
@@ -333,7 +331,7 @@ public class ZMonRestService extends AbstractZMonController {
     public JsonNode getDashboard(@PathVariable(value="id") String id) throws ZMonException {
         List<GrafanaDashboardSprocService.GrafanaDashboard> dashboards = grafanaService.getGrafanaDashboard(id);
         if(dashboards.isEmpty()) {
-            LOG.info("no dashboard found for id {}", id);
+            log.info("No Grafana dashboard found for id {}", id);
             return null;
         }
 

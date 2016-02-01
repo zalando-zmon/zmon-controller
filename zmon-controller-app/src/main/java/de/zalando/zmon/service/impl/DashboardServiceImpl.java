@@ -22,7 +22,7 @@ import de.zalando.zmon.service.DashboardService;
 @Service
 public class DashboardServiceImpl implements DashboardService {
 
-    private static final Logger LOG = LoggerFactory.getLogger(DashboardServiceImpl.class);
+    private final Logger log = LoggerFactory.getLogger(DashboardServiceImpl.class);
 
 //    private static final EventLogger EVENT_LOG = EventLogger.getLogger(DashboardServiceImpl.class);
 
@@ -59,7 +59,7 @@ public class DashboardServiceImpl implements DashboardService {
     @Override
     public Dashboard createOrUpdateDashboard(final Dashboard dashboard) throws ZMonException {
         Preconditions.checkNotNull(dashboard);
-        LOG.info("Saving dashboard '{}' request from user '{}'", dashboard.getId(), dashboard.getLastModifiedBy());
+        log.info("Saving dashboard '{}' request from user '{}'", dashboard.getId(), dashboard.getLastModifiedBy());
 
         final DashboardOperationResult result = dashboardSProc.createOrUpdateDashboard(dashboard)
                                                               .throwExceptionOnFailure();
@@ -75,7 +75,7 @@ public class DashboardServiceImpl implements DashboardService {
     @Override
     public void deleteDashboard(final Integer dashboardId) {
         Preconditions.checkNotNull(dashboardId);
-        LOG.info("Delete dashboard '{}' request from user '{}'", dashboardId);
+        log.info("Delete dashboard '{}' request from user '{}'", dashboardId);
 
         dashboardSProc.deleteDashboard(dashboardId);
     }

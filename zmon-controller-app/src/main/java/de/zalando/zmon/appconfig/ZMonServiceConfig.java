@@ -7,8 +7,5 @@ public interface ZMonServiceConfig {
 
     public boolean writeToKairosDB();
 
-    public String getEventLogHost();
-
-    public int getEventLogPort();
 
 }

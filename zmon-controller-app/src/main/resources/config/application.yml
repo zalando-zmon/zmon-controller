@@ -29,3 +29,10 @@ server:
         key-store-type: PKCS12
         key-store-password: mypassword
         key-alias: tomcat
+
+zmon:
+    eventlog:
+        url: http://localhost:8081/
+    kairosdb:
+        enabled: true
+        url: http://localhost:38083/

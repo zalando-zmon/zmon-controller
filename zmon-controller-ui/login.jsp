@@ -5,7 +5,7 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>ZMON 2.0</title>
+    <title>ZMON</title>
 
     <link rel="stylesheet" type="text/css" href="asset/css/zalando-bootstrap.css?t=${buildTime}" />
     <link rel="stylesheet" type="text/css" href="styles/main.css" />
@@ -21,7 +21,7 @@
 
     <nav class="navbar navbar-inverse" role="navigation" id="navi">
         <div class="navbar-header">
-            <a class="navbar-brand" href="/#/">ZMON 2.0</a>
+            <a class="navbar-brand" href="/#/">ZMON</a>
         </div>
     </nav>
 

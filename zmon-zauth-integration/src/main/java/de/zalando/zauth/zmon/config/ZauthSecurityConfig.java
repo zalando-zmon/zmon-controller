@@ -38,8 +38,9 @@ import org.zalando.zmon.security.service.SimpleSocialUserDetailsService;
  */
 @Configuration
 @EnableWebSecurity
+// The EnableResourceServer creates a WebSecurityConfigurerAdapter with a hard-coded Order (of 3).
 @EnableResourceServer
-@Order(1)
+@Order(5)
 public class ZauthSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
@@ -52,8 +53,7 @@ public class ZauthSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(final WebSecurity web) throws Exception {
-        web.ignoring().antMatchers("/logo.png", "/favicon.ico", "/static-resources/**", "/asset/**", "/styles/**",
-            "/css/**", "/js/**");
+        web.ignoring().antMatchers("/logo.png", "/favicon.ico", "/asset/**", "/styles/**", "/js/**");
     }
 
     @Override
