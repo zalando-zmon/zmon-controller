@@ -28,7 +28,7 @@ public class SimpleSocialUserDetailsService implements SocialUserDetailsService 
         DataAccessException {
 
         try {
-            log.info("Load User : {}", username);
+            log.info("Loading user {}..", username);
 
             UserDetails userDetails = userDetailsService.loadUserByUsername(username);
             return new SocialUser(userDetails.getUsername(), "password", userDetails.getAuthorities());
