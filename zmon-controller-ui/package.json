@@ -1,33 +1,25 @@
 {
-  "name": "zmon2",
+  "name": "zmon-controller-ui",
   "version": "0.0.1",
-  "description": "",
+  "description": "Web UI for Zalando's platform monitoring tool (ZMON)",
   "scripts": {
-    "lint": "./node_modules/gulp/bin/gulp.js lint",
-    "test": "./node_modules/gulp/bin/gulp.js protractor",
-    "selenium": "./node_modules/protractor/bin/webdriver-manager update --standalone && ./node_modules/protractor/bin/webdriver-manager start"
+    "build": "../mvnw clean install",
+    "start": "java -jar ../zmon-controller-app/target/zmon-controller-1.0.1-SNAPSHOT.jar",
+    "test": "node node_modules/karma/bin/karma start test/karma.config.js",
+    "protractor": "protractor test/protractor.config.js",
+    "update-webdriver": "./node_modules/protractor/bin/webdriver-manager update --standalone"
   },
-  "repository": {
-    "type": "git",
-    "url": "https://stash.zalando.net/scm/platform/zmon2.git"
-  },
+  "repository": "https://github.com/zalando/zmon-controller",
   "author": "Emanuel Lauria",
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://stash.zalando.net/scm/platform/zmon2/issues"
+    "url": "https://github.com/zalando/zmon-controller/issues"
   },
-  "homepage": "https://stash.zalando.net/scm/platform/zmon2/",
   "dependencies": {
-    "gulp": "^3.9.0",
     "jasmine-reporters": "~0.2.1",
     "protractor": "2.3.0"
   },
   "devDependencies": {
-    "eslint": "^1.2.1",
-    "eslint-config-angular": "^0.3.0",
-    "eslint-plugin-angular": "^0.9.0",
-    "gulp-eslint": "^1.0.0",
-    "gulp-protractor": "^1.0.0",
     "jasmine-core": "^2.3.4",
     "karma": "^0.13.10",
     "karma-chrome-launcher": "^0.2.0",
