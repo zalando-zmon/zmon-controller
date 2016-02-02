@@ -1,16 +1,42 @@
 package de.zalando.zmon.service.impl;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.xerial.snappy.Snappy;
+
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.NumericNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.SetMultimap;
+
 import de.zalando.zmon.diff.CheckDefinitionsDiffFactory;
-import de.zalando.zmon.domain.*;
-import de.zalando.zmon.rest.domain.*;
+import de.zalando.zmon.domain.AlertDefinition;
+import de.zalando.zmon.domain.CheckDefinition;
+import de.zalando.zmon.domain.CheckDefinitionImport;
+import de.zalando.zmon.domain.CheckDefinitions;
+import de.zalando.zmon.domain.CheckDefinitionsDiff;
+import de.zalando.zmon.domain.CheckResults;
+import de.zalando.zmon.domain.DefinitionStatus;
+import de.zalando.zmon.domain.ExecutionStatus;
+import de.zalando.zmon.domain.WorkerQueue;
 import de.zalando.zmon.event.ZMonEventType;
 import de.zalando.zmon.exception.SerializationException;
 import de.zalando.zmon.persistence.AlertDefinitionSProcService;
@@ -19,20 +45,13 @@ import de.zalando.zmon.persistence.CheckDefinitionSProcService;
 import de.zalando.zmon.persistence.ZMonSProcService;
 import de.zalando.zmon.redis.RedisPattern;
 import de.zalando.zmon.redis.ResponseHolder;
+import de.zalando.zmon.rest.domain.CheckChartResult;
 import de.zalando.zmon.service.ZMonService;
 import de.zalando.zmon.util.DBUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.xerial.snappy.Snappy;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.Pipeline;
 import redis.clients.jedis.Response;
-
-import java.io.IOException;
-import java.util.*;
 
 // TODO remove CheckDefinitionImport and use CheckDefinition with optional id
 // TODO convert mandatory types into native types (Integer -> int...)
@@ -54,7 +73,8 @@ import java.util.*;
 @Service
 public class ZMonServiceImpl implements ZMonService {
 
-//    private static final EventLogger EVENT_LOG = EventLogger.getLogger(ZMonServiceImpl.class);
+    // private static final EventLogger EVENT_LOG =
+    // EventLogger.getLogger(ZMonServiceImpl.class);
 
     private final Logger log = LoggerFactory.getLogger(ZMonServiceImpl.class);
 
@@ -74,7 +94,7 @@ public class ZMonServiceImpl implements ZMonService {
 
     @Autowired
     protected ObjectMapper mapper;
-    
+
     @Autowired
     private NoOpEventLog eventLog;
 
@@ -190,13 +210,14 @@ public class ZMonServiceImpl implements ZMonService {
         log.info("Saving check definition '{}' from team '{}'", checkDefinition.getName(),
                 checkDefinition.getOwningTeam());
 
-        final CheckDefinitionImportResult operationResult = checkDefinitionSProc.createOrUpdateCheckDefinition(
-                checkDefinition);
+        final CheckDefinitionImportResult operationResult = checkDefinitionSProc
+                .createOrUpdateCheckDefinition(checkDefinition);
         final CheckDefinition result = operationResult.getEntity();
 
-        eventLog.log(operationResult.isNewEntity() ? ZMonEventType.CHECK_DEFINITION_CREATED
-                                                    : ZMonEventType.CHECK_DEFINITION_UPDATED, result.getId(),
-            result.getEntities(), result.getCommand(), result.getLastModifiedBy());
+        eventLog.log(
+                operationResult.isNewEntity() ? ZMonEventType.CHECK_DEFINITION_CREATED
+                        : ZMonEventType.CHECK_DEFINITION_UPDATED,
+                result.getId(), result.getEntities(), result.getCommand(), result.getLastModifiedBy());
 
         return result;
     }
@@ -212,8 +233,8 @@ public class ZMonServiceImpl implements ZMonService {
         final CheckDefinition checkDefinition = checkDefinitionSProc.deleteCheckDefinition(userName, name, owningTeam);
 
         if (checkDefinition != null) {
-            eventLog.log(ZMonEventType.CHECK_DEFINITION_DELETED, checkDefinition.getId(),
-                checkDefinition.getEntities(), checkDefinition.getCommand(), userName);
+            eventLog.log(ZMonEventType.CHECK_DEFINITION_DELETED, checkDefinition.getId(), checkDefinition.getEntities(),
+                    checkDefinition.getCommand(), userName);
         }
     }
 
@@ -242,14 +263,14 @@ public class ZMonServiceImpl implements ZMonService {
         final Jedis jedis = redisPool.getResource();
         try {
             final Set<String> entities = (entity == null ? jedis.smembers(RedisPattern.checkEntities(checkId))
-                                                         : Collections.singleton(entity));
+                    : Collections.singleton(entity));
             if (!entities.isEmpty()) {
 
                 // execute async calls
                 final Pipeline p = jedis.pipelined();
                 for (final String key : entities) {
-                    results.add(ResponseHolder.create(key,
-                            p.lrange(RedisPattern.checkResult(checkId, key), 0, limit - 1)));
+                    results.add(
+                            ResponseHolder.create(key, p.lrange(RedisPattern.checkResult(checkId, key), 0, limit - 1)));
                 }
 
                 for (final Integer alertDefinitionId : alertDefinitionIds) {
@@ -305,9 +326,8 @@ public class ZMonServiceImpl implements ZMonService {
                     // execute an async calls
                     final Pipeline p = jedis.pipelined();
                     for (final String key : entities.keySet()) {
-                        results.add(ResponseHolder.create(key,
-                                p.lrange(RedisPattern.checkResult(alertDefinition.getCheckDefinitionId(), key), 0,
-                                    limit - 1)));
+                        results.add(ResponseHolder.create(key, p.lrange(
+                                RedisPattern.checkResult(alertDefinition.getCheckDefinitionId(), key), 0, limit - 1)));
                     }
 
                     p.sync();
@@ -328,7 +348,7 @@ public class ZMonServiceImpl implements ZMonService {
                     }
                 } catch (final IOException e) {
                     throw new SerializationException("Could not read capture's JSON: " + entities.get(cr.getEntity()),
-                        e);
+                            e);
                 }
             }
         }
@@ -340,7 +360,7 @@ public class ZMonServiceImpl implements ZMonService {
     public JsonNode getEntityProperties() {
         final String json = getEntityPropertiesFromRedis();
         try {
-            if(null==json) {
+            if (null == json) {
                 // scheduler-ng currently does not populate this
                 return mapper.createObjectNode();
             }
@@ -356,10 +376,10 @@ public class ZMonServiceImpl implements ZMonService {
         try {
             try {
                 byte[] bs = jedis.get(RedisPattern.entityProperties().getBytes());
-                if(null==bs) return null;
+                if (null == bs)
+                    return null;
                 return new String(Snappy.uncompress(bs), "UTF-8");
-            }
-            catch( IOException ex) {
+            } catch (IOException ex) {
                 log.error("Failed retrieving auto complete properties");
             }
         } finally {
@@ -403,49 +423,48 @@ public class ZMonServiceImpl implements ZMonService {
         final Jedis jedis = redisPool.getResource();
         List<String> values = null;
         try {
-             values = jedis.lrange(RedisPattern.checkResult(checkId, entity), 0, limit);
+            values = jedis.lrange(RedisPattern.checkResult(checkId, entity), 0, limit);
         } finally {
             redisPool.returnResource(jedis);
         }
 
-        if(null==values) {
+        if (null == values) {
             return result;
         }
 
-        for(String value : values) {
+        for (String value : values) {
             try {
                 JsonNode node = mapper.readTree(value);
                 JsonNode v = node.get("value");
 
                 // we only handle one level of result nesting here for now
-                if(v instanceof  ObjectNode) {
+                if (v instanceof ObjectNode) {
                     Iterator<String> i = v.fieldNames();
-                    while(i.hasNext()) {
+                    while (i.hasNext()) {
                         String k = i.next();
                         JsonNode mv = v.get(k);
 
-                        if(mv instanceof NumericNode) {
+                        if (mv instanceof NumericNode) {
                             ArrayNode o = mapper.createArrayNode();
                             o.add(node.get("ts"));
                             o.add(mv);
 
                             List<JsonNode> list = result.values.get(k);
-                            if(null==list) {
-                                list =new ArrayList<>(limit);
+                            if (null == list) {
+                                list = new ArrayList<>(limit);
                                 result.values.put(k, list);
                             }
                             list.add(o);
                         }
                     }
-                }
-                else if(v instanceof NumericNode) {
+                } else if (v instanceof NumericNode) {
                     ArrayNode o = mapper.createArrayNode();
                     o.add(node.get("ts"));
                     o.add(v);
 
                     List<JsonNode> list = result.values.get("");
-                    if(null==list) {
-                        list =new ArrayList<>(limit);
+                    if (null == list) {
+                        list = new ArrayList<>(limit);
                         result.values.put("", list);
                     }
                     list.add(o);
@@ -462,39 +481,37 @@ public class ZMonServiceImpl implements ZMonService {
     @Override
     public CheckChartResult getFilteredLastResults(String checkId, String filter, int limit) {
         Jedis jedis = null;
-        List<ResponseHolder<String,List<String>>> redisResults = new ArrayList<>();
+        List<ResponseHolder<String, List<String>>> redisResults = new ArrayList<>();
 
         try {
             jedis = redisPool.getResource();
-            Set<String> members = jedis.smembers("zmon:checks:"+checkId);
+            Set<String> members = jedis.smembers("zmon:checks:" + checkId);
             Set<String> filteredMembers = new HashSet<>();
-            for(String m : members) {
-                if(m.indexOf(filter) > -1) {
+            for (String m : members) {
+                if (m.indexOf(filter) > -1) {
                     filteredMembers.add(m);
                 }
             }
 
             Pipeline p = jedis.pipelined();
-            for(String m : filteredMembers) {
+            for (String m : filteredMembers) {
                 redisResults.add(ResponseHolder.create(m, p.lrange("zmon:checks:" + checkId + ":" + m, 0, limit)));
             }
             p.sync();
-        }
-        finally {
+        } finally {
             redisPool.returnResource(jedis);
         }
 
         CheckChartResult cr = new CheckChartResult();
 
-        for(ResponseHolder<String, List<String>> rh : redisResults) {
+        for (ResponseHolder<String, List<String>> rh : redisResults) {
             try {
-                if(null != rh.getResponse().get() && rh.getResponse().get().size()>0) {
+                if (null != rh.getResponse().get() && rh.getResponse().get().size() > 0) {
                     List<JsonNode> vs = new ArrayList<>(1);
                     vs.add(mapper.readTree(rh.getResponse().get().get(0)));
                     cr.values.put(rh.getKey(), vs);
                 }
-            }
-            catch(IOException e) {
+            } catch (IOException e) {
                 log.error("Could not read data from redis for {}", rh.getKey());
             }
         }
