@@ -19,6 +19,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import de.zalando.zmon.config.KairosDBProperties;
 import de.zalando.zmon.exception.ZMonException;
 import de.zalando.zmon.persistence.GrafanaDashboardSprocService;
+import de.zalando.zmon.rest.EntityApi;
 import de.zalando.zmon.security.permission.DefaultZMonPermissionService;
 
 import org.apache.http.client.fluent.Executor;
@@ -65,7 +66,7 @@ import org.kairosdb.client.builder.DataFormatException;
 import org.kairosdb.client.response.grouping.TagGroupResult;
 
 @Controller
-@RequestMapping(value="/rest")
+@RequestMapping(value = "/rest")
 public class ZMonRestService extends AbstractZMonController {
 
     private final Logger log = LoggerFactory.getLogger(ZMonRestService.class);
@@ -75,6 +76,9 @@ public class ZMonRestService extends AbstractZMonController {
 
     @Autowired
     private KairosDBProperties kairosDBProperties;
+
+    @Autowired
+    private EntityApi entityApi;
 
     @RequestMapping(value = "/status", method = RequestMethod.GET)
     public ResponseEntity<ExecutionStatus> getStatus() {
@@ -90,7 +94,7 @@ public class ZMonRestService extends AbstractZMonController {
     public ResponseEntity<List<CheckDefinition>> getAllCheckDefinitions(
             @RequestParam(value = "team", required = false) final Set<String> teams) {
         final List<CheckDefinition> defs = teams == null ? service.getCheckDefinitions(null).getCheckDefinitions()
-                                                         : service.getCheckDefinitions(null, teams);
+                : service.getCheckDefinitions(null, teams);
 
         return new ResponseEntity<>(defs, HttpStatus.OK);
     }
@@ -137,13 +141,20 @@ public class ZMonRestService extends AbstractZMonController {
     }
 
     @ResponseBody
+    @RequestMapping(value = "/entities")
+    public void getEntities(@RequestParam(value = "query", defaultValue = "{}") String data, final Writer writer,
+                            final HttpServletResponse response) {
+        entityApi.getEntities(data, writer, response);
+    }
+
+    @ResponseBody
     @RequestMapping(value = "/kairosDBPost", method = RequestMethod.POST, produces = "application/json")
     public void kairosDBPost(@RequestBody(required = true) final JsonNode node, final Writer writer,
-            final HttpServletResponse response) throws IOException {
+                             final HttpServletResponse response) throws IOException {
 
         response.setContentType("application/json");
 
-        if ( !kairosDBProperties.isEnabled() ) {
+        if (!kairosDBProperties.isEnabled()) {
             writer.write("");
             return;
         }
@@ -153,7 +164,7 @@ public class ZMonRestService extends AbstractZMonController {
         final String kairosDBURL = kairosDBProperties.getUrl() + "/api/v1/datapoints/query";
 
         final String r = executor.execute(Request.Post(kairosDBURL).useExpectContinue().bodyString(node.toString(),
-                                         ContentType.APPLICATION_JSON)).returnContent().asString();
+                ContentType.APPLICATION_JSON)).returnContent().asString();
 
         writer.write(r);
     }
@@ -165,14 +176,14 @@ public class ZMonRestService extends AbstractZMonController {
 
         response.setContentType("application/json");
 
-        if ( !kairosDBProperties.isEnabled() ) {
+        if (!kairosDBProperties.isEnabled()) {
             writer.write("");
             return;
         }
 
         final Executor executor = Executor.newInstance();
 
-        final String kairosDBURL = kairosDBProperties.getUrl()  + "/api/v1/datapoints/query/tags";
+        final String kairosDBURL = kairosDBProperties.getUrl() + "/api/v1/datapoints/query/tags";
 
         final String r = executor.execute(Request.Post(kairosDBURL).useExpectContinue().bodyString(node.toString(),
                 ContentType.APPLICATION_JSON)).returnContent().asString();
@@ -186,12 +197,12 @@ public class ZMonRestService extends AbstractZMonController {
 
         response.setContentType("application/json");
 
-        if ( !kairosDBProperties.isEnabled() ) {
+        if (!kairosDBProperties.isEnabled()) {
             writer.write("");
             return;
         }
 
-        final String kairosDBURL = kairosDBProperties.getUrl()  + "/api/v1/metricnames";
+        final String kairosDBURL = kairosDBProperties.getUrl() + "/api/v1/metricnames";
 
         final String r = Request.Get(kairosDBURL).useExpectContinue().execute().returnContent().asString();
 
@@ -210,10 +221,10 @@ public class ZMonRestService extends AbstractZMonController {
             @RequestParam(value = "aggregate_unit", required = false, defaultValue = "minutes") final String aggregateUnit,
             @RequestParam(value = "start_date", required = false) final Long startDate,
             @RequestParam(value = "end_date", required = false) final Long endDate) throws URISyntaxException,
-        IOException {
+            IOException {
 
-        if ( !kairosDBProperties.isEnabled() ) {
-            return new ResponseEntity<>(new CheckHistoryResult(),HttpStatus.METHOD_NOT_ALLOWED);
+        if (!kairosDBProperties.isEnabled()) {
+            return new ResponseEntity<>(new CheckHistoryResult(), HttpStatus.METHOD_NOT_ALLOWED);
         }
 
         final QueryBuilder builder = QueryBuilder.getInstance();
@@ -237,8 +248,8 @@ public class ZMonRestService extends AbstractZMonController {
         }
 
         final QueryMetric metric = builder.addMetric("zmon.check." + checkId)
-                                          .addTag("entity", entityId.replace(":", "_").replace("[","_").replace("]","_").replace("@", "_")).addGrouper(
-                                              new TagGrouper("key"));
+                .addTag("entity", entityId.replace(":", "_").replace("[", "_").replace("]", "_").replace("@", "_")).addGrouper(
+                        new TagGrouper("key"));
 
         if ("hours".equals(aggregateUnit)) {
             metric.addAggregator(AggregatorFactory.createAverageAggregator(aggregate, TimeUnit.HOURS));
@@ -291,7 +302,7 @@ public class ZMonRestService extends AbstractZMonController {
                                 l.add(new DoubleNode(dp.doubleValue()));
                             }
                         } catch (DataFormatException dfe) {
-                            
+
                         }
 
                         groupResult.values.add(l);
@@ -317,7 +328,7 @@ public class ZMonRestService extends AbstractZMonController {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     @RequestMapping(value = "/grafana/dashboard/{id}", method = RequestMethod.PUT)
-    public void putDashboard(@PathVariable(value="id") String id, @RequestBody JsonNode grafanaData) throws ZMonException, JsonProcessingException {
+    public void putDashboard(@PathVariable(value = "id") String id, @RequestBody JsonNode grafanaData) throws ZMonException, JsonProcessingException {
         String title = grafanaData.get("title").asText();
         String dashboard = grafanaData.get("dashboard").asText();
 
@@ -328,9 +339,9 @@ public class ZMonRestService extends AbstractZMonController {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     @RequestMapping(value = "/grafana/dashboard/{id}", method = RequestMethod.GET)
-    public JsonNode getDashboard(@PathVariable(value="id") String id) throws ZMonException {
+    public JsonNode getDashboard(@PathVariable(value = "id") String id) throws ZMonException {
         List<GrafanaDashboardSprocService.GrafanaDashboard> dashboards = grafanaService.getGrafanaDashboard(id);
-        if(dashboards.isEmpty()) {
+        if (dashboards.isEmpty()) {
             log.info("No Grafana dashboard found for id {}", id);
             return null;
         }
@@ -361,7 +372,7 @@ public class ZMonRestService extends AbstractZMonController {
         ArrayNode hitsHits = mapper.createArrayNode();
         List<GrafanaDashboardSprocService.GrafanaDashboard> dashboards = grafanaService.getGrafanaDashboards();
 
-        for(GrafanaDashboardSprocService.GrafanaDashboard d : dashboards) {
+        for (GrafanaDashboardSprocService.GrafanaDashboard d : dashboards) {
 
             ObjectNode hit = mapper.createObjectNode();
             ObjectNode source = mapper.createObjectNode();
@@ -370,7 +381,7 @@ public class ZMonRestService extends AbstractZMonController {
             hit.put("_type", "dashboard");
             hit.put("_source", source);
 
-            source.put("dashboard","");
+            source.put("dashboard", "");
             source.put("tags", mapper.createArrayNode());
             source.put("title", d.title);
             source.put("user", d.user);
@@ -398,7 +409,7 @@ public class ZMonRestService extends AbstractZMonController {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     @RequestMapping(value = "lastResults/{checkId}/{filter}", method = RequestMethod.GET)
-    public ResponseEntity<CheckChartResult> getLastResults(@PathVariable(value="checkId") String checkId, @PathVariable(value="filter") String filter, @RequestParam(value="limit", defaultValue="1") int limit) throws ZMonException {
+    public ResponseEntity<CheckChartResult> getLastResults(@PathVariable(value = "checkId") String checkId, @PathVariable(value = "filter") String filter, @RequestParam(value = "limit", defaultValue = "1") int limit) throws ZMonException {
         CheckChartResult cr = service.getFilteredLastResults(checkId, filter, limit);
         return new ResponseEntity<>(cr, HttpStatus.OK);
     }

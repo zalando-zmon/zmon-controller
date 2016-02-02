@@ -7,6 +7,10 @@
         <version>1.0.1-SNAPSHOT</version>
     </parent>
     <artifactId>zmon-controller</artifactId>
+	<properties>
+		<maven.build.timestamp.format>yyyyMMddHHmm</maven.build.timestamp.format>
+		<buildTime>${maven.build.timestamp}</buildTime>
+    </properties>
 
     <dependencies>
         <dependency>
@@ -213,6 +217,23 @@
     </dependencies>
 
     <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <!-- filter our HTML templates to include "buildTime" -->
+                <filtering>true</filtering>
+                <includes>
+                    <include>**/*.html</include>
+                </includes>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>false</filtering>
+                <excludes>
+                    <exclude>**/*.html</exclude>
+                </excludes>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>

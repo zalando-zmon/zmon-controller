@@ -19,12 +19,16 @@ Running Locally
 
 Please use the `main ZMON repository`_ to start a Vagrant demo box.
 
+Make sure that port forwarding for TCP port 8443 is commented out in your ``Vagrantfile``.
+
 Make sure the provided Vagrant-Box is up and all services are running.
 
 .. code-block:: bash
 
     $ ./mvnw clean install
     $ export SPRING_PROFILES_ACTIVE=github     # use GitHub auth
+    $ export ZMON_OAUTH2_SSO_CLIENT_ID=344c9a90fc697fe6662a
+    $ export ZMON_OAUTH2_SSO_CLIENT_SECRET=a2bbb03a29f6737af04c77f2d88e8f8199ff179b
     $ export ZMON_AUTHORITIES_SIMPLE_ADMINS=*  # everybody is admin!
     $ export REDIS_PORT=38086                  # use Redis in Vagrant box
     $ export POSTGRES_URL=jdbc:postgresql://localhost:38088/local_zmon_db

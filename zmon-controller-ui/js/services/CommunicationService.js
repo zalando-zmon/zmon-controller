@@ -130,7 +130,7 @@ angular.module('zmon2App').factory('CommunicationService', ['$http', '$q', '$log
                 query: JSON.stringify(t)
             };
 
-            return doHttpCall("GET", "rest/api/v1/entities/", params);
+            return doHttpCall("GET", "rest/entities", params);
         };
 
         service.getCheckResultsFiltered = function(id, filter) {

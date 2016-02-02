@@ -26,7 +26,6 @@ module.exports = function(config) {
         '../lib/ui-bootstrap/ui-bootstrap.min.js',
         '../lib/lodash/lodash.min.js',
         '../lib/angulartics/angulartics.min.js',
-        '../lib/angulartics/angulartics-piwik.min.js',
         '../lib/angular-debounce/angular-debounce.js',
         '../lib/js-yaml/js-yaml.min.js',
         '../js/app.js',
