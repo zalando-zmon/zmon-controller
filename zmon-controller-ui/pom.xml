@@ -57,6 +57,10 @@
 				</includes>
 				<targetPath>${output-directory}/grafana</targetPath>
 			</resource>
+            <resource>
+                <directory>grafana2</directory>
+                <targetPath>${output-directory}/grafana2</targetPath>
+            </resource>
 		</resources>
 		<plugins>
 			<!-- <plugin> <groupId>com.github.eirslett</groupId> <artifactId>frontend-maven-plugin</artifactId> 

@@ -6,9 +6,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 public class GrafanaController {
 
-	@RequestMapping(value = "/grafana")
-	public String grafana() {
-		return "grafana";
-	}
+    @RequestMapping(value = "/grafana")
+    public String grafana() {
+        return "grafana";
+    }
 
+    @RequestMapping(value = "/grafana2")
+    public String grafanaTwo() {
+        return "grafana2";
+    }
 }
