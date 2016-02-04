@@ -40,7 +40,7 @@ public class ZauthTeamService implements TeamService {
         this.zauthProperties = zauthProperties;
 
         restTemplate = new StupsOAuth2RestTemplate(new StupsTokensAccessTokenProvider("team-service", accessTokens));
-
+        log.info("Configured Team Service with URL {}", zauthProperties.getTeamServiceUrl());
     }
 
     @Override
