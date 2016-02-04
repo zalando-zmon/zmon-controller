@@ -92,34 +92,7 @@ public class ZauthSecurityConfig extends WebSecurityConfigurerAdapter {
     public ResourceServerConfigurer zmonResourceServerConfigurer() {
         String tokenInfoUri = environment.getProperty("security.oauth2.resource.userInfoUri");
         return new ZmonResourceServerConfigurer(new TokenInfoResourceServerTokenServices(tokenInfoUri,
-                    new ZmonAuthorizationExtractor()));
+                    new LaxAuthenticationExtractor()));
     }
 
-    /**
-     * We allow 'uid'-scope not needed here for tokens.<br/>
-     * We use 'services' as principal when 'realm' is 'services'.
-     *
-     * @author  jbellmann
-     */
-    static final class ZmonAuthorizationExtractor extends LaxAuthenticationExtractor {
-
-        @Override
-        protected Object getPrincipal(final Map<String, Object> map) {
-            if (map.get("realm") != null) {
-                String realm = (String) map.get("realm");
-                if ("services".equals(realm)) {
-                    // HJ: why? this looks wrong..
-                    return realm;
-                }
-            }
-
-            return super.getPrincipal(map);
-        }
-
-        // no 'uid' needed
-        @Override
-        public boolean isThrowExceptionOnEmptyUid() {
-            return false;
-        }
-    }
 }
