@@ -69,11 +69,62 @@ public class WebMvcConfig { // extends WebMvcConfigurationSupport {
                 registry.addResourceHandler("/logo.png").addResourceLocations("classpath:/public/logo.png")
                         .setCacheControl(thirtyDays);
 
-                registry.addResourceHandler("/grafana/**").addResourceLocations("classpath:/public/grafana")
+                // GRAFANA
+                registry.addResourceHandler("/grafana/config.js")
+                        .addResourceLocations("classpath:/public/grafana/config.js").setCacheControl(thirtyDays);
+
+                registry.addResourceHandler("/grafana/app/**").addResourceLocations("classpath:/public/grafana/app/")
                         .setCacheControl(thirtyDays);
 
-                registry.addResourceHandler("/grafana2/**").addResourceLocations("classpath:/public/grafana2")
+                registry.addResourceHandler("/grafana/css/**").addResourceLocations("classpath:/public/grafana/css/")
                         .setCacheControl(thirtyDays);
+
+                registry.addResourceHandler("/grafana/fonts/**")
+                        .addResourceLocations("classpath:/public/grafana/fonts/").setCacheControl(thirtyDays);
+
+                registry.addResourceHandler("/grafana/img/**").addResourceLocations("classpath:/public/grafana/img/")
+                        .setCacheControl(thirtyDays);
+
+                registry.addResourceHandler("/grafana/plugins/**")
+                        .addResourceLocations("classpath:/public/grafana/plugins/").setCacheControl(thirtyDays);
+
+                registry.addResourceHandler("/grafana/vendor/**")
+                        .addResourceLocations("classpath:/public/grafana/vendor/").setCacheControl(thirtyDays);
+
+                // GRAFANA 2
+
+                // registry.addResourceHandler("/grafana2/vendor/require/**")
+                // .addResourceLocations("classpath:/public/grafana2/vendor/require/").setCacheControl(thirtyDays);
+                //
+                // registry.addResourceHandler("/grafana2/app/components/**")
+                // .addResourceLocations("classpath:/public/grafana2/app/components/").setCacheControl(thirtyDays);
+
+                registry.addResourceHandler("/grafana2/app/**").addResourceLocations("classpath:/public/grafana2/app/")
+                        .setCacheControl(thirtyDays);
+
+                registry.addResourceHandler("/grafana2/css/**").addResourceLocations("classpath:/public/grafana2/css/")
+                        .setCacheControl(thirtyDays);
+
+                registry.addResourceHandler("/grafana2/dashboards/**")
+                        .addResourceLocations("classpath:/public/grafana2/dashboards/").setCacheControl(thirtyDays);
+
+                registry.addResourceHandler("/grafana2/emails/**")
+                        .addResourceLocations("classpath:/public/grafana2/emails/").setCacheControl(thirtyDays);
+
+                registry.addResourceHandler("/grafana2/fonts/**")
+                        .addResourceLocations("classpath:/public/grafana2/fonts/").setCacheControl(thirtyDays);
+
+                registry.addResourceHandler("/grafana2/img/**").addResourceLocations("classpath:/public/grafana2/img/")
+                        .setCacheControl(thirtyDays);
+
+                registry.addResourceHandler("/grafana2/public/**")
+                        .addResourceLocations("classpath:/public/grafana2/public/").setCacheControl(thirtyDays);
+
+                registry.addResourceHandler("/grafana2/vendor/**")
+                        .addResourceLocations("classpath:/public/grafana2/vendor/").setCacheControl(thirtyDays);
+
+                registry.addResourceHandler("/grafana2/views/**")
+                        .addResourceLocations("classpath:/public/grafana2/views/").setCacheControl(thirtyDays);
 
                 registry.setOrder(Integer.MIN_VALUE + 5);
             }
