@@ -9,7 +9,6 @@
         <property name="locations">
             <list>
                 <value>classpath:db_api_version.properties</value>
-                <value>classpath:zmon.properties</value>
             </list>
         </property>
     </bean>

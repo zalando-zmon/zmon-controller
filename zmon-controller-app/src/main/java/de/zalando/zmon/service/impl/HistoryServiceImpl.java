@@ -10,12 +10,10 @@ import java.util.List;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.zalando.zmon.appconfig.ZMonServiceConfig;
 import de.zalando.zmon.config.EventLogProperties;
 import de.zalando.zmon.event.Event;
 import org.apache.http.client.fluent.Executor;
 import org.apache.http.client.fluent.Request;
-import org.apache.http.entity.ContentType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,9 +62,6 @@ public class HistoryServiceImpl implements HistoryService {
 
     @Autowired
     private AlertDefinitionSProcService alertDefinitionSProc;
-
-    @Autowired
-    private ZMonServiceConfig zmonConfig;
 
     @Autowired
     private EventLogProperties eventLogProperties;

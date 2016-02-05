@@ -17,6 +17,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import de.zalando.zmon.config.KairosDBProperties;
+import de.zalando.zmon.config.MetricCacheProperties;
 import de.zalando.zmon.exception.ZMonException;
 import de.zalando.zmon.persistence.GrafanaDashboardSprocService;
 import de.zalando.zmon.rest.EntityApi;
@@ -76,6 +77,9 @@ public class ZMonRestService extends AbstractZMonController {
 
     @Autowired
     private KairosDBProperties kairosDBProperties;
+
+    @Autowired
+    private MetricCacheProperties metricCacheProperties;
 
     @Autowired
     private EntityApi entityApi;
@@ -147,6 +151,23 @@ public class ZMonRestService extends AbstractZMonController {
         entityApi.getEntities(data, writer, response);
     }
 
+
+    @ResponseBody
+    @RequestMapping(value = "cloud-view-endpoints", method = RequestMethod.GET, produces = "application/json")
+    public void cloudViewEndpoints(@RequestParam(value = "application_id") String applicationId, final Writer writer,
+                                   final HttpServletResponse response) throws IOException {
+
+        final Executor executor = Executor.newInstance();
+
+        final String dataServiceQuery = metricCacheProperties.getUrl() + "/api/v1/rest-api-metrics/kairosdb-format?application_id=" + applicationId;
+
+        final String r = executor.execute(Request.Get(dataServiceQuery)).returnContent().asString();
+
+        response.setContentType("application/json");
+        writer.write(r);
+    }
+
+
     @ResponseBody
     @RequestMapping(value = "/kairosDBPost", method = RequestMethod.POST, produces = "application/json")
     public void kairosDBPost(@RequestBody(required = true) final JsonNode node, final Writer writer,
@@ -157,6 +178,17 @@ public class ZMonRestService extends AbstractZMonController {
         if (!kairosDBProperties.isEnabled()) {
             writer.write("");
             return;
+        }
+
+        // align all queries to full minutes
+        if (node instanceof ObjectNode) {
+            ObjectNode q = (ObjectNode) node;
+            q.put("cache_time", 60);
+            if (q.has("start_absolute")) {
+                long start = q.get("start_absolute").asLong();
+                start = start - (start % 60000);
+                q.put("start_absolute", start);
+            }
         }
 
         final Executor executor = Executor.newInstance();
