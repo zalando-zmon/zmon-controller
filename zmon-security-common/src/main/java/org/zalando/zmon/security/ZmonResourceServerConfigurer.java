@@ -51,13 +51,13 @@ public class ZmonResourceServerConfigurer extends ResourceServerConfigurerAdapte
 		.and()
 			.authorizeRequests()
 				.antMatchers(HttpMethod.GET, "/api/v1/**")
-					.access("(#oauth2.hasScope('uid') && #oauth2.hasAnyRealm('/employee','/services')) or #oauth2.hasScope('zmon.read_all')")
+					.access("(#oauth2.hasScope('uid') && #oauth2.hasAnyRealm('/employees','/services')) or #oauth2.hasScope('zmon.read_all')")
 				.antMatchers(HttpMethod.POST, "/api/v1/**")
-					.access("(#oauth2.hasScope('uid') && #oauth2.hasAnyRealm('/employee','/services')) or #oauth2.hasScope('zmon.write_all')")
+					.access("(#oauth2.hasScope('uid') && #oauth2.hasAnyRealm('/employees','/services')) or #oauth2.hasScope('zmon.write_all')")
 				.antMatchers(HttpMethod.PUT, "/api/v1/**")
-					.access("(#oauth2.hasScope('uid') && #oauth2.hasAnyRealm('/employee','/services')) or #oauth2.hasScope('zmon.write_all')")
+					.access("(#oauth2.hasScope('uid') && #oauth2.hasAnyRealm('/employees','/services')) or #oauth2.hasScope('zmon.write_all')")
 				.antMatchers(HttpMethod.DELETE, "/api/v1/**")
-					.access("(#oauth2.hasScope('uid') && #oauth2.hasAnyRealm('/employee','/services')) or #oauth2.hasScope('zmon.write_all')");
+					.access("(#oauth2.hasScope('uid') && #oauth2.hasAnyRealm('/employees','/services')) or #oauth2.hasScope('zmon.write_all')");
 
 		// J+
 	}

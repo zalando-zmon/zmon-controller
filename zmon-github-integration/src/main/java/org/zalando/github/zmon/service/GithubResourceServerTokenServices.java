@@ -60,7 +60,7 @@ public class GithubResourceServerTokenServices implements ResourceServerTokenSer
         Set<String> scopes = Sets.newHashSet("uid");
         Map<String, Object> map = Maps.newHashMap();
         map.put("scopes", scopes);
-        map.put("realm", "/employee");
+        map.put("realm", "/employees");
         user.setDetails(map);
 
         OAuth2Request request = new OAuth2Request((Map) null, "NOT_NEEDED", (Collection) null, true, scopes, (Set) null,
