@@ -12,15 +12,15 @@
     <meta name="google" value="notranslate"></meta>
 
     <title>Grafana 2</title>
-    <link rel="stylesheet" href="css/grafana.dark.min.css" title="Dark" th:href="@{/grafana2/css/grafana.dark.min.css}" />
-    <link rel="icon" type="image/png" href="img/fav32.png" th:href="@{/grafana2/img/fav32.png}" />
+    <link rel="stylesheet" href="public/css/grafana.dark.min.css" title="Dark" th:href="@{/grafana2/public/css/grafana.dark.min.css}" />
+    <link rel="icon" type="image/png" href="public/img/fav32.png" th:href="@{/grafana2/public/img/fav32.png}" />
 
     <!-- build:js app/app.js -->
-    <script src="vendor/require/require.js" th:src="@{/grafana2/vendor/requirejs/require.js}"></script>
-    <script src="app/components/require.config.js" th:src="@{/grafana2/public/app/require_config.js}"></script>
+    <script src="public/vendor/require/require.js" th:src="@{/grafana2/public/vendor/requirejs/require.js}"></script>
+    <script src="public/app/components/require.config.js" th:src="@{/grafana2/public/app/require_config.js}"></script>
     <!-- endbuild -->
 
-    <script>require(['app'], function (app) { app.boot(); })</script>
+    <script>require(['app/app'], function (app) { app.boot(); })</script>
 
   </head>
 
@@ -29,7 +29,7 @@
       <div class="sidemenu-canvas">
 
         <aside class="sidemenu-wrapper" ng-if="contextSrv.sidemenu">
-          <div ng-include="'app/partials/sidemenu.html'"></div>
+          <div ng-include="'public/app/partials/sidemenu.html'"></div>
         </aside>
 
         <div class="page-alert-list">
