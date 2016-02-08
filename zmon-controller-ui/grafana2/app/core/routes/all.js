@@ -134,6 +134,7 @@ define([
         templateUrl: 'app/partials/error.html',
         controller: 'ErrorCtrl'
       });
-  });
 
+      $locationProvider.html5Mode(true);
+  });
 });
