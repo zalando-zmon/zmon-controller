@@ -21,3 +21,6 @@ spring:
     username: ${POSTGRES_USERNAME:postgres}
     password: ${POSTGRES_PASSWORD:postgres}
     initSQL: "SET search_path to zzm_api${zzm_api_version}, public;"
+
+resources:
+    projectRoot: ${user.dir}/../zmon-controller-ui
