@@ -413,4 +413,165 @@ public class ZMonRestService extends AbstractZMonController {
         CheckChartResult cr = service.getFilteredLastResults(checkId, filter, limit);
         return new ResponseEntity<>(cr, HttpStatus.OK);
     }
+
+
+    /*
+     * TEMPORARY resource for Grafana2
+     * FIXME
+     */
+
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    @RequestMapping(value = "grafana2/api/dashboards/home", method = RequestMethod.GET)
+    public JsonNode getDashboard2() throws ZMonException {
+        ObjectNode node = mapper.createObjectNode();
+        ObjectNode dashboard = mapper.createObjectNode();
+        dashboard.put("editable", true);
+        dashboard.put("hideControls", true);
+        dashboard.put("id", 36);
+        dashboard.put("oritinalTitle", "DashboardTest");
+        dashboard.put("schemaVersion", 7);
+        dashboard.put("sharedCrosshair", false);
+        dashboard.put("timezone", "browser");
+        dashboard.put("title", "Grafana Zmon");
+        dashboard.put("version", 26);
+
+        ObjectNode annotations = mapper.createObjectNode();
+        ArrayNode list = mapper.createArrayNode();
+
+        annotations.put("list", list);
+        annotations.put("enable", false);
+
+        ArrayNode rows = mapper.createArrayNode();
+        dashboard.put("rows", rows);
+
+        ArrayNode tags = mapper.createArrayNode();
+        tags.add("startpage");
+        tags.add("home");
+        annotations.put("tags", tags);
+
+        ObjectNode templating = mapper.createObjectNode();
+        templating.put("enable", false);
+        templating.put("list", list);
+        annotations.put("templating", templating);
+
+        ObjectNode time = mapper.createObjectNode();
+        time.put("from", "now-2h");
+        time.put("to", "now");
+        annotations.put("time", time);
+
+        dashboard.put("annotations", annotations);
+
+        ObjectNode meta = mapper.createObjectNode();
+        meta.put("canEdit", true);
+        meta.put("canSave", false);
+        meta.put("canStar", false);
+        meta.put("created", "0001-01-01T00:00:00Z");
+        meta.put("expires", "0001-01-01T00:00:00Z");
+        meta.put("updated", "0001-01-01T00:00:00Z");
+        meta.put("isHome", true);
+        meta.put("slug", "");
+
+        node.put("dashboard", dashboard);
+        node.put("meta", meta);
+        return node;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/kairosDBPost/api/v1/datapoints/query/tags", method = RequestMethod.POST, produces = "application/json")
+    public void g2kairosDBtags(@RequestBody(required = true) final JsonNode node, final Writer writer,
+                             final HttpServletResponse response) throws IOException {
+
+        response.setContentType("application/json");
+
+        if (!kairosDBProperties.isEnabled()) {
+            writer.write("");
+            return;
+        }
+
+        final Executor executor = Executor.newInstance();
+
+        final String kairosDBURL = kairosDBProperties.getUrl() + "/api/v1/datapoints/query/tags";
+
+        final String r = executor.execute(Request.Post(kairosDBURL).useExpectContinue().bodyString(node.toString(),
+                ContentType.APPLICATION_JSON)).returnContent().asString();
+
+        writer.write(r);
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/kairosDBPost/api/v1/metricnames", method = RequestMethod.GET, produces = "application/json")
+    public void g2kairosDBmetrics(final Writer writer, final HttpServletResponse response) throws IOException {
+
+        response.setContentType("application/json");
+
+        if (!kairosDBProperties.isEnabled()) {
+            writer.write("");
+            return;
+        }
+
+        final String kairosDBURL = kairosDBProperties.getUrl() + "/api/v1/metricnames";
+
+        final String r = Request.Get(kairosDBURL).useExpectContinue().execute().returnContent().asString();
+
+        writer.write(r);
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/kairosDBPost/api/v1/datapoints/query", method = RequestMethod.POST, produces = "application/json")
+    public void g2kairosDBPost(@RequestBody(required = true) final JsonNode node, final Writer writer,
+                             final HttpServletResponse response) throws IOException {
+
+        response.setContentType("application/json");
+
+        if (!kairosDBProperties.isEnabled()) {
+            writer.write("");
+            return;
+        }
+
+        final Executor executor = Executor.newInstance();
+
+        final String kairosDBURL = kairosDBProperties.getUrl() + "/api/v1/datapoints/query";
+
+        final String r = executor.execute(Request.Post(kairosDBURL).useExpectContinue().bodyString(node.toString(),
+                ContentType.APPLICATION_JSON)).returnContent().asString();
+
+        writer.write(r);
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    @RequestMapping(value = "/grafana2/api/search", method = RequestMethod.GET)
+    public JsonNode g2getDashboards() throws ZMonException {
+        ObjectNode r = mapper.createObjectNode();
+        ArrayNode a = mapper.createArrayNode();
+        ArrayNode arr = mapper.createArrayNode();
+        r.put("id", 1);
+        r.put("title", "New Dashboard");
+        r.put("uri", "db/new-dashboard");
+        r.put("type", "dash-db");
+        r.put("tags", a);
+        r.put("isStarred", false);
+        arr.add(r);
+        return arr;
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    @RequestMapping(value = "/grafana2/api/dashboards/db/new-dashboard", method = RequestMethod.GET)
+    public JsonNode g2getDashboard2() throws ZMonException {
+        ObjectNode r = mapper.createObjectNode();
+        ArrayNode a = mapper.createArrayNode();
+        r.put("id", 1);
+        r.put("title", "New Dashboard");
+        r.put("uri", "db/new-dashboard");
+        r.put("type", "dash-db");
+        r.put("tags", a);
+        r.put("isStarred", false);
+        return r;
+    }
+
+
+
+
 }

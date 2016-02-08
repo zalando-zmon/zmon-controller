@@ -11,7 +11,7 @@ function (angular, _, coreModule, config) {
     var self = this;
 
     this.get = function(url, params) {
-      return this.request({ method: 'GET', url: '/rest/grafana2API' + url, params: params });
+      return this.request({ method: 'GET', url: '/rest/grafana2' + url, params: params });
     };
 
     this.delete = function(url) {

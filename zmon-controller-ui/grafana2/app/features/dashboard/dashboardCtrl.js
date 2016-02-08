@@ -22,7 +22,7 @@ function (angular, $, config) {
       $timeout) {
 
     $scope.editor = { index: 0 };
-    $scope.topNavPartial = 'public/app/features/dashboard/partials/dashboardTopNav.html';
+    $scope.topNavPartial = 'app/features/dashboard/partials/dashboardTopNav.html';
     $scope.panels = config.panels;
 
     var resizeEventTimeout;
@@ -70,7 +70,7 @@ function (angular, $, config) {
 
     $scope.updateTopNavPartial = function() {
       if ($scope.dashboard.meta.isSnapshot) {
-        $scope.topNavPartial = 'public/app/features/dashboard/partials/snapshotTopNav.html';
+        $scope.topNavPartial = 'app/features/dashboard/partials/snapshotTopNav.html';
       }
     };
 
@@ -106,18 +106,18 @@ function (angular, $, config) {
     };
 
     $scope.panelEditorPath = function(type) {
-      return 'public/app/' + config.panels[type].path + '/editor.html';
+      return 'app/' + config.panels[type].path + '/editor.html';
     };
 
     $scope.pulldownEditorPath = function(type) {
-      return 'public/app/panels/'+type+'/editor.html';
+      return 'app/panels/'+type+'/editor.html';
     };
 
     $scope.showJsonEditor = function(evt, options) {
       var editScope = $rootScope.$new();
       editScope.object = options.object;
       editScope.updateHandler = options.updateHandler;
-      $scope.appEvent('show-dash-editor', { src: 'public/app/partials/edit_json.html', scope: editScope });
+      $scope.appEvent('show-dash-editor', { src: 'app/partials/edit_json.html', scope: editScope });
     };
 
     $scope.onDrop = function(panelId, row, dropTarget) {
