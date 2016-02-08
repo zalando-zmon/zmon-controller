@@ -67,8 +67,26 @@ public class WebMvcConfig {
                         .addResourceLocations("classpath:static/grafana/vendor/").setCacheControl(thirtyDays);
 
                 // GRAFANA 2
-                registry.addResourceHandler("/grafana2/**")
-                        .addResourceLocations("classpath:static/grafana2/").setCacheControl(thirtyDays);
+                registry.addResourceHandler("/grafana2/app/**").addResourceLocations("classpath:static/grafana2/app/")
+                        .setCacheControl(thirtyDays);
+
+                registry.addResourceHandler("/grafana2/css/**").addResourceLocations("classpath:static/grafana2/css/")
+                        .setCacheControl(thirtyDays);
+
+                registry.addResourceHandler("/grafana2/dashboards/**")
+                        .addResourceLocations("classpath:static/grafana2/dashboards/").setCacheControl(thirtyDays);
+
+                registry.addResourceHandler("/grafana2/fonts/**")
+                        .addResourceLocations("classpath:static/grafana2/fonts/").setCacheControl(thirtyDays);
+
+                registry.addResourceHandler("/grafana2/img/**").addResourceLocations("classpath:static/grafana2/img/")
+                        .setCacheControl(thirtyDays);
+
+                registry.addResourceHandler("/grafana2/vendor/**")
+                        .addResourceLocations("classpath:static/grafana2/vendor/").setCacheControl(thirtyDays);
+
+                registry.addResourceHandler("/grafana2/views/**")
+                        .addResourceLocations("classpath:static/grafana2/views/").setCacheControl(thirtyDays);
 
                 registry.setOrder(Integer.MIN_VALUE + 5);
 
