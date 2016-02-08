@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.CacheControl;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.PathMatchConfigurer;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
@@ -17,63 +18,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
  */
 @Configuration
 @EnableWebMvc
-public class WebMvcConfig {// extends WebMvcConfigurerAdapter {
-
-    // @Autowired
-    // private Environment env;
-    //
-    // @Value("${resources.projectroot:}")
-    // private String projectRoot;
-    //
-    // @Value("${app.version:13}")
-    // private String appVersion;
-    //
-//    //@formatter:off
-//    @Override
-//    public void addResourceHandlers(ResourceHandlerRegistry registry) {
-//        boolean devMode = this.env.acceptsProfiles("development");
-//
-//        String location = devMode ? "file:///" + getProjectRootRequired() + "/zmon-controller-ui/" : "classpath:static/";
-//        Integer cachePeriod = devMode ? 0 : null;
-//        boolean useResourceCache = !devMode;
-//        String version = getApplicationVersion();
-//
-//        AppCacheManifestTransformer appCacheTransformer = new AppCacheManifestTransformer();
-//        VersionResourceResolver versionResolver = new VersionResourceResolver()
-//                .addFixedVersionStrategy(version, "/**/*.js", "/**/*.map")
-//                    .addContentVersionStrategy("/**");
-//
-//        registry.addResourceHandler("/**")
-//                    .addResourceLocations(location)
-//                        .setCachePeriod(cachePeriod)
-//                            .resourceChain(useResourceCache)
-//                                .addResolver(versionResolver)
-//                                       .addTransformer(appCacheTransformer);
-//    }
-//    //@formatter:on
-    //
-    // private String getProjectRootRequired() {
-    // Assert.state(this.projectRoot != null, "Please set
-    // \"resources.projectRoot\" in application.yml");
-    // return this.projectRoot;
-    // }
-    //
-    // protected String getApplicationVersion() {
-    // return this.env.acceptsProfiles("development") ? "dev" : this.appVersion;
-    // }
-    //
-    // @Override
-    // public void configurePathMatch(PathMatchConfigurer configurer) {
-    // configurer.setUseSuffixPatternMatch(false);
-    // }
-
-    // @Bean
-    // public WebMvcConfigurer webConfigurer() {
-    // return new WebMvcConfigurerAdapter() {
-    //
-    //
-    // };
-    // }
+public class WebMvcConfig {
 
     @Bean
     public WebMvcConfigurer resourcesHandler() {
@@ -122,30 +67,23 @@ public class WebMvcConfig {// extends WebMvcConfigurerAdapter {
                         .addResourceLocations("classpath:static/grafana/vendor/").setCacheControl(thirtyDays);
 
                 // GRAFANA 2
-
-                registry.addResourceHandler("/grafana2/app/**").addResourceLocations("classpath:static/grafana2/app/",
-                        "classpath:static/grafana2/app/components").setCacheControl(thirtyDays);
-
                 registry.addResourceHandler("/grafana2/public/**")
                         .addResourceLocations("classpath:static/grafana2/public/").setCacheControl(thirtyDays);
-
-                registry.addResourceHandler("/grafana2/img/**").addResourceLocations("classpath:static/grafana2/img/")
-                        .setCacheControl(thirtyDays);
 
                 registry.setOrder(Integer.MIN_VALUE + 5);
             }
         };
     }
 
-    // see, resoureces /spring/mvc.xml
-    // @Bean
-    // public WebMvcConfigurer pathMatching() {
-    // return new WebMvcConfigurerAdapter() {
-    // @Override
-    // public void configurePathMatch(PathMatchConfigurer configurer) {
-    // configurer.setUseSuffixPatternMatch(false);
-    // }
-    // };
-    // }
+    // see, resources /spring/mvc.xml
+    @Bean
+    public WebMvcConfigurer pathMatching() {
+        return new WebMvcConfigurerAdapter() {
+            @Override
+            public void configurePathMatch(PathMatchConfigurer configurer) {
+                configurer.setUseSuffixPatternMatch(false);
+            }
+        };
+    }
 
 }
