@@ -16,8 +16,8 @@
     <link rel="icon" type="image/png" href="img/fav32.png" th:href="@{/grafana2/img/fav32.png}" />
 
     <!-- build:js app/app.js -->
-    <script src="vendor/require/require.js" th:src="@{/grafana2/vendor/require/require.js}"></script>
-    <script src="app/components/require.config.js" th:src="@{/grafana2/app/components/require.config.js}"></script>
+    <script src="vendor/require/require.js" th:src="@{/grafana2/vendor/requirejs/require.js}"></script>
+    <script src="app/components/require.config.js" th:src="@{/grafana2/public/app/require_config.js}"></script>
     <!-- endbuild -->
 
     <script>require(['app'], function (app) { app.boot(); })</script>
