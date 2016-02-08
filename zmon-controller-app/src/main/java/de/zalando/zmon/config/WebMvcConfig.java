@@ -67,10 +67,11 @@ public class WebMvcConfig {
                         .addResourceLocations("classpath:static/grafana/vendor/").setCacheControl(thirtyDays);
 
                 // GRAFANA 2
-                registry.addResourceHandler("/grafana2/public/**")
-                        .addResourceLocations("classpath:static/grafana2/public/").setCacheControl(thirtyDays);
+                registry.addResourceHandler("/grafana2/**")
+                        .addResourceLocations("classpath:static/grafana2/").setCacheControl(thirtyDays);
 
                 registry.setOrder(Integer.MIN_VALUE + 5);
+
             }
         };
     }

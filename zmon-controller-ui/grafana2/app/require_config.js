@@ -1,5 +1,5 @@
 require.config({
-  baseUrl: 'public',
+  baseUrl: '',
 
   paths: {
     'lodash-src':             'vendor/lodash',
