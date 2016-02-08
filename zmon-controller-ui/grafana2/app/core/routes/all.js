@@ -7,6 +7,7 @@ define([
   "use strict";
 
   coreModule.config(function($routeProvider, $locationProvider) {
+    $locationProvider.html5Mode(true);
 
     var loadOrgBundle = new BundleLoader.BundleLoader('app/features/org/all');
 
@@ -134,7 +135,6 @@ define([
         templateUrl: 'app/partials/error.html',
         controller: 'ErrorCtrl'
       });
-
-      $locationProvider.html5Mode(true);
   });
+
 });

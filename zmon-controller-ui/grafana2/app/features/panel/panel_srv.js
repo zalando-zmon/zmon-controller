@@ -44,7 +44,6 @@ function (angular, _, config) {
       };
 
       $scope.addDataQuery = function(datasource) {
-          console.log('addD', datasource);
         $scope.dashboard.addDataQueryTo($scope.panel, datasource);
       };
 

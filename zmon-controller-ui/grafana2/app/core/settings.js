@@ -6,23 +6,7 @@ function (_) {
 
   return function Settings (options) {
     var defaults = {
-      datasources: [
-        {
-          "id":1,
-          "orgId":2,
-          "name":"KairosDB",
-          "type":"kairosdb",
-          "access":"direct",
-          "url":"http://localhost:8443/rest/kairosDBPost",
-          "password":"",
-          "user":"",
-          "database":"",
-          "basicAuth":false,
-          "basicAuthUser":"",
-          "basicAuthPassword":"",
-          "isDefault":true
-        }
-      ],
+      datasources                   : {},
       window_title_prefix           : 'Grafana - ',
       panels                        : {
         'graph':      { path: 'app/panels/graph',      name: 'Graph' },

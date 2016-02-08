@@ -100,7 +100,7 @@ function (angular, $, _, appLevelRequire) {
                 });
               };
             }]);
-          });
+        });
     });
   };
 

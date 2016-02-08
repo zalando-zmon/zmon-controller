@@ -1,5 +1,6 @@
 require.config({
-  baseUrl: '',
+  //urlArgs: 'bust=' + (new Date().getTime()),
+  baseUrl: './',
 
   paths: {
     'lodash-src':             'vendor/lodash',

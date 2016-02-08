@@ -15,19 +15,19 @@ function (angular, _, coreModule, config) {
     };
 
     this.delete = function(url) {
-      return this.request({ method: 'DELETE', url: url });
+      return this.request({ method: 'DELETE', url: '/rest/grafana2' + url });
     };
 
     this.post = function(url, data) {
-      return this.request({ method: 'POST', url: url, data: data });
+      return this.request({ method: 'POST', url: '/rest/grafana2' + url, data: data });
     };
 
     this.patch = function(url, data) {
-      return this.request({ method: 'PATCH', url: url, data: data });
+      return this.request({ method: 'PATCH', url: '/rest/grafana2' + url, data: data });
     };
 
     this.put = function(url, data) {
-      return this.request({ method: 'PUT', url: url, data: data });
+      return this.request({ method: 'PUT', url: '/rest/grafana2' + url, data: data });
     };
 
     this._handleError = function(err) {
