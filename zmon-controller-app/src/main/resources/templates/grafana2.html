@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
-	xmlns:data="https://github.com/mxab/thymeleaf-extras-data-attribute">
+    xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+    xmlns:data="https://github.com/mxab/thymeleaf-extras-data-attribute">
 
   <!--[if IE 8]>         <html class="no-js lt-ie9" lang="en"> <![endif]-->
   <!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
@@ -19,8 +19,6 @@
     <script src="public/vendor/require/require.js" th:src="@{/grafana2/public/vendor/requirejs/require.js}"></script>
     <script src="public/app/components/require.config.js" th:src="@{/grafana2/public/app/require_config.js}"></script>
     <!-- endbuild -->
-
-    <script>require(['app/app'], function (app) { app.boot(); })</script>
 
   </head>
 
@@ -46,5 +44,20 @@
 
         </div>
 
-	</body>
+    </body>
+
+  <script>
+
+    var dummyUser = {"isSignedIn":true,"id":2,"login":"emanuel.lauria@zalando.de","email":"emanuel.lauria@zalando.de","name":"Emanuel","lightTheme":false,"orgId":2,"orgName":"zalando","orgRole":"Admin","isGrafanaAdmin":false,"gravatarUrl":"https://secure.gravatar.com/avatar/2f8b7dde4bb801ce5ac324f54c598697?s=90\u0026default=mm"};
+
+    var dummySettings = {"allowOrgCreate":true,"appSubUrl":"","buildInfo":{"buildstamp":1448355841,"commit":"v2.5.0+199-g85382dc-dirty","version":"2.6.0-pre1"},"datasources":{"-- Grafana --":{"meta":{"builtIn":true,"metrics":true,"module":"app/plugins/datasource/grafana/datasource","name":"Grafana","pluginType":"datasource","serviceName":"GrafanaDatasource","type":"grafana"},"type":"grafana"},"-- Mixed --":{"meta":{"builtIn":true,"metrics":true,"mixed":true,"module":"app/plugins/datasource/mixed/datasource","name":"Mixed datasource","pluginType":"datasource","serviceName":"MixedDatasource","type":"mixed"},"type":"mixed"},"kairos":{"meta":{"annotations":false,"metrics":true,"module":"app/plugins/datasource/kairosdb/datasource","name":"KairosDB","partials":{"config":"app/plugins/datasource/kairosdb/partials/config.html"},"pluginType":"datasource","serviceName":"KairosDBDatasource","type":"kairosdb"},"name":"kairos","type":"kairosdb","url":"https://localhost:8443/rest/kairosDBPost"},"test":{"meta":{"annotations":true,"defaultMatchFormat":"glob","metrics":true,"module":"app/plugins/datasource/graphite/datasource","name":"Graphite","partials":{"config":"app/plugins/datasource/graphite/partials/config.html"},"pluginType":"datasource","serviceName":"GraphiteDatasource","type":"graphite"},"name":"test","type":"graphite","url":"/api/datasources/proxy/3"}},"defaultDatasource":"-- Grafana --"};
+    window.grafanaBootData = {
+        user: dummyUser,
+        settings: dummySettings
+    };
+    require(['app/app'], function (app) {
+        app.boot();
+    })
+  </script>
+
 </html>
