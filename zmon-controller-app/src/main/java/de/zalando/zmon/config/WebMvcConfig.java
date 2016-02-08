@@ -6,7 +6,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.CacheControl;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-import org.springframework.web.servlet.config.annotation.PathMatchConfigurer;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
@@ -18,26 +17,62 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
  */
 @Configuration
 @EnableWebMvc
-public class WebMvcConfig { // extends WebMvcConfigurationSupport {
+public class WebMvcConfig {// extends WebMvcConfigurerAdapter {
 
+    // @Autowired
+    // private Environment env;
+    //
+    // @Value("${resources.projectroot:}")
+    // private String projectRoot;
+    //
+    // @Value("${app.version:13}")
+    // private String appVersion;
+    //
+//    //@formatter:off
+//    @Override
+//    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+//        boolean devMode = this.env.acceptsProfiles("development");
+//
+//        String location = devMode ? "file:///" + getProjectRootRequired() + "/zmon-controller-ui/" : "classpath:static/";
+//        Integer cachePeriod = devMode ? 0 : null;
+//        boolean useResourceCache = !devMode;
+//        String version = getApplicationVersion();
+//
+//        AppCacheManifestTransformer appCacheTransformer = new AppCacheManifestTransformer();
+//        VersionResourceResolver versionResolver = new VersionResourceResolver()
+//                .addFixedVersionStrategy(version, "/**/*.js", "/**/*.map")
+//                    .addContentVersionStrategy("/**");
+//
+//        registry.addResourceHandler("/**")
+//                    .addResourceLocations(location)
+//                        .setCachePeriod(cachePeriod)
+//                            .resourceChain(useResourceCache)
+//                                .addResolver(versionResolver)
+//                                       .addTransformer(appCacheTransformer);
+//    }
+//    //@formatter:on
+    //
+    // private String getProjectRootRequired() {
+    // Assert.state(this.projectRoot != null, "Please set
+    // \"resources.projectRoot\" in application.yml");
+    // return this.projectRoot;
+    // }
+    //
+    // protected String getApplicationVersion() {
+    // return this.env.acceptsProfiles("development") ? "dev" : this.appVersion;
+    // }
+    //
     // @Override
     // public void configurePathMatch(PathMatchConfigurer configurer) {
     // configurer.setUseSuffixPatternMatch(false);
     // }
+
+    // @Bean
+    // public WebMvcConfigurer webConfigurer() {
+    // return new WebMvcConfigurerAdapter() {
     //
-    // @Override
-    // protected void addResourceHandlers(ResourceHandlerRegistry registry) {
-    // final CacheControl thirtyDays = CacheControl.maxAge(30, TimeUnit.DAYS);
-    // registry.addResourceHandler("/js/**").addResourceLocations("classpath:/public/js/").setCacheControl(thirtyDays);
     //
-    // registry.addResourceHandler("/lib/**").addResourceLocations("classpath:/public/lib/")
-    //
-    // .setCacheControl(thirtyDays);
-    //
-    // registry.addResourceHandler("/styles/**").addResourceLocations("classpath:/public/styles/")
-    // .setCacheControl(thirtyDays);
-    //
-    // registry.setOrder(Integer.MIN_VALUE + 5);
+    // };
     // }
 
     @Bean
@@ -46,85 +81,56 @@ public class WebMvcConfig { // extends WebMvcConfigurationSupport {
         return new WebMvcConfigurerAdapter() {
             @Override
             public void addResourceHandlers(ResourceHandlerRegistry registry) {
-                // TODO: Remove unnecessary ResourceHander Config due to Spring
-                // Boot's automatic resource handling caps
-                registry.addResourceHandler("/js/**").addResourceLocations("classpath:/public/js/")
+                registry.addResourceHandler("/js/**").addResourceLocations("classpath:static/js/")
                         .setCacheControl(thirtyDays);
 
-                registry.addResourceHandler("/lib/**").addResourceLocations("classpath:/public/lib/")
+                registry.addResourceHandler("/lib/**").addResourceLocations("classpath:static/lib/")
                         .setCacheControl(thirtyDays);
 
-                registry.addResourceHandler("/styles/**").addResourceLocations("classpath:/public/styles/")
+                registry.addResourceHandler("/styles/**").addResourceLocations("classpath:static/styles/")
                         .setCacheControl(thirtyDays);
 
-                registry.addResourceHandler("/asset/**").addResourceLocations("classpath:/public/asset/")
+                registry.addResourceHandler("/asset/**").addResourceLocations("classpath:static/asset/")
                         .setCacheControl(thirtyDays);
 
-                registry.addResourceHandler("/templates/**").addResourceLocations("classpath:/public/templates/")
+                registry.addResourceHandler("/templates/**").addResourceLocations("classpath:static/templates/")
                         .setCacheControl(thirtyDays);
 
-                registry.addResourceHandler("/views/**").addResourceLocations("classpath:/public/views/")
+                registry.addResourceHandler("/views/**").addResourceLocations("classpath:static/views/")
                         .setCacheControl(thirtyDays);
 
-                registry.addResourceHandler("/logo.png").addResourceLocations("classpath:/public/logo.png")
+                registry.addResourceHandler("/logo.png").addResourceLocations("classpath:static/logo.png")
                         .setCacheControl(thirtyDays);
 
                 // GRAFANA
-                registry.addResourceHandler("/grafana/config.js")
-                        .addResourceLocations("classpath:/public/grafana/config.js").setCacheControl(thirtyDays);
-
-                registry.addResourceHandler("/grafana/app/**").addResourceLocations("classpath:/public/grafana/app/")
+                registry.addResourceHandler("/grafana/app/**").addResourceLocations("classpath:static/grafana/app/")
                         .setCacheControl(thirtyDays);
 
-                registry.addResourceHandler("/grafana/css/**").addResourceLocations("classpath:/public/grafana/css/")
+                registry.addResourceHandler("/grafana/css/**").addResourceLocations("classpath:static/grafana/css/")
                         .setCacheControl(thirtyDays);
 
-                registry.addResourceHandler("/grafana/fonts/**")
-                        .addResourceLocations("classpath:/public/grafana/fonts/").setCacheControl(thirtyDays);
+                registry.addResourceHandler("/grafana/fonts/**").addResourceLocations("classpath:static/grafana/fonts/")
+                        .setCacheControl(thirtyDays);
 
-                registry.addResourceHandler("/grafana/img/**").addResourceLocations("classpath:/public/grafana/img/")
+                registry.addResourceHandler("/grafana/img/**").addResourceLocations("classpath:static/grafana/img/")
                         .setCacheControl(thirtyDays);
 
                 registry.addResourceHandler("/grafana/plugins/**")
-                        .addResourceLocations("classpath:/public/grafana/plugins/").setCacheControl(thirtyDays);
+                        .addResourceLocations("classpath:static/grafana/plugins/").setCacheControl(thirtyDays);
 
                 registry.addResourceHandler("/grafana/vendor/**")
-                        .addResourceLocations("classpath:/public/grafana/vendor/").setCacheControl(thirtyDays);
+                        .addResourceLocations("classpath:static/grafana/vendor/").setCacheControl(thirtyDays);
 
                 // GRAFANA 2
 
-                // registry.addResourceHandler("/grafana2/vendor/require/**")
-                // .addResourceLocations("classpath:/public/grafana2/vendor/require/").setCacheControl(thirtyDays);
-                //
-                // registry.addResourceHandler("/grafana2/app/components/**")
-                // .addResourceLocations("classpath:/public/grafana2/app/components/").setCacheControl(thirtyDays);
-
-                registry.addResourceHandler("/grafana2/app/**").addResourceLocations("classpath:/public/grafana2/app/")
-                        .setCacheControl(thirtyDays);
-
-                registry.addResourceHandler("/grafana2/css/**").addResourceLocations("classpath:/public/grafana2/css/")
-                        .setCacheControl(thirtyDays);
-
-                registry.addResourceHandler("/grafana2/dashboards/**")
-                        .addResourceLocations("classpath:/public/grafana2/dashboards/").setCacheControl(thirtyDays);
-
-                registry.addResourceHandler("/grafana2/emails/**")
-                        .addResourceLocations("classpath:/public/grafana2/emails/").setCacheControl(thirtyDays);
-
-                registry.addResourceHandler("/grafana2/fonts/**")
-                        .addResourceLocations("classpath:/public/grafana2/fonts/").setCacheControl(thirtyDays);
-
-                registry.addResourceHandler("/grafana2/img/**").addResourceLocations("classpath:/public/grafana2/img/")
-                        .setCacheControl(thirtyDays);
+                registry.addResourceHandler("/grafana2/app/**").addResourceLocations("classpath:static/grafana2/app/",
+                        "classpath:static/grafana2/app/components").setCacheControl(thirtyDays);
 
                 registry.addResourceHandler("/grafana2/public/**")
-                        .addResourceLocations("classpath:/public/grafana2/public/").setCacheControl(thirtyDays);
+                        .addResourceLocations("classpath:static/grafana2/public/").setCacheControl(thirtyDays);
 
-                registry.addResourceHandler("/grafana2/vendor/**")
-                        .addResourceLocations("classpath:/public/grafana2/vendor/").setCacheControl(thirtyDays);
-
-                registry.addResourceHandler("/grafana2/views/**")
-                        .addResourceLocations("classpath:/public/grafana2/views/").setCacheControl(thirtyDays);
+                registry.addResourceHandler("/grafana2/img/**").addResourceLocations("classpath:static/grafana2/img/")
+                        .setCacheControl(thirtyDays);
 
                 registry.setOrder(Integer.MIN_VALUE + 5);
             }
@@ -132,14 +138,14 @@ public class WebMvcConfig { // extends WebMvcConfigurationSupport {
     }
 
     // see, resoureces /spring/mvc.xml
-    @Bean
-    public WebMvcConfigurer pathMatching() {
-        return new WebMvcConfigurerAdapter() {
-            @Override
-            public void configurePathMatch(PathMatchConfigurer configurer) {
-                configurer.setUseSuffixPatternMatch(false);
-            }
-        };
-    }
+    // @Bean
+    // public WebMvcConfigurer pathMatching() {
+    // return new WebMvcConfigurerAdapter() {
+    // @Override
+    // public void configurePathMatch(PathMatchConfigurer configurer) {
+    // configurer.setUseSuffixPatternMatch(false);
+    // }
+    // };
+    // }
 
 }
