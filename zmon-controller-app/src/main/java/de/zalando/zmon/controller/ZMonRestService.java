@@ -452,6 +452,7 @@ public class ZMonRestService extends AbstractZMonController {
      * FIXME
      */
 
+    // home dashboard
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     @RequestMapping(value = "grafana2/api/dashboards/home", method = RequestMethod.GET)
@@ -509,6 +510,7 @@ public class ZMonRestService extends AbstractZMonController {
         return node;
     }
 
+    // get list of tags
     @ResponseBody
     @RequestMapping(value = "/kairosDBPost/api/v1/datapoints/query/tags", method = RequestMethod.POST, produces = "application/json")
     public void g2kairosDBtags(@RequestBody(required = true) final JsonNode node, final Writer writer,
@@ -531,6 +533,7 @@ public class ZMonRestService extends AbstractZMonController {
         writer.write(r);
     }
 
+    // get list of metricnames
     @ResponseBody
     @RequestMapping(value = "/kairosDBPost/api/v1/metricnames", method = RequestMethod.GET, produces = "application/json")
     public void g2kairosDBmetrics(final Writer writer, final HttpServletResponse response) throws IOException {
@@ -549,6 +552,7 @@ public class ZMonRestService extends AbstractZMonController {
         writer.write(r);
     }
 
+    // get kairosdb query with datapoints
     @ResponseBody
     @RequestMapping(value = "/kairosDBPost/api/v1/datapoints/query", method = RequestMethod.POST, produces = "application/json")
     public void g2kairosDBPost(@RequestBody(required = true) final JsonNode node, final Writer writer,
@@ -571,6 +575,7 @@ public class ZMonRestService extends AbstractZMonController {
         writer.write(r);
     }
 
+    // search for dashboards, returns list of all available dashboards
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     @RequestMapping(value = "/grafana2/api/search", method = RequestMethod.GET)
@@ -588,6 +593,7 @@ public class ZMonRestService extends AbstractZMonController {
         return arr;
     }
 
+    // requests a dashboard
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     @RequestMapping(value = "/grafana2/api/dashboards/db/new-dashboard", method = RequestMethod.GET)
@@ -603,6 +609,7 @@ public class ZMonRestService extends AbstractZMonController {
         return r;
     }
 
+    // saves a dashboard
     @ResponseBody
     @RequestMapping(value = "/kairosDBPost/api/dashboards/db", method = RequestMethod.POST, produces = "application/json")
     public void g2SaveDBPost(@RequestBody(required = true) final JsonNode node, final Writer writer,
@@ -613,11 +620,14 @@ public class ZMonRestService extends AbstractZMonController {
         writer.write(r);
     }
 
-    @ResponseStatus(HttpStatus.OK)
+    // save dashboard snapshot for sharing
     @ResponseBody
-    @RequestMapping(value = "/grafana2/api/metrics/test", method = RequestMethod.GET)
-    public JsonNode g2getDefaultChartData() throws ZMonException {
-        ObjectNode r = mapper.createObjectNode();
-        return r;
+    @RequestMapping(value = "/kairosDBPost/api/snapshots", method = RequestMethod.POST, produces = "application/json")
+    public void g2SaveDBPost(@RequestBody(required = true) final JsonNode node, final Writer writer,
+                             final HttpServletResponse response) throws IOException {
+
+        response.setContentType("application/json");
+        final String r = "{}";
+        writer.write(r);
     }
 }
