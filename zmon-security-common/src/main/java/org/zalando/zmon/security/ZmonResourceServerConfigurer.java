@@ -9,6 +9,7 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.R
 import org.springframework.security.oauth2.config.annotation.web.configurers.ResourceServerSecurityConfigurer;
 import org.springframework.security.oauth2.provider.token.ResourceServerTokenServices;
 import org.springframework.util.Assert;
+import org.zalando.stups.oauth2.spring.security.expression.ExtendedOAuth2WebSecurityExpressionHandler;
 
 /**
  * 
@@ -17,20 +18,23 @@ import org.springframework.util.Assert;
  */
 public class ZmonResourceServerConfigurer extends ResourceServerConfigurerAdapter {
 
-	private final Logger log = LoggerFactory.getLogger(ZmonResourceServerConfigurer.class);
+    private final Logger log = LoggerFactory.getLogger(ZmonResourceServerConfigurer.class);
 
-	private final ResourceServerTokenServices resourceServerTokenServices;
+    private final ResourceServerTokenServices resourceServerTokenServices;
 
-	public ZmonResourceServerConfigurer(ResourceServerTokenServices resourceServerTokenServices) {
-		Assert.notNull(resourceServerTokenServices, "'ResourceServerTokenService' should never be null");
-		this.resourceServerTokenServices = resourceServerTokenServices;
-	}
+    public ZmonResourceServerConfigurer(ResourceServerTokenServices resourceServerTokenServices) {
+        Assert.notNull(resourceServerTokenServices, "'ResourceServerTokenService' should never be null");
+        this.resourceServerTokenServices = resourceServerTokenServices;
+    }
 
-	@Override
-	public void configure(ResourceServerSecurityConfigurer resources) {
-		resources.resourceId("zmon").tokenServices(resourceServerTokenServices); //.stateless(false);
-	}
+    @Override
+    public void configure(ResourceServerSecurityConfigurer resources) {
+        resources.resourceId("zmon").tokenServices(resourceServerTokenServices); // .stateless(false);
+        // here is the important part
+        resources.expressionHandler(new ExtendedOAuth2WebSecurityExpressionHandler());
+    }
 
+    //@formatter:off
 	/**
 	 * Configure scopes for specific controller/httpmethods/roles here.
 	 */
@@ -47,15 +51,16 @@ public class ZmonResourceServerConfigurer extends ResourceServerConfigurerAdapte
 		.and()
 			.authorizeRequests()
 				.antMatchers(HttpMethod.GET, "/api/v1/**")
-					.access("#oauth2.hasScope('uid') or #oauth2.hasScope('zmon.read_all')")
+					.access("(#oauth2.hasScope('uid') && #oauth2.hasAnyRealm('/employees','/services')) or #oauth2.hasScope('zmon.read_all')")
 				.antMatchers(HttpMethod.POST, "/api/v1/**")
-					.access("#oauth2.hasScope('uid') or #oauth2.hasScope('zmon.write_all')")
+					.access("(#oauth2.hasScope('uid') && #oauth2.hasAnyRealm('/employees','/services')) or #oauth2.hasScope('zmon.write_all')")
 				.antMatchers(HttpMethod.PUT, "/api/v1/**")
-					.access("#oauth2.hasScope('uid') or #oauth2.hasScope('zmon.write_all')")
+					.access("(#oauth2.hasScope('uid') && #oauth2.hasAnyRealm('/employees','/services')) or #oauth2.hasScope('zmon.write_all')")
 				.antMatchers(HttpMethod.DELETE, "/api/v1/**")
-					.access("#oauth2.hasScope('uid') or #oauth2.hasScope('zmon.write_all')");
+					.access("(#oauth2.hasScope('uid') && #oauth2.hasAnyRealm('/employees','/services')) or #oauth2.hasScope('zmon.write_all')");
 
 		// J+
 	}
+	//@formatter:on
 
 }
