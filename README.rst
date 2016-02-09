@@ -13,6 +13,8 @@ ZMON Controller
 .. image:: https://readthedocs.org/projects/zmon/badge/?version=latest
    :target: https://readthedocs.org/projects/zmon/?badge=latest
    :alt: Documentation Status
+   
+ZMON Controller is the frontend UI and REST API for Zalando's open-source platform monitoring tool.
 
 Running Locally
 ===============
