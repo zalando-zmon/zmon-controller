@@ -70,7 +70,7 @@ function (angular, _, coreModule, config) {
         });
 
         if ($scope.queryHasNoFilters()) {
-          $scope.results.unshift({ title: 'Home', url: config.appSubUrl + '/', type: 'dash-home' });
+          $scope.results.unshift({ title: 'Home', url: config.appSubUrl + '/grafana2', type: 'dash-home' });
         }
       });
     };

@@ -603,7 +603,21 @@ public class ZMonRestService extends AbstractZMonController {
         return r;
     }
 
+    @ResponseBody
+    @RequestMapping(value = "/kairosDBPost/api/dashboards/db", method = RequestMethod.POST, produces = "application/json")
+    public void g2SaveDBPost(@RequestBody(required = true) final JsonNode node, final Writer writer,
+                             final HttpServletResponse response) throws IOException {
 
+        response.setContentType("application/json");
+        final String r = "{}";
+        writer.write(r);
+    }
 
-
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    @RequestMapping(value = "/grafana2/api/metrics/test", method = RequestMethod.GET)
+    public JsonNode g2getDefaultChartData() throws ZMonException {
+        ObjectNode r = mapper.createObjectNode();
+        return r;
+    }
 }

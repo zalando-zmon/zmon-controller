@@ -18,14 +18,14 @@ function (angular, _, $, coreModule, config) {
       $scope.mainLinks.push({
         text: "Dashboards",
         icon: "fa fa-fw fa-th-large",
-        href: $scope.getUrl("/"),
+        href: $scope.getUrl("/grafana2/"),
       });
 
       if (contextSrv.hasRole('Admin')) {
         $scope.mainLinks.push({
           text: "Data Sources",
           icon: "fa fa-fw fa-database",
-          href: $scope.getUrl("/datasources"),
+          href: $scope.getUrl("/grafana2/datasources"),
         });
       }
     };
@@ -36,15 +36,15 @@ function (angular, _, $, coreModule, config) {
       if (contextSrv.hasRole('Admin')) {
         $scope.orgMenu.push({
           text: "Organization settings",
-          href: $scope.getUrl("/org"),
+          href: $scope.getUrl("/grafana2/org"),
         });
         $scope.orgMenu.push({
           text: "Users",
-          href: $scope.getUrl("/org/users"),
+          href: $scope.getUrl("/grafana2/org/users"),
         });
         $scope.orgMenu.push({
           text: "API Keys",
-          href: $scope.getUrl("/org/apikeys"),
+          href: $scope.getUrl("/grafana2/org/apikeys"),
         });
       }
 
@@ -79,7 +79,7 @@ function (angular, _, $, coreModule, config) {
 
     $scope.switchOrg = function(orgId) {
       backendSrv.post('/api/user/using/' + orgId).then(function() {
-        window.location.href = $scope.getUrl('/');
+        window.location.href = $scope.getUrl('/grafana2/');
       });
     };
 
@@ -90,19 +90,19 @@ function (angular, _, $, coreModule, config) {
       $scope.mainLinks.push({
         text: "System info",
         icon: "fa fa-fw fa-info",
-        href: $scope.getUrl("/admin/settings"),
+        href: $scope.getUrl("/grafana2/admin/settings"),
       });
 
       $scope.mainLinks.push({
         text: "Global Users",
         icon: "fa fa-fw fa-user",
-        href: $scope.getUrl("/admin/users"),
+        href: $scope.getUrl("/grafana2/admin/users"),
       });
 
       $scope.mainLinks.push({
         text: "Global Orgs",
         icon: "fa fa-fw fa-users",
-        href: $scope.getUrl("/admin/orgs"),
+        href: $scope.getUrl("/grafana2/admin/orgs"),
       });
     };
 
@@ -112,7 +112,7 @@ function (angular, _, $, coreModule, config) {
       $scope.orgMenu = [];
 
       var currentPath = $location.path();
-      if (currentPath.indexOf('/admin') === 0) {
+      if (currentPath.indexOf('/grafana2/admin') === 0) {
         $scope.setupAdminNav();
       } else {
         $scope.setupMainNav();
