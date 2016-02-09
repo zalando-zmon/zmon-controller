@@ -2,37 +2,28 @@ package de.zalando.zmon.adapter;
 
 import java.util.Map;
 
-import de.zalando.zmon.config.TestConfiguration;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
-
+import org.junit.Before;
 import org.junit.Test;
-
-import org.junit.runner.RunWith;
-
-import org.springframework.beans.factory.annotation.Autowired;
-
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-
 import com.google.common.collect.ImmutableMap;
 
 import de.zalando.zmon.domain.Parameter;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes= TestConfiguration.class)
-@TestPropertySource("/test.properties")
-public class JsonAdapterIT {
+public class JsonAdapterTest {
 
-    @Autowired
     private ObjectMapper objectMapper;
 
     private final JsonAdapter jsonAdapter = new JsonAdapter();
+
+    @Before
+    public void setUp() {
+        objectMapper = new ObjectMapper();
+    }
 
     @Test
     public void testUnmarshalNull() throws Exception {
@@ -45,13 +36,12 @@ public class JsonAdapterIT {
         final JsonNode param1 = objectMapper.readTree("{\"value\":1,\"comment\":\"desc 1\",\"type\":\"float\"}");
 
         final ObjectNode node = objectMapper.createObjectNode();
-        node.put("param0", param0);
-        node.put("param1", param1);
+        node.set("param0", param0);
+        node.set("param1", param1);
 
         MatcherAssert.assertThat(jsonAdapter.unmarshal(node.toString()),
-            Matchers.<Map<String, Parameter>>is(
-                ImmutableMap.of("param0", new Parameter(0, "desc 0", "int"), "param1",
-                    new Parameter(1, "desc 1", "float"))));
+                Matchers.<Map<String, Parameter>> is(ImmutableMap.of("param0", new Parameter(0, "desc 0", "int"),
+                        "param1", new Parameter(1, "desc 1", "float"))));
     }
 
     @Test
@@ -66,9 +56,10 @@ public class JsonAdapterIT {
                 "param1", new Parameter(1, "desc 1", "float"));
 
         final ObjectNode node = objectMapper.createObjectNode();
-        node.put("param0", objectMapper.readTree("{\"value\":0,\"comment\":\"desc 0\",\"type\":\"int\"}"));
-        node.put("param1", objectMapper.readTree("{\"value\":1,\"comment\":\"desc 1\",\"type\":\"float\"}"));
+        node.set("param0", objectMapper.readTree("{\"value\":0,\"comment\":\"desc 0\",\"type\":\"int\"}"));
+        node.set("param1", objectMapper.readTree("{\"value\":1,\"comment\":\"desc 1\",\"type\":\"float\"}"));
 
         MatcherAssert.assertThat(jsonAdapter.marshal(input), Matchers.is(node.toString()));
     }
+
 }
