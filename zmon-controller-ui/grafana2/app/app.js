@@ -82,7 +82,6 @@ function (angular, $, _, appLevelRequire) {
       angular
         .element(document)
         .ready(function() {
-          angular.bootstrap(document, apps_deps);
           angular.bootstrap(document, apps_deps)
             .invoke(['$rootScope', function ($rootScope) {
               _.each(preBootModules, function (module) {
