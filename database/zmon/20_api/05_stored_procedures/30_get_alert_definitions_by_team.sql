@@ -35,3 +35,18 @@ END
 $BODY$
 LANGUAGE 'plpgsql' VOLATILE SECURITY DEFINER
 COST 100;
+
+-- HACK: create same sproc with different signature to work around JDBC/SProcWrapper problem/bug
+CREATE OR REPLACE FUNCTION get_alert_definitions_by_team(
+     IN status              text,
+     IN teams               text[]
+) RETURNS SETOF alert_definition_type AS
+$BODY$
+BEGIN
+    RETURN QUERY
+        SELECT *
+          FROM get_alert_definitions_by_team(status::zzm_data.definition_status, teams);
+END
+$BODY$
+LANGUAGE 'plpgsql' VOLATILE SECURITY DEFINER
+COST 100;

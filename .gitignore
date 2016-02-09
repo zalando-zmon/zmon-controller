@@ -9,6 +9,7 @@
 target
 *.pre-cvfix
 *.springBeans
+*.swp
 eventlog.layout*
 eventlog.log*
 config-service.json
@@ -26,3 +27,4 @@ zmon-controller-ui/node_modules
 .factorypath
 
 client.json
+user.json
