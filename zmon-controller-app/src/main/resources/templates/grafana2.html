@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+    xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+    xmlns:data="https://github.com/mxab/thymeleaf-extras-data-attribute">
+
+  <!--[if IE 8]>         <html class="no-js lt-ie9" lang="en"> <![endif]-->
+  <!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+  <head>
+    <meta charset="utf-8"></meta>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"></meta>
+    <meta name="viewport" content="width=device-width"></meta>
+    <meta name="google" value="notranslate"></meta>
+
+    <base href="/grafana2/">
+
+    <title>Grafana 2</title>
+    <link rel="stylesheet" href="css/grafana.dark.min.css" title="Dark" th:href="@{/grafana2/css/grafana.dark.min.css}" />
+    <link rel="icon" type="image/png" href="img/fav32.png" th:href="@{/grafana2/img/fav32.png}" />
+
+    <!-- build:js app/app.js -->
+    <script src="vendor/require/require.js" th:src="@{/grafana2/vendor/requirejs/require.js}"></script>
+    <script src="app/components/require.config.js" th:src="@{/grafana2/app/require_config.js}"></script>
+    <!-- endbuild -->
+
+  </head>
+
+  <body ng-cloak ng-controller="GrafanaCtrl" ng-class="{'sidemenu-open': contextSrv.sidemenu}">
+
+      <div class="sidemenu-canvas">
+
+        <aside class="sidemenu-wrapper" ng-if="contextSrv.sidemenu">
+          <div ng-include="'app/partials/sidemenu.html'"></div>
+        </aside>
+
+        <div class="page-alert-list">
+          <div ng-repeat='alert in dashAlerts.list' class="alert-{{alert.severity}} alert">
+            <button type="button" class="alert-close" ng-click="dashAlerts.clear(alert)">
+              <i class="fa fa-times-circle"></i>
+            </button>
+            <div class="alert-title">{{alert.title}}</div>
+            <div ng-bind='alert.text'></div>
+            </div>
+          </div>
+
+          <div ng-view class="main-view"></div>
+
+        </div>
+
+    </body>
+
+  <script>
+
+    var dummyUser = {"isSignedIn":true,"id":2,"login":"emanuel.lauria@zalando.de","email":"emanuel.lauria@zalando.de","name":"Emanuel","lightTheme":false,"orgId":2,"orgName":"zalando","orgRole":"Admin","isGrafanaAdmin":false,"gravatarUrl":"https://secure.gravatar.com/avatar/2f8b7dde4bb801ce5ac324f54c598697?s=90\u0026default=mm"};
+
+    var dummySettings = {"allowOrgCreate":true,"appSubUrl":"","buildInfo":{"buildstamp":1448355841,"commit":"v2.5.0+199-g85382dc-dirty","version":"2.6.0-pre1"},"datasources":{"-- Grafana --":{"meta":{"builtIn":true,"metrics":true,"module":"app/plugins/datasource/grafana/datasource","name":"Grafana","pluginType":"datasource","serviceName":"GrafanaDatasource","type":"grafana"},"type":"grafana"},"-- Mixed --":{"meta":{"builtIn":true,"metrics":true,"mixed":true,"module":"app/plugins/datasource/mixed/datasource","name":"Mixed datasource","pluginType":"datasource","serviceName":"MixedDatasource","type":"mixed"},"type":"mixed"},"kairos":{"meta":{"annotations":false,"metrics":true,"module":"app/plugins/datasource/kairosdb/datasource","name":"KairosDB","partials":{"config":"app/plugins/datasource/kairosdb/partials/config.html"},"pluginType":"datasource","serviceName":"KairosDBDatasource","type":"kairosdb"},"name":"kairos","type":"kairosdb","url":"https://localhost:8443/rest/kairosDBPost"},"test":{"meta":{"annotations":true,"defaultMatchFormat":"glob","metrics":true,"module":"app/plugins/datasource/graphite/datasource","name":"Graphite","partials":{"config":"app/plugins/datasource/graphite/partials/config.html"},"pluginType":"datasource","serviceName":"GraphiteDatasource","type":"graphite"},"name":"test","type":"graphite","url":"/api/datasources/proxy/3"}},"defaultDatasource":"-- Grafana --"};
+    window.grafanaBootData = {
+        user: dummyUser,
+        settings: dummySettings
+    };
+    require(['app/app'], function (app) {
+        app.boot();
+    })
+  </script>
+
+</html>

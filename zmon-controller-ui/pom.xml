@@ -9,7 +9,7 @@
 	<artifactId>zmon-controller-ui</artifactId>
 	
 	<properties>
-		<output-directory>${project.build.directory}/classes/public/</output-directory>
+		<output-directory>${project.build.directory}/classes/static</output-directory>
 	</properties>
 
 	<build>
@@ -57,23 +57,18 @@
 				</includes>
 				<targetPath>${output-directory}/grafana</targetPath>
 			</resource>
+            <resource>
+                <directory>grafana2</directory>
+                <targetPath>${output-directory}/grafana2</targetPath>
+            </resource>
 		</resources>
 		<plugins>
-			<!-- <plugin> <groupId>com.github.eirslett</groupId> <artifactId>frontend-maven-plugin</artifactId> 
-				<version>0.0.26</version> <configuration> <installDirectory>target</installDirectory> 
-				</configuration> <executions> <execution> <id>install node and npm</id> <goals> 
-				<goal>install-node-and-npm</goal> </goals> <configuration> <nodeVersion>v4.2.1</nodeVersion> 
-				<npmVersion>2.14.7</npmVersion> </configuration> </execution> <execution> 
-				<id>npm install</id> <goals> <goal>npm</goal> </goals> </execution> <execution> 
-				<id>bower install</id> <goals> <goal>bower</goal> </goals> </execution> <execution> 
-				<id>gulp build</id> <goals> <goal>gulp</goal> </goals> </execution> </executions> 
-				</plugin> -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-resources-plugin</artifactId>
 				<version>2.7</version>
 				<configuration>
-					<outputDirectory>${project.build.directory}/classes/public/</outputDirectory>
+					<outputDirectory>${output-directory}</outputDirectory>
 				</configuration>
 			</plugin>
 		</plugins>

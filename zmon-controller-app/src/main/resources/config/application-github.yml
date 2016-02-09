@@ -1,8 +1,11 @@
+#
+# included when using profile 'vagrantbox'
+#
 zmon:
   oauth2:
     sso:
-      client-id: YourGitHubClientID
-      client-secret: YourGitHubClientSecret
+      client-id: 344c9a90fc697fe6662a #vagrantbox
+      client-secret: a2bbb03a29f6737af04c77f2d88e8f8199ff179b #vagrantbox
   signup:
     github:
       # Specify users who are authorized to log in
@@ -12,8 +15,8 @@ zmon:
       allowed-orgas: ['*']
   authorities:
     simple:
-      admins: []
-      users: []
+      admins: ['*']
+      users: ['*']
   teams:
     simple:
       teams:
