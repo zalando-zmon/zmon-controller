@@ -623,7 +623,7 @@ public class ZMonRestService extends AbstractZMonController {
     // save dashboard snapshot for sharing
     @ResponseBody
     @RequestMapping(value = "/kairosDBPost/api/snapshots", method = RequestMethod.POST, produces = "application/json")
-    public void g2SaveDBPost(@RequestBody(required = true) final JsonNode node, final Writer writer,
+    public void g2SaveSnapshots(@RequestBody(required = true) final JsonNode node, final Writer writer,
                              final HttpServletResponse response) throws IOException {
 
         response.setContentType("application/json");
