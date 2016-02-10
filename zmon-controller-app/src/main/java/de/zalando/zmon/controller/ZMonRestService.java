@@ -630,4 +630,42 @@ public class ZMonRestService extends AbstractZMonController {
         final String r = "{}";
         writer.write(r);
     }
+
+    // returns a list of all available datasources
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    @RequestMapping(value = "/grafana2/api/datasources", method = RequestMethod.GET)
+    public JsonNode g2getDatasources() throws ZMonException {
+        ArrayNode arr = mapper.createArrayNode();
+        ObjectNode k = mapper.createObjectNode();
+        k.put("id", 1);
+        k.put("orgId", "2");
+        k.put("name", "kairos");
+        k.put("access", "direct");
+        k.put("url", "https:/zmon2.zalando.net/rest/kairosDBPost");
+        k.put("password", "");
+        k.put("user", "");
+        k.put("database", "");
+        k.put("basicAuth", false);
+        k.put("basicAuthUser", "");
+        k.put("basicAuthPassword", "");
+        k.put("isDefault", true);
+        arr.add(k);
+
+        ObjectNode e = mapper.createObjectNode();
+        e.put("id", 2);
+        e.put("orgId", "2");
+        e.put("name", "elasticsearch");
+        e.put("access", "direct");
+        e.put("url", "https:/zmon2.zalando.net/rest/grafana/dashboard/_search");
+        e.put("password", "");
+        e.put("user", "");
+        e.put("database", "");
+        e.put("basicAuth", false);
+        e.put("basicAuthUser", "");
+        e.put("basicAuthPassword", "");
+        e.put("isDefault", true);
+        arr.add(e);
+        return arr;
+    }
 }
