@@ -642,7 +642,7 @@ public class ZMonRestService extends AbstractZMonController {
         k.put("orgId", "2");
         k.put("name", "kairos");
         k.put("access", "direct");
-        k.put("url", "https:/zmon2.zalando.net/rest/kairosDBPost");
+        k.put("url", "/rest/kairosDBPost");
         k.put("password", "");
         k.put("user", "");
         k.put("database", "");
@@ -657,7 +657,7 @@ public class ZMonRestService extends AbstractZMonController {
         e.put("orgId", "2");
         e.put("name", "elasticsearch");
         e.put("access", "direct");
-        e.put("url", "https:/zmon2.zalando.net/rest/grafana/dashboard/_search");
+        e.put("url", "/rest/grafana/dashboard/_search");
         e.put("password", "");
         e.put("user", "");
         e.put("database", "");
