@@ -47,7 +47,8 @@ function (angular, _, moment, kbn, ElasticQueryBuilder, IndexPattern, ElasticRes
     };
 
     ElasticDatasource.prototype._get = function(url) {
-      return this._request('GET', this.indexPattern.getIndexForToday() + url)
+      //return this._request('GET', this.indexPattern.getIndexForToday() + url)
+      return this._request('GET', url)
         .then(function(results) {
           return results.data;
         });
@@ -264,7 +265,8 @@ function (angular, _, moment, kbn, ElasticQueryBuilder, IndexPattern, ElasticRes
     };
 
     ElasticDatasource.prototype.getDashboard = function(id) {
-      return this._get('/dashboard/' + id)
+      //return this._get('/dashboard/' + id);
+      return this._get(id)
       .then(function(result) {
         return angular.fromJson(result._source.dashboard);
       });
@@ -277,7 +279,8 @@ function (angular, _, moment, kbn, ElasticQueryBuilder, IndexPattern, ElasticRes
         sort: ["_uid"],
       };
 
-      return this._post(this.index + '/dashboard/_search', query)
+      //return this._post(this.index + '/dashboard/_search', query)
+      return this._post('_search', query)
       .then(function(results) {
         if(_.isUndefined(results.hits)) {
           return { dashboards: [], tags: [] };
