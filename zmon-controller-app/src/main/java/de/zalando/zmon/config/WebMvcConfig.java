@@ -51,6 +51,8 @@ public class WebMvcConfig {
                         .setCacheControl(thirtyDays);
 
                 // GRAFANA
+                registry.addResourceHandler("/grafana/config.js").addResourceLocations("classpath:static/grafana/config.js")
+                        .setCacheControl(thirtyDays);
                 registry.addResourceHandler("/grafana/app/**").addResourceLocations("classpath:static/grafana/app/")
                         .setCacheControl(thirtyDays);
 
