@@ -25,6 +25,11 @@ angular.module('zmon2App').controller('AlertDefinitionCtrl', ['$scope', '$window
             CommunicationService.getAllTeams().then(
                 function(data) {
                     $scope.alertTeams = data;
+
+                    // remove saved team from local storage if it doesnt exist anymore
+                    if ($scope.alertTeams.indexOf(localStorageService.get('teamFilter')) === -1) {
+                        localStorageService.remove('teamFilter');
+                    };
                 }
             );
 
@@ -73,6 +78,7 @@ angular.module('zmon2App').controller('AlertDefinitionCtrl', ['$scope', '$window
             $scope.DefinitionsCtrl.fetchAlertDefinitions();
             $location.search('tf', $scope.teamFilter ? $scope.teamFilter : 'all');
             $scope.isFilteredByTemplate = false;
+            localStorageService.set('teamFilter', $scope.teamFilter);
             localStorageService.set('returnTo', '/#' + $location.url());
         };
 
@@ -139,6 +145,11 @@ angular.module('zmon2App').controller('AlertDefinitionCtrl', ['$scope', '$window
         // Set team filter on load from userInfo
         if (!_.isEmpty(userInfo.teams)) {
             $scope.teamFilter = userInfo.teams.split(',')[0];
+        }
+
+        // Override teamFilter if it was saved in localStorage
+        if (localStorageService.get('teamFilter')) {
+            $scope.teamFilter = localStorageService.get('teamFilter');
         }
 
         // Override teamFilter if specified on queryString
