@@ -631,6 +631,15 @@ angular.module('zmon2App').controller('AlertDetailsCtrl', ['$scope', '$location'
             );
         };
 
+        // Force cleanup of alert state
+        this.forceAlertCleanup = function() {
+            CommunicationService.forceAlertCleanup($scope.AlertDetailsCtrl.alertDefinitionId)
+                .then(function() {;
+                    FeedbackMessageService.showSuccessMessage('Cleanup of alert state successfully forced...');
+                }
+            );
+        };
+
         this.timestampIsOld = function(entity) {
             var now = new Date()/1000;
             var interval = $scope.AlertDetailsCtrl.checkDefinition.interval;

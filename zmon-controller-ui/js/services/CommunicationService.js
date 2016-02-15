@@ -195,6 +195,15 @@ angular.module('zmon2App').factory('CommunicationService', ['$http', '$q', '$log
             return doHttpCall("POST", "rest/forceAlertEvaluation", params);
         };
 
+        service.forceAlertCleanup = function(id) {
+            var params = {};
+            if (id) {
+                PreconditionsService.isNumber(id);
+                params.alert_definition_id = id;
+            }
+            return doHttpCall("POST", "rest/cleanAlertState", params);
+        };
+
         service.getAllTeams = function() {
             return doHttpCall("GET", "rest/allTeams");
         };
