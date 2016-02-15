@@ -1,5 +1,6 @@
 package org.zalando.zmon.security.service;
 
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import de.zalando.zmon.security.AuthorityService;
 import org.springframework.core.env.Environment;
@@ -25,13 +26,13 @@ public class PresharedTokensResourceServerTokenServices implements ResourceServe
 
     private Environment environment;
 
-    public PresharedTokensResourceServerTokenServices(AuthorityService authorityService, Environment environment) {
+    public PresharedTokensResourceServerTokenServices(final AuthorityService authorityService, final Environment environment) {
         this.authorityService = authorityService;
         this.environment = environment;
     }
 
     @Override
-    public OAuth2Authentication loadAuthentication(String accessToken) throws AuthenticationException, InvalidTokenException {
+    public OAuth2Authentication loadAuthentication(final String accessToken) throws AuthenticationException, InvalidTokenException {
 
         final String uid = environment.getProperty(String.format("preshared_tokens.%s.uid", accessToken));
 
@@ -48,9 +49,15 @@ public class PresharedTokensResourceServerTokenServices implements ResourceServe
         Collection<? extends GrantedAuthority> authorities = authorityService.getAuthorities(uid);
 
         UsernamePasswordAuthenticationToken user = new UsernamePasswordAuthenticationToken(uid, "N/A", authorities);
-        Set scopes = Sets.newHashSet("uid");
+        final Set scopes = Sets.newHashSet("uid");
 
-        OAuth2Request request = new OAuth2Request((Map)null, "NOT_NEEDED", (Collection)null, true, scopes, (Set)null, (String)null, (Set)null, (Map)null);
+        final Map<String, Object> map = Maps.newHashMap();
+        map.put("scopes", scopes);
+        // we assume pre-shared tokens are only used for services
+        map.put("realm", "/services");
+        user.setDetails(map);
+
+        OAuth2Request request = new OAuth2Request((Map) null, "NOT_NEEDED", (Collection) null, true, scopes, (Set) null, (String) null, (Set) null, (Map) null);
         return new OAuth2Authentication(request, user);
     }
 
