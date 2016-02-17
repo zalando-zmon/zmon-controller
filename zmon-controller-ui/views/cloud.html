@@ -2,7 +2,7 @@
 <div class="row">
     <div class="col-md-12">
         <div class="row">
-            <div class="col-md-10">
+            <div class="col-md-10" ng-show="haveTeams()">
                 <h3>
                     <span ng-click="setTeam(null)" class="clickable" style="padding-left:5px;"><a>teams</a></span>
                     <span ng-click="setApp(null)" ng-if="selectedTeam" class="clickable"> > <a>{{selectedTeam}}</a></span>
@@ -22,6 +22,7 @@
         </div>
         <div class="row">
             <div class="col-md-12">
+                <div ng-hide="haveTeams()"><h4>No teams available.</h4></div>
                 <div ng-repeat="team in teams" class="clickable card" ng-hide="selectedTeam" ng-click="setTeam(team.name)">
                     <a><h4>{{team.name}}</h4></a>
                     <div><span class="number">{{team.applications.length}}</span><span class="lbl">apps</span></div>

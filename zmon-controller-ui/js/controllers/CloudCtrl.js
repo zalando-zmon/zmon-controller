@@ -299,6 +299,11 @@ angular.module('zmon2App').controller('CloudCtrl', ['$scope', '$interval', '$loc
             return !app.metrics.length;
         }
 
+        // check if teams object is populated
+        $scope.haveTeams = function() {
+            return !_.isEmpty($scope.teams);
+        }
+
         // fetch all necessary resources
         var fetchCloudData = function() {
             CommunicationService.getCloudData('local').then(function(teams) {
