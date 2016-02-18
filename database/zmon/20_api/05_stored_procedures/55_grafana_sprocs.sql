@@ -21,10 +21,12 @@ BEGIN
 END;
 $$ LANGUAGE PLPGSQL VOLATILE SECURITY DEFINER;
 
-CREATE OR REPLACE FUNCTION get_grafana_dashboards(OUT id TEXT, OUT title TEXT, OUT dashboard TEXT, OUT "user" TEXT) RETURNS SETOF record AS
+CREATE OR REPLACE FUNCTION get_grafana_dashboards(IN s_title TEXT, OUT id TEXT, OUT title TEXT, OUT dashboard TEXT, OUT "user" TEXT) RETURNS SETOF record AS
 $$
   SELECT gd_id id, gd_title title, gd_dashboard::text dashboard, gd_created_by "user"
-    FROM zzm_data.grafana_dashboard;
+    FROM zzm_data.grafana_dashboard
+   WHERE gd_title ilike '%' || s_title || '%'
+   ORDER BY gd_title ASC;
 $$ LANGUAGE SQL VOLATILE SECURITY DEFINER;
 
 CREATE OR REPLACE FUNCTION get_grafana_dashboard(INOUT id text, OUT title text, OUT dashboard text, OUT "user" TEXT) RETURNS SETOF record AS

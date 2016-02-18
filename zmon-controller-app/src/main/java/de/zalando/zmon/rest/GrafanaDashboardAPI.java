@@ -79,7 +79,10 @@ public class GrafanaDashboardAPI {
     public JsonNode getDashboards(@RequestBody JsonNode grafanaSearch) throws ZMonException {
         ObjectNode r = mapper.createObjectNode();
         ArrayNode hits = mapper.createArrayNode();
-        List<GrafanaDashboardSprocService.GrafanaDashboard> dashboards = grafanaService.getGrafanaDashboards();
+
+        JsonNode query = grafanaSearch.get("query").get("query_string").get("query");
+        List<GrafanaDashboardSprocService.GrafanaDashboard> dashboards = grafanaService.getGrafanaDashboards(query.textValue().replace("title:", "").replace("*", ""));
+
         for(GrafanaDashboardSprocService.GrafanaDashboard d : dashboards) {
             ObjectNode hit = mapper.createObjectNode();
             hit.put("_id", d.title);

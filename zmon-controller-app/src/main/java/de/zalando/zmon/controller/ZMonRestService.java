@@ -402,7 +402,9 @@ public class ZMonRestService extends AbstractZMonController {
         ObjectNode facetsTags = mapper.createObjectNode();
         ArrayNode facetsTagsTerms = mapper.createArrayNode();
         ArrayNode hitsHits = mapper.createArrayNode();
-        List<GrafanaDashboardSprocService.GrafanaDashboard> dashboards = grafanaService.getGrafanaDashboards();
+
+        JsonNode query = grafanaSearch.get("query").get("query_string").get("query");
+        List<GrafanaDashboardSprocService.GrafanaDashboard> dashboards = grafanaService.getGrafanaDashboards(query.textValue().replace("title:", "").replace("*", ""));
 
         for (GrafanaDashboardSprocService.GrafanaDashboard d : dashboards) {
 

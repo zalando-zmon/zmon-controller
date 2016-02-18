@@ -15,7 +15,7 @@ import java.util.List;
 public interface GrafanaDashboardSprocService {
 
     @DatabaseType
-    public static class GrafanaDashboard {
+    class GrafanaDashboard {
         @DatabaseField
         public String id;
 
@@ -33,7 +33,7 @@ public interface GrafanaDashboardSprocService {
     void createOrUpdateGrafanaDashboard(@SProcParam String id, @SProcParam String title, @SProcParam String dashboard, @SProcParam String userName);
 
     @SProcCall
-    List<GrafanaDashboard> getGrafanaDashboards();
+    List<GrafanaDashboard> getGrafanaDashboards(String title);
 
     @SProcCall
     List<GrafanaDashboard> getGrafanaDashboard(@SProcParam String id);
