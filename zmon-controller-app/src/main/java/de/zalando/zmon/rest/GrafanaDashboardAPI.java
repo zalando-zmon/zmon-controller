@@ -75,6 +75,13 @@ public class GrafanaDashboardAPI {
 
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+    public void deleteDashboard(@PathVariable(value="id") String id) throws ZMonException, IOException {
+        grafanaService.deleteGrafanaDashboard(id, authService.getUserName());
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
     @RequestMapping(value = "/_search", method = RequestMethod.POST)
     public JsonNode getDashboards(@RequestBody JsonNode grafanaSearch) throws ZMonException {
         ObjectNode r = mapper.createObjectNode();

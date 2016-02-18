@@ -35,3 +35,10 @@ $$
     FROM zzm_data.grafana_dashboard
    WHERE gd_id = id;
 $$ LANGUAGE SQL VOLATILE SECURITY DEFINER;
+
+CREATE OR REPLACE FUNCTION delete_grafana_dashboard(IN id text, IN user_name TEXT) RETURNS void AS
+$$
+  DELETE FROM zzm_data.grafana_dashboard
+   WHERE gd_id = id
+     AND gd_created_by = user_name;
+$$ LANGUAGE SQL VOLATILE SECURITY DEFINER;

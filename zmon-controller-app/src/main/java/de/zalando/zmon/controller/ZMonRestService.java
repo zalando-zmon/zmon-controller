@@ -394,6 +394,14 @@ public class ZMonRestService extends AbstractZMonController {
 
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
+    @RequestMapping(value = "/grafana/dashboard/{id}", method = RequestMethod.DELETE)
+    public void deleteDashboard(@PathVariable(value="id") String id) throws ZMonException, IOException {
+        grafanaService.deleteDashboard(id, authService.getUserName());
+    }
+
+
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
     @RequestMapping(value = "/grafana/dashboard/_search", method = RequestMethod.POST)
     public JsonNode getDashboards(@RequestBody JsonNode grafanaSearch) throws ZMonException {
         ObjectNode r = mapper.createObjectNode();
