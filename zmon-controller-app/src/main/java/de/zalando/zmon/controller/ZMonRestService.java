@@ -648,12 +648,17 @@ public class ZMonRestService extends AbstractZMonController {
         model.put("id", id);
 
         ArrayNode rows = (ArrayNode) model.get("rows");
-        for(int i = 0; i < rows.size(); ++i) {
-            JsonNode row = rows.get(i);
-            if(row.has("panels") && row.get("panels").size() > 0) {
-                ArrayNode panels = (ArrayNode)row.get("panels");
-                for(int j = 0; j < panels.size(); ++j) {
-                    ((ObjectNode)panels.get(i)).putNull("datasource");
+        if (null!=rows) {
+            for (int i = 0; i < rows.size(); ++i) {
+                JsonNode row = rows.get(i);
+                if (null!=row && row.has("panels")) {
+                    ArrayNode panels = (ArrayNode) row.get("panels");
+                    if (null == panels) continue;
+
+                    for (int j = 0; j < panels.size(); ++j) {
+                        if(null==panels.get(i)) continue;
+                        ((ObjectNode) panels.get(i)).putNull("datasource");
+                    }
                 }
             }
         }
