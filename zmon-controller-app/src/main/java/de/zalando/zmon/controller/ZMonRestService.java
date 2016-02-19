@@ -609,7 +609,7 @@ public class ZMonRestService extends AbstractZMonController {
             dashboard.putArray("tags");
             dashboard.put("user", d.user);
             dashboard.put("group", d.user);
-            dashboard.put("isStarred", "false");
+            dashboard.put("isStarred", false);
         }
 
         return resultsNode;
@@ -619,8 +619,26 @@ public class ZMonRestService extends AbstractZMonController {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     @RequestMapping(value = "/grafana2/api/dashboards/db/{id}", method = RequestMethod.GET)
-    public JsonNode g2getDashboard2(@PathVariable(value="id") String id) throws ZMonException {
-        return getDashboard(id); // lets see if this is compatible enought with Grafana 1
+    public ResponseEntity<JsonNode> g2getDashboard2(@PathVariable(value="id") String id) throws ZMonException, IOException {
+        if(null == id || "".equals(id)) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        List<GrafanaDashboardSprocService.GrafanaDashboard> dashboards = grafanaService.getGrafanaDashboard(id);
+        if(dashboards.size()==0) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        GrafanaDashboardSprocService.GrafanaDashboard dashboard = dashboards.get(0);
+
+        ObjectNode result = mapper.createObjectNode();
+
+        ObjectNode meta = result.putObject("meta");
+        meta.put("slug", id);
+        meta.put("isStarred", false);
+        result.set("model", mapper.readTree(dashboard.dashboard));
+
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     // saves a dashboard
