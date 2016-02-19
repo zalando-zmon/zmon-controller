@@ -593,9 +593,9 @@ public class ZMonRestService extends AbstractZMonController {
         if (null == query) {
             query = "";
         }
-        log.info("Grafana2 search: {} {}", query, starred);
+        log.info("Grafana2 search: \"{}\" {}", query, starred);
 
-        List<GrafanaDashboardSprocService.GrafanaDashboard> results = grafanaService.getGrafanaDashboard(query);
+        List<GrafanaDashboardSprocService.GrafanaDashboard> results = grafanaService.getGrafanaDashboards(query);
         ObjectNode outer = mapper.createObjectNode();
         ArrayNode resultsNode = outer.putArray("results");
 
