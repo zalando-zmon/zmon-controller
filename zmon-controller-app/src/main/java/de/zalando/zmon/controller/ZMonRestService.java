@@ -648,8 +648,7 @@ public class ZMonRestService extends AbstractZMonController {
     // saves a dashboard
     @ResponseBody
     @RequestMapping(value = "/grafana2/api/dashboards/db", method = RequestMethod.POST, produces = "application/json")
-    public ResponseEntity<JsonNode> g2SaveDBPost(@RequestBody(required = true) final JsonNode grafanaData, final Writer writer,
-                             final HttpServletResponse response) throws IOException {
+    public ResponseEntity<JsonNode> g2SaveDBPost(@RequestBody(required = true) final JsonNode grafanaData) throws IOException {
 
         String title = grafanaData.get("dashboard").get("title").textValue();
         assert(title!=null);
