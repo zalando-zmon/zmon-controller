@@ -646,7 +646,7 @@ public class ZMonRestService extends AbstractZMonController {
 
         ObjectNode model =  (ObjectNode) mapper.readTree(dashboard.dashboard);
         model.put("id", id);
-        result.set("model", model);
+        result.set("dashboard", model);
 
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
