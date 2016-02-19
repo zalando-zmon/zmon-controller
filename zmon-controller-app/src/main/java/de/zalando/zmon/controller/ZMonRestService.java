@@ -589,34 +589,16 @@ public class ZMonRestService extends AbstractZMonController {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     @RequestMapping(value = "/grafana2/api/search", method = RequestMethod.GET)
-    public JsonNode g2getDashboards() throws ZMonException {
-        ObjectNode r = mapper.createObjectNode();
-        ArrayNode a = mapper.createArrayNode();
-        ArrayNode arr = mapper.createArrayNode();
-        r.put("id", 1);
-        r.put("title", "New Dashboard");
-        r.put("uri", "db/new-dashboard");
-        r.put("type", "dash-db");
-        r.put("tags", a);
-        r.put("isStarred", false);
-        arr.add(r);
-        return arr;
+    public JsonNode g2getDashboards(@RequestBody JsonNode grafanaSearch) throws ZMonException {
+        return getDashboards(grafanaSearch);
     }
 
     // requests a dashboard
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    @RequestMapping(value = "/grafana2/api/dashboards/db/new-dashboard", method = RequestMethod.GET)
-    public JsonNode g2getDashboard2() throws ZMonException {
-        ObjectNode r = mapper.createObjectNode();
-        ArrayNode a = mapper.createArrayNode();
-        r.put("id", 1);
-        r.put("title", "New Dashboard");
-        r.put("uri", "db/new-dashboard");
-        r.put("type", "dash-db");
-        r.put("tags", a);
-        r.put("isStarred", false);
-        return r;
+    @RequestMapping(value = "/grafana2/api/dashboards/db/{id}", method = RequestMethod.GET)
+    public JsonNode g2getDashboard2(@PathVariable(value="id") String id) throws ZMonException {
+        return getDashboard(id); // lets see if this is compatible enought with Grafana 1
     }
 
     // saves a dashboard
