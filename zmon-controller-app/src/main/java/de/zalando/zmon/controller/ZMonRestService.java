@@ -625,10 +625,10 @@ public class ZMonRestService extends AbstractZMonController {
     public void g2SaveDBPost(@RequestBody(required = true) final JsonNode grafanaData, final Writer writer,
                              final HttpServletResponse response) throws IOException {
 
-        String title = grafanaData.get("dashboard").get("title").asText();
-        String dashboard = grafanaData.get("dashboard").asText();
+        String title = grafanaData.get("dashboard").get("title").textValue();
+        String dashboard = mapper.writeValueAsString(grafanaData.get("dashboard"));
 
-        String id = grafanaData.get("dashboard").get("id").asText();
+        String id = grafanaData.get("dashboard").get("id").textValue();
         if (null == id) {
             id = title.replace(" ", "-").replace("'","");
         }
