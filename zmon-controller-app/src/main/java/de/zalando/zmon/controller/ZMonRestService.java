@@ -636,8 +636,17 @@ public class ZMonRestService extends AbstractZMonController {
         ObjectNode result = mapper.createObjectNode();
 
         ObjectNode meta = result.putObject("meta");
+        meta.put("type", "db");
+        meta.put("canEdit", true);
+        meta.put("canSave", true);
+        meta.put("canStar", false);
+        meta.put("created", "0001-01-01T00:00:00Z");
+        meta.put("expires", "2999-01-01T00:00:00Z");
+        meta.put("updated", "0001-01-01T00:00:00Z");
+        meta.put("isHome", false);
         meta.put("slug", id);
         meta.put("isStarred", false);
+
         ObjectNode model =  (ObjectNode) mapper.readTree(dashboard.dashboard);
         model.put("id", id);
         result.set("model", model);
