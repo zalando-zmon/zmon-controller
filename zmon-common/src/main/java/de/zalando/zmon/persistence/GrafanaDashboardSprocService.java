@@ -39,5 +39,5 @@ public interface GrafanaDashboardSprocService {
     List<GrafanaDashboard> getGrafanaDashboard(@SProcParam String id);
 
     @SProcCall
-    void deleteGrafanaDashboard(@SProcParam String id, @SProcParam String user);
+    List<String> deleteGrafanaDashboard(@SProcParam String id, @SProcParam String user);
 }

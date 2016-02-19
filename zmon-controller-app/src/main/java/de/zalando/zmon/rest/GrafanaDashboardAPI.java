@@ -76,8 +76,8 @@ public class GrafanaDashboardAPI {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-    public void deleteDashboard(@PathVariable(value="id") String id) throws ZMonException, IOException {
-        grafanaService.deleteGrafanaDashboard(id, authService.getUserName());
+    public List<String> deleteDashboard(@PathVariable(value="id") String id) throws ZMonException, IOException {
+        return grafanaService.deleteGrafanaDashboard(id, authService.getUserName());
     }
 
     @ResponseStatus(HttpStatus.OK)
