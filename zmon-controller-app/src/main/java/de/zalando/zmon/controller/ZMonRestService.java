@@ -596,8 +596,7 @@ public class ZMonRestService extends AbstractZMonController {
         log.info("Grafana2 search: \"{}\" {}", query, starred);
 
         List<GrafanaDashboardSprocService.GrafanaDashboard> results = grafanaService.getGrafanaDashboards(query);
-        ObjectNode outer = mapper.createObjectNode();
-        ArrayNode resultsNode = outer.putArray("results");
+        ArrayNode resultsNode = mapper.createArrayNode();
 
         for (GrafanaDashboardSprocService.GrafanaDashboard d : results ) {
             log.info("Adding dashboard: {}", d);
@@ -613,7 +612,7 @@ public class ZMonRestService extends AbstractZMonController {
             dashboard.put("isStarred", "false");
         }
 
-        return outer;
+        return resultsNode;
     }
 
     // requests a dashboard
