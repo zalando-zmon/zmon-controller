@@ -1,12 +1,12 @@
-CREATE OR REPLACE FUNCTION create_or_update_grafana_dashboard(id text, title text, dashboard text, user_name text) RETURNS void AS
+CREATE OR REPLACE FUNCTION create_or_update_grafana_dashboard(id text, title text, dashboard text, user_name text, version text) RETURNS void AS
 $$
 BEGIN
   RAISE WARNING 'dashboard: % title: %', dashboard, title;
 
   BEGIN
 
-    INSERT INTO zzm_data.grafana_dashboard(gd_id, gd_title, gd_tags, gd_dashboard, gd_created_by, gd_last_modified_by)
-         SELECT id, title, '{}'::text[], dashboard::jsonb, user_name, user_name;
+    INSERT INTO zzm_data.grafana_dashboard(gd_id, gd_title, gd_tags, gd_dashboard, gd_grafana_version, gd_created_by, gd_last_modified_by)
+         SELECT id, title, '{}'::text[], dashboard::jsonb, version, user_name, user_name;
 
   EXCEPTION WHEN UNIQUE_VIOLATION THEN
 

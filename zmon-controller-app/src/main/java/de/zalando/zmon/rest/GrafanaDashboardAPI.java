@@ -46,7 +46,7 @@ public class GrafanaDashboardAPI {
         String dashboard = mapper.writeValueAsString(grafanaData.get("dashboard"));
 
         log.info("Saving Grafana dashboard \"{}\"..", title);
-        grafanaService.createOrUpdateGrafanaDashboard(id, title, dashboard, authService.getUserName());
+        grafanaService.createOrUpdateGrafanaDashboard(id, title, dashboard, authService.getUserName(), "v1");
     }
 
     @ResponseStatus(HttpStatus.OK)

@@ -365,7 +365,7 @@ public class ZMonRestService extends AbstractZMonController {
         String dashboard = grafanaData.get("dashboard").asText();
 
         log.info("Saving Grafana dashboard \"{}\"..", title);
-        grafanaService.createOrUpdateGrafanaDashboard(id, title, dashboard, authService.getUserName());
+        grafanaService.createOrUpdateGrafanaDashboard(id, title, dashboard, authService.getUserName(), "v1");
     }
 
     @ResponseStatus(HttpStatus.OK)
@@ -621,13 +621,20 @@ public class ZMonRestService extends AbstractZMonController {
 
     // saves a dashboard
     @ResponseBody
-    @RequestMapping(value = "/kairosDBPost/api/dashboards/db", method = RequestMethod.POST, produces = "application/json")
-    public void g2SaveDBPost(@RequestBody(required = true) final JsonNode node, final Writer writer,
+    @RequestMapping(value = "/grafana2/api/dashboards/db", method = RequestMethod.POST, produces = "application/json")
+    public void g2SaveDBPost(@RequestBody(required = true) final JsonNode grafanaData, final Writer writer,
                              final HttpServletResponse response) throws IOException {
 
-        response.setContentType("application/json");
-        final String r = "{}";
-        writer.write(r);
+        String title = grafanaData.get("title").asText();
+        String dashboard = grafanaData.get("dashboard").asText();
+        String id = grafanaData.get("dashboard").get("id").asText();
+        if (null == id) {
+            title.replace(" ", "-").replace("'","");
+        }
+
+        log.info("Saving Grafana 2 dashboard \"{}\" {}", title, id);
+        grafanaService.createOrUpdateGrafanaDashboard(id, title, dashboard, authService.getUserName(), "v2");
+
     }
 
     // save dashboard snapshot for sharing
