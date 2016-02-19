@@ -656,9 +656,12 @@ public class ZMonRestService extends AbstractZMonController {
 
         String dashboard = mapper.writeValueAsString(grafanaData.get("dashboard"));
 
-        String id = grafanaData.get("dashboard").get("id").textValue().toLowerCase();
+        String id = grafanaData.get("dashboard").get("id").textValue();
         if (null == id || "".equals(id)) {
             id = title.replace(" ", "-").replace("'","").toLowerCase();
+        }
+        else {
+            id = id.toLowerCase();
         }
 
         log.info("Saving Grafana 2 dashboard title: \"{}\" id: {}", title, id);
@@ -668,7 +671,7 @@ public class ZMonRestService extends AbstractZMonController {
         result.put("slug", id);
         result.put("status", "success");
         result.put("version", 0);
-        
+
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
