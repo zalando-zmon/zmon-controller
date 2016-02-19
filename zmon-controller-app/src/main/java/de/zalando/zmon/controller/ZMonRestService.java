@@ -602,8 +602,9 @@ public class ZMonRestService extends AbstractZMonController {
         for (GrafanaDashboardSprocService.GrafanaDashboard d : results ) {
             log.info("Adding dashboard: {}", d);
             ObjectNode dashboard = resultsNode.addObject();
-            dashboard.put("uri", d.id);
+            dashboard.put("uri", "db/"+d.id);
             dashboard.put("_id", d.id);
+            dashboard.put("id", d.id);
             dashboard.put("_type", "db-dash");
             dashboard.put("title", d.title);
             dashboard.putArray("tags");
