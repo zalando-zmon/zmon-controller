@@ -624,6 +624,8 @@ public class ZMonRestService extends AbstractZMonController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
+        id = id.toLowerCase();
+
         List<GrafanaDashboardSprocService.GrafanaDashboard> dashboards = grafanaService.getGrafanaDashboard(id);
         if(dashboards.size()==0) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -636,7 +638,9 @@ public class ZMonRestService extends AbstractZMonController {
         ObjectNode meta = result.putObject("meta");
         meta.put("slug", id);
         meta.put("isStarred", false);
-        result.set("model", mapper.readTree(dashboard.dashboard));
+        ObjectNode model =  (ObjectNode) mapper.readTree(dashboard.dashboard);
+        model.put("id", id);
+        result.set("model", model);
 
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
@@ -644,7 +648,7 @@ public class ZMonRestService extends AbstractZMonController {
     // saves a dashboard
     @ResponseBody
     @RequestMapping(value = "/grafana2/api/dashboards/db", method = RequestMethod.POST, produces = "application/json")
-    public void g2SaveDBPost(@RequestBody(required = true) final JsonNode grafanaData, final Writer writer,
+    public ResponseEntity<JsonNode> g2SaveDBPost(@RequestBody(required = true) final JsonNode grafanaData, final Writer writer,
                              final HttpServletResponse response) throws IOException {
 
         String title = grafanaData.get("dashboard").get("title").textValue();
@@ -652,13 +656,20 @@ public class ZMonRestService extends AbstractZMonController {
 
         String dashboard = mapper.writeValueAsString(grafanaData.get("dashboard"));
 
-        String id = grafanaData.get("dashboard").get("id").textValue();
+        String id = grafanaData.get("dashboard").get("id").textValue().toLowerCase();
         if (null == id || "".equals(id)) {
-            id = title.replace(" ", "-").replace("'","");
+            id = title.replace(" ", "-").replace("'","").toLowerCase();
         }
 
-        log.info("Saving Grafana 2 dashboard \"{}\" {}", title, id);
+        log.info("Saving Grafana 2 dashboard title: \"{}\" id: {}", title, id);
         grafanaService.createOrUpdateGrafanaDashboard(id, title, dashboard, authService.getUserName(), "v2");
+
+        ObjectNode result = mapper.createObjectNode();
+        result.put("slug", id);
+        result.put("status", "success");
+        result.put("version", 0);
+        
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     // save dashboard snapshot for sharing
