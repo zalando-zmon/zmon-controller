@@ -593,8 +593,19 @@ public class ZMonRestService extends AbstractZMonController {
         if (null == query) {
             query = "";
         }
-        String v1Query = "{\"query\":{\"query_string\":{\"query\": \"" + query.replace("\"", "") + "\"}}}";
-        return getDashboards(mapper.readTree(v1Query));
+
+        List<GrafanaDashboardSprocService.GrafanaDashboard> results = grafanaService.getGrafanaDashboard(query);
+        ObjectNode outer = mapper.createObjectNode();
+        ArrayNode resultsNode = outer.putArray("results");
+
+        for (GrafanaDashboardSprocService.GrafanaDashboard d : results ) {
+            ObjectNode dashboard = resultsNode.addObject();
+            dashboard.put("uri", d.id);
+            dashboard.put("id", d.id);
+            dashboard.put("title", d.title);
+        }
+
+        return outer;
     }
 
     // requests a dashboard
