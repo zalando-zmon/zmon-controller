@@ -628,8 +628,9 @@ public class ZMonRestService extends AbstractZMonController {
         String title = grafanaData.get("title").asText();
         String dashboard = grafanaData.get("dashboard").asText();
         String id = grafanaData.get("dashboard").get("id").asText();
+
         if (null == id) {
-            title.replace(" ", "-").replace("'","");
+            id = title.replace(" ", "-").replace("'","");
         }
 
         log.info("Saving Grafana 2 dashboard \"{}\" {}", title, id);
