@@ -646,6 +646,18 @@ public class ZMonRestService extends AbstractZMonController {
 
         ObjectNode model =  (ObjectNode) mapper.readTree(dashboard.dashboard);
         model.put("id", id);
+
+        ArrayNode rows = (ArrayNode) model.get("dashboard").get("rows");
+        for(int i = 0; i < rows.size(); ++i) {
+            JsonNode row = rows.get(i);
+            if(row.has("panels") && row.get("panels").size() > 0) {
+                ArrayNode panels = (ArrayNode)row.get("panels");
+                for(int j = 0; j < panels.size(); ++j) {
+                    ((ObjectNode)panels.get(i)).putNull("datasource");
+                }
+            }
+        }
+
         result.set("dashboard", model);
 
         return new ResponseEntity<>(result, HttpStatus.OK);
