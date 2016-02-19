@@ -593,12 +593,14 @@ public class ZMonRestService extends AbstractZMonController {
         if (null == query) {
             query = "";
         }
+        log.info("Grafana2 search: {} {}", query, starred);
 
         List<GrafanaDashboardSprocService.GrafanaDashboard> results = grafanaService.getGrafanaDashboard(query);
         ObjectNode outer = mapper.createObjectNode();
         ArrayNode resultsNode = outer.putArray("results");
 
         for (GrafanaDashboardSprocService.GrafanaDashboard d : results ) {
+            log.info("Adding dashboard: {}", d);
             ObjectNode dashboard = resultsNode.addObject();
             dashboard.put("uri", d.id);
             dashboard.put("id", d.id);
@@ -623,16 +625,17 @@ public class ZMonRestService extends AbstractZMonController {
                              final HttpServletResponse response) throws IOException {
 
         String title = grafanaData.get("dashboard").get("title").textValue();
+        assert(title!=null);
+
         String dashboard = mapper.writeValueAsString(grafanaData.get("dashboard"));
 
         String id = grafanaData.get("dashboard").get("id").textValue();
-        if (null == id) {
+        if (null == id || "".equals(id)) {
             id = title.replace(" ", "-").replace("'","");
         }
 
         log.info("Saving Grafana 2 dashboard \"{}\" {}", title, id);
         grafanaService.createOrUpdateGrafanaDashboard(id, title, dashboard, authService.getUserName(), "v2");
-
     }
 
     // save dashboard snapshot for sharing
