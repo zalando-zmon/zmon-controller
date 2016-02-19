@@ -602,13 +602,10 @@ public class ZMonRestService extends AbstractZMonController {
             log.info("Adding dashboard: {}", d);
             ObjectNode dashboard = resultsNode.addObject();
             dashboard.put("uri", "db/"+d.id);
-            dashboard.put("_id", d.id);
             dashboard.put("id", d.id);
-            dashboard.put("_type", "db-dash");
+            dashboard.put("type", "db-dash");
             dashboard.put("title", d.title);
             dashboard.putArray("tags");
-            dashboard.put("user", d.user);
-            dashboard.put("group", d.user);
             dashboard.put("isStarred", false);
         }
 
