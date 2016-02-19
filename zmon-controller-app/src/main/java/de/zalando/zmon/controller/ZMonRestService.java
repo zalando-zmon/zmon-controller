@@ -589,8 +589,12 @@ public class ZMonRestService extends AbstractZMonController {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     @RequestMapping(value = "/grafana2/api/search", method = RequestMethod.GET)
-    public JsonNode g2getDashboards(@RequestBody JsonNode grafanaSearch) throws ZMonException {
-        return getDashboards(grafanaSearch);
+    public JsonNode g2getDashboards(@RequestParam(value="query") String query, @RequestParam(value="starred") boolean starred) throws IOException, ZMonException {
+        if (null == query) {
+            query = "";
+        }
+        String v1Query = "{\"query\":{\"query_string\":{\"query\": \"" + query.replace("\"", "") + "\"}}}";
+        return getDashboards(mapper.readTree(v1Query));
     }
 
     // requests a dashboard
