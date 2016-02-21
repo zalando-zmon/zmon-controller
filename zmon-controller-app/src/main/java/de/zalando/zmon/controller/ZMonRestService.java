@@ -752,11 +752,13 @@ public class ZMonRestService extends AbstractZMonController {
     }
 
     @RequestMapping(value="/grafana2/api/user/orgs", method = RequestMethod.GET)
+    @ResponseBody
     public Collection<String> getUserOrgs() {
         return authService.getTeams();
     }
 
     @RequestMapping(value="/grafana2/api/user", method = RequestMethod.GET)
+    @ResponseBody
     public JsonNode getCurrentUser() {
         ObjectNode node = mapper.createObjectNode();
         node.put("name", authService.getUserName());
