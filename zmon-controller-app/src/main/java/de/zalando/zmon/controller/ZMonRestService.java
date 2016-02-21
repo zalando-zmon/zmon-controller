@@ -5,10 +5,7 @@ import java.io.Writer;
 
 import java.net.URISyntaxException;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -752,5 +749,21 @@ public class ZMonRestService extends AbstractZMonController {
         e.put("isDefault", true);
         arr.add(e);
         return arr;
+    }
+
+    @RequestMapping(value="/grafana2/api/user/orgs", method = RequestMethod.GET)
+    public Collection<String> getUserOrgs() {
+        return authService.getTeams();
+    }
+
+    @RequestMapping(value="/grafana2/api/user", method = RequestMethod.GET)
+    public JsonNode getCurrentUser() {
+        ObjectNode node = mapper.createObjectNode();
+        node.put("name", authService.getUserName());
+        node.put("login", authService.getUserName());
+        node.put("email", "");
+        node.put("isGrafanaAdmin", false);
+        node.put("isSignedIn", true);
+        return node;
     }
 }
