@@ -27,6 +27,9 @@ public interface GrafanaDashboardSprocService {
 
         @DatabaseField
         public String user;
+
+        @DatabaseField
+        public String tags;
     }
 
     @SProcCall

@@ -605,7 +605,15 @@ public class ZMonRestService extends AbstractZMonController {
             dashboard.put("id", d.id);
             dashboard.put("type", "db-dash");
             dashboard.put("title", d.title);
-            dashboard.putArray("tags");
+
+            if(d.tags != null && !"".equals(d.tags)) {
+                JsonNode tags = mapper.readTree(d.tags);
+                dashboard.set("tags", tags);
+            }
+            else {
+                dashboard.putArray("tags");
+            }
+
             dashboard.put("isStarred", false);
         }
 
