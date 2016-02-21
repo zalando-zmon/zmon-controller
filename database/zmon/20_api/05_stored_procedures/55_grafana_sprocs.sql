@@ -43,3 +43,9 @@ $$
      AND gd_created_by = user_name
      RETURNING gd_id;
 $$ LANGUAGE SQL VOLATILE SECURITY DEFINER;
+
+
+CREATE OR REPLACE FUNCTION get_tags_with_count(OUT tag TEXT, OUT "count" INT) RETURNS SETOF RECORD AS
+$$
+select tag_name, count(1) AS "count" from (select json_array_elements_text((gd_dashboard->'tags')::json) AS tag_name from zzm_data.grafana_dashboard) t group by 1;
+$$ LANGUAGE SQL VOLATILE SECURITY DEFINER;

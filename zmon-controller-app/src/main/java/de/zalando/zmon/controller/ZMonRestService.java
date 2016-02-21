@@ -768,4 +768,17 @@ public class ZMonRestService extends AbstractZMonController {
         node.put("isSignedIn", true);
         return node;
     }
+
+    @RequestMapping(value="/grafana2/api/dashboards/tags")
+    @ResponseBody
+    public JsonNode getGrafana2Tags() {
+        ArrayNode result = mapper.createArrayNode();
+        List<GrafanaDashboardSprocService.GrafanaTag> tags = grafanaService.getTagsWithCount();
+        for(GrafanaDashboardSprocService.GrafanaTag t : tags) {
+            ObjectNode node = result.addObject();
+            node.put("term", t.tag);
+            node.put("count", t.count);
+        }
+        return result;
+    }
 }

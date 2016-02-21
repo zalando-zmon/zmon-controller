@@ -32,6 +32,15 @@ public interface GrafanaDashboardSprocService {
         public String tags;
     }
 
+    @DatabaseType
+    class GrafanaTag {
+        @DatabaseField
+        public String tag;
+        @DatabaseField
+        public int count;
+    }
+
+
     @SProcCall
     void createOrUpdateGrafanaDashboard(@SProcParam String id, @SProcParam String title, @SProcParam String dashboard, @SProcParam String userName, @SProcParam String version);
 
@@ -43,4 +52,7 @@ public interface GrafanaDashboardSprocService {
 
     @SProcCall
     List<String> deleteGrafanaDashboard(@SProcParam String id, @SProcParam String user);
+
+    @SProcCall
+    List<GrafanaTag> getTagsWithCount();
 }
