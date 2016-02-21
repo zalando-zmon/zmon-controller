@@ -27,7 +27,7 @@ $$
     FROM zzm_data.grafana_dashboard
    WHERE gd_title ilike '%' || s_title || '%'
      AND (s_tag IS NULL OR (gd_dashboard->'tags') ? s_tag)
-     AND (s_starred IS NULL OR s_starred IN gd_starred_by)
+     AND (s_starred IS NULL OR s_starred =ANY(gd_starred_by))
    ORDER BY gd_title ASC;
 $$ LANGUAGE SQL VOLATILE SECURITY DEFINER;
 
