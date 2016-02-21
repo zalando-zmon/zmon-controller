@@ -684,6 +684,14 @@ public class ZMonRestService extends AbstractZMonController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    @RequestMapping(value = "/grafana2/api/dashboards/db/{id}", method = RequestMethod.DELETE)
+    public ResponseEntity<JsonNode> deleteG2Dashboard(@PathVariable(value="id") String id) {
+        grafanaService.deleteGrafanaDashboard(id, authService.getUserName());
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
     // saves a dashboard
     @ResponseBody
     @RequestMapping(value = "/grafana2/api/dashboards/db", method = RequestMethod.POST, produces = "application/json")
