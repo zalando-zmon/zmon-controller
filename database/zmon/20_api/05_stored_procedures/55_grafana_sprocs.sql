@@ -31,9 +31,9 @@ $$
    ORDER BY gd_title ASC;
 $$ LANGUAGE SQL VOLATILE SECURITY DEFINER;
 
-CREATE OR REPLACE FUNCTION get_grafana_dashboard(INOUT id text, OUT title text, OUT dashboard text, OUT "user" TEXT) RETURNS SETOF record AS
+CREATE OR REPLACE FUNCTION get_grafana_dashboard(INOUT id text, IN user_name TEXT, OUT title text, OUT dashboard text, OUT "user" TEXT, OUT starred BOOLEAN) RETURNS SETOF record AS
 $$
-  SELECT gd_id id, gd_title title, gd_dashboard::text dashboard, gd_created_by "user"
+  SELECT gd_id id, gd_title title, gd_dashboard::text dashboard, gd_created_by "user", COALESCE(user_name=ANY(gd_starred_by), FALSE) "starred"
     FROM zzm_data.grafana_dashboard
    WHERE gd_id = id;
 $$ LANGUAGE SQL VOLATILE SECURITY DEFINER;

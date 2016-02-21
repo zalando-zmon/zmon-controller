@@ -53,7 +53,7 @@ public class GrafanaDashboardAPI {
     @ResponseBody
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public JsonNode getDashboard(@PathVariable(value="id") String id) throws ZMonException, IOException {
-        List<GrafanaDashboardSprocService.GrafanaDashboard> dashboards = grafanaService.getGrafanaDashboard(id);
+        List<GrafanaDashboardSprocService.GrafanaDashboard> dashboards = grafanaService.getGrafanaDashboard(id, authService.getUserName());
         if(dashboards.isEmpty()) {
             log.info("No Grafana dashboard found for id {}", id);
             return null;

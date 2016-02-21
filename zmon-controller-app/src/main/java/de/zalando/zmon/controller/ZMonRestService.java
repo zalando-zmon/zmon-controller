@@ -370,7 +370,7 @@ public class ZMonRestService extends AbstractZMonController {
     @ResponseBody
     @RequestMapping(value = "/grafana/dashboard/{id}", method = RequestMethod.GET)
     public JsonNode getDashboard(@PathVariable(value = "id") String id) throws ZMonException {
-        List<GrafanaDashboardSprocService.GrafanaDashboard> dashboards = grafanaService.getGrafanaDashboard(id);
+        List<GrafanaDashboardSprocService.GrafanaDashboard> dashboards = grafanaService.getGrafanaDashboard(id, authService.getUserName());
         if (dashboards.isEmpty()) {
             log.info("No Grafana dashboard found for id {}", id);
             return null;
@@ -592,16 +592,16 @@ public class ZMonRestService extends AbstractZMonController {
             query = "";
         }
 
+        String starredBy = null;
+        if(starred) {
+            starredBy = authService.getUserName();
+        }
+
         String jsonTags = null;
         if(tags!=null && tags.size()>0) {
             mapper.writeValueAsString(tags);
         }
-        log.info("Grafana2 search: query=\"{}\" starred={} tags={}", query, starred, jsonTags);
-
-        String starredBy = null;
-        if(starred) {
-            starredBy = "\"" + authService.getUserName() + "\"";
-        }
+        log.info("Grafana2 search: query=\"{}\" starred={} by={} tags={}", query, starred, starredBy, jsonTags);
 
         List<GrafanaDashboardSprocService.GrafanaDashboard> results = grafanaService.getGrafanaDashboards(query, jsonTags, starredBy, authService.getUserName());
         ArrayNode resultsNode = mapper.createArrayNode();
@@ -639,7 +639,7 @@ public class ZMonRestService extends AbstractZMonController {
 
         id = id.toLowerCase();
 
-        List<GrafanaDashboardSprocService.GrafanaDashboard> dashboards = grafanaService.getGrafanaDashboard(id);
+        List<GrafanaDashboardSprocService.GrafanaDashboard> dashboards = grafanaService.getGrafanaDashboard(id, authService.getUserName());
         if(dashboards.size()==0) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
@@ -658,7 +658,7 @@ public class ZMonRestService extends AbstractZMonController {
         meta.put("updated", "0001-01-01T00:00:00Z");
         meta.put("isHome", false);
         meta.put("slug", id);
-        meta.put("isStarred", false);
+        meta.put("isStarred", dashboard.starred);
 
         ObjectNode model =  (ObjectNode) mapper.readTree(dashboard.dashboard);
         model.put("id", id);
