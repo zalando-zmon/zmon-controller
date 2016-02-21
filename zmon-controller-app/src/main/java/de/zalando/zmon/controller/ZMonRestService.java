@@ -599,7 +599,7 @@ public class ZMonRestService extends AbstractZMonController {
 
         String jsonTags = null;
         if(tags!=null && tags.size()>0) {
-            mapper.writeValueAsString(tags);
+            jsonTags = mapper.writeValueAsString(tags);
         }
         log.info("Grafana2 search: query=\"{}\" starred={} by={} tags={}", query, starred, starredBy, jsonTags);
 
