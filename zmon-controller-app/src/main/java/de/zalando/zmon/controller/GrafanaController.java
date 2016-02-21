@@ -15,4 +15,9 @@ public class GrafanaController {
     public String grafanaTwo() {
         return "grafana2";
     }
+
+    @RequestMapping(value = "/grafana2/dashboard/db/**")
+    public String grafana2DirectLinks() {
+        return "grafana2";
+    }
 }
