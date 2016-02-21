@@ -21,12 +21,12 @@ BEGIN
 END;
 $$ LANGUAGE PLPGSQL VOLATILE SECURITY DEFINER;
 
-CREATE OR REPLACE FUNCTION get_grafana_dashboards(IN s_title TEXT, IN s_starred TEXT, IN s_tag TEXT, OUT id TEXT, OUT title TEXT, OUT dashboard TEXT, OUT "user" TEXT, OUT "tags" TEXT) RETURNS SETOF record AS
+CREATE OR REPLACE FUNCTION get_grafana_dashboards(IN s_title TEXT, IN s_starred TEXT, IN s_tags TEXT, OUT id TEXT, OUT title TEXT, OUT dashboard TEXT, OUT "user" TEXT, OUT "tags" TEXT) RETURNS SETOF record AS
 $$
   SELECT gd_id id, gd_title title, gd_dashboard::text dashboard, gd_created_by "user", (gd_dashboard->'tags')::text "tags"
     FROM zzm_data.grafana_dashboard
    WHERE gd_title ilike '%' || s_title || '%'
-     AND (s_tag IS NULL OR (gd_dashboard->'tags') ? s_tag)
+     AND (s_tags IS NULL OR (gd_dashboard->'tags') @> s_tags::jsonb)
      AND (s_starred IS NULL OR s_starred =ANY(gd_starred_by))
    ORDER BY gd_title ASC;
 $$ LANGUAGE SQL VOLATILE SECURITY DEFINER;
@@ -54,7 +54,7 @@ select tag_name, count(1)::INT AS "count" from
             group by 1;
 $$ LANGUAGE SQL VOLATILE SECURITY DEFINER;
 
-CREATE OR REPLACE FUNCTION star_grafana_dashboard(INOUT id TEXT, IN user_name TEXT) RETURNS SETOF RECORD AS
+CREATE OR REPLACE FUNCTION star_grafana_dashboard(INOUT id TEXT, IN user_name TEXT) RETURNS SETOF TEXT AS
 $$
 update zzm_data.grafana_dashboard
    set gd_starred_by = gd_starred_by || user_name
@@ -63,7 +63,7 @@ update zzm_data.grafana_dashboard
  returning gd_id;
 $$ LANGUAGE SQL VOLATILE SECURITY DEFINER;
 
-CREATE OR REPLACE FUNCTION unstar_grafana_dashboard(INOUT id TEXT, IN user_name TEXT) RETURNS SETOF RECORD AS
+CREATE OR REPLACE FUNCTION unstar_grafana_dashboard(INOUT id TEXT, IN user_name TEXT) RETURNS SETOF TEXT AS
 $$
 update zzm_data.grafana_dashboard
    set gd_starred_by = array_agg((select distinct a from unnest(gd_starred_by) t(a) where a <> user_name ))

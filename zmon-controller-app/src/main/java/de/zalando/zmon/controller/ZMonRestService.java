@@ -587,7 +587,7 @@ public class ZMonRestService extends AbstractZMonController {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     @RequestMapping(value = "/grafana2/api/search", method = RequestMethod.GET)
-    public JsonNode g2getDashboards(@RequestParam(value="query") String query, @RequestParam(value="tag") String tag, @RequestParam(value="starred") boolean starred) throws IOException, ZMonException {
+    public JsonNode g2getDashboards(@RequestParam(value="query") String query, @RequestParam(value="tag", required = false) List<String> tags, @RequestParam(value="starred", defaultValue="false") boolean starred) throws IOException, ZMonException {
         if (null == query) {
             query = "";
         }
@@ -598,7 +598,7 @@ public class ZMonRestService extends AbstractZMonController {
             starredBy = authService.getUserName();
         }
 
-        List<GrafanaDashboardSprocService.GrafanaDashboard> results = grafanaService.getGrafanaDashboards(query, tag, starredBy);
+        List<GrafanaDashboardSprocService.GrafanaDashboard> results = grafanaService.getGrafanaDashboards(query, mapper.writeValueAsString(tags), starredBy);
         ArrayNode resultsNode = mapper.createArrayNode();
 
         for (GrafanaDashboardSprocService.GrafanaDashboard d : results ) {
@@ -610,8 +610,8 @@ public class ZMonRestService extends AbstractZMonController {
             dashboard.put("title", d.title);
 
             if(d.tags != null && !"".equals(d.tags)) {
-                JsonNode tags = mapper.readTree(d.tags);
-                dashboard.set("tags", tags);
+                JsonNode tagsField = mapper.readTree(d.tags);
+                dashboard.set("tags", tagsField);
             }
             else {
                 dashboard.putArray("tags");
