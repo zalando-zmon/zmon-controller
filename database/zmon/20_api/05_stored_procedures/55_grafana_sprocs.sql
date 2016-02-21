@@ -21,7 +21,7 @@ BEGIN
 END;
 $$ LANGUAGE PLPGSQL VOLATILE SECURITY DEFINER;
 
-CREATE OR REPLACE FUNCTION get_grafana_dashboards(IN s_title TEXT, IN s_starred TEXT, IN s_tags TEXT, OUT id TEXT, OUT title TEXT, OUT dashboard TEXT, OUT "user" TEXT, OUT "tags" TEXT) RETURNS SETOF record AS
+CREATE OR REPLACE FUNCTION get_grafana_dashboards(IN s_title TEXT, IN s_tags TEXT, IN s_starred TEXT, OUT id TEXT, OUT title TEXT, OUT dashboard TEXT, OUT "user" TEXT, OUT "tags" TEXT) RETURNS SETOF record AS
 $$
   SELECT gd_id id, gd_title title, gd_dashboard::text dashboard, gd_created_by "user", (gd_dashboard->'tags')::text "tags"
     FROM zzm_data.grafana_dashboard
@@ -66,7 +66,7 @@ $$ LANGUAGE SQL VOLATILE SECURITY DEFINER;
 CREATE OR REPLACE FUNCTION unstar_grafana_dashboard(INOUT id TEXT, IN user_name TEXT) RETURNS SETOF TEXT AS
 $$
 update zzm_data.grafana_dashboard
-   set gd_starred_by = (SELECT array_agg((select distinct a from unnest(gd_starred_by) t(a) where a <> user_name )))
+   set gd_starred_by = array_remove(gd_starred_by, user_name)
  where gd_id = id
    and user_name =ANY(gd_starred_by)
  returning gd_id;
