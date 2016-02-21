@@ -410,7 +410,7 @@ public class ZMonRestService extends AbstractZMonController {
         ArrayNode hitsHits = mapper.createArrayNode();
 
         JsonNode query = grafanaSearch.get("query").get("query_string").get("query");
-        List<GrafanaDashboardSprocService.GrafanaDashboard> dashboards = grafanaService.getGrafanaDashboards(query.textValue().replace("title:", "").replace("*", ""), null, null);
+        List<GrafanaDashboardSprocService.GrafanaDashboard> dashboards = grafanaService.getGrafanaDashboards(query.textValue().replace("title:", "").replace("*", ""), null, null, null);
 
         for (GrafanaDashboardSprocService.GrafanaDashboard d : dashboards) {
 
@@ -591,14 +591,19 @@ public class ZMonRestService extends AbstractZMonController {
         if (null == query) {
             query = "";
         }
-        log.info("Grafana2 search: query=\"{}\" starred={} tags={}", query, starred, tags);
+
+        String jsonTags = null;
+        if(tags!=null && tags.size()>0) {
+            mapper.writeValueAsString(tags);
+        }
+        log.info("Grafana2 search: query=\"{}\" starred={} tags={}", query, starred, jsonTags);
 
         String starredBy = null;
         if(starred) {
             starredBy = "\"" + authService.getUserName() + "\"";
         }
 
-        List<GrafanaDashboardSprocService.GrafanaDashboard> results = grafanaService.getGrafanaDashboards(query, mapper.writeValueAsString(tags), starredBy);
+        List<GrafanaDashboardSprocService.GrafanaDashboard> results = grafanaService.getGrafanaDashboards(query, jsonTags, starredBy, authService.getUserName());
         ArrayNode resultsNode = mapper.createArrayNode();
 
         for (GrafanaDashboardSprocService.GrafanaDashboard d : results ) {
@@ -617,7 +622,7 @@ public class ZMonRestService extends AbstractZMonController {
                 dashboard.putArray("tags");
             }
 
-            dashboard.put("isStarred", false);
+            dashboard.put("isStarred", d.starred);
         }
 
         return resultsNode;

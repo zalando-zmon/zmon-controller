@@ -30,6 +30,9 @@ public interface GrafanaDashboardSprocService {
 
         @DatabaseField
         public String tags;
+
+        @DatabaseField
+        public boolean starred;
     }
 
     @DatabaseType
@@ -45,7 +48,7 @@ public interface GrafanaDashboardSprocService {
     void createOrUpdateGrafanaDashboard(@SProcParam String id, @SProcParam String title, @SProcParam String dashboard, @SProcParam String userName, @SProcParam String version);
 
     @SProcCall
-    List<GrafanaDashboard> getGrafanaDashboards(@SProcParam String title, @SProcParam String tags, @SProcParam String starredBy);
+    List<GrafanaDashboard> getGrafanaDashboards(@SProcParam String title, @SProcParam String tags, @SProcParam String starredBy, @SProcParam String user);
 
     @SProcCall
     List<GrafanaDashboard> getGrafanaDashboard(@SProcParam String id);
