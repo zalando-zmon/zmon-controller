@@ -59,15 +59,15 @@ $$
 update zzm_data.grafana_dashboard
    set gd_starred_by = gd_starred_by || user_name
  where gd_id = id
-   and user_name not in (gd_starred_by)
+   and not user_name =ANY(gd_starred_by)
  returning gd_id;
 $$ LANGUAGE SQL VOLATILE SECURITY DEFINER;
 
 CREATE OR REPLACE FUNCTION unstar_grafana_dashboard(INOUT id TEXT, IN user_name TEXT) RETURNS SETOF TEXT AS
 $$
 update zzm_data.grafana_dashboard
-   set gd_starred_by = array_agg((select distinct a from unnest(gd_starred_by) t(a) where a <> user_name ))
+   set gd_starred_by = (SELECT array_agg((select distinct a from unnest(gd_starred_by) t(a) where a <> user_name )))
  where gd_id = id
-   and user_name not in (gd_starred_by)
+   and user_name =ANY(gd_starred_by)
  returning gd_id;
 $$ LANGUAGE SQL VOLATILE SECURITY DEFINER;

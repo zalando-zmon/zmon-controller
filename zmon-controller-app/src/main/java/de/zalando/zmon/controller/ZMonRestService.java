@@ -591,11 +591,11 @@ public class ZMonRestService extends AbstractZMonController {
         if (null == query) {
             query = "";
         }
-        log.info("Grafana2 search: \"{}\" {}", query, starred);
+        log.info("Grafana2 search: query=\"{}\" starred={} tags={}", query, starred, tags);
 
         String starredBy = null;
         if(starred) {
-            starredBy = authService.getUserName();
+            starredBy = "\"" + authService.getUserName() + "\"";
         }
 
         List<GrafanaDashboardSprocService.GrafanaDashboard> results = grafanaService.getGrafanaDashboards(query, mapper.writeValueAsString(tags), starredBy);
@@ -788,14 +788,14 @@ public class ZMonRestService extends AbstractZMonController {
         return result;
     }
 
-    @RequestMapping(value="/api/user/stars/dashboard/{id}", method=RequestMethod.POST)
+    @RequestMapping(value="/grafana2/api/user/stars/dashboard/{id}", method=RequestMethod.POST)
     @ResponseBody
     public JsonNode starDashboard(@PathVariable String id) {
         grafanaService.starGrafanaDashboard(id, authService.getUserName());
         return mapper.createObjectNode();
     }
 
-    @RequestMapping(value="/api/user/stars/dashboard/{id}", method=RequestMethod.DELETE)
+    @RequestMapping(value="/grafana2/api/user/stars/dashboard/{id}", method=RequestMethod.DELETE)
     @ResponseBody
     public JsonNode unstarDashboard(@PathVariable String id) {
         grafanaService.unstarGrafanaDashboard(id, authService.getUserName());
