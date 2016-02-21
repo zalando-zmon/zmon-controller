@@ -26,7 +26,7 @@ import de.zalando.zmon.persistence.AlertDefinitionSProcService;
 import de.zalando.zmon.persistence.DashboardSProcService;
 import de.zalando.zmon.security.authority.ZMonAuthority;
 
-@Service
+@Service("defaultZMONPermissionService")
 public class DefaultZMonPermissionService {
 
     private static final String ANONYMOUS_USER = "anonymousUser";
