@@ -8,6 +8,7 @@ import java.net.URISyntaxException;
 import java.util.*;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.websocket.server.PathParam;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -409,7 +410,7 @@ public class ZMonRestService extends AbstractZMonController {
         ArrayNode hitsHits = mapper.createArrayNode();
 
         JsonNode query = grafanaSearch.get("query").get("query_string").get("query");
-        List<GrafanaDashboardSprocService.GrafanaDashboard> dashboards = grafanaService.getGrafanaDashboards(query.textValue().replace("title:", "").replace("*", ""));
+        List<GrafanaDashboardSprocService.GrafanaDashboard> dashboards = grafanaService.getGrafanaDashboards(query.textValue().replace("title:", "").replace("*", ""), null, null);
 
         for (GrafanaDashboardSprocService.GrafanaDashboard d : dashboards) {
 
@@ -586,13 +587,18 @@ public class ZMonRestService extends AbstractZMonController {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     @RequestMapping(value = "/grafana2/api/search", method = RequestMethod.GET)
-    public JsonNode g2getDashboards(@RequestParam(value="query") String query, @RequestParam(value="starred") boolean starred) throws IOException, ZMonException {
+    public JsonNode g2getDashboards(@RequestParam(value="query") String query, @RequestParam(value="tag") String tag, @RequestParam(value="starred") boolean starred) throws IOException, ZMonException {
         if (null == query) {
             query = "";
         }
         log.info("Grafana2 search: \"{}\" {}", query, starred);
 
-        List<GrafanaDashboardSprocService.GrafanaDashboard> results = grafanaService.getGrafanaDashboards(query);
+        String starredBy = null;
+        if(starred) {
+            starredBy = authService.getUserName();
+        }
+
+        List<GrafanaDashboardSprocService.GrafanaDashboard> results = grafanaService.getGrafanaDashboards(query, tag, starredBy);
         ArrayNode resultsNode = mapper.createArrayNode();
 
         for (GrafanaDashboardSprocService.GrafanaDashboard d : results ) {
@@ -641,7 +647,7 @@ public class ZMonRestService extends AbstractZMonController {
         meta.put("type", "db");
         meta.put("canEdit", true);
         meta.put("canSave", true);
-        meta.put("canStar", false);
+        meta.put("canStar", true);
         meta.put("created", "0001-01-01T00:00:00Z");
         meta.put("expires", "2999-01-01T00:00:00Z");
         meta.put("updated", "0001-01-01T00:00:00Z");
@@ -780,5 +786,19 @@ public class ZMonRestService extends AbstractZMonController {
             node.put("count", t.count);
         }
         return result;
+    }
+
+    @RequestMapping(value="/api/user/stars/dashboard/{id}", method=RequestMethod.POST)
+    @ResponseBody
+    public JsonNode starDashboard(@PathVariable String id) {
+        grafanaService.starGrafanaDashboard(id, authService.getUserName());
+        return mapper.createObjectNode();
+    }
+
+    @RequestMapping(value="/api/user/stars/dashboard/{id}", method=RequestMethod.DELETE)
+    @ResponseBody
+    public JsonNode unstarDashboard(@PathVariable String id) {
+        grafanaService.unstarGrafanaDashboard(id, authService.getUserName());
+        return mapper.createObjectNode();
     }
 }

@@ -45,7 +45,7 @@ public interface GrafanaDashboardSprocService {
     void createOrUpdateGrafanaDashboard(@SProcParam String id, @SProcParam String title, @SProcParam String dashboard, @SProcParam String userName, @SProcParam String version);
 
     @SProcCall
-    List<GrafanaDashboard> getGrafanaDashboards(@SProcParam String title);
+    List<GrafanaDashboard> getGrafanaDashboards(@SProcParam String title, @SProcParam String tag, @SProcParam String starredBy);
 
     @SProcCall
     List<GrafanaDashboard> getGrafanaDashboard(@SProcParam String id);
@@ -55,4 +55,11 @@ public interface GrafanaDashboardSprocService {
 
     @SProcCall
     List<GrafanaTag> getTagsWithCount();
+
+    @SProcCall
+    List<String> starGrafanaDashboard(@SProcParam String id, @SProcParam String user);
+
+    @SProcCall
+    List<String> unstarGrafanaDashboard(@SProcParam String id, @SProcParam String user);
+
 }

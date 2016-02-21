@@ -88,7 +88,7 @@ public class GrafanaDashboardAPI {
         ArrayNode hits = mapper.createArrayNode();
 
         JsonNode query = grafanaSearch.get("query").get("query_string").get("query");
-        List<GrafanaDashboardSprocService.GrafanaDashboard> dashboards = grafanaService.getGrafanaDashboards(query.textValue().replace("title:", "").replace("*", ""));
+        List<GrafanaDashboardSprocService.GrafanaDashboard> dashboards = grafanaService.getGrafanaDashboards(query.textValue().replace("title:", "").replace("*", ""), null, null);
 
         for(GrafanaDashboardSprocService.GrafanaDashboard d : dashboards) {
             ObjectNode hit = mapper.createObjectNode();
