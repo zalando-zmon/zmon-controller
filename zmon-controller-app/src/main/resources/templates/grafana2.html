@@ -48,14 +48,14 @@
 
     </body>
 
-  <script>
+  <script th:inline="javascript">
 
     var dummyUser = {
         "isSignedIn": true,
         "id":2,
-        "login":"${authService.getUserName}",
+        "login":"[[${authService.getUserName}]]",
         "email":"",
-        "name":"${authService.getUserName}",
+        "name":"[[${authService.getUserName}]]",
         "lightTheme":false,
         "orgId":2,
         "orgName":"ZMON",
