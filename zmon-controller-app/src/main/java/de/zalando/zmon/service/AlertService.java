@@ -1,5 +1,6 @@
 package de.zalando.zmon.service;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 
@@ -47,7 +48,7 @@ public interface AlertService {
 
     List<AlertDefinition> getAlertDefinitionChildren(int alertDefinitionId);
 
-    void forceAlertEvaluation(int alertDefinitionId);
+    void forceAlertEvaluation(int alertDefinitionId) throws IOException;
 
     List<String> getAllTags();
 }

@@ -6,6 +6,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
+import de.zalando.zmon.config.SchedulerConfiguration;
+import de.zalando.zmon.config.SchedulerProperties;
+import org.apache.http.client.fluent.Executor;
+import org.apache.http.client.fluent.Request;
+import org.apache.http.entity.ContentType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.redis.connection.RedisConnection;
@@ -31,16 +36,13 @@ import redis.clients.jedis.Response;
 @Service
 public class TrialRunServiceImpl implements TrialRunService {
 
-//    private static final EventLogger EVENT_LOG = EventLogger.getLogger(TrialRunServiceImpl.class);
-
-    // expiration time in seconds
     private static final int TRIAL_RUN_EXPIRATION_TIME = 300;
 
     @Autowired
     private JedisPool redisPool;
-    
-//    @Autowired
-//    private RedisTemplate<String,String> redisTemplate;
+
+    @Autowired
+    private SchedulerProperties schedulerProperties;
 
     @Autowired
     private ObjectMapper mapper;
@@ -48,49 +50,20 @@ public class TrialRunServiceImpl implements TrialRunService {
     @Autowired
     private NoOpEventLog eventLog;
 
+    private static final String SCHEDULER_TRIAL_RUN_PATH = "/api/v1/trial-runs";
+
     @Override
-    public String scheduleTrialRun(final TrialRunRequest request) {
+    public String scheduleTrialRun(final TrialRunRequest request) throws IOException {
         Preconditions.checkNotNull(request, "request");
 
         final String id = UUID.randomUUID().toString();
-        request.setId(id);
 
-        try {
-            final String json = mapper.writeValueAsString(request);
+        final Executor executor = Executor.newInstance();
 
-            final Jedis jedis = redisPool.getResource();
-            
-            // TODO, instead of using 'Jedis' directly
-//            redisTemplate.executePipelined(new RedisCallback<Void>() {
-//
-//				@Override
-//				public Void doInRedis(RedisConnection connection) throws DataAccessException {
-//					connection.hSet(RedisPattern.trialRunQueue().getBytes(), id.getBytes(), json.getBytes());
-//					connection.expire(RedisPattern.trialRunQueue().getBytes(), TRIAL_RUN_EXPIRATION_TIME);
-//					connection.publish(RedisPattern.trialRunChannel().getBytes(), id.getBytes());
-//					// sync will be done by template ?
-//					return null;
-//				}
-//			});
-            try {
-                final Pipeline p = jedis.pipelined();
+        final String url = schedulerProperties.getUrl().toString() + SCHEDULER_TRIAL_RUN_PATH;
 
-                p.hset(RedisPattern.trialRunQueue(), id, json);
-
-                // expire queue. The scheduler might be down
-                p.expire(RedisPattern.trialRunQueue(), TRIAL_RUN_EXPIRATION_TIME);
-
-                p.publish(RedisPattern.trialRunChannel(), id);
-
-                p.sync();
-
-            } finally {
-                redisPool.returnResource(jedis);
-            }
-
-        } catch (final IOException e) {
-            throw new SerializationException("Could not write JSON: " + request, e);
-        }
+        final String r = executor.execute(Request.Post(url).useExpectContinue().bodyString(mapper.writeValueAsString(request),
+                ContentType.APPLICATION_JSON)).returnContent().asString();
 
         eventLog.log(ZMonEventType.TRIAL_RUN_SCHEDULED, request.getCheckCommand(), request.getAlertCondition(),
             request.getEntities(), request.getPeriod(), request.getCreatedBy());

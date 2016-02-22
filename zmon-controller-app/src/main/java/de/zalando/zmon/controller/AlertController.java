@@ -1,5 +1,6 @@
 package de.zalando.zmon.controller;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -193,7 +194,7 @@ public class AlertController extends AbstractZMonController {
 
     @ResponseBody
     @RequestMapping(value = "/forceAlertEvaluation", method = RequestMethod.POST)
-    public void forceAlertEvaluation(@Valid @RequestBody final InstantaneousAlertEvaluationRequest request) {
+    public void forceAlertEvaluation(@Valid @RequestBody final InstantaneousAlertEvaluationRequest request) throws IOException {
         authorityService.verifyInstantaneousAlertEvaluationPermission();
         service.forceAlertEvaluation(request.getAlertDefinitionId());
     }

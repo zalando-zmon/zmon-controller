@@ -1,5 +1,6 @@
 package de.zalando.zmon.controller;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.Map;
 
@@ -38,7 +39,7 @@ public class TrialRunController extends AbstractZMonController {
     public ResponseEntity<Map<String, String>> scheduleTrial(
             @Valid
             @RequestBody(required = true)
-            final TrialRunRequest request) {
+            final TrialRunRequest request) throws IOException {
 
         authorityService.verifyTrialRunPermission();
         request.setCreatedBy(authorityService.getUserName());
