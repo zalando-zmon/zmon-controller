@@ -1,5 +1,5 @@
-angular.module('zmon2App').controller('CloudCtrl', ['$scope', '$interval', '$location', 'CommunicationService','MainAlertService', 'LoadingIndicatorService', 
-    function($scope, $interval, $location, CommunicationService, MainAlertService, LoadingIndicatorService) {
+angular.module('zmon2App').controller('CloudCtrl', ['$scope', '$interval', '$location', 'CommunicationService','MainAlertService', 'LoadingIndicatorService', 'UserInfoService',
+    function($scope, $interval, $location, CommunicationService, MainAlertService, LoadingIndicatorService, UserInfoService) {
 
         // Set 'Cloud' tab as active
         $scope.$parent.activePage = 'cloud';
@@ -18,6 +18,12 @@ angular.module('zmon2App').controller('CloudCtrl', ['$scope', '$interval', '$loc
 
         // flag true if tracked apps are present
         $scope.trackedApplications = false;
+
+        // Get user info with preferences i.e. cloud check
+        this.userInfo = UserInfoService.get();
+
+        // Determine cloud check to use
+        var cloudCheck = this.userInfo['cloud-check'] || 0;
 
         // loading indicator
         LoadingIndicatorService.start();
@@ -139,7 +145,7 @@ angular.module('zmon2App').controller('CloudCtrl', ['$scope', '$interval', '$loc
         var fastFetchTeamApps = function(teamId) {
             var team = $scope.teams[teamId];
             var awsTeamId = $scope.teams[teamId].awsId;
-            CommunicationService.getCheckResultsFiltered(2132, awsTeamId).then(function(metrics) {
+            CommunicationService.getCheckResultsFiltered(cloudCheck, awsTeamId).then(function(metrics) {
                 _.each(team.applications, function(app) {
                     app.instances = 0;
                     app.einstances = 0;

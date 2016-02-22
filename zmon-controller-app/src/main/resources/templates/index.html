@@ -100,7 +100,7 @@
                         </a>
                     </span>
                     <span class="app-status">
-                        <a title="Grafana" target="_blank" href="/grafana/">
+                        <a title="Grafana" target="_blank" href="/grafana2/">
                             <i class="fa fa-fw fa-bar-chart-o fa-lg"></i>
                         </a>
                     </span>
@@ -116,7 +116,8 @@
                         data:add-alert-def="${hasAddAlertDefinitionPermission}"
                         data:add-dashboard="${hasAddDashboardPermission}"
                         data:history-report-access="${hasHistoryReportAccess}"
-                        data:instantaneous-alert-evaluation="${hasInstantaneousAlertEvaluationPermission}">
+                        data:instantaneous-alert-evaluation="${hasInstantaneousAlertEvaluationPermission}"
+                        data:cloud-check="${cloudCheckId}">
 
                         <button type="button" class="auth-user btn btn-default dropdown-toggle" data-toggle="dropdown" sec:authentication="name">
                             klaus
