@@ -169,14 +169,11 @@ angular.module('zmon2App').controller('CloudCtrl', ['$scope', '$interval', '$loc
         // set teams object with awsId as keys
         var createTeams = function(teams) {
             _.each(teams, function(team) {
-                team.awsId = team.infrastructure_account.slice(-3);
+                team.awsId = team.infrastructure_account;
                 team.instances = [];
                 team.applications = [];
                 team.elbs = [];
                 team.name = team.account_alias;
-                if (team.account_alias.slice(0, 8) === 'zalando-') {
-                    team.name = team.account_alias.split('zalando-')[1];
-                }
                 $scope.teams[team.name] = team;
             });
         }
@@ -184,8 +181,7 @@ angular.module('zmon2App').controller('CloudCtrl', ['$scope', '$interval', '$loc
         // create application object and add to belonging team
         var createApplications = function(applications) {
             _.each(applications, function(app) {
-                var teamAwsId = app.id.split(':')[1].slice(-3);
-                app.team = getTeamNameFromAwsId(teamAwsId);
+                app.team = getTeamNameFromAwsId(app.infrastructure_account);
                 app.instances = 0;
                 app.einstances = 0;
                 app.metrics = [];
@@ -199,7 +195,7 @@ angular.module('zmon2App').controller('CloudCtrl', ['$scope', '$interval', '$loc
         // create instances object and add to belonging team
         var createInstances = function(instances) {
             _.each(instances, function(instance) {
-                var teamId = getTeamNameFromAwsId(instance.id.split(":")[1].slice(-3));
+                var teamId = getTeamNameFromAwsId(instance.infrastructure_account);
                 if ($scope.teams[teamId] !== undefined) {
                     $scope.teams[teamId].instances.push(instance);
                 } 
@@ -209,8 +205,7 @@ angular.module('zmon2App').controller('CloudCtrl', ['$scope', '$interval', '$loc
         // var create elbs object and add to belonging team
         var createElbs = function(elbs) {
             _.each(elbs, function(elb) {
-                var teamAwsId = elb.id.split(':')[1].slice(-3);
-                elb.team = getTeamNameFromAwsId(teamAwsId);
+                elb.team = getTeamNameFromAwsId(elb.infrastructure_account);
                 if (elb.team && $scope.teams[elb.team]) {
                     $scope.teams[elb.team].elbs.push(elb);
                 }
