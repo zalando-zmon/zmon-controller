@@ -46,14 +46,14 @@ public class GrafanaDashboardAPI {
         String dashboard = mapper.writeValueAsString(grafanaData.get("dashboard"));
 
         log.info("Saving Grafana dashboard \"{}\"..", title);
-        grafanaService.createOrUpdateGrafanaDashboard(id, title, dashboard, authService.getUserName());
+        grafanaService.createOrUpdateGrafanaDashboard(id, title, dashboard, authService.getUserName(), "v1");
     }
 
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public JsonNode getDashboard(@PathVariable(value="id") String id) throws ZMonException, IOException {
-        List<GrafanaDashboardSprocService.GrafanaDashboard> dashboards = grafanaService.getGrafanaDashboard(id);
+        List<GrafanaDashboardSprocService.GrafanaDashboard> dashboards = grafanaService.getGrafanaDashboard(id, authService.getUserName());
         if(dashboards.isEmpty()) {
             log.info("No Grafana dashboard found for id {}", id);
             return null;
@@ -75,11 +75,21 @@ public class GrafanaDashboardAPI {
 
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+    public List<String> deleteDashboard(@PathVariable(value="id") String id) throws ZMonException, IOException {
+        return grafanaService.deleteGrafanaDashboard(id, authService.getUserName());
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
     @RequestMapping(value = "/_search", method = RequestMethod.POST)
     public JsonNode getDashboards(@RequestBody JsonNode grafanaSearch) throws ZMonException {
         ObjectNode r = mapper.createObjectNode();
         ArrayNode hits = mapper.createArrayNode();
-        List<GrafanaDashboardSprocService.GrafanaDashboard> dashboards = grafanaService.getGrafanaDashboards();
+
+        JsonNode query = grafanaSearch.get("query").get("query_string").get("query");
+        List<GrafanaDashboardSprocService.GrafanaDashboard> dashboards = grafanaService.getGrafanaDashboards(query.textValue().replace("title:", "").replace("*", ""), null, null, null);
+
         for(GrafanaDashboardSprocService.GrafanaDashboard d : dashboards) {
             ObjectNode hit = mapper.createObjectNode();
             hit.put("_id", d.title);

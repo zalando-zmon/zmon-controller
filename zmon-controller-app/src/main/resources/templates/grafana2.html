@@ -48,17 +48,17 @@
 
     </body>
 
-  <script>
+  <script th:inline="javascript">
 
     var dummyUser = {
-        "isSignedIn":true,
+        "isSignedIn": true,
         "id":2,
-        "login":"emanuel.lauria@zalando.de",
-        "email":"emanuel.lauria@zalando.de",
-        "name":"Emanuel",
+        "login": [[${@defaultZMONPermissionService.getUserName()}]],
+        "email":"",
+        "name": [[${@defaultZMONPermissionService.getUserName()}]],
         "lightTheme":false,
         "orgId":2,
-        "orgName":"zalando",
+        "orgName":"ZMON",
         "orgRole":"Admin",
         "isGrafanaAdmin":false,
         "gravatarUrl":"https://secure.gravatar.com/avatar/2f8b7dde4bb801ce5ac324f54c598697?s=90\u0026default=mm"

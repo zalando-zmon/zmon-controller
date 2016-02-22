@@ -15,7 +15,7 @@ import java.util.List;
 public interface GrafanaDashboardSprocService {
 
     @DatabaseType
-    public static class GrafanaDashboard {
+    class GrafanaDashboard {
         @DatabaseField
         public String id;
 
@@ -27,14 +27,42 @@ public interface GrafanaDashboardSprocService {
 
         @DatabaseField
         public String user;
+
+        @DatabaseField
+        public String tags;
+
+        @DatabaseField
+        public boolean starred;
     }
 
-    @SProcCall
-    void createOrUpdateGrafanaDashboard(@SProcParam String id, @SProcParam String title, @SProcParam String dashboard, @SProcParam String userName);
+    @DatabaseType
+    class GrafanaTag {
+        @DatabaseField
+        public String tag;
+        @DatabaseField
+        public int count;
+    }
+
 
     @SProcCall
-    List<GrafanaDashboard> getGrafanaDashboards();
+    void createOrUpdateGrafanaDashboard(@SProcParam String id, @SProcParam String title, @SProcParam String dashboard, @SProcParam String userName, @SProcParam String version);
 
     @SProcCall
-    List<GrafanaDashboard> getGrafanaDashboard(@SProcParam String id);
+    List<GrafanaDashboard> getGrafanaDashboards(@SProcParam String title, @SProcParam String tags, @SProcParam String starredBy, @SProcParam String user);
+
+    @SProcCall
+    List<GrafanaDashboard> getGrafanaDashboard(@SProcParam String id, @SProcParam String user);
+
+    @SProcCall
+    List<String> deleteGrafanaDashboard(@SProcParam String id, @SProcParam String user);
+
+    @SProcCall
+    List<GrafanaTag> getTagsWithCount();
+
+    @SProcCall
+    List<String> starGrafanaDashboard(@SProcParam String id, @SProcParam String user);
+
+    @SProcCall
+    List<String> unstarGrafanaDashboard(@SProcParam String id, @SProcParam String user);
+
 }

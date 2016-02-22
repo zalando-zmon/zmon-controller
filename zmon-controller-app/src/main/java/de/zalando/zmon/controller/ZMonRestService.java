@@ -5,12 +5,10 @@ import java.io.Writer;
 
 import java.net.URISyntaxException;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.websocket.server.PathParam;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -365,14 +363,14 @@ public class ZMonRestService extends AbstractZMonController {
         String dashboard = grafanaData.get("dashboard").asText();
 
         log.info("Saving Grafana dashboard \"{}\"..", title);
-        grafanaService.createOrUpdateGrafanaDashboard(id, title, dashboard, authService.getUserName());
+        grafanaService.createOrUpdateGrafanaDashboard(id, title, dashboard, authService.getUserName(), "v1");
     }
 
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     @RequestMapping(value = "/grafana/dashboard/{id}", method = RequestMethod.GET)
     public JsonNode getDashboard(@PathVariable(value = "id") String id) throws ZMonException {
-        List<GrafanaDashboardSprocService.GrafanaDashboard> dashboards = grafanaService.getGrafanaDashboard(id);
+        List<GrafanaDashboardSprocService.GrafanaDashboard> dashboards = grafanaService.getGrafanaDashboard(id, authService.getUserName());
         if (dashboards.isEmpty()) {
             log.info("No Grafana dashboard found for id {}", id);
             return null;
@@ -394,6 +392,14 @@ public class ZMonRestService extends AbstractZMonController {
 
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
+    @RequestMapping(value = "/grafana/dashboard/{id}", method = RequestMethod.DELETE)
+    public List<String> deleteDashboard(@PathVariable(value="id") String id) throws ZMonException, IOException {
+        return grafanaService.deleteGrafanaDashboard(id, authService.getUserName());
+    }
+
+
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
     @RequestMapping(value = "/grafana/dashboard/_search", method = RequestMethod.POST)
     public JsonNode getDashboards(@RequestBody JsonNode grafanaSearch) throws ZMonException {
         ObjectNode r = mapper.createObjectNode();
@@ -402,7 +408,9 @@ public class ZMonRestService extends AbstractZMonController {
         ObjectNode facetsTags = mapper.createObjectNode();
         ArrayNode facetsTagsTerms = mapper.createArrayNode();
         ArrayNode hitsHits = mapper.createArrayNode();
-        List<GrafanaDashboardSprocService.GrafanaDashboard> dashboards = grafanaService.getGrafanaDashboards();
+
+        JsonNode query = grafanaSearch.get("query").get("query_string").get("query");
+        List<GrafanaDashboardSprocService.GrafanaDashboard> dashboards = grafanaService.getGrafanaDashboards(query.textValue().replace("title:", "").replace("*", ""), null, null, null);
 
         for (GrafanaDashboardSprocService.GrafanaDashboard d : dashboards) {
 
@@ -579,45 +587,138 @@ public class ZMonRestService extends AbstractZMonController {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     @RequestMapping(value = "/grafana2/api/search", method = RequestMethod.GET)
-    public JsonNode g2getDashboards() throws ZMonException {
-        ObjectNode r = mapper.createObjectNode();
-        ArrayNode a = mapper.createArrayNode();
-        ArrayNode arr = mapper.createArrayNode();
-        r.put("id", 1);
-        r.put("title", "New Dashboard");
-        r.put("uri", "db/new-dashboard");
-        r.put("type", "dash-db");
-        r.put("tags", a);
-        r.put("isStarred", false);
-        arr.add(r);
-        return arr;
+    public JsonNode g2getDashboards(@RequestParam(value="query", required = false) String query, @RequestParam(value="tag", required = false) List<String> tags, @RequestParam(value="starred", defaultValue="false") boolean starred) throws IOException, ZMonException {
+        if (null == query) {
+            query = "";
+        }
+
+        String starredBy = null;
+        if(starred) {
+            starredBy = authService.getUserName();
+        }
+
+        String jsonTags = null;
+        if(tags!=null && tags.size()>0) {
+            jsonTags = mapper.writeValueAsString(tags);
+        }
+        log.info("Grafana2 search: query=\"{}\" starred={} by={} tags={}", query, starred, starredBy, jsonTags);
+
+        List<GrafanaDashboardSprocService.GrafanaDashboard> results = grafanaService.getGrafanaDashboards(query, jsonTags, starredBy, authService.getUserName());
+        ArrayNode resultsNode = mapper.createArrayNode();
+
+        for (GrafanaDashboardSprocService.GrafanaDashboard d : results ) {
+            log.info("Adding dashboard: {}", d);
+            ObjectNode dashboard = resultsNode.addObject();
+            dashboard.put("uri", "db/"+d.id);
+            dashboard.put("id", d.id);
+            dashboard.put("type", "db-dash");
+            dashboard.put("title", d.title);
+
+            if(d.tags != null && !"".equals(d.tags)) {
+                JsonNode tagsField = mapper.readTree(d.tags);
+                dashboard.set("tags", tagsField);
+            }
+            else {
+                dashboard.putArray("tags");
+            }
+
+            dashboard.put("isStarred", d.starred);
+        }
+
+        return resultsNode;
     }
 
     // requests a dashboard
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    @RequestMapping(value = "/grafana2/api/dashboards/db/new-dashboard", method = RequestMethod.GET)
-    public JsonNode g2getDashboard2() throws ZMonException {
-        ObjectNode r = mapper.createObjectNode();
-        ArrayNode a = mapper.createArrayNode();
-        r.put("id", 1);
-        r.put("title", "New Dashboard");
-        r.put("uri", "db/new-dashboard");
-        r.put("type", "dash-db");
-        r.put("tags", a);
-        r.put("isStarred", false);
-        return r;
+    @RequestMapping(value = "/grafana2/api/dashboards/db/{id}", method = RequestMethod.GET)
+    public ResponseEntity<JsonNode> g2getDashboard2(@PathVariable(value="id") String id) throws ZMonException, IOException {
+        if(null == id || "".equals(id)) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        id = id.toLowerCase();
+
+        List<GrafanaDashboardSprocService.GrafanaDashboard> dashboards = grafanaService.getGrafanaDashboard(id, authService.getUserName());
+        if(dashboards.size()==0) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        GrafanaDashboardSprocService.GrafanaDashboard dashboard = dashboards.get(0);
+
+        ObjectNode result = mapper.createObjectNode();
+
+        ObjectNode meta = result.putObject("meta");
+        meta.put("type", "db");
+        meta.put("canEdit", true);
+        meta.put("canSave", true);
+        meta.put("canStar", true);
+        meta.put("created", "0001-01-01T00:00:00Z");
+        meta.put("expires", "2999-01-01T00:00:00Z");
+        meta.put("updated", "0001-01-01T00:00:00Z");
+        meta.put("isHome", false);
+        meta.put("slug", id);
+        meta.put("isStarred", dashboard.starred);
+
+        ObjectNode model =  (ObjectNode) mapper.readTree(dashboard.dashboard);
+        model.put("id", id);
+
+        ArrayNode rows = (ArrayNode) model.get("rows");
+        if (null!=rows) {
+            for (int i = 0; i < rows.size(); ++i) {
+                JsonNode row = rows.get(i);
+                if (null!=row && row.has("panels")) {
+                    ArrayNode panels = (ArrayNode) row.get("panels");
+                    if (null == panels) continue;
+
+                    for (int j = 0; j < panels.size(); ++j) {
+                        if(null==panels.get(i)) continue;
+                        ((ObjectNode) panels.get(i)).putNull("datasource");
+                    }
+                }
+            }
+        }
+
+        result.set("dashboard", model);
+
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    @RequestMapping(value = "/grafana2/api/dashboards/db/{id}", method = RequestMethod.DELETE)
+    public ResponseEntity<JsonNode> deleteG2Dashboard(@PathVariable(value="id") String id) {
+        grafanaService.deleteGrafanaDashboard(id, authService.getUserName());
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     // saves a dashboard
     @ResponseBody
-    @RequestMapping(value = "/kairosDBPost/api/dashboards/db", method = RequestMethod.POST, produces = "application/json")
-    public void g2SaveDBPost(@RequestBody(required = true) final JsonNode node, final Writer writer,
-                             final HttpServletResponse response) throws IOException {
+    @RequestMapping(value = "/grafana2/api/dashboards/db", method = RequestMethod.POST, produces = "application/json")
+    public ResponseEntity<JsonNode> g2SaveDBPost(@RequestBody(required = true) final JsonNode grafanaData) throws IOException {
 
-        response.setContentType("application/json");
-        final String r = "{}";
-        writer.write(r);
+        String title = grafanaData.get("dashboard").get("title").textValue();
+        assert(title!=null);
+
+        String dashboard = mapper.writeValueAsString(grafanaData.get("dashboard"));
+
+        String id = grafanaData.get("dashboard").get("id").textValue();
+        if (null == id || "".equals(id)) {
+            id = title.replace(" ", "-").replace("'","").toLowerCase();
+        }
+        else {
+            id = id.toLowerCase();
+        }
+
+        log.info("Saving Grafana 2 dashboard title: \"{}\" id: {}", title, id);
+        grafanaService.createOrUpdateGrafanaDashboard(id, title, dashboard, authService.getUserName(), "v2");
+
+        ObjectNode result = mapper.createObjectNode();
+        result.put("slug", id);
+        result.put("status", "success");
+        result.put("version", 0);
+
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     // save dashboard snapshot for sharing
@@ -667,5 +768,50 @@ public class ZMonRestService extends AbstractZMonController {
         e.put("isDefault", true);
         arr.add(e);
         return arr;
+    }
+
+    @RequestMapping(value="/grafana2/api/user/orgs", method = RequestMethod.GET)
+    @ResponseBody
+    public Collection<String> getUserOrgs() {
+        return authService.getTeams();
+    }
+
+    @RequestMapping(value="/grafana2/api/user", method = RequestMethod.GET)
+    @ResponseBody
+    public JsonNode getCurrentUser() {
+        ObjectNode node = mapper.createObjectNode();
+        node.put("name", authService.getUserName());
+        node.put("login", authService.getUserName());
+        node.put("email", "");
+        node.put("isGrafanaAdmin", false);
+        node.put("isSignedIn", true);
+        return node;
+    }
+
+    @RequestMapping(value="/grafana2/api/dashboards/tags")
+    @ResponseBody
+    public JsonNode getGrafana2Tags() {
+        ArrayNode result = mapper.createArrayNode();
+        List<GrafanaDashboardSprocService.GrafanaTag> tags = grafanaService.getTagsWithCount();
+        for(GrafanaDashboardSprocService.GrafanaTag t : tags) {
+            ObjectNode node = result.addObject();
+            node.put("term", t.tag);
+            node.put("count", t.count);
+        }
+        return result;
+    }
+
+    @RequestMapping(value="/grafana2/api/user/stars/dashboard/{id}", method=RequestMethod.POST)
+    @ResponseBody
+    public JsonNode starDashboard(@PathVariable String id) {
+        grafanaService.starGrafanaDashboard(id, authService.getUserName());
+        return mapper.createObjectNode();
+    }
+
+    @RequestMapping(value="/grafana2/api/user/stars/dashboard/{id}", method=RequestMethod.DELETE)
+    @ResponseBody
+    public JsonNode unstarDashboard(@PathVariable String id) {
+        grafanaService.unstarGrafanaDashboard(id, authService.getUserName());
+        return mapper.createObjectNode();
     }
 }
