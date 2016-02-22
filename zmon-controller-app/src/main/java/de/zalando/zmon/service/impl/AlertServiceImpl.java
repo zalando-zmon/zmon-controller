@@ -15,6 +15,10 @@ import java.util.UUID;
 
 import javax.annotation.Nullable;
 
+import de.zalando.zmon.config.SchedulerProperties;
+import org.apache.http.client.fluent.Executor;
+import org.apache.http.client.fluent.Request;
+import org.apache.http.entity.ContentType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -95,6 +99,9 @@ public class AlertServiceImpl implements AlertService {
 
     @Autowired
     private ObjectMapper mapper;
+
+    @Autowired
+    private SchedulerProperties schedulerProperties;
 
     @Override
     public AlertDefinition createOrUpdateAlertDefinition(final AlertDefinition alertDefinition) throws ZMonException {
@@ -382,30 +389,13 @@ public class AlertServiceImpl implements AlertService {
     }
 
     @Override
-    public void forceAlertEvaluation(final int alertDefinitionId) {
+    public void forceAlertEvaluation(final int alertDefinitionId) throws IOException {
 
-        // generate id
-        final String id = UUID.randomUUID().toString();
+        final Executor executor = Executor.newInstance();
 
-        // build the json
-        final ObjectNode node = mapper.createObjectNode();
-        node.put("alert_definition_id", alertDefinitionId);
+        final String url = schedulerProperties.getUrl().toString() + "/api/v1/alerts/" + alertDefinitionId + "/instant-eval";
 
-        final String json = node.toString();
-
-        final Jedis jedis = redisPool.getResource();
-        try {
-            final Pipeline p = jedis.pipelined();
-            p.hset(RedisPattern.alertEvaluationQueue(), id, json);
-
-            // expire queue. The scheduler might be down
-            p.expire(RedisPattern.alertEvaluationQueue(), INSTANTANEOUS_ALERT_EVALUATION_TIME);
-            p.publish(RedisPattern.alertEvaluationChannel(), id);
-
-            p.sync();
-        } finally {
-            redisPool.returnResource(jedis);
-        }
+        final String r = executor.execute(Request.Post(url)).returnContent().asString();
 
         eventLog.log(ZMonEventType.INSTANTANEOUS_ALERT_EVALUATION_SCHEDULED, alertDefinitionId,
             authorityService.getUserName());
