@@ -1,5 +1,9 @@
-describe('AlertDefinitionsCtrl', function() {
+describe('AlertDefinitionCtrl', function() {
     var scope, controller, httpBackend;
+    var store = {};
+    var ls = function() {
+        return JSON.parse(store.storage);
+    };
 
     beforeEach(function() {
         // Fake the module's UserInfoService dependency
@@ -15,6 +19,15 @@ describe('AlertDefinitionsCtrl', function() {
             });
         });
 
+        // LocalStorage mock.
+        spyOn(localStorage, 'getItem').and.callFake(function (key) {
+          return store[key];
+        });
+        Object.defineProperty(sessionStorage, "setItem", { writable: true });
+        spyOn(localStorage, 'setItem').and.callFake(function(key, value) {
+            store[key] = value;
+        });
+
         angular.mock.inject(function($rootScope, $controller, $httpBackend) {
             scope = $rootScope.$new();
 
@@ -24,27 +37,27 @@ describe('AlertDefinitionsCtrl', function() {
 
             httpBackend = $httpBackend;
 
-            httpBackend.when('GET', 'rest/allTeams?').respond(["STUPS", "Greendale", "Platform/Software"]);
-            httpBackend.when('GET', 'rest/allAlerts?').respond(["Backend/Order", "Backend/Payment", "Platform/System"]);
+            httpBackend.when('GET', 'rest/allTeams?').respond(["teamA", "Greendale", "Platform"]);
+            httpBackend.when('GET', 'rest/allAlerts?').respond(["teamB", "teamB", "Platform"]);
             httpBackend.when('GET', 'rest/alertDefinitions?').respond([
                 {
                     "id": 691,
                     "name": "Alert on http code (1) --",
                     "description": "Alert description",
-                    "team": "Backend/Order",
-                    "responsible_team": "Platform/Software",
+                    "team": "teamB",
+                    "responsible_team": "Platform",
                     "entities": [{
                         "project": "shop",
                         "environment": "release-staging",
                         "type": "zomcat"
                     }],
                     "condition": "!=0",
-                    "notifications": ["send_mail('vitalii.kapara@zalando.de')"],
+                    "notifications": ["send_mail('example@email.com')"],
                     "check_definition_id": 2,
                     "status": "ACTIVE",
                     "priority": 1,
                     "last_modified": 1396619805429,
-                    "last_modified_by": "hjacobs",
+                    "last_modified_by": "userZ",
                     "period": "xxxxx",
                     "editable": true,
                     "cloneable": true,
@@ -55,7 +68,7 @@ describe('AlertDefinitionsCtrl', function() {
                     "name": "Alert on http code1",
                     "description": "Alert description",
                     "team": "Platform",
-                    "responsible_team": "Platform/System",
+                    "responsible_team": "Platform",
                     "entities": [],
                     "condition": "!=0",
                     "notifications": [],
@@ -63,7 +76,7 @@ describe('AlertDefinitionsCtrl', function() {
                     "status": "INACTIVE",
                     "priority": 1,
                     "last_modified": 1396362646573,
-                    "last_modified_by": "hjacobs",
+                    "last_modified_by": "userZ",
                     "period": null,
                     "editable": true,
                     "cloneable": true,
@@ -72,8 +85,8 @@ describe('AlertDefinitionsCtrl', function() {
                     "id":730,
                     "name":"Alert template",
                     "description":"Test alert on all keys extended",
-                    "team":"Platform/Software",
-                    "responsible_team":"Platform/Software",
+                    "team":"Platform",
+                    "responsible_team":"Platform",
                     "entities":[],
                     "entities_exclude":[],
                     "condition":"['load1']>1",
@@ -82,7 +95,7 @@ describe('AlertDefinitionsCtrl', function() {
                     "status":"INACTIVE",
                     "priority":1,
                     "last_modified":1407504616498,
-                    "last_modified_by":"hjacobs",
+                    "last_modified_by":"userZ",
                     "period":"",
                     "template":true,
                     "parent_id":728,
@@ -114,12 +127,40 @@ describe('AlertDefinitionsCtrl', function() {
                     "deletable":true
                 }
             ]);
+
+            httpBackend.when('GET', 'rest/alertDefinitions?team=Platform').respond([
+                {
+                    "id": 691,
+                    "name": "Alert on http code (1) --",
+                    "description": "Alert description",
+                    "team": "Platform",
+                    "responsible_team": "Platform",
+                    "entities": [{
+                        "project": "shop",
+                        "environment": "release-staging",
+                        "type": "zomcat"
+                    }],
+                    "condition": "!=0",
+                    "notifications": ["send_mail('example@email.com')"],
+                    "check_definition_id": 2,
+                    "status": "ACTIVE",
+                    "priority": 1,
+                    "last_modified": 1396619805429,
+                    "last_modified_by": "userZ",
+                    "period": "xxxxx",
+                    "editable": true,
+                    "cloneable": true,
+                    "deletable": true,
+                    "star": true
+                }
+            ]);
         });
     });
 
     afterEach(function() {
         httpBackend.verifyNoOutstandingExpectation();
         httpBackend.verifyNoOutstandingRequest();
+        store = {};
     });
 
 
@@ -140,6 +181,7 @@ describe('AlertDefinitionsCtrl', function() {
         httpBackend.flush();
         scope.setAlertsFilter('ACTIVE');
         expect(scope.alertDefinitionsByStatus.length).toBe(1);
+        expect(store['ls.returnTo']).toBe("/#?tab=ACTIVE");
     });
 
     it('should have one template alert after applying filter for templates', function() {
@@ -147,6 +189,16 @@ describe('AlertDefinitionsCtrl', function() {
         scope.setAlertsFilter('All');
         scope.setTemplateFilter('template');
         expect(scope.alertDefinitionsByStatus.length).toBe(1);
+        expect(store['ls.returnTo']).toBe("/#?tab=All");
+        expect(scope.isFilteredByTemplate).toBe(true);
+    });
+
+    it('should have one alert after applying team filter "Platform"', function() {
+        scope.setTeamFilter('Platform');
+        httpBackend.flush();
+        expect(scope.alertDefinitionsByStatus.length).toBe(1);
+        expect(store['ls.teamFilter']).toBe("Platform");
+        expect(store['ls.returnTo']).toBe("/#?tf=Platform");
     });
 
     it('should have one star alert at least', function() {

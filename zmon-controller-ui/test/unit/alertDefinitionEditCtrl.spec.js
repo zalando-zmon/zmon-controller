@@ -2,18 +2,18 @@ describe('AlertDefinitionEditCtrl', function() {
     var scope, controller, httpBackend, routeParams;
 
     var alertDefinition = {
-        "id": 691,
+        "id": 123,
         "name": "Alert on http code (1) --",
         "description": "Alert description",
-        "team": "Backend/Order",
-        "responsible_team": "Platform/Software",
+        "team": "Platform",
+        "responsible_team": "Platform",
         "entities": [{
             "project": "shop",
             "environment": "release-staging",
             "type": "zomcat"
         }],
         "condition": "!=0",
-        "notifications": ["send_mail('vitalii.kapara@zalando.de')"],
+        "notifications": ["send_mail('mail@example.com')"],
         "check_definition_id": 2,
         "status": "ACTIVE",
         "priority": 1,
@@ -33,7 +33,7 @@ describe('AlertDefinitionEditCtrl', function() {
                 return {
                     get: function() {
                         return {
-                            'teams': 'STUPS,greendale',
+                            'teams': 'teamA,teamB',
                             'fakeKey': 'fakeValue'
                         };
                     }
@@ -43,7 +43,7 @@ describe('AlertDefinitionEditCtrl', function() {
 
         angular.mock.inject(function($rootScope, $controller, $httpBackend, $routeParams) {
             scope = $rootScope.$new();
-            $routeParams.alertDefinitionId = 691;
+            $routeParams.alertDefinitionId = 123;
 
             controller = $controller('AlertDefinitionEditCtrl', {
                 $scope: scope,
@@ -52,16 +52,16 @@ describe('AlertDefinitionEditCtrl', function() {
             httpBackend = $httpBackend;
 
             httpBackend.when('GET', 'rest/alertDefinitions?').respond([alertDefinition]);
-            httpBackend.when('GET', 'rest/alertDefinitionNode?id=691').respond(alertDefinition);
+            httpBackend.when('GET', 'rest/alertDefinitionNode?id=123').respond(alertDefinition);
             httpBackend.when('GET', 'rest/entityProperties?').respond({
                 "instance": {
                     "infrastructure_account": [
-                        "aws:085668006708", "aws:162935806085", "aws:356702503974", "aws:681709283245",
-                        "aws:576069677832", "aws:149830196184", "aws:625928549634", "aws:352469958076",
-                        "aws:786011980701", "aws:341135513002", "aws:021483111008", "aws:075097227389",
-                        "aws:257146137867", "aws:607300429032", "aws:368335482178", "aws:493493404749",
-                        "aws:511305221567", "aws:950209458978", "aws:007149717068", "aws:263820974194",
-                        "aws:222970907460", "aws:790810764578"
+                        "aws:111", "aws:222", "aws:333", "aws:444",
+                        "aws:555", "aws:666", "aws:777", "aws:888",
+                        "aws:999", "aws:112", "aws:113", "aws:114",
+                        "aws:221", "aws:223", "aws:224", "aws:331",
+                        "aws:332", "aws:334", "aws:441", "aws:442",
+                        "aws:443", "aws:551"
                 ]}
             });
 
@@ -77,13 +77,13 @@ describe('AlertDefinitionEditCtrl', function() {
                 "potential_analysis":null,
                 "potential_impact":null,
                 "potential_solution":null,
-                "owning_team":"Platform/Software",
+                "owning_team":"Platform",
                 "entities":[{"type":"zomcat"}],
                 "interval":60,
                 "command":"http('/heartbeat.jsp', timeout=5).text().strip()=='OK: Zalando JVM is running'",
                 "status":"ACTIVE",
-                "source_url":"https://stash.zalando.net/scm/platform/zmon2-software-checks.git/zmon-checks/heartbeatjsp.yaml",
-                "last_modified_by":"Henning Jacobs"
+                "source_url":"somewhere.yaml",
+                "last_modified_by":"userZ"
             });
         });
     });
@@ -105,8 +105,27 @@ describe('AlertDefinitionEditCtrl', function() {
     it('should initialize to Edit mode if an alert id is given', function() {
         httpBackend.flush();
         expect(scope.mode).toBe('edit');
-        expect(scope.alertDefinition.id).toBe(691);
+        expect(scope.alertDefinition.id).toBe(123);
         expect(scope.alertDefinition.check_definition_id).toBe(2);
     });
 
+    it('should add and remove a tag to/from the tags array', function() {
+        httpBackend.flush();
+        scope.addTag('tagX');
+        expect(scope.alertDefinition.tags.length).toBe(1);
+        scope.removeTag('tagX');
+        expect(scope.alertDefinition.tags.length).toBe(0);
+    });
+
+    it('should validate a python variable name', function() {
+        httpBackend.flush();
+        expect(scope.paramNameIsValid('_goodVariableName12')).toBe(true);
+        expect(scope.paramNameIsValid('!bad#Variable!bad')).toBe(false);
+    });
+
+    it('should set correct name for new cloned alert if in clone mode', function() {
+        httpBackend.flush();
+        scope.cloneFromAlertDefinitionId = 123;
+        expect(scope.alertDefinition.name).toBe('Alert on http code (1) --');
+    });
 });
