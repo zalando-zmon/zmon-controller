@@ -1,4 +1,4 @@
- CREATE TYPE alert_comment AS (
+CREATE TYPE alert_comment AS (
     id                  int,
     created             timestamptz,
     created_by          text,

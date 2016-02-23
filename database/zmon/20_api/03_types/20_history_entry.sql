@@ -1,4 +1,4 @@
- CREATE TYPE history_entry AS (
+CREATE TYPE history_entry AS (
     id                  bigint,
     "timestamp"         timestamptz,
     "action"            zzm_data.history_action,
