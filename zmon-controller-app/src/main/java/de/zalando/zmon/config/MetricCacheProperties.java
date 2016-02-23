@@ -7,7 +7,7 @@ import java.net.URL;
 /**
  * Created by hjacobs on 2/5/16.
  */
-@ConfigurationProperties(prefix = "zmon.metric-cache")
+@ConfigurationProperties(prefix = "zmon.metriccache")
 public class MetricCacheProperties {
 
     private URL url;
