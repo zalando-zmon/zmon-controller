@@ -57,6 +57,7 @@ public class TrialRunServiceImpl implements TrialRunService {
         Preconditions.checkNotNull(request, "request");
 
         final String id = UUID.randomUUID().toString();
+        request.setId(id);
 
         final Executor executor = Executor.newInstance();
 
