@@ -1,55 +1,54 @@
 angular.module('zmon2App').controller('AlertDetailsCtrl', ['$scope', '$location', 'timespanFilter', '$routeParams', '$modal', 'MainAlertService', 'CommunicationService', 'DowntimesService', 'FeedbackMessageService', 'UserInfoService', 'APP_CONST',
     function($scope, $location, timespanFilter, $routeParams, $modal, MainAlertService, CommunicationService, DowntimesService, FeedbackMessageService, UserInfoService, APP_CONST) {
-        $scope.AlertDetailsCtrl = this;
 
         // Set in parent scope which page is active for the menu styling
         $scope.$parent.activePage = 'alert-details'; // is not a menu option, but still set
-        this.entitiesFilter = [];
-        this.entitiesExcludeFilter = [];
-        this.alertDefinitionId = $routeParams.alertId;
-        this.alertDefinition = null;
-        this.alertDetails = null; // all alerts (active + currently in downtime)
-        this.activeAlerts = null; // 1st tab, 1st button filter content with alerts currently active
-        this.alertsInDowntime = null; // 1st tab, 2nd button filter content with alerts currently in downtime
-        this.checkResults = null; // 1st tab, 3rd button filter content with OKs [checks results i.e. w/o alert]
-        this.allAlertsAndChecks = null; // a concatenation of the (non-null) arrays activeAlerts, alertsInDowntime and checkResults
-        this.allDowntimes = null; // 2nd tab content with all downtimes (for alerts + OK's, current and future)
-        this.allHistory = null; // 3rd tab content with all history entries
+        $scope.entitiesFilter = [];
+        $scope.entitiesExcludeFilter = [];
+        $scope.alertDefinitionId = $routeParams.alertId;
+        $scope.alertDefinition = null;
+        $scope.alertDetails = null; // all alerts (active + currently in downtime)
+        $scope.activeAlerts = null; // 1st tab, 1st button filter content with alerts currently active
+        $scope.alertsInDowntime = null; // 1st tab, 2nd button filter content with alerts currently in downtime
+        $scope.checkResults = null; // 1st tab, 3rd button filter content with OKs [checks results i.e. w/o alert]
+        $scope.allAlertsAndChecks = null; // a concatenation of the (non-null) arrays activeAlerts, alertsInDowntime and checkResults
+        $scope.allDowntimes = null; // 2nd tab content with all downtimes (for alerts + OK's, current and future)
+        $scope.allHistory = null; // 3rd tab content with all history entries
 
-        this.showActiveAlerts = true; // 1st tab, 1st button
-        this.showAlertsInDowntime = false; // 1st tab, 2nd button
-        this.showCheckResults = false; // 1st tab, 3rd button
+        $scope.showActiveAlerts = true; // 1st tab, 1st button
+        $scope.showAlertsInDowntime = false; // 1st tab, 2nd button
+        $scope.showCheckResults = false; // 1st tab, 3rd button
 
         // Total number of alerts/checksResults visible on screen (used by alert-details-infinit-scroll directive)
-        this.infScrollNumAlertsVisible = APP_CONST.INFINITE_SCROLL_VISIBLE_ENTITIES_INCREMENT;
+        $scope.infScrollNumAlertsVisible = APP_CONST.INFINITE_SCROLL_VISIBLE_ENTITIES_INCREMENT;
         // Total number of downtimes visible on screen
-        this.infScrollNumDowntimesVisible = APP_CONST.INFINITE_SCROLL_VISIBLE_ENTITIES_INCREMENT;
-        this.checkDefinition = null;
-        this.addDowntimeEntities = [];
-        this.deleteDowntimeUUIDs = [];
+        $scope.infScrollNumDowntimesVisible = APP_CONST.INFINITE_SCROLL_VISIBLE_ENTITIES_INCREMENT;
+        $scope.checkDefinition = null;
+        $scope.addDowntimeEntities = [];
+        $scope.deleteDowntimeUUIDs = [];
         // History button active
-        this.activeHistoryButton = {
+        $scope.activeHistoryButton = {
             "1": false,
             "7": false,
             "14": false,
             "-1": false
         };
-        this.historyFromInEpochSeconds = null;
-        this.currentDate = new Date();
+        $scope.historyFromInEpochSeconds = null;
+        $scope.currentDate = new Date();
 
-        this.alertComments = [];
+        $scope.alertComments = [];
 
-        this.alertJson = '';
+        $scope.alertJson = '';
 
-        this.userInfo = UserInfoService.get();
+        $scope.userInfo = UserInfoService.get();
 
         // Querystring is '?downtimes' when user comes from dashboard clicking on the flag icon of an alert to see its downtimes
         if ($location.search().downtimes) {
-            this.showAlertsInDowntime = true;
+            $scope.showAlertsInDowntime = true;
         }
 
-        $scope.$watch('[AlertDetailsCtrl.activeAlerts, AlertDetailsCtrl.alertsInDowntime, AlertDetailsCtrl.checkResults]', function() {
-            $scope.AlertDetailsCtrl.allAlertsAndChecks = _.foldl([$scope.AlertDetailsCtrl.activeAlerts, $scope.AlertDetailsCtrl.alertsInDowntime, $scope.AlertDetailsCtrl.checkResults], function(result, nextDataArray) {
+        $scope.$watch('[activeAlerts, alertsInDowntime, checkResults]', function() {
+            $scope.allAlertsAndChecks = _.foldl([$scope.activeAlerts, $scope.alertsInDowntime, $scope.checkResults], function(result, nextDataArray) {
                 if (nextDataArray && nextDataArray.length !== 0) {
                     return result.concat(nextDataArray);
                 }
@@ -57,121 +56,121 @@ angular.module('zmon2App').controller('AlertDetailsCtrl', ['$scope', '$location'
             }, []);
         }, true);
 
-        this.timeAgo = function(epochPastTs) {
+        $scope.timeAgo = function(epochPastTs) {
             var timeIntervalSinceLastUpdate = MainAlertService.millisecondsApart(epochPastTs, MainAlertService.getLastUpdate());
             return timespanFilter(timeIntervalSinceLastUpdate);
         };
 
-        this.refreshAlertDetails = function() {
+        $scope.refreshAlertDetails = function() {
             var now = new Date().getTime() / 1000;
-            CommunicationService.getAlertDefinition(this.alertDefinitionId).then(function(response) {
-                    $scope.AlertDetailsCtrl.alertDefinition = response;
-                    $scope.AlertDetailsCtrl.currentDate = new Date();
+            CommunicationService.getAlertDefinition($scope.alertDefinitionId).then(function(response) {
+                    $scope.alertDefinition = response;
+                    $scope.currentDate = new Date();
 
                     // Fetch the information needed to fill the "Details" panel for both ACTIVE & INACTIVE alerts
-                    CommunicationService.getCheckDefinition($scope.AlertDetailsCtrl.alertDefinition.check_definition_id).then(
+                    CommunicationService.getCheckDefinition($scope.alertDefinition.check_definition_id).then(
                         function(response) {
-                            $scope.AlertDetailsCtrl.checkDefinition = response;
-                            $scope.AlertDetailsCtrl.entitiesFilter = [];
-                            $scope.AlertDetailsCtrl.entitiesExcludeFilter = [];
+                            $scope.checkDefinition = response;
+                            $scope.entitiesFilter = [];
+                            $scope.entitiesExcludeFilter = [];
 
                             // Multiply and merge check entities filter with alert entities filter.
-                            if (_.size($scope.AlertDetailsCtrl.checkDefinition.entities) < 1) {
-                                $scope.AlertDetailsCtrl.entitiesFilter = $scope.AlertDetailsCtrl.alertDefinition.entities;
-                            } else if (_.size($scope.AlertDetailsCtrl.alertDefinition.entities) < 1) {
-                                $scope.AlertDetailsCtrl.entitiesFilter = $scope.AlertDetailsCtrl.checkDefinition.entities;
+                            if (_.size($scope.checkDefinition.entities) < 1) {
+                                $scope.entitiesFilter = $scope.alertDefinition.entities;
+                            } else if (_.size($scope.alertDefinition.entities) < 1) {
+                                $scope.entitiesFilter = $scope.checkDefinition.entities;
                             } else {
-                                _.each($scope.AlertDetailsCtrl.checkDefinition.entities, function (cEntity) {
-                                    _.each($scope.AlertDetailsCtrl.alertDefinition.entities, function (aEntity) {
+                                _.each($scope.checkDefinition.entities, function (cEntity) {
+                                    _.each($scope.alertDefinition.entities, function (aEntity) {
                                         var mergedEntity = _.extend({}, cEntity, aEntity);
-                                        $scope.AlertDetailsCtrl.entitiesFilter.push(mergedEntity);
+                                        $scope.entitiesFilter.push(mergedEntity);
                                     });
                                 });
                             }
 
                             // Remove entity filter duplicates!
-                            $scope.AlertDetailsCtrl.entitiesFilter = _.uniq($scope.AlertDetailsCtrl.entitiesFilter, false, function(eFilter) {
+                            $scope.entitiesFilter = _.uniq($scope.entitiesFilter, false, function(eFilter) {
                                 return JSON.stringify(eFilter, null, 0);
                             });
 
                             // Remove entity filters with no "type".
-                            $scope.AlertDetailsCtrl.entitiesFilter = _.reject($scope.AlertDetailsCtrl.entitiesFilter, function(eFilter) {
+                            $scope.entitiesFilter = _.reject($scope.entitiesFilter, function(eFilter) {
                                 return (eFilter.type === undefined || eFilter.type == null || eFilter.type == "");
                             });
 
                             // Multiply and merge check entities EXCLUDE filter with alert entities EXCLUDE filter.
-                            if (_.size($scope.AlertDetailsCtrl.checkDefinition.entities_exclude) < 1) {
-                                $scope.AlertDetailsCtrl.entitiesExcludeFilter = $scope.AlertDetailsCtrl.alertDefinition.entities_exclude;
-                            } else if (_.size($scope.AlertDetailsCtrl.alertDefinition.entities_exclude) < 1) {
-                                $scope.AlertDetailsCtrl.entitiesExcludeFilter = $scope.AlertDetailsCtrl.checkDefinition.entities_exclude;
+                            if (_.size($scope.checkDefinition.entities_exclude) < 1) {
+                                $scope.entitiesExcludeFilter = $scope.alertDefinition.entities_exclude;
+                            } else if (_.size($scope.alertDefinition.entities_exclude) < 1) {
+                                $scope.entitiesExcludeFilter = $scope.checkDefinition.entities_exclude;
                             } else {
-                                _.each($scope.AlertDetailsCtrl.checkDefinition.entities_exclude, function (cEntity) {
-                                    _.each($scope.AlertDetailsCtrl.alertDefinition.entities_exclude, function (aEntity) {
+                                _.each($scope.checkDefinition.entities_exclude, function (cEntity) {
+                                    _.each($scope.alertDefinition.entities_exclude, function (aEntity) {
                                         var mergedEntity = _.extend({}, cEntity, aEntity);
-                                        $scope.AlertDetailsCtrl.entitiesExcludeFilter.push(mergedEntity);
+                                        $scope.entitiesExcludeFilter.push(mergedEntity);
                                     });
                                 });
                             }
 
                             // Remove entity EXCLUDE filter duplicates!
-                            $scope.AlertDetailsCtrl.entitiesExcludeFilter = _.uniq($scope.AlertDetailsCtrl.entitiesExcludeFilter, false, function(eFilter) {
+                            $scope.entitiesExcludeFilter = _.uniq($scope.entitiesExcludeFilter, false, function(eFilter) {
                                 return JSON.stringify(eFilter, null, 0);
                             });
 
                             // Remove entity EXCLUDE filters with no "type".
-                            $scope.AlertDetailsCtrl.entitiesExcludeFilter = _.reject($scope.AlertDetailsCtrl.entitiesExcludeFilter, function(eFilter) {
+                            $scope.entitiesExcludeFilter = _.reject($scope.entitiesExcludeFilter, function(eFilter) {
                                 return (eFilter.type === undefined || eFilter.type == null || eFilter.type == "");
                             });
 
                             // Get any children alerts that inherit from this alert
-                            CommunicationService.getAlertDefinitionChildren($scope.AlertDetailsCtrl.alertDefinition.id).then(function(response) {
-                                $scope.AlertDetailsCtrl.alertDefinitionChildren = response;
+                            CommunicationService.getAlertDefinitionChildren($scope.alertDefinition.id).then(function(response) {
+                                $scope.alertDefinitionChildren = response;
                             });
 
                             // Get Parent Alert Definition if a paret_id is preset
-                            if ($scope.AlertDetailsCtrl.alertDefinition.parent_id) {
-                                CommunicationService.getAlertDefinition($scope.AlertDetailsCtrl.alertDefinition.parent_id).then(function(response) {
-                                    $scope.AlertDetailsCtrl.parentAlertDefinition = response;
+                            if ($scope.alertDefinition.parent_id) {
+                                CommunicationService.getAlertDefinition($scope.alertDefinition.parent_id).then(function(response) {
+                                    $scope.parentAlertDefinition = response;
                                 });
                             }
 
-                            if ($scope.AlertDetailsCtrl.alertDefinition.status === 'ACTIVE') {
-                                CommunicationService.getAlertDetails($scope.AlertDetailsCtrl.alertDefinitionId).then(function(response) {
-                                    $scope.AlertDetailsCtrl.alertDetails = response;
+                            if ($scope.alertDefinition.status === 'ACTIVE') {
+                                CommunicationService.getAlertDetails($scope.alertDefinitionId).then(function(response) {
+                                    $scope.alertDetails = response;
                                     // TBD: decide whether we want to reset the number of displayed entities on each refresh
                                     // or whether we want to keep the extended # displayed on previous refresh (the only way to reset back is by page refresh)
-                                    // $scope.AlertDetailsCtrl.infScrollNumAlertsVisible = APP_CONST.INFINITE_SCROLL_VISIBLE_ENTITIES_INCREMENT;
+                                    // $scope.infScrollNumAlertsVisible = APP_CONST.INFINITE_SCROLL_VISIBLE_ENTITIES_INCREMENT;
 
                                     // Split into 2 sets: active alerts and alerts currently in downtime additionally flagging each item accordingly
                                     // so we can discriminate them in the allAlertAndChecks array
-                                    $scope.AlertDetailsCtrl.activeAlerts = [];
-                                    $scope.AlertDetailsCtrl.alertsInDowntime = [];
+                                    $scope.activeAlerts = [];
+                                    $scope.alertsInDowntime = [];
 
-                                    _.each($scope.AlertDetailsCtrl.alertDetails.entities, function(nextAlert) {
+                                    _.each($scope.alertDetails.entities, function(nextAlert) {
                                         if (nextAlert.result.downtimes && nextAlert.result.downtimes.length) {
                                             // Add it to alertsInDowntime if any of its downtimes is active now; otherwise add it to activeAlerts
                                             if (DowntimesService.isAnyDowntimeNow(nextAlert.result.downtimes)) {
                                                 nextAlert.isAlertInDowntime = true;
-                                                $scope.AlertDetailsCtrl.alertsInDowntime.push(nextAlert);
+                                                $scope.alertsInDowntime.push(nextAlert);
                                             } else {
                                                 nextAlert.isActiveAlert = true;
-                                                $scope.AlertDetailsCtrl.activeAlerts.push(nextAlert);
+                                                $scope.activeAlerts.push(nextAlert);
                                             }
                                         } else {
                                             // alert has no downtimes; by definition goes to activeAlerts
                                             nextAlert.isActiveAlert = true;
-                                            $scope.AlertDetailsCtrl.activeAlerts.push(nextAlert);
+                                            $scope.activeAlerts.push(nextAlert);
                                         }
                                     });
 
-                                    $scope.namesOfEntitiesWithAlert = _.foldl($scope.AlertDetailsCtrl.alertDetails.entities, function(prev, curr) {
+                                    $scope.namesOfEntitiesWithAlert = _.foldl($scope.alertDetails.entities, function(prev, curr) {
                                         prev[curr.entity] = true;
                                         return prev;
                                     }, {});
 
-                                    CommunicationService.getCheckResultsForAlert($scope.AlertDetailsCtrl.alertDefinitionId, 1).then(
+                                    CommunicationService.getCheckResultsForAlert($scope.alertDefinitionId, 1).then(
                                         function(response) {
-                                            $scope.AlertDetailsCtrl.checkResults = _.map(_.filter(response, function(entityRes) {
+                                            $scope.checkResults = _.map(_.filter(response, function(entityRes) {
                                                 return !(entityRes.entity in $scope.namesOfEntitiesWithAlert);
                                             }), function(entityRes) {
                                                 return {
@@ -184,9 +183,9 @@ angular.module('zmon2App').controller('AlertDetailsCtrl', ['$scope', '$location'
 
                                     );
 
-                                    CommunicationService.getDowntimes($scope.AlertDetailsCtrl.alertDefinitionId).then(
+                                    CommunicationService.getDowntimes($scope.alertDefinitionId).then(
                                         function(response) {
-                                            $scope.AlertDetailsCtrl.allDowntimes = response;
+                                            $scope.allDowntimes = response;
                                         }
                                     );
                                 });
@@ -204,20 +203,20 @@ angular.module('zmon2App').controller('AlertDetailsCtrl', ['$scope', '$location'
 
         var setLinkToTrialRun = function () {
             var params = {
-                name: $scope.AlertDetailsCtrl.alertDefinition.name,
-                description: $scope.AlertDetailsCtrl.alertDefinition.description,
-                check_command: $scope.AlertDetailsCtrl.checkDefinition.command,
-                alert_condition: $scope.AlertDetailsCtrl.alertDefinition.condition,
-                entities: $scope.AlertDetailsCtrl.entitiesFilter,
-                entities_exclude: $scope.AlertDetailsCtrl.entitiesExcludeFilter,
-                interval: $scope.AlertDetailsCtrl.checkDefinition.interval,
-                period: $scope.AlertDetailsCtrl.alertDefinition.period,
-                parameters: $scope.AlertDetailsCtrl.alertDefinition.parameters || []
+                name: $scope.alertDefinition.name,
+                description: $scope.alertDefinition.description,
+                check_command: $scope.checkDefinition.command,
+                alert_condition: $scope.alertDefinition.condition,
+                entities: $scope.entitiesFilter,
+                entities_exclude: $scope.entitiesExcludeFilter,
+                interval: $scope.checkDefinition.interval,
+                period: $scope.alertDefinition.period,
+                parameters: $scope.alertDefinition.parameters || []
             }
-            $scope.AlertDetailsCtrl.alertJson = window.encodeURIComponent(JSON.stringify(params));
+            $scope.alertJson = window.encodeURIComponent(JSON.stringify(params));
         };
 
-        this.showDeleteAlertDefinitionModal = function() {
+        $scope.showDeleteAlertDefinitionModal = function() {
 
             // Delete alert definition modal
             var deleteAlertDefinitionModalInstance = $modal.open({
@@ -226,14 +225,14 @@ angular.module('zmon2App').controller('AlertDetailsCtrl', ['$scope', '$location'
                 backdrop: false,
                 resolve: {
                     alertDefinition: function() {
-                        return $scope.AlertDetailsCtrl.alertDefinition;
+                        return $scope.alertDefinition;
                     }
                 }
             });
 
             deleteAlertDefinitionModalInstance.result.then(
                 function() {
-                    CommunicationService.deleteAlertDefinition($scope.AlertDetailsCtrl.alertDefinition.id).then(function() {
+                    CommunicationService.deleteAlertDefinition($scope.alertDefinition.id).then(function() {
                         $location.path('/alert-definitions');
                     });
                 });
@@ -341,7 +340,7 @@ angular.module('zmon2App').controller('AlertDetailsCtrl', ['$scope', '$location'
             };
         };
 
-        this.showDowntimeModal = function(alertId) {
+        $scope.showDowntimeModal = function(alertId) {
             var downtimeModalInstance = $modal.open({
                 templateUrl: '/templates/downtimeModal.html',
                 controller: downtimeModalCtrl,
@@ -351,7 +350,7 @@ angular.module('zmon2App').controller('AlertDetailsCtrl', ['$scope', '$location'
                         return alertId;
                     },
                     downtimeEntities: function() {
-                        return $scope.AlertDetailsCtrl.addDowntimeEntities;
+                        return $scope.addDowntimeEntities;
                     }
                 }
             });
@@ -362,13 +361,13 @@ angular.module('zmon2App').controller('AlertDetailsCtrl', ['$scope', '$location'
                 function(downtimeData) {
                     // In this case the entity-alert relationship is N-1
                     var entitiesPerAlert = [{
-                        "alert_definition_id": $scope.AlertDetailsCtrl.alertDefinitionId,
-                        "entity_ids": $scope.AlertDetailsCtrl.addDowntimeEntities
+                        "alert_definition_id": $scope.alertDefinitionId,
+                        "entity_ids": $scope.addDowntimeEntities
                     }];
                     CommunicationService.scheduleDowntime(downtimeData.comment, downtimeData.downStartTime, downtimeData.downEndTime, entitiesPerAlert).then(
                         function(downtimeUUIDs) {
-                            FeedbackMessageService.showSuccessMessage('Success setting ' + $scope.AlertDetailsCtrl.addDowntimeEntities.length + ($scope.AlertDetailsCtrl.addDowntimeEntities.length > 1 ? ' downtimes' : ' downtime'));
-                            $scope.AlertDetailsCtrl.addDowntimeEntities = [];
+                            FeedbackMessageService.showSuccessMessage('Success setting ' + $scope.addDowntimeEntities.length + ($scope.addDowntimeEntities.length > 1 ? ' downtimes' : ' downtime'));
+                            $scope.addDowntimeEntities = [];
                         }
 
                     );
@@ -378,9 +377,9 @@ angular.module('zmon2App').controller('AlertDetailsCtrl', ['$scope', '$location'
         /**
          * Delete multiple downtimes (Downtimes tab)
          */
-        this.deleteMultiDowntimes = function() {
-            var that = this;
-            CommunicationService.deleteDowntime(this.deleteDowntimeUUIDs).then(
+        $scope.deleteMultiDowntimes = function() {
+            var that = $scope;
+            CommunicationService.deleteDowntime($scope.deleteDowntimeUUIDs).then(
                 function(data) {
                     FeedbackMessageService.showSuccessMessage('Downtimes deleted', 3000);
                     that.deleteDowntimeUUIDs = [];
@@ -393,11 +392,11 @@ angular.module('zmon2App').controller('AlertDetailsCtrl', ['$scope', '$location'
         /**
          * Returns t/f (Downtimes tab). Again displayed don't mean visible.
          */
-        this.areAllDowntimesChecked = function() {
+        $scope.areAllDowntimesChecked = function() {
             var totalDisplayedDowntimes = 0;
-            if (this.allDowntimes && this.allDowntimes.length) {
-                totalDisplayedDowntimes = this.allDowntimes.length;
-                if (this.deleteDowntimeUUIDs.length === totalDisplayedDowntimes) {
+            if ($scope.allDowntimes && $scope.allDowntimes.length) {
+                totalDisplayedDowntimes = $scope.allDowntimes.length;
+                if ($scope.deleteDowntimeUUIDs.length === totalDisplayedDowntimes) {
                     return true;
                 }
             }
@@ -407,43 +406,43 @@ angular.module('zmon2App').controller('AlertDetailsCtrl', ['$scope', '$location'
         /**
          * Triggered when individual delete downtime checkbox is checked/unchecked (Downtimes tab)
          */
-        this.toggleSingleDeleteDowntime = function(downtimeUUID) {
-            var idx = this.deleteDowntimeUUIDs.indexOf(downtimeUUID);
+        $scope.toggleSingleDeleteDowntime = function(downtimeUUID) {
+            var idx = $scope.deleteDowntimeUUIDs.indexOf(downtimeUUID);
             if (idx > -1) {
                 // It's already in deleteDowntimeUUIDs; remove it
-                this.deleteDowntimeUUIDs.splice(idx, 1);
+                $scope.deleteDowntimeUUIDs.splice(idx, 1);
             } else {
                 // Not in deleteDowntimeUUIDs; add it
-                this.deleteDowntimeUUIDs.push(downtimeUUID);
+                $scope.deleteDowntimeUUIDs.push(downtimeUUID);
             }
         };
 
         /**
          * (Downtimes tab) Triggered when overall delete downtime checkbox of header is checked/unchecked to set/unset all delete downtime checkboxes
          */
-        this.toggleAllDeleteDowntimes = function() {
-            if (!this.areAllDowntimesChecked()) {
-                this.deleteDowntimeUUIDs = [];
+        $scope.toggleAllDeleteDowntimes = function() {
+            if (!$scope.areAllDowntimesChecked()) {
+                $scope.deleteDowntimeUUIDs = [];
                 // Delete downtimes checkboxes are partially checked; proceed to check all of them
-                _.each(_.pluck(this.allDowntimes, 'id'), function(nextUUID) {
-                    $scope.AlertDetailsCtrl.deleteDowntimeUUIDs.push(nextUUID);
+                _.each(_.pluck($scope.allDowntimes, 'id'), function(nextUUID) {
+                    $scope.deleteDowntimeUUIDs.push(nextUUID);
                 });
             } else {
-                this.deleteDowntimeUUIDs = [];
+                $scope.deleteDowntimeUUIDs = [];
             }
         };
 
         /**
          * (Alerts tab) Triggered when individual entity checkbox for downtime is checked/unchecked
          */
-        this.toggleEntityAddDowntime = function(entityId) {
-            var idx = this.addDowntimeEntities.indexOf(entityId);
+        $scope.toggleEntityAddDowntime = function(entityId) {
+            var idx = $scope.addDowntimeEntities.indexOf(entityId);
             if (idx > -1) {
                 // It's already in addDowntimeEntities; remove it
-                this.addDowntimeEntities.splice(idx, 1);
+                $scope.addDowntimeEntities.splice(idx, 1);
             } else {
                 // Not in addDowntimeEntities; add it
-                this.addDowntimeEntities.push(entityId);
+                $scope.addDowntimeEntities.push(entityId);
             }
         };
 
@@ -451,28 +450,28 @@ angular.module('zmon2App').controller('AlertDetailsCtrl', ['$scope', '$location'
          * (Alerts tab) Triggered when overall downtime checkbox of header is checked/unchecked to set/unset all entity checkboxes to add downtime
          * What is included by "all", depends on which groups are selected to be displayed at the moment
          */
-        this.toggleAllEntitiesAddDowntime = function() {
-            if (!this.areAllDisplayedAlertsChecked()) {
-                this.addDowntimeEntities = [];
+        $scope.toggleAllEntitiesAddDowntime = function() {
+            if (!$scope.areAllDisplayedAlertsChecked()) {
+                $scope.addDowntimeEntities = [];
                 // Check all
-                if (this.showActiveAlerts) {
-                    _.each(_.pluck(this.activeAlerts, 'entity'), function(entity) {
-                        $scope.AlertDetailsCtrl.addDowntimeEntities.push(entity);
+                if ($scope.showActiveAlerts) {
+                    _.each(_.pluck($scope.activeAlerts, 'entity'), function(entity) {
+                        $scope.addDowntimeEntities.push(entity);
                     });
                 }
-                if (this.showAlertsInDowntime) {
-                    _.each(_.pluck(this.alertsInDowntime, 'entity'), function(entity) {
-                        $scope.AlertDetailsCtrl.addDowntimeEntities.push(entity);
+                if ($scope.showAlertsInDowntime) {
+                    _.each(_.pluck($scope.alertsInDowntime, 'entity'), function(entity) {
+                        $scope.addDowntimeEntities.push(entity);
                     });
                 }
-                if (this.showCheckResults) {
-                    _.each(_.pluck(this.checkResults, 'entity'), function(entity) {
-                        $scope.AlertDetailsCtrl.addDowntimeEntities.push(entity);
+                if ($scope.showCheckResults) {
+                    _.each(_.pluck($scope.checkResults, 'entity'), function(entity) {
+                        $scope.addDowntimeEntities.push(entity);
                     });
                 }
             } else {
                 // Uncheck all
-                this.addDowntimeEntities = [];
+                $scope.addDowntimeEntities = [];
             }
         };
 
@@ -480,31 +479,31 @@ angular.module('zmon2App').controller('AlertDetailsCtrl', ['$scope', '$location'
          * Trivial function, but necessary because the directive for infinite-scroll requires the attribute "getTotalNumDisplayedItems" to be a function ref
          * Return # of items to be displayed and not necessarilly visible on screen
          */
-        this.getTotalNumDowntimes = function() {
-            return this.allDowntimes ? this.allDowntimes.length : 0;
+        $scope.getTotalNumDowntimes = function() {
+            return $scope.allDowntimes ? $scope.allDowntimes.length : 0;
         };
 
         /**
          * (Alerts tab) Returns true if all alerts from groups selected to be displayed are checked
          */
-        this.areAllDisplayedAlertsChecked = function() {
-            return this.addDowntimeEntities.length === this.getTotalNumDisplayedAlerts();
+        $scope.areAllDisplayedAlertsChecked = function() {
+            return $scope.addDowntimeEntities.length === $scope.getTotalNumDisplayedAlerts();
         };
 
         /**
          * Returns number of entities from groups (activeAlerts, alertsInDowntime, checkResults) selected to be displayed
          * Displayed doesn't mean immediately visible on screen due to infinite scroll; it means belonging to a group that is selected to be displayed and not hidden
          */
-        this.getTotalNumDisplayedAlerts = function() {
+        $scope.getTotalNumDisplayedAlerts = function() {
             var numDisplayed = 0;
-            if (this.showActiveAlerts && this.activeAlerts) {
-                numDisplayed += this.activeAlerts.length;
+            if ($scope.showActiveAlerts && $scope.activeAlerts) {
+                numDisplayed += $scope.activeAlerts.length;
             }
-            if (this.showAlertsInDowntime && this.alertsInDowntime) {
-                numDisplayed += this.alertsInDowntime.length;
+            if ($scope.showAlertsInDowntime && $scope.alertsInDowntime) {
+                numDisplayed += $scope.alertsInDowntime.length;
             }
-            if (this.showCheckResults && this.checkResults) {
-                numDisplayed += this.checkResults.length;
+            if ($scope.showCheckResults && $scope.checkResults) {
+                numDisplayed += $scope.checkResults.length;
             }
             return numDisplayed;
         };
@@ -514,89 +513,89 @@ angular.module('zmon2App').controller('AlertDetailsCtrl', ['$scope', '$location'
          * When a group is deselected from being displayed, any references to its entities are remove from addDowntimeEntities
          * Passed param is 'activeAlerts', 'alertsInDowntime' or 'checkResults'
          */
-        this.toggleShowEntities = function(entityType) {
+        $scope.toggleShowEntities = function(entityType) {
             if (entityType === 'activeAlerts') {
-                this.showActiveAlerts = !this.showActiveAlerts;
-                if (this.showActiveAlerts === false) {
+                $scope.showActiveAlerts = !$scope.showActiveAlerts;
+                if ($scope.showActiveAlerts === false) {
                     // Active alerts no longer displayed; remove from addDowntimeEntities any references to them
-                    _.each(_.pluck(this.activeAlerts, 'entity'), function(entity) {
-                        var idx = $scope.AlertDetailsCtrl.addDowntimeEntities.indexOf(entity);
+                    _.each(_.pluck($scope.activeAlerts, 'entity'), function(entity) {
+                        var idx = $scope.addDowntimeEntities.indexOf(entity);
                         if (idx > -1) {
-                            $scope.AlertDetailsCtrl.addDowntimeEntities.splice(idx, 1);
+                            $scope.addDowntimeEntities.splice(idx, 1);
                         }
                     });
                 }
             } else if (entityType === 'alertsInDowntime') {
-                this.showAlertsInDowntime = !this.showAlertsInDowntime;
-                if (this.showAlertsInDowntime === false) {
+                $scope.showAlertsInDowntime = !$scope.showAlertsInDowntime;
+                if ($scope.showAlertsInDowntime === false) {
                     // Alerts in downtime no longer displayed; remove from addDowntimeEntities any references to them
-                    _.each(_.pluck(this.alertsInDowntime, 'entity'), function(entity) {
-                        var idx = $scope.AlertDetailsCtrl.addDowntimeEntities.indexOf(entity);
+                    _.each(_.pluck($scope.alertsInDowntime, 'entity'), function(entity) {
+                        var idx = $scope.addDowntimeEntities.indexOf(entity);
                         if (idx > -1) {
-                            $scope.AlertDetailsCtrl.addDowntimeEntities.splice(idx, 1);
+                            $scope.addDowntimeEntities.splice(idx, 1);
                         }
                     });
                 }
             } else {
-                this.showCheckResults = !this.showCheckResults;
-                if (this.showCheckResults === false) {
+                $scope.showCheckResults = !$scope.showCheckResults;
+                if ($scope.showCheckResults === false) {
                     // Check results no longer displayed; remove from addDowntimeEntities any references to them
-                    _.each(_.pluck(this.checkResults, 'entity'), function(entity) {
-                        var idx = $scope.AlertDetailsCtrl.addDowntimeEntities.indexOf(entity);
+                    _.each(_.pluck($scope.checkResults, 'entity'), function(entity) {
+                        var idx = $scope.addDowntimeEntities.indexOf(entity);
                         if (idx > -1) {
-                            $scope.AlertDetailsCtrl.addDowntimeEntities.splice(idx, 1);
+                            $scope.addDowntimeEntities.splice(idx, 1);
                         }
                     });
                 }
             }
         };
 
-        this.startAlertDetailsRefresh = function() {
-            MainAlertService.startDataRefresh('AlertDetailsCtrl', _.bind(this.refreshAlertDetails, this), APP_CONST.ALERT_DETAILS_REFRESH_RATE, true);
+        $scope.startAlertDetailsRefresh = function() {
+            MainAlertService.startDataRefresh('AlertDetailsCtrl', _.bind($scope.refreshAlertDetails, this), APP_CONST.ALERT_DETAILS_REFRESH_RATE, true);
         };
 
 
-        this.getComments = function(alertId, limit, offset, cb) {
+        $scope.getComments = function(alertId, limit, offset, cb) {
             CommunicationService.getAlertComments(alertId, limit, offset).then(function(comments) {
                 if (cb) cb(comments);
             });
         };
 
-        this.saveComment = function(data, cb) {
+        $scope.saveComment = function(data, cb) {
             CommunicationService.insertAlertComment(data).then(function(comment) {
                 if (cb) cb(comment);
             });
         };
 
-        this.deleteComment = function(commentId, cb) {
+        $scope.deleteComment = function(commentId, cb) {
             CommunicationService.deleteAlertComment(commentId).then(function(status) {
                 if (cb) cb(commentId);
             });
         };
 
-        this.getComments(this.alertDefinitionId, 6, 0, function(comments) {
-            $scope.AlertDetailsCtrl.alertComments = comments;
+        $scope.getComments($scope.alertDefinitionId, 6, 0, function(comments) {
+            $scope.alertComments = comments;
         });
 
         /**
          * Refreshes history data with lastNDays worth of events; the range is [now - lastNDays, now]
          * Stores fetched data in allHistory array
          */
-        this.fetchHistoryLastNDays = function(lastNDays) {
+        $scope.fetchHistoryLastNDays = function(lastNDays) {
             // Set corresponding flags for highlighting of history buttons accordingly
-            _.each(this.activeHistoryButton, function(nextVal, nextKey) {
+            _.each($scope.activeHistoryButton, function(nextVal, nextKey) {
                 if (lastNDays === parseInt(nextKey, 10)) {
-                    $scope.AlertDetailsCtrl.activeHistoryButton[nextKey] = true;
+                    $scope.activeHistoryButton[nextKey] = true;
                 } else {
-                    $scope.AlertDetailsCtrl.activeHistoryButton[nextKey] = false;
+                    $scope.activeHistoryButton[nextKey] = false;
                 }
             });
 
             // Note: we maintain the from timestamp in seconds but javascript time calculations are done in milliseconds
-            this.historyFromInEpochSeconds = parseInt(((new Date().getTime()) - (lastNDays * 24 * 60 * 60 * 1000)) / 1000, 10);
-            CommunicationService.getAlertHistory(this.alertDefinitionId, this.historyFromInEpochSeconds).then(
+            $scope.historyFromInEpochSeconds = parseInt(((new Date().getTime()) - (lastNDays * 24 * 60 * 60 * 1000)) / 1000, 10);
+            CommunicationService.getAlertHistory($scope.alertDefinitionId, $scope.historyFromInEpochSeconds).then(
                 function(response) {
-                    $scope.AlertDetailsCtrl.allHistory = response;
+                    $scope.allHistory = response;
                 }
             );
         };
@@ -605,26 +604,26 @@ angular.module('zmon2App').controller('AlertDetailsCtrl', ['$scope', '$location'
          * Fetches 1 week's worth of data; the range is [historyFromInEpochSeconds - 7 days, historyFromInEpochSeconds, ]
          * Concats fetched data to the existing allHistory array
          */
-        this.fetchOneMoreWeekOfHistory = function() {
+        $scope.fetchOneMoreWeekOfHistory = function() {
             // Set corresponding flags for highlighting of history buttons accordingly
-            _.each(this.activeHistoryButton, function(nextVal, nextKey) {
-                $scope.AlertDetailsCtrl.activeHistoryButton[nextKey] = false;
+            _.each($scope.activeHistoryButton, function(nextVal, nextKey) {
+                $scope.activeHistoryButton[nextKey] = false;
             });
-            this.activeHistoryButton['-1'] = true;
+            $scope.activeHistoryButton['-1'] = true;
             // Decrement current historyFromInEpochSeconds by 1 more week (here all times are in seconds)
-            var historyToInEpochSeconds = this.historyFromInEpochSeconds;
-            this.historyFromInEpochSeconds = this.historyFromInEpochSeconds - (7 * 24 * 60 * 60);
-            CommunicationService.getAlertHistory(this.alertDefinitionId, this.historyFromInEpochSeconds, historyToInEpochSeconds).then(
+            var historyToInEpochSeconds = $scope.historyFromInEpochSeconds;
+            $scope.historyFromInEpochSeconds = $scope.historyFromInEpochSeconds - (7 * 24 * 60 * 60);
+            CommunicationService.getAlertHistory($scope.alertDefinitionId, $scope.historyFromInEpochSeconds, historyToInEpochSeconds).then(
                 function(response) {
                     // Append the additional week's
-                    $scope.AlertDetailsCtrl.allHistory = $scope.AlertDetailsCtrl.allHistory.concat(response);
+                    $scope.allHistory = $scope.allHistory.concat(response);
                 }
             );
         };
 
         // Force evaluation of alert definition
-        this.forceAlertEvaluation = function() {
-            CommunicationService.forceAlertEvaluation($scope.AlertDetailsCtrl.alertDefinitionId)
+        $scope.forceAlertEvaluation = function() {
+            CommunicationService.forceAlertEvaluation($scope.alertDefinitionId)
                 .then(function() {;
                     FeedbackMessageService.showSuccessMessage('Evaluation of alert successfully forced...');
                 }
@@ -632,17 +631,17 @@ angular.module('zmon2App').controller('AlertDetailsCtrl', ['$scope', '$location'
         };
 
         // Force cleanup of alert state
-        this.forceAlertCleanup = function() {
-            CommunicationService.forceAlertCleanup($scope.AlertDetailsCtrl.alertDefinitionId)
+        $scope.forceAlertCleanup = function() {
+            CommunicationService.forceAlertCleanup($scope.alertDefinitionId)
                 .then(function() {;
                     FeedbackMessageService.showSuccessMessage('Cleanup of alert state successfully forced...');
                 }
             );
         };
 
-        this.timestampIsOld = function(entity) {
+        $scope.timestampIsOld = function(entity) {
             var now = new Date()/1000;
-            var interval = $scope.AlertDetailsCtrl.checkDefinition.interval;
+            var interval = $scope.checkDefinition.interval;
             if ( entity.result.ts < now - 300 && now - entity.result.ts > 3*interval) {
                 return true;
             }
@@ -655,7 +654,7 @@ angular.module('zmon2App').controller('AlertDetailsCtrl', ['$scope', '$location'
          *                          NEW_ALERT_COMMENT, CHECK_DEFINITION_{CREATED|UPDATED}, ALERT_DEFINITION_{CREATED|UPDATED}
          * "aattributes" is
          */
-        this.getHistoryContent = function(historyType, attributes) {
+        $scope.getHistoryContent = function(historyType, attributes) {
             switch (historyType) {
                 case 'ALERT_STARTED':
                 case 'ALERT_ENDED':
@@ -681,10 +680,10 @@ angular.module('zmon2App').controller('AlertDetailsCtrl', ['$scope', '$location'
             }
         };
 
-        this.HSLaFromHistoryEventTypeId = function(eventTypeId) {
+        $scope.HSLaFromHistoryEventTypeId = function(eventTypeId) {
             return ((eventTypeId * 6151 % 1000 / 1000.0) * 360);
         };
 
-        this.startAlertDetailsRefresh();
+        $scope.startAlertDetailsRefresh();
     }
 ]);
