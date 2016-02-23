@@ -16,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.xerial.snappy.Snappy;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -71,10 +72,8 @@ import redis.clients.jedis.Response;
 // compositePermissionManager
 
 @Service
+@Transactional
 public class ZMonServiceImpl implements ZMonService {
-
-    // private static final EventLogger EVENT_LOG =
-    // EventLogger.getLogger(ZMonServiceImpl.class);
 
     private final Logger log = LoggerFactory.getLogger(ZMonServiceImpl.class);
 
