@@ -1,4 +1,6 @@
 zmon:
   zauth:
     oauth2-access-token-url: ${OAUTH2_ACCESS_TOKEN_URL}
-    credentials-directory-path: ${CREDENTIALS_DIR}
+  oauth2:
+    sso:
+      credentials-directory-path: ${CREDENTIALS_DIR}
