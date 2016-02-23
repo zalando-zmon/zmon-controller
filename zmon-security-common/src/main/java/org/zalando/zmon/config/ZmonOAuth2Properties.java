@@ -14,6 +14,12 @@ public class ZmonOAuth2Properties {
 
 	private String clientSecret;
 
+    /**
+     * Path to the directory where credential-files can be found (client.json).
+     * 
+     */
+    private String credentialsDirectoryPath;
+
 	public String getClientId() {
 		return clientId;
 	}
@@ -29,5 +35,13 @@ public class ZmonOAuth2Properties {
 	public void setClientSecret(String clientSecret) {
 		this.clientSecret = clientSecret;
 	}
+
+    public String getCredentialsDirectoryPath() {
+        return credentialsDirectoryPath;
+    }
+
+    public void setCredentialsDirectoryPath(String credentialsDirectoryPath) {
+        this.credentialsDirectoryPath = credentialsDirectoryPath;
+    }
 
 }
