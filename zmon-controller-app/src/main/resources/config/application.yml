@@ -31,6 +31,8 @@ server:
         key-alias: tomcat
 
 zmon:
+    cloud:
+      checkid: 9
     eventlog:
         url: http://localhost:8081/
     kairosdb:
