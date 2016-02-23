@@ -2,33 +2,15 @@ package de.zalando.zmon.transformer;
 
 import java.util.Map;
 
-import de.zalando.zmon.config.TestConfiguration;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
-
 import org.junit.Test;
-
-import org.junit.runner.RunWith;
-
-import org.springframework.beans.factory.annotation.Autowired;
-
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.google.common.collect.ImmutableMap;
 
 import de.zalando.zmon.domain.Parameter;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes= TestConfiguration.class)
-@TestPropertySource("/test.properties")
-public class JsonTransformerIT {
-
-    @Autowired
-    private ObjectMapper objectMapper;
+public class JsonTransformerTest {
 
     private final JsonTransformer jsonTransformer = new JsonTransformer();
 

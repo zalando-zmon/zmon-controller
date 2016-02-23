@@ -1,0 +1,3 @@
+-- drop and create
+DROP EXTENSION IF EXISTS hstore CASCADE;
+CREATE EXTENSION hstore;

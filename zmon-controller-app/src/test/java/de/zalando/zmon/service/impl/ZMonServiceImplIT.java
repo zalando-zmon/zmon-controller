@@ -4,24 +4,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import de.zalando.zmon.config.TestConfiguration;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
-
 import org.hamcrest.core.IsNull;
-
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
-
-import org.junit.runner.RunWith;
-
 import org.springframework.beans.factory.annotation.Autowired;
-
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Lists;
@@ -39,18 +29,18 @@ import de.zalando.zmon.domain.DefinitionStatus;
 import de.zalando.zmon.generator.AlertDefinitionGenerator;
 import de.zalando.zmon.generator.CheckDefinitionImportGenerator;
 import de.zalando.zmon.generator.DataGenerator;
+import de.zalando.zmon.service.AlertService;
+import de.zalando.zmon.service.ZMonService;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes= TestConfiguration.class)
-@TestPropertySource("/test.properties")
+@ContextConfiguration(classes = ServiceTestConfiguration.class)
 @Transactional
-public class ZMonServiceImplIT {
+public class ZMonServiceImplIT extends AbstractServiceIntegrationTest {
 
     @Autowired
-    private ZMonServiceImpl service;
+    private ZMonService service;
 
     @Autowired
-    private AlertServiceImpl alertService;
+    private AlertService alertService;
 
     private DataGenerator<CheckDefinitionImport> checkImportGenerator;
     private DataGenerator<AlertDefinition> alertGenerator;
@@ -248,6 +238,7 @@ public class ZMonServiceImplIT {
             Matchers.not(Matchers.hasItem(CheckDefinitionIsEqual.equalTo(newCheckDefinition))));
     }
 
+    @Ignore
     @Test
     public void testDeleteExistingCheckDefinitionWithAlerts() throws Exception {
 

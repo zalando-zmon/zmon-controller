@@ -3,35 +3,27 @@ package de.zalando.zmon.service.impl;
 // TODO: refactor tests using hamcrest
 import java.util.List;
 
-import de.zalando.zmon.config.TestConfiguration;
+import org.assertj.core.api.Assertions;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
-
 import org.junit.Test;
-
-import org.junit.runner.RunWith;
-
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
 import org.springframework.transaction.annotation.Transactional;
 
 import de.zalando.zmon.domain.Dashboard;
 import de.zalando.zmon.domain.DashboardIsEqual;
 import de.zalando.zmon.generator.DashboardGenerator;
 import de.zalando.zmon.generator.DataGenerator;
+import de.zalando.zmon.service.DashboardService;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes= TestConfiguration.class)
-@TestPropertySource("/test.properties")
+@ContextConfiguration(classes = ServiceTestConfiguration.class)
 @Transactional
-public class DashboardServiceImplIT {
+public class DashboardServiceImplIT extends AbstractServiceIntegrationTest {
+
 
     @Autowired
-    private DashboardServiceImpl service;
+    private DashboardService service;
 
     private final DataGenerator<Dashboard> dashboardGenerator = new DashboardGenerator();
 
@@ -64,6 +56,9 @@ public class DashboardServiceImplIT {
 
         final List<Dashboard> allDashboards = service.getAllDashboards();
 
+        // Assertions.assertThat(allDashboards).contains(dashboard0,
+        // dashboard1);
+
         MatcherAssert.assertThat(allDashboards,
             Matchers.containsInAnyOrder(DashboardIsEqual.equalTo(dashboard0), DashboardIsEqual.equalTo(dashboard1)));
     }
@@ -89,6 +84,7 @@ public class DashboardServiceImplIT {
 
     @Test
     public void testDeleteDashboard() throws Exception {
+
         final Dashboard genDashboard = dashboardGenerator.generate();
 
         // create first dashboard
@@ -99,9 +95,12 @@ public class DashboardServiceImplIT {
 
         // and create the second dashboard
         final Dashboard dashboard1 = service.createOrUpdateDashboard(genDashboard);
+
         service.deleteDashboard(dashboard1.getId());
 
         final List<Dashboard> allDashboards = service.getAllDashboards();
-        MatcherAssert.assertThat(allDashboards, Matchers.contains(DashboardIsEqual.equalTo(dashboard0)));
+
+        Assertions.assertThat(allDashboards).doesNotContain(dashboard1);
+        Assertions.assertThat(allDashboards).contains(dashboard0);
     }
 }

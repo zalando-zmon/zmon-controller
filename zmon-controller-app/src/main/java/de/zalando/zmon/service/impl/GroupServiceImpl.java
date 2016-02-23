@@ -24,7 +24,7 @@ public class GroupServiceImpl implements GroupService {
 
     private final JedisPool redisPool;
     protected final DefaultZMonPermissionService authorityService;
-    
+
     @Autowired
     private NoOpEventLog eventLog;
 
@@ -128,6 +128,7 @@ public class GroupServiceImpl implements GroupService {
         }
     }
 
+    @Override
     public void setName(String memberId, String name) {
         Jedis jedis = redisPool.getResource();
         try {

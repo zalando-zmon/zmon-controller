@@ -11,28 +11,26 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
-import java.util.UUID;
 
 import javax.annotation.Nullable;
 
-import de.zalando.zmon.config.SchedulerProperties;
 import org.apache.http.client.fluent.Executor;
 import org.apache.http.client.fluent.Request;
-import org.apache.http.entity.ContentType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
+import de.zalando.zmon.config.SchedulerProperties;
 import de.zalando.zmon.diff.AlertDefinitionsDiffFactory;
 import de.zalando.zmon.domain.Alert;
 import de.zalando.zmon.domain.AlertComment;
@@ -60,6 +58,7 @@ import redis.clients.jedis.Pipeline;
 
 // TODO diffs should never return null collections. They should be empty instead
 @Service
+@Transactional
 public class AlertServiceImpl implements AlertService {
 
     private final Logger log = LoggerFactory.getLogger(AlertServiceImpl.class);

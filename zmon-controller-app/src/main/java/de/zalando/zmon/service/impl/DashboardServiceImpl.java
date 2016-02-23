@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Preconditions;
 import com.google.common.primitives.Ints;
@@ -20,11 +21,10 @@ import de.zalando.zmon.persistence.DashboardSProcService;
 import de.zalando.zmon.service.DashboardService;
 
 @Service
+@Transactional
 public class DashboardServiceImpl implements DashboardService {
 
     private final Logger log = LoggerFactory.getLogger(DashboardServiceImpl.class);
-
-//    private static final EventLogger EVENT_LOG = EventLogger.getLogger(DashboardServiceImpl.class);
 
     private static final Comparator<Dashboard> DASHBOARD_ID_COMPARATOR = new Comparator<Dashboard>() {
 
@@ -33,12 +33,16 @@ public class DashboardServiceImpl implements DashboardService {
             return Ints.compare(o1.getId(), o2.getId());
         }
     };
-    
-    @Autowired
-    private NoOpEventLog eventLog;
+
+    private final NoOpEventLog eventLog;
+
+    private final DashboardSProcService dashboardSProc;
 
     @Autowired
-    private DashboardSProcService dashboardSProc;
+    public DashboardServiceImpl(NoOpEventLog eventLog, DashboardSProcService dashboardSProc) {
+        this.eventLog = eventLog;
+        this.dashboardSProc = dashboardSProc;
+    }
 
     @Override
     public List<Dashboard> getDashboards(final List<Integer> dashboardIds) {

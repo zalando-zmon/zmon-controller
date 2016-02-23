@@ -6,22 +6,17 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-import de.zalando.zmon.config.SchedulerConfiguration;
-import de.zalando.zmon.config.SchedulerProperties;
 import org.apache.http.client.fluent.Executor;
 import org.apache.http.client.fluent.Request;
 import org.apache.http.entity.ContentType;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataAccessException;
-import org.springframework.data.redis.connection.RedisConnection;
-import org.springframework.data.redis.core.RedisCallback;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Preconditions;
 
+import de.zalando.zmon.config.SchedulerProperties;
 import de.zalando.zmon.domain.TrialRunRequest;
 import de.zalando.zmon.domain.TrialRunResults;
 import de.zalando.zmon.event.ZMonEventType;
