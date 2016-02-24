@@ -1,0 +1,124 @@
+<div class="row">
+    <div class="col-md-12" ng-switch="mode">
+        <h1 ng-switch-when="edit">Edit Check Definition</h1>
+        <h1 ng-switch-when="add">Add Check Definition</h1>
+        <h1 ng-switch-when="clone">Clone Check Definition</h1>
+    </div>
+</div>
+
+<form class="form-horizontal" role="form" name="cdForm" novalidate>
+    <div class="form-group" ng-if="mode === 'edit'">
+        <label class="col-sm-2 control-label">Check ID</label>
+        <div class="col-sm-10">
+            <p class="form-control-static">{{check.id}}</p>
+        </div>
+    </div>
+
+    <div class="form-group" ng-class="{'has-error': cdForm.submitted && cdForm.name.$error.required}">
+        <label for="inp-name" class="col-sm-2 control-label">Name</label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control" id="inp-name" name="name" placeholder="Check name" ng-model="check.name" required>
+        </div>
+    </div>
+
+    <div class="form-group" ng-class="{'has-error': cdForm.submitted && cdForm.check_command.$error.required}">
+        <label for="inp-command" class="col-sm-2 control-label"><a href="/docs/check-definitions.html" rel="help" target="docs">Check Command</a></label>
+        <div class="col-sm-10">
+            <div id="inp-command" name="check_command" class="code-editor" ng-model="check.command" code-language="python" code-editor required></div>
+            <span class="help-block">Valid Python expression used to query the instances specified in entities filter.</span>
+        </div>
+    </div>
+
+    <div class="form-group" ng-class="{'has-error': cdForm.submitted && cdForm.parameters.$error['valid-json'] || cdForm.parameters.$error.required }">
+        <label for="inp-parameters" class="col-sm-2 control-label">
+            <div>
+                <a href="/docs/check-definitions.html#parameters" rel="help" target="docs">Parameters</a>
+            </div>
+        </label>
+        <div class="col-sm-10">
+            <!-- PARAMETERS EDITOR -->
+            <div class="col-sm-12">
+                <div class="row parameter-row" ng-repeat="param in parameters" ng-form="pForm">
+
+                    <div class="col-sm-2 name-col">
+                        <input type="text" class="form-control parameter" name="name" placeholder="Name" ng-model="param.name" ng-class="{'has-error': pForm.name.$error.required || !paramNameIsValid(param.name)}" model-change-blur required/>
+                    </div>
+                    <div class="col-sm-2">
+                        <input ng-if="param.type === undefined || param.type === 'str' || param.type === 'int' || param.type === 'float'" type="text" class="form-control parameter" name="value" placeholder="Value" ng-model="param.value" ng-class="{'has-error':pForm.value.$error.required}" required/>
+                        <select ng-if="param.type === 'bool'" class="form-control parameter" name="value" ng-model="param.value" ng-options="item.value as item.label for item in parameterTypeBooleanOptions"></select>
+                        <div ng-if="param.type === 'date'">
+                            <input type="text" class="form-control" datepicker-popup="{{format}}" ng-model="param.value" name="value" datepicker-options="dateOptions" close-text="Close" ng-class="{'has-error':pForm.value.$error.required}" required />
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control parameter param-desc" name="description" placeholder="Description" ng-model="param.comment" />
+                    </div>
+                    <div class="col-sm-2">
+                        <select class="form-control parameter" name="type" ng-model="param.type" ng-class="{'has-error': pForm.type.$error.required }" ng-options="item.value as item.label for item in parameterTypeOptions" required></select>
+                    </div>
+                    <div class="col-sm-2">
+                        <span class="btn btn-primary" ng-click="removeParameter(param.name)"><i class="fa fa-fw fa-minus-circle" ></i></span>
+                    </div>
+                </div>
+                <div class="row parameter-row">
+                    <span class="btn btn-primary" ng-click="addParameter()"><i class="fa fa-fw fa-plus-circle"></i> Add Parameter</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="inp-entities" class="col-sm-2 control-label">
+            <a href="/docs/check-definitions.html#entities" rel="help" target="docs">Included Entities</a>
+            <div id="entity-filter-buttons">
+                <button type="button" class="btn btn-primary fa fa-keyboard-o" ng-model="entityFilterInputMethod" btn-radio="'text'" title="Plain text input"></button>
+                <button type="button" class="btn btn-primary fa fa-check-square-o" ng-model="entityFilterInputMethod" btn-radio="'form'" title="Form input"></button>
+            </div>
+        </label>
+        <div class="col-sm-10" ng-class="{'has-error': cdForm.submitted && cdForm.entities.$error['non-empty-json']}">
+            <div id="inp-entities" name="entities" ng-show="entityFilterInputMethod == 'text'" class="code-editor" ng-model="entityFilter.textEntityFilters" json non-empty-json code-editor required></div>
+            <div ng-show="entityFilterInputMethod == 'form'">
+                <entity-filter-container entity-filter-types="entityFilter.types" form-entity-filters="entityFilter.formEntityFilters" invalid-json="cdForm.entities.$error['valid-json']" empty-json="cdForm.entities.$error['non-empty-json']"></entity-filter-container>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="inp-entities-exclude" class="col-sm-2 control-label">
+            <a href="/docs/check-definitions.html#entities" rel="help" target="docs">Excluded Entities</a>
+            <div id="entity-exclude-filter-buttons">
+                <button type="button" class="btn btn-primary fa fa-keyboard-o" ng-model="entityExcludeFilterInputMethod" btn-radio="'text'" title="Plain text input"></button>
+                <button type="button" class="btn btn-primary fa fa-check-square-o" ng-model="entityExcludeFilterInputMethod" btn-radio="'form'" title="Form input"></button>
+            </div>
+        </label>
+        <div class="col-sm-10" ng-class="{'has-error': cdForm.submitted && cdForm.entitiesExclude.$error['non-empty-json']}">
+            <div id="inp-entities-exclude" name="entitiesExclude" ng-show="entityExcludeFilterInputMethod == 'text'" class="code-editor" ng-model="entityExcludeFilter.textEntityFilters" json code-editor required></div>
+            <div ng-show="entityExcludeFilterInputMethod == 'form'">
+            <entity-filter-container entity-filter-types="entityExcludeFilter.types" form-entity-filters="entityExcludeFilter.formEntityFilters" invalid-json="cdForm.entitiesExclude.$error['valid-json']" empty-json="cdForm.entitiesExclude.$error['non-empty-json']" exclude="true"></entity-filter-container>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="inp-period" class="col-sm-2 control-label"><a href="/docs/check-definitions.html#time-periods" rel="help" target="docs">Time Period</a></label>
+        <div class="col-sm-10">
+            <input class="form-control" id="inp-period" ng-model="check.period" placeholder="Notification time period (e.g. 'wd {Mon-Fri} hr {9-16}')">
+        </div>
+    </div>
+
+    <div class="form-group" ng-class="{'has-error': cdForm.submitted && (cdForm.interval.$error.required || cdForm.interval.$error.number)}">
+        <label for="inp-interval" class="col-sm-2 control-label"><a href="/docs/check-definitions.html#interval" rel="help" target="docs">Interval</a></label>
+        <div class="col-sm-10">
+            <input id="inp-interval" name="interval" type="number" min="5" class="form-control" ng-model="check.interval" placeholder="Please type interval in seconds" required>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="col-sm-offset-2 col-sm-10">
+            <span class="btn btn-primary" ng-click="cancel()"><i class="fa fa-fw fa-times" ></i>Cancel</span>
+            <button class="btn btn-warning" ng-click="save()"><i class="fa fa-fw fa-save" ></i>Save</button>
+        </div>
+    </div>
+
+</form>
+
