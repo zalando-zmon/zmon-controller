@@ -2,22 +2,12 @@ package de.zalando.zmon.service.impl;
 
 import java.util.List;
 
-import de.zalando.zmon.config.TestConfiguration;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
-
 import org.junit.Before;
 import org.junit.Test;
-
-import org.junit.runner.RunWith;
-
 import org.springframework.beans.factory.annotation.Autowired;
-
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
 import org.springframework.transaction.annotation.Transactional;
 
 import de.zalando.zmon.domain.ActivityDiff;
@@ -28,21 +18,22 @@ import de.zalando.zmon.domain.HistoryReport;
 import de.zalando.zmon.generator.AlertDefinitionGenerator;
 import de.zalando.zmon.generator.CheckDefinitionImportGenerator;
 import de.zalando.zmon.generator.DataGenerator;
+import de.zalando.zmon.service.AlertService;
+import de.zalando.zmon.service.HistoryService;
+import de.zalando.zmon.service.ZMonService;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes= TestConfiguration.class)
-@TestPropertySource("/test.properties")
+@ContextConfiguration(classes = ServiceTestConfiguration.class)
 @Transactional
-public class HistoryServiceImplIT {
+public class HistoryServiceImplIT extends AbstractServiceIntegrationTest {
 
     @Autowired
-    private HistoryServiceImpl historyService;
+    private HistoryService historyService;
 
     @Autowired
-    private AlertServiceImpl alertService;
+    private AlertService alertService;
 
     @Autowired
-    private ZMonServiceImpl service;
+    private ZMonService service;
 
     private DataGenerator<CheckDefinitionImport> checkImportGenerator;
     private DataGenerator<AlertDefinition> alertGenerator;

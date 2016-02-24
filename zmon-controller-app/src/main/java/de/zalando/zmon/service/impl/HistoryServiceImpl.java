@@ -8,21 +8,20 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import de.zalando.zmon.config.EventLogProperties;
-import de.zalando.zmon.event.Event;
 import org.apache.http.client.fluent.Executor;
 import org.apache.http.client.fluent.Request;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Preconditions;
 import com.google.common.primitives.Longs;
 
+import de.zalando.zmon.config.EventLogProperties;
 import de.zalando.zmon.domain.Activity;
 import de.zalando.zmon.domain.ActivityDiff;
 import de.zalando.zmon.domain.AlertDefinition;
@@ -30,6 +29,7 @@ import de.zalando.zmon.domain.HistoryAction;
 import de.zalando.zmon.domain.HistoryEntry;
 import de.zalando.zmon.domain.HistoryReport;
 import de.zalando.zmon.domain.HistoryType;
+import de.zalando.zmon.event.Event;
 import de.zalando.zmon.event.ZMonEventType;
 import de.zalando.zmon.persistence.AlertDefinitionSProcService;
 import de.zalando.zmon.persistence.CheckDefinitionSProcService;
@@ -37,6 +37,7 @@ import de.zalando.zmon.service.HistoryService;
 import de.zalando.zmon.util.HistoryUtils;
 
 @Service
+@Transactional
 public class HistoryServiceImpl implements HistoryService {
 
     private static final String ZMON_BY_CHECK_ID_USE_CASE = "ZMON_BY_CHECK_ID";

@@ -18,7 +18,7 @@
             <artifactId>postgresql</artifactId>
             <!-- IMPORTANT: we pin the version to 9.3-.. here
             as zalando-sprocwrapper is broken with 9.4.. JDBC driver -->
-            <version>9.3-1102-jdbc41</version>
+            <version>${postgresql-driver.version}</version>
         </dependency>
 
         <dependency>
@@ -214,6 +214,17 @@
             <artifactId>spring-boot-configuration-processor</artifactId>
             <optional>true</optional>
         </dependency>
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <version>3.1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.zalando.stups</groupId>
+            <artifactId>junit-postgres</artifactId>
+            <version>0.4.0</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -285,6 +296,7 @@
                                 <frontend.sproc.datasource.url>
                                     jdbc:postgresql://${test.db.host}:${test.db.port}/${test.db.name}
                                 </frontend.sproc.datasource.url>
+                                <skipPostgreSqlRule>true</skipPostgreSqlRule>
                             </systemPropertyVariables>
                         </configuration>
                         <executions>
@@ -310,7 +322,7 @@
                             <dependency>
                                 <groupId>org.postgresql</groupId>
                                 <artifactId>postgresql</artifactId>
-                                <version>9.3-1102-jdbc41</version>
+                                <version>${postgresql-driver.version}</version>
                             </dependency>
                         </dependencies>
                         <configuration>

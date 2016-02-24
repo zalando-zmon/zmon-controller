@@ -1,16 +1,12 @@
 package de.zalando.zauth.zmon.config;
 
 import java.util.ArrayList;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
 import org.springframework.core.annotation.Order;
 import org.springframework.core.env.Environment;
-
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -23,22 +19,20 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.E
 import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurer;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.provisioning.UserDetailsManager;
-
 import org.springframework.social.security.SocialUserDetailsService;
 import org.springframework.social.security.SpringSocialConfigurer;
-
-import org.zalando.stups.oauth2.spring.server.LaxAuthenticationExtractor;
+import org.zalando.stups.oauth2.spring.server.DefaultAuthenticationExtractor;
 import org.zalando.stups.oauth2.spring.server.TokenInfoResourceServerTokenServices;
-
 import org.zalando.zmon.security.ZmonResourceServerConfigurer;
 import org.zalando.zmon.security.service.SimpleSocialUserDetailsService;
 
 /**
- * @author  jbellmann
+ * @author jbellmann
  */
 @Configuration
 @EnableWebSecurity
-// The EnableResourceServer creates a WebSecurityConfigurerAdapter with a hard-coded Order (of 3).
+// The EnableResourceServer creates a WebSecurityConfigurerAdapter with a
+// hard-coded Order (of 3).
 @EnableResourceServer
 @Order(5)
 public class ZauthSecurityConfig extends WebSecurityConfigurerAdapter {
@@ -63,14 +57,34 @@ public class ZauthSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     // J-
+    // @formatter:off
     @Override
     protected void configure(final HttpSecurity http) throws Exception {
 
-        http.formLogin().loginPage("/signin").failureUrl("/signin?param.error=bad_credentials").permitAll().and()
-            .logout().logoutUrl("/logout").deleteCookies("JSESSIONID").logoutSuccessUrl("/signin?param.logout=logout")
-            .permitAll().and().authorizeRequests().antMatchers("/**").authenticated().and().rememberMe().and()
-            .apply(new SpringSocialConfigurer()).and().csrf().disable();
+        http
+            .formLogin()
+                .loginPage("/signin")
+                .failureUrl("/signin?param.error=bad_credentials")
+                .permitAll()
+        .and()
+            .logout()
+                .logoutUrl("/logout")
+                .deleteCookies("JSESSIONID")
+                .logoutSuccessUrl("/signin?param.logout=logout")
+                .permitAll()
+        .and()
+            .authorizeRequests()
+                .antMatchers("/**")
+                .authenticated()
+        .and()
+            .rememberMe()
+        .and()
+            .apply(new SpringSocialConfigurer())
+        .and()
+            .csrf()
+                .disable();
     }
+    // @formatter:on
     // J+
 
     @Bean
@@ -91,8 +105,8 @@ public class ZauthSecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     public ResourceServerConfigurer zmonResourceServerConfigurer() {
         String tokenInfoUri = environment.getProperty("security.oauth2.resource.userInfoUri");
-        return new ZmonResourceServerConfigurer(new TokenInfoResourceServerTokenServices(tokenInfoUri,
-                    new LaxAuthenticationExtractor()));
+        return new ZmonResourceServerConfigurer(
+                new TokenInfoResourceServerTokenServices(tokenInfoUri, new DefaultAuthenticationExtractor()));
     }
 
 }

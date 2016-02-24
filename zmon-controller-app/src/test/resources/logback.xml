@@ -8,6 +8,12 @@
         </encoder>
     </appender>
 
+    <logger name="org.springframework.jdbc" level="DEBUG" />
+    <logger name="org.springframework.transaction.interceptor" level="DEBUG"/>
+    <logger name="org.springframework.transaction" level="DEBUG"/>
+    <logger name="org.zalando.stups.junit" level="DEBUG"/>
+    <logger name="org.springframework.jdbc.datasource.init.ScriptUtils" level="INFO" />
+
     <root level="INFO">
         <appender-ref ref="STDOUT" />
     </root>
