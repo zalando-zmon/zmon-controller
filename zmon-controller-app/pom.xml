@@ -18,7 +18,7 @@
             <artifactId>postgresql</artifactId>
             <!-- IMPORTANT: we pin the version to 9.3-.. here
             as zalando-sprocwrapper is broken with 9.4.. JDBC driver -->
-            <version>9.3-1102-jdbc41</version>
+            <version>${postgresql-driver.version}</version>
         </dependency>
 
         <dependency>
@@ -322,7 +322,7 @@
                             <dependency>
                                 <groupId>org.postgresql</groupId>
                                 <artifactId>postgresql</artifactId>
-                                <version>9.3-1102-jdbc41</version>
+                                <version>${postgresql-driver.version}</version>
                             </dependency>
                         </dependencies>
                         <configuration>
