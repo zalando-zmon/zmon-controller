@@ -11,4 +11,5 @@ after_success:
   - mvn clean test jacoco:report coveralls:report
 
 # go faster on travis
-sudo: false
+# fuckoff fast, I want same behaviour on every branch
+sudo: true
