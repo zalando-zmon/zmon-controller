@@ -305,6 +305,8 @@ angular.module('zmon2App').controller('CloudEndpointsCtrl', ['$scope', '$timeout
 
             Object.keys(a).forEach(function(k){
                 if ("_url" == k) return;
+                if (a[k]["mRate"].length==0) return;
+
                 var v = a[k]["mRate"].slice(-1)[0];
                 if (v.length > 0) {
                     sumA += v[1]
@@ -313,6 +315,8 @@ angular.module('zmon2App').controller('CloudEndpointsCtrl', ['$scope', '$timeout
 
             Object.keys(b).forEach(function(k){
                 if ("_url" == k) return;
+                if (b[k]["mRate"].length==0) return;
+
                 var v = b[k]["mRate"].slice(-1)[0];
                 if (v.length > 0) {
                     sumB += v[1]
@@ -328,6 +332,9 @@ angular.module('zmon2App').controller('CloudEndpointsCtrl', ['$scope', '$timeout
 
             Object.keys(a).forEach(function(k){
                 if ("_url" == k) return;
+                if (a[k]["mRate"].length==0) return;
+                if (a[k]["median"].length==0) return;
+
                 var v_r = a[k]["mRate"].slice(-1)[0];
                 var v_t = a[k]["median"].slice(-1)[0];
                 if(v_r.length > 0 && v_t.length > 0) {
@@ -337,6 +344,9 @@ angular.module('zmon2App').controller('CloudEndpointsCtrl', ['$scope', '$timeout
 
             Object.keys(b).forEach(function(k){
                 if ("_url" == k) return;
+                if (b[k]["mRate"].length==0) return;
+                if (b[k]["median"].length==0) return;
+
                 var v_r = b[k]["mRate"].slice(-1)[0];
                 var v_t = b[k]["median"].slice(-1)[0];
                 if(v_r.length > 0 && v_t.length > 0) {
