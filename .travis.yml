@@ -4,11 +4,14 @@ jdk:
 addons:
     postgresql: "9.4"
 
+before_script:
+  - pip install --user codecov
+
 script:
   - mvn clean verify -Pintegration-test
 
 after_success:
-  - mvn clean test jacoco:report coveralls:report
+  - codecov
 
 # go faster on travis
 # fuckoff fast, I want same behaviour on every branch
