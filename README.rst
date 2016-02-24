@@ -10,6 +10,10 @@ ZMON Controller
    :target: https://coveralls.io/r/zalando/zmon-controller
    :alt: Coverage Status
 
+.. image:: https://codecov.io/github/zalando/zmon-controller/coverage.svg?branch=master
+   :target: https://codecov.io/github/zalando/zmon-controller?branch=master
+   :alt: Codecov.io
+
 .. image:: https://readthedocs.org/projects/zmon/badge/?version=latest
    :target: https://readthedocs.org/projects/zmon/?badge=latest
    :alt: Documentation Status
