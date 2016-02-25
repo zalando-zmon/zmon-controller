@@ -14,7 +14,8 @@ BEGIN
        SET gd_title = title,
            gd_dashboard = dashboard::jsonb,
            gd_last_modified = now(),
-           gd_last_modified_by = user_name
+           gd_last_modified_by = user_name,
+           gd_grafana_version = version
      WHERE gd_id = id;
 
   END;
