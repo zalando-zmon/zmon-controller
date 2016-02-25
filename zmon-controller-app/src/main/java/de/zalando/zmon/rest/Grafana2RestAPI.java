@@ -18,7 +18,7 @@ import java.util.List;
  */
 
 @Controller
-@RequestMapping("/api/v2/grafana")
+@RequestMapping("/api/v1/grafana2-dashboards")
 public class Grafana2RestAPI {
 
     @Autowired
@@ -34,14 +34,14 @@ public class Grafana2RestAPI {
     }
 
     @ResponseBody
-    @RequestMapping(value = "/", method = RequestMethod.POST, produces = "application/json")
-    public ResponseEntity<JsonNode> g2SaveDBPost(@RequestBody(required = true) final JsonNode grafanaData) throws IOException {
+    @RequestMapping(value = "", method = RequestMethod.POST, produces = "application/json")
+    public ResponseEntity<JsonNode> saveDashboard(@RequestBody(required = true) final JsonNode grafanaData) throws IOException {
         return grafana2UI.saveDashboard(grafanaData);
     }
 
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    @RequestMapping(value = "/search", method = RequestMethod.GET)
+    @RequestMapping(value = "", method = RequestMethod.GET)
     public JsonNode g2getDashboards(@RequestParam(value = "query", required = false) String query, @RequestParam(value = "tag", required = false) List<String> tags, @RequestParam(value = "starred", defaultValue = "false") boolean starred) throws IOException, ZMonException {
         return grafana2UI.searchDashboards(query, tags, starred);
     }

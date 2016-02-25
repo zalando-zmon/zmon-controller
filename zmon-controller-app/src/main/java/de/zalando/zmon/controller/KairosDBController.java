@@ -48,11 +48,6 @@ import java.util.Set;
 @RequestMapping(value = "/rest/kairosDBPost")
 public class KairosDBController extends AbstractZMonController {
 
-    private final Logger log = LoggerFactory.getLogger(KairosDBController.class);
-
-    @Autowired
-    private ZMonService service;
-
     @Autowired
     private KairosDBProperties kairosDBProperties;
 
