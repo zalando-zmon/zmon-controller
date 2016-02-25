@@ -306,7 +306,7 @@
             };
 
             // Start refreshing workers / queue status.
-            $interval(refreshStatus, 2000);
+            $interval(refreshStatus, 15000);
             refreshStatus();
 
             String.prototype.format = function() {
