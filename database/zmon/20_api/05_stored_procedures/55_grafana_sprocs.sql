@@ -21,9 +21,9 @@ BEGIN
 END;
 $$ LANGUAGE PLPGSQL VOLATILE SECURITY DEFINER;
 
-CREATE OR REPLACE FUNCTION get_grafana_dashboards(IN s_title TEXT, IN s_tags TEXT, IN s_starred TEXT, IN s_user TEXT, OUT id TEXT, OUT title TEXT, OUT dashboard TEXT, OUT "user" TEXT, OUT "tags" TEXT, OUT "starred" BOOLEAN) RETURNS SETOF record AS
+CREATE OR REPLACE FUNCTION get_grafana_dashboards(IN s_title TEXT, IN s_tags TEXT, IN s_starred TEXT, IN s_user TEXT, OUT id TEXT, OUT title TEXT, OUT dashboard TEXT, OUT "user" TEXT, OUT "tags" TEXT, OUT "starred" BOOLEAN, OUT "grafana_version" TEXT) RETURNS SETOF record AS
 $$
-  SELECT gd_id id, gd_title title, gd_dashboard::text dashboard, gd_created_by "user", (gd_dashboard->'tags')::text "tags", COALESCE(s_user =ANY(gd_starred_by), FALSE) "starred"
+  SELECT gd_id id, gd_title title, gd_dashboard::text dashboard, gd_created_by "user", (gd_dashboard->'tags')::text "tags", COALESCE(s_user =ANY(gd_starred_by), FALSE) "starred", gd_grafana_version "grafana_version"
     FROM zzm_data.grafana_dashboard
    WHERE gd_title ilike '%' || s_title || '%'
      AND (s_tags IS NULL OR (gd_dashboard->'tags') @> s_tags::jsonb)
