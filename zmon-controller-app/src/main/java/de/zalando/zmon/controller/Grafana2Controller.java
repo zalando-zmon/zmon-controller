@@ -140,6 +140,29 @@ public class Grafana2Controller extends AbstractZMonController {
         return resultsNode;
     }
 
+    public static String getUnit(String unit) {
+        if(unit.equals("minutes")) return "m";
+        if(unit.equals("hours")) return "h";
+        return "m";
+    }
+
+    public static void migrateSampling(ObjectNode target) {
+        if(target.has("sampling")) {
+            ObjectNode sampling = (ObjectNode)target.get("sampling");
+            String unit = sampling.get("unit").textValue();
+            String value = sampling.get("value").textValue();
+
+            target.put("sampling", value.replace("'","") + getUnit(unit));
+
+            ArrayNode h = target.putArray("horizontalAggregators");
+            String aggregator = target.get("aggregator").textValue();
+            
+            ObjectNode entry = h.addObject();
+            entry.put("name", aggregator);
+            entry.put("sampling_rate", value.replace("'", "") + getUnit(unit));
+        }
+    }
+
     public static void migrateTarget(ObjectNode target) {// convert groups
         if(target.get("groups")!=null && target.get("groups").size()>0) {
             target.put("currentGroupByType", "tag");
@@ -193,6 +216,7 @@ public class Grafana2Controller extends AbstractZMonController {
                         for(int k = 0; null!=targets && k < targets.size(); ++k) {
                             ObjectNode target = (ObjectNode)targets.get(k);
                             migrateTarget(target);
+                            migrateSampling(target);
                         }
                     }
                 }
