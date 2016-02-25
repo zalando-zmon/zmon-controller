@@ -171,7 +171,10 @@ public class Grafana2Controller extends AbstractZMonController {
         }
     }
 
+    private static final Logger LOG = LoggerFactory.getLogger(Grafana2Controller.class);
+
     public static void migrateV1(ObjectNode dashboard) {
+        LOG.info("Migrating dashboard to v2 properties");
         ArrayNode rows = (ArrayNode) dashboard.get("rows");
         if (null!=rows) {
             for (int i = 0; i < rows.size(); ++i) {
@@ -181,8 +184,8 @@ public class Grafana2Controller extends AbstractZMonController {
                     if (null == panels) continue;
 
                     for (int j = 0; j < panels.size(); ++j) {
-                        if(null==panels.get(i)) continue;
-                        ObjectNode panel = (ObjectNode) panels.get(i);
+                        if(null==panels.get(j)) continue;
+                        ObjectNode panel = (ObjectNode) panels.get(j);
                         panel.putNull("datasource");
                         ArrayNode targets = (ArrayNode)panel.get("targets");
 
