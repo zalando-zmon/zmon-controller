@@ -95,7 +95,7 @@ public class Grafana2Controller extends AbstractZMonController {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     @RequestMapping(value = "/api/search", method = RequestMethod.GET)
-    public JsonNode g2getDashboards(@RequestParam(value="query", required = false) String query, @RequestParam(value="tag", required = false) List<String> tags, @RequestParam(value="starred", defaultValue="false") boolean starred) throws IOException, ZMonException {
+    public JsonNode searchDashboards(@RequestParam(value="query", required = false) String query, @RequestParam(value="tag", required = false) List<String> tags, @RequestParam(value="starred", defaultValue="false") boolean starred) throws IOException, ZMonException {
         if (null == query) {
             query = "";
         }
@@ -140,7 +140,7 @@ public class Grafana2Controller extends AbstractZMonController {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     @RequestMapping(value = "/api/dashboards/db/{id}", method = RequestMethod.GET)
-    public ResponseEntity<JsonNode> g2getDashboard2(@PathVariable(value="id") String id) throws ZMonException, IOException {
+    public ResponseEntity<JsonNode> getDashboard(@PathVariable(value="id") String id) throws ZMonException, IOException {
         if(null == id || "".equals(id)) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
@@ -203,10 +203,12 @@ public class Grafana2Controller extends AbstractZMonController {
     // saves a dashboard
     @ResponseBody
     @RequestMapping(value = "/api/dashboards/db", method = RequestMethod.POST, produces = "application/json")
-    public ResponseEntity<JsonNode> g2SaveDBPost(@RequestBody(required = true) final JsonNode grafanaData) throws IOException {
+    public ResponseEntity<JsonNode> saveDashboard(@RequestBody(required = true) final JsonNode grafanaData) throws IOException {
 
         String title = grafanaData.get("dashboard").get("title").textValue();
-        assert(title!=null);
+        if(title==null || "".equals(title)) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
 
         String dashboard = mapper.writeValueAsString(grafanaData.get("dashboard"));
 
