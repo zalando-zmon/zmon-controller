@@ -22,7 +22,7 @@ import java.util.*;
 @RequestMapping(value = "/rest/grafana2")
 public class Grafana2Controller extends AbstractZMonController {
 
-    private final Logger log = LoggerFactory.getLogger(Grafana2Controller.class);
+    private static final Logger LOG = LoggerFactory.getLogger(Grafana2Controller.class);
 
     @Autowired
     GrafanaDashboardSprocService grafanaService;
@@ -109,20 +109,20 @@ public class Grafana2Controller extends AbstractZMonController {
         if(tags!=null && tags.size()>0) {
             jsonTags = mapper.writeValueAsString(tags);
         }
-        log.info("Grafana2 search: query=\"{}\" starred={} by={} tags={}", query, starred, starredBy, jsonTags);
+        LOG.info("Grafana2 search: query=\"{}\" starred={} by={} tags={}", query, starred, starredBy, jsonTags);
 
         List<GrafanaDashboardSprocService.GrafanaDashboard> results = grafanaService.getGrafanaDashboards(query, jsonTags, starredBy, authService.getUserName());
         ArrayNode resultsNode = mapper.createArrayNode();
 
         for (GrafanaDashboardSprocService.GrafanaDashboard d : results ) {
-            log.info("Adding dashboard: {}", d);
+            LOG.info("Adding dashboard: {}", d);
             ObjectNode dashboard = resultsNode.addObject();
             dashboard.put("uri", "db/"+d.id);
             dashboard.put("id", d.id);
             dashboard.put("type", "db-dash");
             dashboard.put("title", d.title);
 
-            if(d.tags != null && !"".equals(d.tags)) {
+            if(d.tags != null && !"".equals(d.tags) && !"[]".equals(d.tags)) {
                 JsonNode tagsField = mapper.readTree(d.tags);
                 dashboard.set("tags", tagsField);
             }
@@ -141,13 +141,16 @@ public class Grafana2Controller extends AbstractZMonController {
     }
 
     public static void migrateTarget(ObjectNode target) {// convert groups
-        if(target.get("groups")!=null) {
+        if(target.get("groups")!=null && target.get("groups").size()>0) {
             target.put("currentGroupByType", "tag");
             ArrayNode groupTags = (ArrayNode)target.get("groups");
             ArrayNode groupV2 = target.putArray("groupByTags");
             for(int l = 0; l < groupTags.size(); ++l) {
                 groupV2.add(groupTags.get(l).textValue());
             }
+        }
+        else {
+            target.remove("groups");
         }
 
         ArrayNode oldTags = (ArrayNode)target.get("tags");
@@ -170,8 +173,6 @@ public class Grafana2Controller extends AbstractZMonController {
             }
         }
     }
-
-    private static final Logger LOG = LoggerFactory.getLogger(Grafana2Controller.class);
 
     public static void migrateV1(ObjectNode dashboard) {
         LOG.info("Migrating dashboard to v2 properties");
@@ -271,7 +272,7 @@ public class Grafana2Controller extends AbstractZMonController {
             id = id.toLowerCase();
         }
 
-        log.info("Saving Grafana 2 dashboard title: \"{}\" id: {}", title, id);
+        LOG.info("Saving Grafana 2 dashboard title: \"{}\" id: {}", title, id);
         grafanaService.createOrUpdateGrafanaDashboard(id, title, dashboard, authService.getUserName(), "v2");
 
         ObjectNode result = mapper.createObjectNode();
