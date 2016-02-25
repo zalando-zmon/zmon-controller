@@ -1,5 +1,7 @@
 package de.zalando.zmon.controller;
 
+import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.Timer;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -51,6 +53,15 @@ public class KairosDBController extends AbstractZMonController {
     @Autowired
     private KairosDBProperties kairosDBProperties;
 
+    @Autowired
+    private MetricRegistry metricRegistry;
+
+    @Autowired
+    DefaultZMonPermissionService authService;
+
+    @Autowired
+    ObjectMapper mapper;
+
     @ResponseBody
     @RequestMapping(value = "", method = RequestMethod.POST, produces = "application/json")
     public void kairosDBPost(@RequestBody(required = true) final JsonNode node, final Writer writer,
@@ -62,6 +73,9 @@ public class KairosDBController extends AbstractZMonController {
             writer.write("");
             return;
         }
+
+        String checkId = node.get("metrics").get(0).get("name").textValue().replace("zmon\\.check\\.", "");
+        Timer.Context timer = metricRegistry.timer("kairosdb.check.query."+checkId).time();
 
         // align all queries to full minutes
         if (node instanceof ObjectNode) {
@@ -80,6 +94,10 @@ public class KairosDBController extends AbstractZMonController {
 
         final String r = executor.execute(Request.Post(kairosDBURL).useExpectContinue().bodyString(node.toString(),
                 ContentType.APPLICATION_JSON)).returnContent().asString();
+
+        if(timer!=null) {
+            timer.stop();
+        }
 
         writer.write(r);
     }
@@ -123,88 +141,4 @@ public class KairosDBController extends AbstractZMonController {
 
         writer.write(r);
     }
-
-    @Autowired
-    DefaultZMonPermissionService authService;
-
-    @Autowired
-    ObjectMapper mapper;
-
-
-    // get list of tags
-    @ResponseBody
-    @RequestMapping(value = "/api/v1/datapoints/query/tags", method = RequestMethod.POST, produces = "application/json")
-    public void g2kairosDBtags(@RequestBody(required = true) final JsonNode node, final Writer writer,
-                             final HttpServletResponse response) throws IOException {
-
-        response.setContentType("application/json");
-
-        if (!kairosDBProperties.isEnabled()) {
-            writer.write("");
-            return;
-        }
-
-        final Executor executor = Executor.newInstance();
-
-        final String kairosDBURL = kairosDBProperties.getUrl() + "/api/v1/datapoints/query/tags";
-
-        final String r = executor.execute(Request.Post(kairosDBURL).useExpectContinue().bodyString(node.toString(),
-                ContentType.APPLICATION_JSON)).returnContent().asString();
-
-        writer.write(r);
-    }
-
-    // get list of metricnames
-    @ResponseBody
-    @RequestMapping(value = "/api/v1/metricnames", method = RequestMethod.GET, produces = "application/json")
-    public void g2kairosDBmetrics(final Writer writer, final HttpServletResponse response) throws IOException {
-
-        response.setContentType("application/json");
-
-        if (!kairosDBProperties.isEnabled()) {
-            writer.write("");
-            return;
-        }
-
-        final String kairosDBURL = kairosDBProperties.getUrl() + "/api/v1/metricnames";
-
-        final String r = Request.Get(kairosDBURL).useExpectContinue().execute().returnContent().asString();
-
-        writer.write(r);
-    }
-
-    // get kairosdb query with datapoints
-    @ResponseBody
-    @RequestMapping(value = "/api/v1/datapoints/query", method = RequestMethod.POST, produces = "application/json")
-    public void g2kairosDBPost(@RequestBody(required = true) final JsonNode node, final Writer writer,
-                             final HttpServletResponse response) throws IOException {
-
-        response.setContentType("application/json");
-
-        if (!kairosDBProperties.isEnabled()) {
-            writer.write("");
-            return;
-        }
-
-        final Executor executor = Executor.newInstance();
-
-        final String kairosDBURL = kairosDBProperties.getUrl() + "/api/v1/datapoints/query";
-
-        final String r = executor.execute(Request.Post(kairosDBURL).useExpectContinue().bodyString(node.toString(),
-                ContentType.APPLICATION_JSON)).returnContent().asString();
-
-        writer.write(r);
-    }
-
-    // save dashboard snapshot for sharing
-    @ResponseBody
-    @RequestMapping(value = "/api/snapshots", method = RequestMethod.POST, produces = "application/json")
-    public void g2SaveSnapshots(@RequestBody(required = true) final JsonNode node, final Writer writer,
-                             final HttpServletResponse response) throws IOException {
-
-        response.setContentType("application/json");
-        final String r = "{}";
-        writer.write(r);
-    }
-
 }
