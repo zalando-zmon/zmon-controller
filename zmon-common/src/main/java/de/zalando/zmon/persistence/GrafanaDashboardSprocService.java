@@ -35,7 +35,7 @@ public interface GrafanaDashboardSprocService {
         public boolean starred;
 
         @DatabaseField
-        public String grafana_version;
+        public String grafanaVersion;
     }
 
     @DatabaseType

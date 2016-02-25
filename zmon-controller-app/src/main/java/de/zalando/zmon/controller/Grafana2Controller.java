@@ -130,7 +130,7 @@ public class Grafana2Controller extends AbstractZMonController {
                 dashboard.putArray("tags");
             }
 
-            if(d.grafana_version.equals("v1")) {
+            if(d.grafanaVersion.equals("v1")) {
                 ((ArrayNode)dashboard.get("tags")).add("v1");
             }
 
