@@ -140,6 +140,38 @@ public class Grafana2Controller extends AbstractZMonController {
         return resultsNode;
     }
 
+    private void migrateV1(ObjectNode dashboard) {
+        ArrayNode rows = (ArrayNode) dashboard.get("rows");
+        if (null!=rows) {
+            for (int i = 0; i < rows.size(); ++i) {
+                JsonNode row = rows.get(i);
+                if (null!=row && row.has("panels")) {
+                    ArrayNode panels = (ArrayNode) row.get("panels");
+                    if (null == panels) continue;
+
+                    for (int j = 0; j < panels.size(); ++j) {
+                        if(null==panels.get(i)) continue;
+                        ObjectNode panel = (ObjectNode) panels.get(i);
+                        panel.putNull("datasource");
+                        ArrayNode targets = (ArrayNode)panel.get("targets");
+
+                        for(int k = 0; null!=targets && k < targets.size(); ++k) {
+                            ObjectNode target = (ObjectNode)targets.get(k);
+                            if(target.get("groups")!=null) {
+                                target.put("currentGroupByType", "tag");
+                                ArrayNode groupTags = (ArrayNode)target.get("groups");
+                                ArrayNode groupV2 = target.putArray("groupByTags");
+                                for(int l = 0; l < groupTags.size(); ++l) {
+                                    groupV2.add(groupTags.get(l).textValue());
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     // requests a dashboard
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
@@ -175,20 +207,8 @@ public class Grafana2Controller extends AbstractZMonController {
         ObjectNode model =  (ObjectNode) mapper.readTree(dashboard.dashboard);
         model.put("id", id);
 
-        ArrayNode rows = (ArrayNode) model.get("rows");
-        if (null!=rows) {
-            for (int i = 0; i < rows.size(); ++i) {
-                JsonNode row = rows.get(i);
-                if (null!=row && row.has("panels")) {
-                    ArrayNode panels = (ArrayNode) row.get("panels");
-                    if (null == panels) continue;
-
-                    for (int j = 0; j < panels.size(); ++j) {
-                        if(null==panels.get(i)) continue;
-                        ((ObjectNode) panels.get(i)).putNull("datasource");
-                    }
-                }
-            }
+        if(dashboard.grafanaVersion.equals("v1")) {
+            migrateV1(model);
         }
 
         result.set("dashboard", model);
