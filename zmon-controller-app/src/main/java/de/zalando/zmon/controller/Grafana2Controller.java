@@ -143,6 +143,7 @@ public class Grafana2Controller extends AbstractZMonController {
     public static String getUnit(String unit) {
         if(unit.equals("minutes")) return "m";
         if(unit.equals("hours")) return "h";
+        if(unit.equals("seconds")) return "s";
         return "m";
     }
 
