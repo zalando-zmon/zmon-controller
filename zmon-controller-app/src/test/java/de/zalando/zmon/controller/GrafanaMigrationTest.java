@@ -24,8 +24,8 @@ public class GrafanaMigrationTest {
     @Test
     public void testMigrationRow() throws IOException {
         ObjectMapper mapper = new ObjectMapper();
-        ObjectNode row = (ObjectNode)mapper.readTree((new ClassPathResource("/old_grafana_row.json").getInputStream()));
-        Grafana2Controller.migrateV1(row);
-        assert(row.get(0).get("targets").get(0).get("groupByTags") instanceof ArrayNode);
+        ObjectNode dashboard = (ObjectNode)mapper.readTree((new ClassPathResource("/old_grafana_row.json").getInputStream()));
+        Grafana2Controller.migrateV1(dashboard);
+        assert(dashboard.get("rows").get(0).get("panels").get(0).get("targets").get(0).get("groupByTags") instanceof ArrayNode);
     }
 }
