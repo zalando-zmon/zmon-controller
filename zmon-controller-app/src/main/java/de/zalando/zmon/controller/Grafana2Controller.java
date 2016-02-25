@@ -148,7 +148,7 @@ public class Grafana2Controller extends AbstractZMonController {
 
     public static void migratePanel(ObjectNode panel) {
         panel.putNull("datasource");
-        ArrayNode overrides = (ArrayNode) panel.get("seriesOverride");
+        ArrayNode overrides = (ArrayNode) panel.get("seriesOverrides");
         if(null != overrides && overrides.size() >0) {
             for(int i = 0; i < overrides.size(); ++i) {
                 ObjectNode o = (ObjectNode) overrides.get(i);
