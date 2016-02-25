@@ -157,12 +157,34 @@ public class Grafana2Controller extends AbstractZMonController {
 
                         for(int k = 0; null!=targets && k < targets.size(); ++k) {
                             ObjectNode target = (ObjectNode)targets.get(k);
+
+                            // convert groups
                             if(target.get("groups")!=null) {
                                 target.put("currentGroupByType", "tag");
                                 ArrayNode groupTags = (ArrayNode)target.get("groups");
                                 ArrayNode groupV2 = target.putArray("groupByTags");
                                 for(int l = 0; l < groupTags.size(); ++l) {
                                     groupV2.add(groupTags.get(l).textValue());
+                                }
+                            }
+
+                            ArrayNode oldTags = (ArrayNode)target.get("tags");
+                            ObjectNode newTags = target.putObject("tags");
+
+                            // convert tag filter
+                            if(oldTags!=null && oldTags.size()>0) {
+                                for(int t = 0; t < oldTags.size(); ++t) {
+                                    ObjectNode tf = (ObjectNode)oldTags.get(i);
+                                    String tk = tf.get("key").textValue();
+                                    String tv = tf.get("value").textValue();
+                                    if(newTags.has(tk)) {
+                                        ArrayNode vs = (ArrayNode)newTags.get(tk);
+                                        vs.add(tv);
+                                    }
+                                    else {
+                                        ArrayNode vs = newTags.putArray(tk);
+                                        vs.add(tv);
+                                    }
                                 }
                             }
                         }
