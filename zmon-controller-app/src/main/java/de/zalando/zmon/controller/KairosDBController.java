@@ -57,7 +57,7 @@ public class KairosDBController extends AbstractZMonController {
     private KairosDBProperties kairosDBProperties;
 
     @ResponseBody
-    @RequestMapping(value = "/", method = RequestMethod.POST, produces = "application/json")
+    @RequestMapping(value = "", method = RequestMethod.POST, produces = "application/json")
     public void kairosDBPost(@RequestBody(required = true) final JsonNode node, final Writer writer,
                              final HttpServletResponse response) throws IOException {
 
