@@ -304,38 +304,62 @@ angular.module('zmon2App').controller('CloudEndpointsCtrl', ['$scope', '$timeout
         }
 
         var sortEps = function(a,b) {
-            var sumA = 0
-            var sumB = 0
+            var sumA = 0;
+            var sumB = 0;
 
             Object.keys(a).forEach(function(k){
-                if ("_url"== k) return
-                sumA += a[k]["mRate"].slice(-1)[0][1]
-            })
+                if ("_url" == k) return;
+                if (a[k]["mRate"].length==0) return;
+
+                var v = a[k]["mRate"].slice(-1)[0];
+                if (v.length > 0) {
+                    sumA += v[1]
+                }
+            });
 
             Object.keys(b).forEach(function(k){
-                if ("_url"== k) return
-                sumB += b[k]["mRate"].slice(-1)[0][1]
-            })
+                if ("_url" == k) return;
+                if (b[k]["mRate"].length==0) return;
+
+                var v = b[k]["mRate"].slice(-1)[0];
+                if (v.length > 0) {
+                    sumB += v[1]
+                }
+            });
 
             return sumB - sumA;
-        }
+        };
 
         var sortEpsRt = function(a,b) {
-            var sumA = 0
-            var sumB = 0
+            var sumA = 0;
+            var sumB = 0;
 
             Object.keys(a).forEach(function(k){
-                if ("_url"== k) return;
-                sumA += a[k]["mRate"].slice(-1)[0][1] * a[k]["median"].slice(-1)[0][1];
+                if ("_url" == k) return;
+                if (a[k]["mRate"].length==0) return;
+                if (a[k]["median"].length==0) return;
+
+                var v_r = a[k]["mRate"].slice(-1)[0];
+                var v_t = a[k]["median"].slice(-1)[0];
+                if(v_r.length > 0 && v_t.length > 0) {
+                    sumA += v_r[1]*v_t[1];
+                }
             });
 
             Object.keys(b).forEach(function(k){
-                if ("_url"== k) return;
-                sumB += b[k]["mRate"].slice(-1)[0][1] * b[k]["median"].slice(-1)[0][1];
+                if ("_url" == k) return;
+                if (b[k]["mRate"].length==0) return;
+                if (b[k]["median"].length==0) return;
+
+                var v_r = b[k]["mRate"].slice(-1)[0];
+                var v_t = b[k]["median"].slice(-1)[0];
+                if(v_r.length > 0 && v_t.length > 0) {
+                    sumB += v_r[1]*v_t[1];
+                }
             });
 
             return sumB - sumA;
-        }
+        };
 
         // kairos data for one application (or entity) has been successfully fetched and needs processing
         var receivedSingleApp = function (data) {
