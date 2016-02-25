@@ -146,6 +146,18 @@ public class Grafana2Controller extends AbstractZMonController {
         return "m";
     }
 
+    public static void migratePanel(ObjectNode panel) {
+        panel.putNull("datasource");
+        ArrayNode overrides = (ArrayNode) panel.get("seriesOverride");
+        if(null != overrides && overrides.size() >0) {
+            for(int i = 0; i < overrides.size(); ++i) {
+                ObjectNode o = (ObjectNode) overrides.get(i);
+                String id = o.get("alias").textValue();
+                o.put("alias", id.replace("{"," ( ").replace("}", " ) "));
+            }
+        }
+    }
+
     public static void migrateSampling(ObjectNode target) {
         if(target.has("sampling")) {
             ObjectNode sampling = (ObjectNode)target.get("sampling");
@@ -156,7 +168,7 @@ public class Grafana2Controller extends AbstractZMonController {
 
             ArrayNode h = target.putArray("horizontalAggregators");
             String aggregator = target.get("aggregator").textValue();
-            
+
             ObjectNode entry = h.addObject();
             entry.put("name", aggregator);
             entry.put("sampling_rate", value.replace("'", "") + getUnit(unit));
@@ -210,7 +222,7 @@ public class Grafana2Controller extends AbstractZMonController {
                     for (int j = 0; j < panels.size(); ++j) {
                         if(null==panels.get(j)) continue;
                         ObjectNode panel = (ObjectNode) panels.get(j);
-                        panel.putNull("datasource");
+                        migratePanel(panel);
                         ArrayNode targets = (ArrayNode)panel.get("targets");
 
                         for(int k = 0; null!=targets && k < targets.size(); ++k) {
