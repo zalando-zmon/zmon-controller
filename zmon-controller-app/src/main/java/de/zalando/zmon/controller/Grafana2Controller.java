@@ -130,6 +130,10 @@ public class Grafana2Controller extends AbstractZMonController {
                 dashboard.putArray("tags");
             }
 
+            if(d.grafana_version.equals("v1")) {
+                ((ArrayNode)dashboard.get("tags")).add("v1");
+            }
+
             dashboard.put("isStarred", d.starred);
         }
 
@@ -185,11 +189,6 @@ public class Grafana2Controller extends AbstractZMonController {
                     }
                 }
             }
-        }
-
-        if(dashboard.grafana_version.equals("v1") && model.has("tags")) {
-            ArrayNode tags = (ArrayNode) model.get("tags");
-            tags.add("v1");
         }
 
         result.set("dashboard", model);
