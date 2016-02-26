@@ -55,7 +55,7 @@ $BODY$
 LANGUAGE 'plpgsql' VOLATILE SECURITY DEFINER
 COST 100;
 
-CREATE OR REPLACE FUNCTION delete_unused_check_defintion(IN id INT, IN teams TEXT[]) RETURNS SETOF INT AS
+CREATE OR REPLACE FUNCTION delete_unused_check_definition(IN id INT, IN teams TEXT[]) RETURNS SETOF INT AS
 $$
 DELETE FROM zzm_data.check_definition
  WHERE cd_id = id
