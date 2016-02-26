@@ -10,6 +10,7 @@ import de.zalando.zmon.service.ZMonService;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -66,4 +67,14 @@ public class CheckDefinitionsApi extends AbstractZMonController {
         return cImport;
     }
 
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public ResponseEntity<String> deleteUnusedCheck(@PathVariable(value = "id") int id) throws ZMonException {
+        List<Integer> ids = zMonService.deleteUnusedCheckDef(id, authorityService.getTeams());
+        if(ids.size() == 1) {
+            return new ResponseEntity<>("Deleted", HttpStatus.OK);
+        }
+        return new ResponseEntity<>("Id not found or not part of owning team", HttpStatus.NOT_FOUND);
+    }
 }
