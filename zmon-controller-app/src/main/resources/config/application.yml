@@ -38,3 +38,4 @@ zmon:
     kairosdb:
         enabled: true
         url: http://localhost:38083/
+    grafana-min-interval: 60

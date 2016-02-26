@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import de.zalando.zmon.config.ControllerProperties;
 import de.zalando.zmon.exception.ZMonException;
 import de.zalando.zmon.persistence.GrafanaDashboardSprocService;
 import de.zalando.zmon.security.permission.DefaultZMonPermissionService;
@@ -32,6 +33,9 @@ public class Grafana2Controller extends AbstractZMonController {
 
     @Autowired
     ObjectMapper mapper;
+
+    @Autowired
+    ControllerProperties controllerProperties;
 
     // home dashboard
     @ResponseStatus(HttpStatus.OK)
@@ -271,6 +275,17 @@ public class Grafana2Controller extends AbstractZMonController {
 
         ObjectNode model =  (ObjectNode) mapper.readTree(dashboard.dashboard);
         model.put("id", id);
+
+        if(model.has("refresh")) {
+            String refresh = model.get("refresh").textValue();
+            if(refresh.endsWith("s")) {
+                int interval = Integer.parseInt(refresh.replace("s", ""));
+                if (interval < controllerProperties.getGrafanaMinInterval()) {
+                    model.put("refresh", controllerProperties.getGrafanaMinInterval()+"s");
+                }
+            }
+        }
+
 
         if(dashboard.grafanaVersion.equals("v1")) {
             migrateV1(model);
