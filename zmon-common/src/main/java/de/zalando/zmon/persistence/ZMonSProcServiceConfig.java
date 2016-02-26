@@ -43,4 +43,9 @@ public class ZMonSProcServiceConfig {
     public GrafanaDashboardSprocService getGrafanaSprocService() {
         return SProcProxyBuilder.build(dataSourceProvider, GrafanaDashboardSprocService.class);
     }
+
+    @Bean(autowire = Autowire.BY_TYPE)
+    public OnetimeTokensSProcService getOnetimeTokenSprocService() {
+        return SProcProxyBuilder.build(dataSourceProvider, OnetimeTokensSProcService.class);
+    }
 }
