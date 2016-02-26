@@ -62,8 +62,10 @@ public class KairosDBController extends AbstractZMonController {
     @Autowired
     ObjectMapper mapper;
 
+    /* For Grafana2 KairosDB plugin we need to prepend the original KairosDB URLs too */
+
     @ResponseBody
-    @RequestMapping(value = "", method = RequestMethod.POST, produces = "application/json")
+    @RequestMapping(value = {"","/api/v1/datapoints/query"}, method = RequestMethod.POST, produces = "application/json")
     public void kairosDBPost(@RequestBody(required = true) final JsonNode node, final Writer writer,
                              final HttpServletResponse response) throws IOException {
 
@@ -103,7 +105,7 @@ public class KairosDBController extends AbstractZMonController {
     }
 
     @ResponseBody
-    @RequestMapping(value = "/tags", method = RequestMethod.POST, produces = "application/json")
+    @RequestMapping(value = {"/tags", "/api/v1/datapoints/query/tags"} , method = RequestMethod.POST, produces = "application/json")
     public void kairosDBtags(@RequestBody(required = true) final JsonNode node, final Writer writer,
                              final HttpServletResponse response) throws IOException {
 
@@ -125,7 +127,7 @@ public class KairosDBController extends AbstractZMonController {
     }
 
     @ResponseBody
-    @RequestMapping(value = "/metrics", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = {"/metrics", "/api/v1/metricnames"}, method = RequestMethod.GET, produces = "application/json")
     public void kairosDBmetrics(final Writer writer, final HttpServletResponse response) throws IOException {
 
         response.setContentType("application/json");
