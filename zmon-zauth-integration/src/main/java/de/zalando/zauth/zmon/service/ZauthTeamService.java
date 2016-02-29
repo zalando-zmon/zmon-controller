@@ -1,6 +1,5 @@
 package de.zalando.zauth.zmon.service;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Sets;
 import de.zalando.zauth.zmon.config.ZauthProperties;
@@ -15,7 +14,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 import org.zalando.stups.oauth2.spring.client.StupsOAuth2RestTemplate;
 import org.zalando.stups.oauth2.spring.client.StupsTokensAccessTokenProvider;
 import org.zalando.stups.tokens.AccessTokens;
-import org.zalando.zmon.config.ZmonOAuth2Properties;
 
 import java.util.List;
 import java.util.Set;

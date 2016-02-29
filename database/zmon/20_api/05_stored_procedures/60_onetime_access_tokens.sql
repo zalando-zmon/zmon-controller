@@ -16,4 +16,4 @@ $$
      AND (oat_session_id is NULL or oat_session_id = session_id)
     RETURNING oat_id;
 $$
-LANGUAGE 'sql' VOLATILE SECURITY DEFINER
+LANGUAGE 'sql' VOLATILE SECURITY DEFINER;

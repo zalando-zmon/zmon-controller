@@ -1,4 +1,4 @@
-CREATE TABLE zzm_data.onetime_access_tokens (
+CREATE TABLE zzm_data.onetime_access_token (
   oat_id serial not null,
   oat_token text not null,
   oat_valid_until timestamp not null default now() + '1 hours'::interval, -- until when token can be used to sign in
