@@ -1,6 +1,6 @@
 CREATE OR REPLACE FUNCTION create_onetime_token(IN "user_name" TEXT, IN "ip" TEXT, IN "token" TEXT) RETURNS SETOF INT AS
 $$
-  INSERT INTO zzm_data.onetime_access_token(oat_created_by, oat_created_from, oat_token) VALUES(user_name, ip, token) RETURNING oat_id;
+  INSERT INTO zzm_data.onetime_access_token(oat_created_by, oat_created_ip, oat_token) VALUES(user_name, ip, token) RETURNING oat_id;
 $$
 LANGUAGE 'sql' VOLATILE SECURITY DEFINER
 COST 100;
