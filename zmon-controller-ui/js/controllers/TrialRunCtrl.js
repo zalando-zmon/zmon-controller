@@ -87,10 +87,6 @@ var TrialRunCtrl = function ($scope, $interval, timespanFilter, localStorageServ
         {
             'value': 'bool',
             'label': 'Boolean'
-        },
-        {
-            'value': 'date',
-            'label': 'Date'
         }
     ];
 
@@ -274,6 +270,48 @@ var TrialRunCtrl = function ($scope, $interval, timespanFilter, localStorageServ
 
     var tr = new TrialRun(trc);
 
+    // save as new check
+    trc.save = function () {
+        if ($scope.trForm.$valid) {
+            try {
+
+                if (trc.entityFilter.textEntityFilters === '') {
+                    delete $scope.alert.entities;
+                } else {
+                    $scope.alert.entities = JSON.parse(trc.entityFilter.textEntityFilters);
+                }
+
+                if (trc.entityExcludeFilter.textEntityFilters === '') {
+                    delete $scope.alert.entities_exclude;
+                } else {
+                    $scope.alert.entities_exclude = JSON.parse(trc.entityExcludeFilter.textEntityFilters);
+                }
+
+                if (trc.parameters.length === 0) {
+                    delete $scope.alert.parameters;
+                } else {
+                    $scope.alert.parameters = formParametersObject();
+                }
+
+                if (typeof $scope.alert.period === 'undefined') {
+                    $scope.alert.period = "";
+                }
+
+                CommunicationService.updateCheckDefinition($scope.check).then(function(data) {
+                    FeedbackMessageService.showSuccessMessage('Saved successfully; redirecting...', 500, function() {
+                        $location.path('/check-details/' + data.id);
+                    });
+                });
+            } catch (ex) {
+                trc.invalidFormat = true;
+                return FeedbackMessageService.showErrorMessage('JSON format is incorrect' + ex);
+            }
+        } else {
+            $scope.trForm.submitted = true;
+            $scope.focusedElement = null;
+        }
+    };
+
     // Download implementation
     trc.download = function ($event) {
         $event.stopPropagation();
@@ -448,11 +486,6 @@ var TrialRunCtrl = function ($scope, $interval, timespanFilter, localStorageServ
             }
             if (param.type === 'float') {
                 val = parseFloat(param.value);
-            }
-            if (param.type === 'date') {
-                var d = new Date(val);
-                // FIXME Date should be seconds since epoch. Current format is temporary because python implementation needs to be changed to seconds also.
-                val = d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate() + 'T00:00:00.000Z';
             }
 
             parameters[param.name] = {

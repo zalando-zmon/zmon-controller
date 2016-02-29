@@ -112,14 +112,12 @@ angular.module('zmon2App').controller('CheckDefinitionEditCtrl', ['$scope', '$ro
                     return FeedbackMessageService.showErrorMessage('JSON format is incorrect' + ex);
                 }
             } else {
-                console.log('submitted');
                 $scope.cdForm.submitted = true;
                 $scope.focusedElement = null;
             }
         };
 
         $scope.cancel = function() {
-            console.log('submitted false');
             $scope.cdForm.submitted = false;
             if ($scope.mode === 'edit') {
                 $location.path('/check-definitions/view/' + $scope.checkId);
@@ -176,27 +174,23 @@ angular.module('zmon2App').controller('CheckDefinitionEditCtrl', ['$scope', '$ro
 
         // Get current parameters in form and generate a properly formatted
         // json to send to the backend.
-        var formParametersObject = function() {
+        function formParametersObject() {
             var parameters = {};
-            _.each($scope.oParams, function(p) {
-                _.each($scope.parameters, function(param) {
-                    if (param.name === p) {
-                        var val = param.value;
+            _.each($scope.parameters, function(param) {
+                var val = param.value;
 
-                        if (param.type === 'int') {
-                            val = parseInt(param.value);
-                        }
-                        if (param.type === 'float') {
-                            val = parseFloat(param.value);
-                        }
+                if (param.type === 'int') {
+                    val = parseInt(param.value);
+                }
+                if (param.type === 'float') {
+                    val = parseFloat(param.value);
+                }
 
-                        parameters[param.name] = {
-                            "value": val,
-                            "comment": param.comment,
-                            "type": param.type
-                        }
-                    }
-                });
+                parameters[param.name] = {
+                    "value": val,
+                    "comment": param.comment,
+                    "type": param.type
+                }
             });
             return parameters;
         };
