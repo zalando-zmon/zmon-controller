@@ -119,7 +119,6 @@ public class Grafana2Controller extends AbstractZMonController {
         ArrayNode resultsNode = mapper.createArrayNode();
 
         for (GrafanaDashboardSprocService.GrafanaDashboard d : results ) {
-            LOG.info("Adding dashboard: {}", d);
             ObjectNode dashboard = resultsNode.addObject();
             dashboard.put("uri", "db/"+d.id);
             dashboard.put("id", d.id);
