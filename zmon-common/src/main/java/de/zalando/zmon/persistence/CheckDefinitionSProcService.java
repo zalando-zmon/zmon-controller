@@ -1,5 +1,6 @@
 package de.zalando.zmon.persistence;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -43,4 +44,7 @@ public interface CheckDefinitionSProcService {
     @SProcCall
     List<HistoryEntry> getCheckDefinitionHistory(@SProcParam int checkDefinitionId, @SProcParam int limit,
             @SProcParam Date from, @SProcParam Date to);
+
+    @SProcCall
+    List<Integer> deleteUnusedCheckDefinition(@SProcParam int id, @SProcParam Collection<String> teams);
 }

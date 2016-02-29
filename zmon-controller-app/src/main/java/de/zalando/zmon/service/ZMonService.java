@@ -1,5 +1,6 @@
 package de.zalando.zmon.service;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -42,6 +43,8 @@ public interface ZMonService {
     void deleteCheckDefinition(String userName, String name, String owningTeam);
 
     void deleteDetachedCheckDefinitions();
+
+    List<Integer> deleteUnusedCheckDef(int id, Collection<String> teams);
 
     JsonNode getEntityProperties();
 

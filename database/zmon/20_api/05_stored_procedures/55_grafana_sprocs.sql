@@ -14,16 +14,17 @@ BEGIN
        SET gd_title = title,
            gd_dashboard = dashboard::jsonb,
            gd_last_modified = now(),
-           gd_last_modified_by = user_name
+           gd_last_modified_by = user_name,
+           gd_grafana_version = version
      WHERE gd_id = id;
 
   END;
 END;
 $$ LANGUAGE PLPGSQL VOLATILE SECURITY DEFINER;
 
-CREATE OR REPLACE FUNCTION get_grafana_dashboards(IN s_title TEXT, IN s_tags TEXT, IN s_starred TEXT, IN s_user TEXT, OUT id TEXT, OUT title TEXT, OUT dashboard TEXT, OUT "user" TEXT, OUT "tags" TEXT, OUT "starred" BOOLEAN) RETURNS SETOF record AS
+CREATE OR REPLACE FUNCTION get_grafana_dashboards(IN s_title TEXT, IN s_tags TEXT, IN s_starred TEXT, IN s_user TEXT, OUT id TEXT, OUT title TEXT, OUT dashboard TEXT, OUT "user" TEXT, OUT "tags" TEXT, OUT "starred" BOOLEAN, OUT "grafana_version" TEXT) RETURNS SETOF record AS
 $$
-  SELECT gd_id id, gd_title title, gd_dashboard::text dashboard, gd_created_by "user", (gd_dashboard->'tags')::text "tags", COALESCE(s_user =ANY(gd_starred_by), FALSE) "starred"
+  SELECT gd_id id, gd_title title, gd_dashboard::text dashboard, gd_created_by "user", (gd_dashboard->'tags')::text "tags", COALESCE(s_user =ANY(gd_starred_by), FALSE) "starred", gd_grafana_version "grafana_version"
     FROM zzm_data.grafana_dashboard
    WHERE gd_title ilike '%' || s_title || '%'
      AND (s_tags IS NULL OR (gd_dashboard->'tags') @> s_tags::jsonb)
@@ -31,9 +32,9 @@ $$
    ORDER BY gd_title ASC;
 $$ LANGUAGE SQL VOLATILE SECURITY DEFINER;
 
-CREATE OR REPLACE FUNCTION get_grafana_dashboard(INOUT id text, IN user_name TEXT, OUT title text, OUT dashboard text, OUT "user" TEXT, OUT starred BOOLEAN) RETURNS SETOF record AS
+CREATE OR REPLACE FUNCTION get_grafana_dashboard(INOUT id text, IN user_name TEXT, OUT title text, OUT dashboard text, OUT "user" TEXT, OUT starred BOOLEAN, OUT "grafana_version" TEXT) RETURNS SETOF record AS
 $$
-  SELECT gd_id id, gd_title title, gd_dashboard::text dashboard, gd_created_by "user", COALESCE(user_name=ANY(gd_starred_by), FALSE) "starred"
+  SELECT gd_id id, gd_title title, gd_dashboard::text dashboard, gd_created_by "user", COALESCE(user_name=ANY(gd_starred_by), FALSE) "starred", gd_grafana_version "grafana_version"
     FROM zzm_data.grafana_dashboard
    WHERE gd_id = id;
 $$ LANGUAGE SQL VOLATILE SECURITY DEFINER;

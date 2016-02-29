@@ -1,0 +1,27 @@
+{
+  "rows":[
+    {
+      "panels": [
+        {
+          "targets": [
+            {
+              "groups": [
+                "entity",
+                "key"
+              ],
+              "tags": [
+                {
+                  "key": "entity",
+                  "value": "host1"
+                },
+                {
+                  "key": "entity",
+                  "value": "host2"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }]
+}

@@ -1,11 +1,15 @@
-angular.module('zmon2App').controller('CloudEndpointsCtrl', ['$scope', '$timeout', '$location', 'CommunicationService', 'LoadingIndicatorService', 'APP_CONST',
-    function CloudEndpointsCtrl($scope, $timeout, $location, CommunicationService, LoadingIndicatorService, APP_CONST) {
+angular.module('zmon2App').controller('CloudEndpointsCtrl', ['$scope', '$timeout', '$interval', '$location', 'CommunicationService', 'LoadingIndicatorService', 'APP_CONST',
+    function CloudEndpointsCtrl($scope, $timeout, $interval, $location, CommunicationService, LoadingIndicatorService, APP_CONST) {
 
         // endpoints and charts
         $scope.endpoints = [];
         $scope.endpointsByRuntime = [];
         $scope.globalAppData = {};
         $scope.globalAppDataList = {};
+
+        // interval id and duration of 1min
+        var fetchInterval = null;
+        var INTERVAL = 60000;
 
         // KairosDB query objects
         var q_single_app_aws = function(appId, metric, tags, grpOp) {
@@ -300,38 +304,62 @@ angular.module('zmon2App').controller('CloudEndpointsCtrl', ['$scope', '$timeout
         }
 
         var sortEps = function(a,b) {
-            var sumA = 0
-            var sumB = 0
+            var sumA = 0;
+            var sumB = 0;
 
             Object.keys(a).forEach(function(k){
-                if ("_url"== k) return
-                sumA += a[k]["mRate"].slice(-1)[0][1]
-            })
+                if ("_url" == k) return;
+                if (a[k]["mRate"].length==0) return;
+
+                var v = a[k]["mRate"].slice(-1)[0];
+                if (v.length > 0) {
+                    sumA += v[1]
+                }
+            });
 
             Object.keys(b).forEach(function(k){
-                if ("_url"== k) return
-                sumB += b[k]["mRate"].slice(-1)[0][1]
-            })
+                if ("_url" == k) return;
+                if (b[k]["mRate"].length==0) return;
+
+                var v = b[k]["mRate"].slice(-1)[0];
+                if (v.length > 0) {
+                    sumB += v[1]
+                }
+            });
 
             return sumB - sumA;
-        }
+        };
 
         var sortEpsRt = function(a,b) {
-            var sumA = 0
-            var sumB = 0
+            var sumA = 0;
+            var sumB = 0;
 
             Object.keys(a).forEach(function(k){
-                if ("_url"== k) return;
-                sumA += a[k]["mRate"].slice(-1)[0][1] * a[k]["median"].slice(-1)[0][1];
+                if ("_url" == k) return;
+                if (a[k]["mRate"].length==0) return;
+                if (a[k]["median"].length==0) return;
+
+                var v_r = a[k]["mRate"].slice(-1)[0];
+                var v_t = a[k]["median"].slice(-1)[0];
+                if(v_r.length > 0 && v_t.length > 0) {
+                    sumA += v_r[1]*v_t[1];
+                }
             });
 
             Object.keys(b).forEach(function(k){
-                if ("_url"== k) return;
-                sumB += b[k]["mRate"].slice(-1)[0][1] * b[k]["median"].slice(-1)[0][1];
+                if ("_url" == k) return;
+                if (b[k]["mRate"].length==0) return;
+                if (b[k]["median"].length==0) return;
+
+                var v_r = b[k]["mRate"].slice(-1)[0];
+                var v_t = b[k]["median"].slice(-1)[0];
+                if(v_r.length > 0 && v_t.length > 0) {
+                    sumB += v_r[1]*v_t[1];
+                }
             });
 
             return sumB - sumA;
-        }
+        };
 
         // kairos data for one application (or entity) has been successfully fetched and needs processing
         var receivedSingleApp = function (data) {
@@ -494,7 +522,7 @@ angular.module('zmon2App').controller('CloudEndpointsCtrl', ['$scope', '$timeout
             var responseTime200 = []
             var responseTimeOther= []
 
-            status.forEach(function(k){
+            status.forEach(function(k) {
 
                 if (k=='200') {
                     ratesByStatus200.push({key: k, values: epData[k]["mRate"]})
@@ -526,8 +554,12 @@ angular.module('zmon2App').controller('CloudEndpointsCtrl', ['$scope', '$timeout
             var totalRates = extractData(pointsRate, "mRate", function f(x){return true})
             var totalErrorRates = extractData(pointsRate, "mRate", function f(x){return x!='200'})
 
-            renderStackedChart('chart_rate', totalRates.reverse())
-            renderStackedChart('chart_error', totalErrorRates.reverse())
+            if (!$scope.selectedEndpoint) {
+                renderStackedChart('chart_rate', totalRates.reverse())
+                renderStackedChart('chart_error', totalErrorRates.reverse())
+            } else {
+                showEndpoint($scope.selectedEndpoint, $scope.selectedApplication)
+            }
 
             LoadingIndicatorService.stop();
             $scope.loading = false;
@@ -535,25 +567,37 @@ angular.module('zmon2App').controller('CloudEndpointsCtrl', ['$scope', '$timeout
             $location.search('app', appId);
         }
 
-        var showApp = function(appId, cb, forceFetch) {
+        var showApp = function(appId, cb) {
 
             $scope.selectedApplication = appId;
             LoadingIndicatorService.start();
             $scope.loading = true;
 
-            if ($scope.applications[appId].data && !forceFetch) {
-                renderCharts(appId);
-                if (cb) cb();
-                return;
-            }
+            startFetchAppData(appId, renderCharts);
+        };
 
+        var startFetchAppData = function(appId, cb) {
+            if (!fetchInterval) { 
+                fetchInterval = $interval(function() {
+                    fetchAppData(appId, cb)
+                }, INTERVAL);
+                fetchAppData(appId, cb);
+            }
+        };
+
+        var stopFetchInterval = function() {
+            $interval.cancel(fetchInterval);
+            fetchInterval = null;
+        }
+
+        var fetchAppData = function(appId, cb) {
             CommunicationService.getCloudViewEndpoints({"application_id": appId})
                 .then(function(d1) {
                     var app = $scope.$parent.applications[appId];
                     app.data = receivedSingleApp(d1);
-                    renderCharts(appId);
+                    cb(appId);
                 });
-        };
+        }
 
         // set view state from URL
         var setStateFromUrl = function() {
@@ -566,13 +610,16 @@ angular.module('zmon2App').controller('CloudEndpointsCtrl', ['$scope', '$timeout
         $scope.$watch('selectedEndpoint', function(endpoint) {
             if (endpoint) {
                 showEndpoint(endpoint, $scope.selectedApplication);
+            } else if ($scope.selectedApplication) {
+                renderCharts($scope.selectedApplication);
             }
         });
 
-        $scope.$watch('selectedApplication', function(app) {
+        $scope.$parent.$watch('selectedApplication', function(app) {
             if (app) {
-                showApp(app);
+                return showApp(app);
             }
+            stopFetchInterval();
         });
 
         $scope.$on('$routeUpdate', function() {
