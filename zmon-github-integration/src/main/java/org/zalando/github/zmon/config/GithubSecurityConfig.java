@@ -3,15 +3,10 @@ package org.zalando.github.zmon.config;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.google.common.collect.ImmutableList;
-import de.zalando.zmon.security.AuthorityService;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
 import org.springframework.core.annotation.Order;
-
 import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -26,16 +21,17 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.R
 import org.springframework.security.oauth2.provider.token.ResourceServerTokenServices;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.provisioning.UserDetailsManager;
-
 import org.springframework.social.security.SocialUserDetailsService;
 import org.springframework.social.security.SpringSocialConfigurer;
-
 import org.zalando.github.zmon.service.GithubResourceServerTokenServices;
-
 import org.zalando.zmon.security.ZmonResourceServerConfigurer;
 import org.zalando.zmon.security.service.ChainedResourceServerTokenServices;
 import org.zalando.zmon.security.service.PresharedTokensResourceServerTokenServices;
 import org.zalando.zmon.security.service.SimpleSocialUserDetailsService;
+
+import com.google.common.collect.ImmutableList;
+
+import de.zalando.zmon.security.AuthorityService;
 
 /**
  * Nothing to add here.
@@ -62,7 +58,7 @@ public class GithubSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(final WebSecurity web) throws Exception {
-        web.ignoring().antMatchers("/logo.png", "/favicon.ico", "/asset/**", "/styles/**", "/js/**");
+        web.ignoring().antMatchers("/logo.png", "/favicon.ico", "/asset/**", "/styles/**", "/js/**", "/tv/**");
     }
 
     @Override
