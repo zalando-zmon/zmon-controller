@@ -2,7 +2,9 @@ angular.module('zmon2App').factory('CommunicationService', ['$http', '$q', '$log
     function($http, $q, $log, APP_CONST, PreconditionsService) {
         var service = {},
             alertIdCache = {},
-            alertNameCache = {};
+            alertNameCache = {},
+            checkIdCache = {},
+            checkNameCache = {};
 
         /*
          * Get all the alerts based on passed filter object (empty object to get everything).
@@ -251,6 +253,36 @@ angular.module('zmon2App').factory('CommunicationService', ['$http', '$q', '$log
             return doHttpCall("GET", "rest/checkDefinition", params);
         };
 
+        service.updateCheckDefinition = function(def) {
+            var deferred = $q.defer();
+            if (def.id) {
+                if (def.name != checkIdCache[def.id]) {
+                    checkNameCache[def.name] = 1;
+                    delete checkNameCache[checkIdCache[def.id]];
+                }
+            } else {
+                checkNameCache[def.name] = 1;
+            }
+
+            $http({
+                method: 'POST',
+                url: 'rest/updateCheckDefinition',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                data: def
+            }).success(function(data, status, headers, config) {
+                checkIdCache[data.id] = data.name;
+                deferred.resolve(data);
+            }).error(function(data, status, headers, config) {
+                checkNameCache[alertIdCache[def.id]] = 1;
+                delete checkNameCache[def.name];
+                deferred.reject(status);
+            });
+            return deferred.promise;
+        };
+
+
         service.getStatus = function() {
             return doHttpCall("GET", "rest/status");
         };
@@ -277,7 +309,7 @@ angular.module('zmon2App').factory('CommunicationService', ['$http', '$q', '$log
                 alertIdCache[data.id] = data.name;
                 deferred.resolve(data);
             }).error(function(data, status, headers, config) {
-                alertNameCache[alertIdCache[def.id]] = 1;
+                alertNameCache[checkIdCache[def.id]] = 1;
                 delete alertNameCache[def.name];
                 deferred.reject(status);
             });

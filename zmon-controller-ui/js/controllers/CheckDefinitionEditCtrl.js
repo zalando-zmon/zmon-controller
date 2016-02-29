@@ -5,55 +5,38 @@ angular.module('zmon2App').controller('CheckDefinitionEditCtrl', ['$scope', '$ro
 
         $scope.$parent.activePage = 'check-definitions';
         $scope.invalidFormat = false;
-        $scope.entityFilter = {};
-        $scope.entityExcludeFilter = {};
-        $scope.checkParameters = [];
+        $scope.parameters = [];
         $scope.paramTypes = ['string', 'int', 'boolean'];
         $scope.allTags = [];
         $scope.defaultEntitiesFilter = [];
         $scope.defaultEntitiesExcludeFilter = [];
         $scope.defaultNotifications = [];
 
-        // for route '/check-definitions/edit/:checkId' [edit existing check]
-        $scope.checkId = $routeParams.checkId;
+        $scope.entityFilterInputMethod = 'text';
+        $scope.entityExcludeFilterInputMethod = 'text';
 
-        $scope.check = {};
+        // Keep account of overwritten Properties and Parameters on inherit mode
+        $scope.oProps = [];
+        $scope.oParams = [];
 
-        $scope.mode = 'edit';
-
-        $scope.save = function() {
-            if ($scope.cdForm.$valid) {
-                // SAVE
-            }
+        $scope.entityFilter = {
+            "types":
+            [{
+                "type": "GLOBAL"
+            }],
+            formEntityFilters: [],
+            textEntityFilters: '[]'
         };
 
-        $scope.cancel = function() {
-            $scope.cdForm.submitted = false;
-            if ($scope.mode === 'edit') {
-                $location.path('/check-definitions/view/' + scope.checkId);
-            } else if ($scope.mode === 'clone') {
-                $location.path('/check-definitions/view/' + scope.cloneFromCheckDefinitionId);
-            } else {
-                $location.path('/check-definitions/');
-            }
+        $scope.entityExcludeFilter = {
+            "types":
+            [{
+                "type": "GLOBAL"
+            }],
+            "formEntityFilters": [],
+            "textEntityFilters": '[]'
         };
 
-        // Get a check definition from the backend
-        var getCheckDefinition = function() {
-            CommunicationService.getCheckDefinition($scope.checkId).then(
-                function(response) {
-                    $scope.check = response;
-                }
-            );
-        };
-
-        if ($scope.checkId) {
-            getCheckDefinition($scope.checkId);
-        };
-
-
-        // from TrialRun
-        $scope.paramTypes = ['string', 'int', 'boolean', 'date'];
         $scope.parameterTypeOptions = [
             {
                 'value': 'str',
@@ -68,10 +51,6 @@ angular.module('zmon2App').controller('CheckDefinitionEditCtrl', ['$scope', '$ro
             {
                 'value': 'bool',
                 'label': 'Boolean'
-            },
-            {
-                'value': 'date',
-                'label': 'Date'
             }
         ];
 
@@ -86,51 +65,112 @@ angular.module('zmon2App').controller('CheckDefinitionEditCtrl', ['$scope', '$ro
             }
         ];
 
-        // Entities filter data
-        $scope.entityFilter = {
-            formEntityFilters: [],
-            textEntityFilters: []
-        };
-
-        $scope.entityExcludeFilter = {
-            formEntityFilters: [],
-            textEntityFilters: []
-        };
-
-        // Entity filter types initialized by default with GLOBAL (which is not provided by backend as separate type) and the rest comes from backend
-        $scope.entityFilter.types = [
-            {
-                "type": "GLOBAL"
-            }
-        ];
-
-        $scope.entityExcludeFilter.types = [
-            {
-                "type": "GLOBAL"
-            }
-        ];
-
-        // Flag to toggle UI on whether user types JSON text or uses form to define the entity filters
-        $scope.entityFilterInputMethod = 'text';
-        $scope.entityExcludeFilterInputMethod = 'text';
-
         $scope.INDENT = '    ';
+
+        // for route '/check-definitions/edit/:checkId' [edit existing check]
+        $scope.checkId = $routeParams.checkId;
+
+        $scope.check = {};
+
+        $scope.mode = 'edit';
+
+        $scope.focusedElement = null;
+
+        $scope.save = function() {
+            if ($scope.cdForm.$valid) {
+                try {
+
+                    if ($scope.entityFilter.textEntityFilters === '') {
+                        delete $scope.check.entities;
+                    } else {
+                        $scope.check.entities = JSON.parse($scope.entityFilter.textEntityFilters);
+                    }
+
+                    if ($scope.entityExcludeFilter.textEntityFilters === '') {
+                        delete $scope.check.entities_exclude;
+                    } else {
+                        $scope.check.entities_exclude = JSON.parse($scope.entityExcludeFilter.textEntityFilters);
+                    }
+
+                    if ($scope.oParams.length === 0) {
+                        delete $scope.check.parameters;
+                    } else {
+                        $scope.check.parameters = $scope.formParametersObject();
+                    }
+
+                    if (typeof $scope.check.period === 'undefined') {
+                        $scope.check.period = "";
+                    }
+
+                    CommunicationService.updateCheckDefinition($scope.check).then(function(data) {
+                        FeedbackMessageService.showSuccessMessage('Saved successfully; redirecting...', 500, function() {
+                            $location.path('/check-details/' + data.id);
+                        });
+                    });
+                } catch (ex) {
+                    $scope.invalidFormat = true;
+                    return FeedbackMessageService.showErrorMessage('JSON format is incorrect' + ex);
+                }
+            } else {
+                console.log('submitted');
+                $scope.cdForm.submitted = true;
+                $scope.focusedElement = null;
+            }
+        };
+
+        $scope.cancel = function() {
+            console.log('submitted false');
+            $scope.cdForm.submitted = false;
+            if ($scope.mode === 'edit') {
+                $location.path('/check-definitions/view/' + $scope.checkId);
+            } else if ($scope.mode === 'clone') {
+                $location.path('/check-definitions/view/' + $scope.cloneFromCheckDefinitionId);
+            } else {
+                $location.path('/check-definitions/');
+            }
+        };
+
+        // Get a check definition from the backend
+        var getCheckDefinition = function() {
+            CommunicationService.getCheckDefinition($scope.checkId).then(
+                function(response) {
+                    $scope.check = response;
+
+                    $scope.parameters = [];
+                    _.each(_.keys(response.parameters).sort(), function(name) {
+                        $scope.oParams.push(name);
+                        $scope.parameters.push(_.extend({'name': name}, response.parameters[name]));
+                    });
+
+                    $scope.entityFilter.formEntityFilters = response.entities;
+                    $scope.entityFilter.textEntityFilters = JSON.stringify(response.entities, null, $scope.INDENT) || '[]';
+                    $scope.entityExcludeFilter.formEntityFilters = response.entities_exclude;
+                    $scope.entityExcludeFilter.textEntityFilters = JSON.stringify(response.entities_exclude, null, $scope.INDENT) || '[]';
+                    $scope.entityFilter.formEntityFilters = $scope.check.entities;
+                }
+            );
+        };
+
+        if ($scope.checkId) {
+            getCheckDefinition($scope.checkId);
+        };
+
 
         // Add a new parameter with cleared values and type string by default
         $scope.addParameter = function() {
-            $scope.checkParameters.push({type: 'str'});
+            $scope.parameters.push({type: 'str'});
         };
 
         // Remove a parameter from the parameters json object
         $scope.removeParameter = function(name) {
             var index = null;
-            _.each($scope.checkParameters, function(param, i) {
+            _.each($scope.parameters, function(param, i) {
                 if (param.name === name) {
                     index = i;
                 };
             });
             if (index != null) {
-                $scope.checkParameters.splice(index, 1);
+                $scope.parameters.splice(index, 1);
             }
         };
 
@@ -139,7 +179,7 @@ angular.module('zmon2App').controller('CheckDefinitionEditCtrl', ['$scope', '$ro
         var formParametersObject = function() {
             var parameters = {};
             _.each($scope.oParams, function(p) {
-                _.each($scope.checkParameters, function(param) {
+                _.each($scope.parameters, function(param) {
                     if (param.name === p) {
                         var val = param.value;
 
@@ -160,6 +200,19 @@ angular.module('zmon2App').controller('CheckDefinitionEditCtrl', ['$scope', '$ro
             });
             return parameters;
         };
+
+        // Validate a parameter's name to be a valid python variable name
+        $scope.paramNameIsValid = function(name) {
+            var re = /^[_a-zA-Z][_a-zA-Z0-9]*/;
+            return re.test(name);
+        };
+
+        $scope.dateOptions = {
+            formatYear: 'yy',
+            startingDay: 1
+        };
+
+        $scope.format = 'dd.MM.yyyy';
 
         CommunicationService.getEntityProperties().then(
             function (data) {
