@@ -9,4 +9,5 @@ CREATE TABLE zzm_data.onetime_access_token (
   oat_created_from text not null, -- IP
   oat_created_by text not null, -- USER requesting a token
   oat_created timestamp not null default now(),
+  PRIMARY KEY(oat_id)
 );
