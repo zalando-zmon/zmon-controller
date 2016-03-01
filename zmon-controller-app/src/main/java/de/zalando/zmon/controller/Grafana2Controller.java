@@ -192,6 +192,10 @@ public class Grafana2Controller extends AbstractZMonController {
             target.remove("groups");
         }
 
+        if(!target.has("downsampling")) {
+            target.put("downsampling", "(NONE)");
+        }
+
         ArrayNode oldTags = (ArrayNode)target.get("tags");
         ObjectNode newTags = target.putObject("tags");
 
