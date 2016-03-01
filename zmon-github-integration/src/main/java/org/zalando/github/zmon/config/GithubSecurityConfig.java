@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.RememberMeAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
@@ -32,6 +33,8 @@ import org.zalando.zmon.security.service.SimpleSocialUserDetailsService;
 import com.google.common.collect.ImmutableList;
 
 import de.zalando.zmon.security.AuthorityService;
+import de.zalando.zmon.security.tvtoken.TvTokenService;
+import de.zalando.zmon.security.tvtoken.ZMonTvRememberMeServices;
 
 /**
  * Nothing to add here.
@@ -52,6 +55,9 @@ public class GithubSecurityConfig extends WebSecurityConfigurerAdapter {
     Environment environment;
 
     @Autowired
+    private TvTokenService TvTokenService;
+
+    @Autowired
     public void configureGlobal(final AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(userDetailsManager());
     }
@@ -68,14 +74,36 @@ public class GithubSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     // J-
+    // @formatter:off
     @Override
-    protected void configure(final HttpSecurity http) throws Exception {
+    protected void configure( HttpSecurity http) throws Exception {
 
-        http.formLogin().loginPage("/signin").failureUrl("/signin?error=bad_credentials").permitAll().and().logout()
-                .logoutUrl("/logout").deleteCookies("JSESSIONID").logoutSuccessUrl("/signin?logout=true").permitAll().and()
-                .authorizeRequests().antMatchers("/**").authenticated().and().rememberMe().and()
-                .apply(new SpringSocialConfigurer()).and().csrf().disable();
+        http = http.authenticationProvider(new RememberMeAuthenticationProvider("ZMON_TV"));
+
+        http
+            .apply(new SpringSocialConfigurer())
+            .and()
+                .formLogin()
+                    .loginPage("/signin")
+                    .failureUrl("/signin?error=bad_credentials")
+                    .permitAll()
+            .and()
+                .logout()
+                    .logoutUrl("/logout")
+                    .deleteCookies("JSESSIONID")
+                    .logoutSuccessUrl("/signin?logout=true")
+                    .permitAll()
+            .and()
+                .authorizeRequests()
+                .antMatchers("/**")
+                    .authenticated()
+            .and()
+                .rememberMe()
+                .rememberMeServices(new ZMonTvRememberMeServices(TvTokenService))
+            .and()
+                .csrf().disable();
     }
+    // @formatter:on
     // J+
 
     @Bean

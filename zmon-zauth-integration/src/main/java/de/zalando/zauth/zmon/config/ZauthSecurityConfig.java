@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.RememberMeAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
@@ -26,6 +27,9 @@ import org.zalando.stups.oauth2.spring.server.TokenInfoResourceServerTokenServic
 import org.zalando.zmon.security.ZmonResourceServerConfigurer;
 import org.zalando.zmon.security.service.SimpleSocialUserDetailsService;
 
+import de.zalando.zmon.security.tvtoken.TvTokenService;
+import de.zalando.zmon.security.tvtoken.ZMonTvRememberMeServices;
+
 /**
  * @author jbellmann
  */
@@ -39,6 +43,9 @@ public class ZauthSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private Environment environment;
+
+    @Autowired
+    private TvTokenService TvTokenService;
 
     @Autowired
     public void configureGlobal(final AuthenticationManagerBuilder auth) throws Exception {
@@ -59,9 +66,13 @@ public class ZauthSecurityConfig extends WebSecurityConfigurerAdapter {
     // J-
     // @formatter:off
     @Override
-    protected void configure(final HttpSecurity http) throws Exception {
+    protected void configure(HttpSecurity http) throws Exception {
+
+        http = http.authenticationProvider(new RememberMeAuthenticationProvider("ZMON_TV"));
 
         http
+        .apply(new SpringSocialConfigurer())
+        .and()
             .formLogin()
                 .loginPage("/signin")
                 .failureUrl("/signin?param.error=bad_credentials")
@@ -78,8 +89,7 @@ public class ZauthSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authenticated()
         .and()
             .rememberMe()
-        .and()
-            .apply(new SpringSocialConfigurer())
+            .rememberMeServices(new ZMonTvRememberMeServices(TvTokenService))
         .and()
             .csrf()
                 .disable();
