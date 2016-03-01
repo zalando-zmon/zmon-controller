@@ -22,6 +22,18 @@ import de.zalando.zmon.annotation.NotNullEntity;
 @DatabaseType(name = "check_definition_import")
 public class CheckDefinitionImport {
 
+    @XmlElement(required = false)
+    @DatabaseField
+    private Integer id;
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
     @XmlElement(required = true)
     @DatabaseField
     @NotNull(message = "name is mandatory")
@@ -197,6 +209,8 @@ public class CheckDefinitionImport {
         final StringBuilder builder = new StringBuilder();
         builder.append("CheckDefinitionImport [name=");
         builder.append(name);
+        builder.append(", id=");
+        builder.append(id);
         builder.append(", description=");
         builder.append(description);
         builder.append(", technicalDetails=");

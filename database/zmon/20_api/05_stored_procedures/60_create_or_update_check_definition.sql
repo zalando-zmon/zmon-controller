@@ -36,12 +36,12 @@ BEGIN
            cd_source_url           = check_definition_import.source_url,
            cd_last_modified_by     = check_definition_import.last_modified_by,
            cd_last_modified        = now()
-     WHERE lower(cd_source_url)    = lower(check_definition_import.source_url)
-        OR lower(cd_name)          = lower(check_definition_import.name)
-       AND lower(cd_owning_team)   = lower(check_definition_import.owning_team)
+     WHERE (lower(cd_source_url) = lower(check_definition_import.source_url) AND check_definition_import.id IS NULL)
+        OR (lower(cd_name) = lower(check_definition_import.name) AND lower(cd_owning_team) = lower(check_definition_import.owning_team) AND check_definition_import.id IS NULL)
+        OR (cd_id = check_definition_import.id)
  RETURNING cd_id INTO entity.id;
 
-    IF NOT FOUND THEN
+    IF NOT FOUND AND check_definition_import.id IS NULL THEN
 
         -- if it's not there, we should create a new one
         INSERT INTO zzm_data.check_definition (

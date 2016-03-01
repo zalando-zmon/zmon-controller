@@ -40,6 +40,24 @@ public class CheckDefinitionsApi extends AbstractZMonController {
         return zMonService.createOrUpdateCheckDefinition(checkDefinition);
     }
 
+    @RequestMapping(value = "/{id}", method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public CheckDefinition createOrUpdateById(@Valid
+                                          @RequestBody(required = true)
+                                          final CheckDefinitionImport checkDefinition, @PathVariable(value = "id") int id) throws ZMonException {
+
+        if (null == checkDefinition.getId()) {
+            throw new ZMonException("ID missing in body");
+        }
+
+        if (id != checkDefinition.getId()) {
+            throw new ZMonException("ID from path does not match the one received in body");
+        }
+
+        return zMonService.createOrUpdateCheckDefinition(checkDefinition);
+    }
+
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
@@ -50,6 +68,7 @@ public class CheckDefinitionsApi extends AbstractZMonController {
 
         CheckDefinitionImport cImport = new CheckDefinitionImport();
 
+        cImport.setId(check.getId());
         cImport.setName(check.getName());
         cImport.setDescription(check.getDescription());
         cImport.setInterval(check.getInterval());

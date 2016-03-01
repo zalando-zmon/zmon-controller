@@ -11,5 +11,6 @@ CREATE TYPE check_definition_import AS (
     command             text,
     status              zzm_data.definition_status,
     source_url          text,
-    last_modified_by    text
+    last_modified_by    text,
+    id                  int
 );
