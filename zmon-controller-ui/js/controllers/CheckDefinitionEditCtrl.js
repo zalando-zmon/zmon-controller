@@ -33,8 +33,8 @@ angular.module('zmon2App').controller('CheckDefinitionEditCtrl', ['$scope', '$ro
             [{
                 "type": "GLOBAL"
             }],
-            "formEntityFilters": [],
-            "textEntityFilters": '[]'
+            formEntityFilters: [],
+            textEntityFilters: '[]'
         };
 
         $scope.parameterTypeOptions = [
@@ -140,11 +140,10 @@ angular.module('zmon2App').controller('CheckDefinitionEditCtrl', ['$scope', '$ro
                         $scope.parameters.push(_.extend({'name': name}, response.parameters[name]));
                     });
 
-                    $scope.entityFilter.formEntityFilters = response.entities;
+                    $scope.entityFilter.formEntityFilters = response.entities || [];
                     $scope.entityFilter.textEntityFilters = JSON.stringify(response.entities, null, $scope.INDENT) || '[]';
-                    $scope.entityExcludeFilter.formEntityFilters = response.entities_exclude;
+                    $scope.entityExcludeFilter.formEntityFilters = response.entities_exclude || [];
                     $scope.entityExcludeFilter.textEntityFilters = JSON.stringify(response.entities_exclude, null, $scope.INDENT) || '[]';
-                    $scope.entityFilter.formEntityFilters = $scope.check.entities;
                 }
             );
         };

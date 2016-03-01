@@ -297,15 +297,16 @@ var TrialRunCtrl = function ($scope, $interval, timespanFilter, localStorageServ
                     $scope.alert.period = "";
                 }
 
-                CommunicationService.updateCheckDefinition($scope.check).then(function(data) {
-                    FeedbackMessageService.showSuccessMessage('Saved successfully; redirecting...', 500, function() {
-                        $location.path('/check-details/' + data.id);
-                    });
-                });
             } catch (ex) {
                 trc.invalidFormat = true;
                 return FeedbackMessageService.showErrorMessage('JSON format is incorrect' + ex);
             }
+
+            CommunicationService.updateCheckDefinition($scope.alert).then(function(data) {
+                FeedbackMessageService.showSuccessMessage('Saved successfully; redirecting...', 500, function() {
+                    $location.path('/check-details/' + data.id);
+                });
+            });
         } else {
             $scope.trForm.submitted = true;
             $scope.focusedElement = null;
