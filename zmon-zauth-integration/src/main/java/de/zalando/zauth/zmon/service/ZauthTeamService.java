@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 import org.zalando.stups.oauth2.spring.client.StupsOAuth2RestTemplate;
@@ -47,10 +48,16 @@ public class ZauthTeamService implements TeamService {
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(zauthProperties.getTeamServiceUrl().toString()).path("/api/teams")
                 .queryParam("member", username);
 
-        List<Team> teams = restTemplate.exchange(builder.build().toUri(), HttpMethod.GET, null, TYPE_REF).getBody();
-        for (Team team : teams) {
-            result.add(team.getName());
+        try {
+            List<Team> teams = restTemplate.exchange(builder.build().toUri(), HttpMethod.GET, null, TYPE_REF).getBody();
+            for (Team team : teams) {
+                result.add(team.getName());
+            }
         }
+        catch(RestClientException ex) {
+            log.error("Failed to call team service, no teams for now!", ex);
+        }
+
         return result;
     }
 }
