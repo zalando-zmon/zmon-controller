@@ -66,3 +66,12 @@ See also the `ZMON Documentation`_.
 
 .. _main ZMON repository: https://github.com/zalando/zmon
 .. _ZMON Documentation: https://zmon.readthedocs.org/
+
+
+Database API schema
+===================
+
+.. code-block:: bash
+
+	find . -name '*sql' | sort -V | xargs cat > schema_os.sql
+
