@@ -28,14 +28,14 @@
                     <div class="form-group" ng-class="{'has-error': trForm.submitted && trForm.name.$error.required}">
                         <label for="inp-name" class="col-sm-2 control-label">Name</label>
                         <div class="col-sm-10">
-                            <input type="text" class="form-control" id="inp-name" name="name" placeholder="Alert name (will be shown on dashboard)" ng-model="alert.name" required>
+                            <input type="text" class="form-control" id="inp-name" name="name" placeholder="Alert name (will be shown on dashboard)" ng-model="alert.name" required ng-focus="trForm.submitted && trForm.name.$error.required">
                         </div>
                     </div>
 
                     <div class="form-group" ng-class="{'has-error': trForm.submitted && trForm.check_command.$error.required}">
                         <label for="inp-command" class="col-sm-2 control-label"><a href="/docs/check-definitions.html" rel="help" target="docs">Check Command</a></label>
                         <div class="col-sm-10">
-                            <div id="inp-command" name="check_command" class="code-editor" ng-model="alert.check_command" code-language="python" code-editor required></div>
+                            <div id="inp-command" name="check_command" class="code-editor" ng-model="alert.check_command" code-language="python" code-editor required ng-focus="trForm.submitted && trForm.check_command.$error.required"></div>
                             <span class="help-block">Valid Python expression used to query the instances specified in entities filter.</span>
                         </div>
                     </div>
@@ -86,7 +86,7 @@
                         </div>
                     </div>
 
-                    <div class="form-group">
+                    <div class="form-group" ng-class="{'has-error': trForm.submitted && trForm.entities.$error['valid-json'] || trForm.entities.$error.required }">
                         <label for="inp-entities" class="col-sm-2 control-label">
                             <a href="/docs/alert-definitions.html#entities" rel="help" target="docs">Included Entities</a>
                             <div id="entity-filter-buttons">
@@ -102,7 +102,7 @@
                         </div>
                     </div>
 
-                    <div class="form-group">
+                    <div class="form-group" ng-class="{'has-error': trForm.submitted && trForm.entitiesExclude.$error['valid-json'] || trForm.entitiesExclude.$error.required }">
                         <label for="inp-entities-exclude" class="col-sm-2 control-label">
                             <a href="/docs/alert-definitions.html#entities" rel="help" target="docs">Excluded Entities</a>
                             <div id="entity-exclude-filter-buttons">
@@ -132,8 +132,11 @@
                         </div>
                     </div>
 
-                    <div class="col-sm-12 text-right no-padding">
-                        <button id="download-button" class="btn btn-warning" ng-click="TrialRunCtrl.download($event)"><i class="fa fa-fw fa-download" ></i>Download</button>
+                    <div class="form-group">
+                        <div class="col-sm-12 text-right">
+                            <button class="btn btn-primary" ng-click="TrialRunCtrl.save()"><i class="fa fa-fw fa-save" ></i>Save as New Check    </button>
+                            <button id="download-button" class="btn btn-warning" ng-click="TrialRunCtrl.download($event)"><i class="fa fa-fw fa-download" ></i>Download</button>
+                        </div>
                     </div>
                 </form>
             </div>
