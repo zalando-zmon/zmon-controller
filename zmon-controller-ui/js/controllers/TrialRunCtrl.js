@@ -308,6 +308,7 @@ var TrialRunCtrl = function ($scope, $interval, timespanFilter, localStorageServ
             checkImport.command = $scope.alert.check_command;
             checkImport.interval = $scope.alert.interval;
             checkImport.description = "";
+            checkImport.status = "ACTIVE";
 
             CommunicationService.updateCheckDefinition(checkImport).then(function(data) {
                 FeedbackMessageService.showSuccessMessage('Saved successfully; redirecting...', 500, function() {
