@@ -104,7 +104,7 @@ public class ZMonRestService extends AbstractZMonController {
     }
 
     @RequestMapping(value="/updateCheckDefinition")
-    public ResponseEntity<CheckDefinitionImport> updateCheckDefinition(@RequestBody(required=true) CheckDefinitionImport check) {
+    public ResponseEntity<CheckDefinition> updateCheckDefinition(@RequestBody(required=true) CheckDefinitionImport check) {
         if(check.getOwningTeam() == null || check.getOwningTeam().equals("")) {
             if(authService.getTeams().isEmpty()) {
                 check.setOwningTeam("ZMON");
@@ -115,8 +115,8 @@ public class ZMonRestService extends AbstractZMonController {
         }
 
         check.setLastModifiedBy(authService.getUserName());
-        service.createOrUpdateCheckDefinition(check);
-        return new ResponseEntity<>(check, HttpStatus.OK);
+        CheckDefinition saved = service.createOrUpdateCheckDefinition(check);
+        return new ResponseEntity<>(saved, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/checkDefinition", method = RequestMethod.GET)
