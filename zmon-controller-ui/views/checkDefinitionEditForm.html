@@ -83,30 +83,6 @@
         </div>
     </div>
 
-    <div class="form-group" ng-class="{'has-error': cdForm.submitted && cdForm.entitiesExclude.$error['valid-json'] || cdForm.entitiesExclude.$error.required }">
-        <label for="inp-entities-exclude" class="col-sm-2 control-label">
-            <a href="/docs/check-definitions.html#entities" rel="help" target="docs">Excluded Entities</a>
-            <div id="entity-exclude-filter-buttons">
-                <button type="button" class="btn btn-primary fa fa-keyboard-o" ng-model="entityExcludeFilterInputMethod" btn-radio="'text'" title="Plain text input"></button>
-                <button type="button" class="btn btn-primary fa fa-check-square-o" ng-model="entityExcludeFilterInputMethod" btn-radio="'form'" title="Form input"></button>
-            </div>
-        </label>
-        <div class="col-sm-10" ng-class="{'has-error': cdForm.submitted && cdForm.entitiesExclude.$error['non-empty-json']}">
-            <div id="inp-entities-exclude" name="entitiesExclude" ng-show="entityExcludeFilterInputMethod == 'text'" class="code-editor" ng-model="entityExcludeFilter.textEntityFilters" json non-empty-json code-editor required></div>
-
-            <div ng-show="entityExcludeFilterInputMethod == 'form'">
-                <entity-filter-container entity-filter-types="entityExcludeFilter.types" form-entity-filters="entityExcludeFilter.formEntityFilters" invalid-json="cdForm.entitiesExclude.$error['valid-json']" empty-json="cdForm.entitiesExclude.$error['non-empty-json']"></entity-filter-container>
-            </div>
-        </div>
-    </div>
-
-    <div class="form-group">
-        <label for="inp-period" class="col-sm-2 control-label"><a href="/docs/check-definitions.html#time-periods" rel="help" target="docs">Time Period</a></label>
-        <div class="col-sm-10">
-            <input class="form-control" id="inp-period" ng-model="check.period" placeholder="Notification time period (e.g. 'wd {Mon-Fri} hr {9-16}')">
-        </div>
-    </div>
-
     <div class="form-group" ng-class="{'has-error': cdForm.submitted && (cdForm.interval.$error.required || cdForm.interval.$error.number)}">
         <label for="inp-interval" class="col-sm-2 control-label"><a href="/docs/check-definitions.html#interval" rel="help" target="docs">Interval</a></label>
         <div class="col-sm-10">
