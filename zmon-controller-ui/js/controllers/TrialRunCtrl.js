@@ -302,7 +302,13 @@ var TrialRunCtrl = function ($scope, $interval, timespanFilter, localStorageServ
                 return FeedbackMessageService.showErrorMessage('JSON format is incorrect' + ex);
             }
 
-            CommunicationService.updateCheckDefinition($scope.alert).then(function(data) {
+            var checkImport = {}
+            checkImport.name = $scope.alert.name;
+            checkImport.entities = $scope.alert.entities;
+            checkImport.command = $scope.alert.check_command;
+            checkImport.interval = $scope.alert.interval;
+
+            CommunicationService.updateCheckDefinition(checkImport).then(function(data) {
                 FeedbackMessageService.showSuccessMessage('Saved successfully; redirecting...', 500, function() {
                     $location.path('/check-details/' + data.id);
                 });
