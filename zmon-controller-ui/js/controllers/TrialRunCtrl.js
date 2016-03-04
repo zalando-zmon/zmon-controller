@@ -312,7 +312,7 @@ var TrialRunCtrl = function ($scope, $interval, timespanFilter, localStorageServ
 
             CommunicationService.updateCheckDefinition(checkImport).then(function(data) {
                 FeedbackMessageService.showSuccessMessage('Saved successfully; redirecting...', 500, function() {
-                    $location.path('/check-details/' + data.id);
+                    $location.path('/check-definitions/view/' + data.id);
                 });
             });
         } else {
