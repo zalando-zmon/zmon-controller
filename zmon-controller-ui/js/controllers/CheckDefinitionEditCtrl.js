@@ -9,26 +9,14 @@ angular.module('zmon2App').controller('CheckDefinitionEditCtrl', ['$scope', '$ro
         $scope.paramTypes = ['string', 'int', 'boolean'];
         $scope.allTags = [];
         $scope.defaultEntitiesFilter = [];
-        $scope.defaultEntitiesExcludeFilter = [];
-        $scope.defaultNotifications = [];
 
         $scope.entityFilterInputMethod = 'text';
-        $scope.entityExcludeFilterInputMethod = 'text';
 
         // Keep account of overwritten Properties and Parameters on inherit mode
         $scope.oProps = [];
         $scope.oParams = [];
 
         $scope.entityFilter = {
-            "types":
-            [{
-                "type": "GLOBAL"
-            }],
-            formEntityFilters: [],
-            textEntityFilters: '[]'
-        };
-
-        $scope.entityExcludeFilter = {
             "types":
             [{
                 "type": "GLOBAL"
@@ -86,20 +74,10 @@ angular.module('zmon2App').controller('CheckDefinitionEditCtrl', ['$scope', '$ro
                         $scope.check.entities = JSON.parse($scope.entityFilter.textEntityFilters);
                     }
 
-                    if ($scope.entityExcludeFilter.textEntityFilters === '') {
-                        delete $scope.check.entities_exclude;
-                    } else {
-                        $scope.check.entities_exclude = JSON.parse($scope.entityExcludeFilter.textEntityFilters);
-                    }
-
                     if ($scope.oParams.length === 0) {
                         delete $scope.check.parameters;
                     } else {
                         $scope.check.parameters = $scope.formParametersObject();
-                    }
-
-                    if (typeof $scope.check.period === 'undefined') {
-                        $scope.check.period = "";
                     }
 
                     CommunicationService.updateCheckDefinition($scope.check).then(function(data) {
@@ -142,8 +120,6 @@ angular.module('zmon2App').controller('CheckDefinitionEditCtrl', ['$scope', '$ro
 
                     $scope.entityFilter.formEntityFilters = response.entities || [];
                     $scope.entityFilter.textEntityFilters = JSON.stringify(response.entities, null, $scope.INDENT) || '[]';
-                    $scope.entityExcludeFilter.formEntityFilters = response.entities_exclude || [];
-                    $scope.entityExcludeFilter.textEntityFilters = JSON.stringify(response.entities_exclude, null, $scope.INDENT) || '[]';
                 }
             );
         };
@@ -215,13 +191,11 @@ angular.module('zmon2App').controller('CheckDefinitionEditCtrl', ['$scope', '$ro
                         nextFilterType.type = p;
                         angular.extend(nextFilterType, data[p]);
                         $scope.entityFilter.types.push(nextFilterType);
-                        $scope.entityExcludeFilter.types.push(nextFilterType);
                     }
                 }
 
                 // Sort entity filter types.
                 $scope.entityFilter.types = _.sortBy($scope.entityFilter.types, "type");
-                $scope.entityExcludeFilter.types = _.sortBy($scope.entityExcludeFilter.types, "type");
             }
         );
 
@@ -239,40 +213,12 @@ angular.module('zmon2App').controller('CheckDefinitionEditCtrl', ['$scope', '$ro
             }
         }, true);
 
-        // Same as above, for excluded entities.
-        $scope.$watch('entityExcludeFilter.formEntityFilters', function (newVal, oldVal) {
-            if ($scope.entityExcludeFilterInputMethod === 'form') {
-                // Process a copy so we safely remove $$hashKey property which we don't want to be transfered to entityExcludeFilter.textEntityFilters
-                var formEntityFiltersClone = angular.copy($scope.entityExcludeFilter.formEntityFilters);
-                for (var p in formEntityFiltersClone) {
-                    if (formEntityFiltersClone.hasOwnProperty(p) && p === '$$hashKey') {
-                        delete formEntityFiltersClone[p];
-                    }
-                }
-                $scope.entityExcludeFilter.textEntityFilters = JSON.stringify(formEntityFiltersClone, null, $scope.INDENT);
-                $scope.check.entities_exclude = angular.copy(formEntityFiltersClone);
-            }
-        }, true);
-
         // If entity filter input method is 'text', reflect changes of entityFilter.textEntityFilters on entityFilter.formEntityFilters
         $scope.$watch('entityFilter.textEntityFilters', function (newVal, oldVal) {
             if ($scope.entityFilterInputMethod === 'text') {
                 try {
                     $scope.check.entities = JSON.parse($scope.entityFilter.textEntityFilters);
                     $scope.entityFilter.formEntityFilters = JSON.parse($scope.entityFilter.textEntityFilters);
-                    $scope.invalidFormat = false;
-                } catch (ex) {
-                    $scope.invalidFormat = true;
-                }
-            }
-        }, true);
-
-        // Same as above, for excluded entities.
-        $scope.$watch('entityExcludeFilter.textEntityFilters', function (newVal, oldVal) {
-            if ($scope.entityExcludeFilterInputMethod === 'text') {
-                try {
-                    $scope.check.entities_exclude = JSON.parse($scope.entityExcludeFilter.textEntityFilters);
-                    $scope.entityExcludeFilter.formEntityFilters = JSON.parse($scope.entityExcludeFilter.textEntityFilters);
                     $scope.invalidFormat = false;
                 } catch (ex) {
                     $scope.invalidFormat = true;
