@@ -16,6 +16,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import de.zalando.zmon.config.KairosDBProperties;
 import de.zalando.zmon.config.MetricCacheProperties;
+import de.zalando.zmon.domain.*;
 import de.zalando.zmon.exception.ZMonException;
 import de.zalando.zmon.persistence.GrafanaDashboardSprocService;
 import de.zalando.zmon.rest.EntityApi;
@@ -54,11 +55,6 @@ import com.fasterxml.jackson.databind.node.LongNode;
 
 import com.google.common.collect.Lists;
 
-import de.zalando.zmon.domain.CheckDefinition;
-import de.zalando.zmon.domain.CheckHistoryGroupResult;
-import de.zalando.zmon.domain.CheckHistoryResult;
-import de.zalando.zmon.domain.CheckResults;
-import de.zalando.zmon.domain.ExecutionStatus;
 import de.zalando.zmon.rest.domain.*;
 import de.zalando.zmon.service.ZMonService;
 import org.kairosdb.client.builder.DataFormatException;
@@ -105,6 +101,12 @@ public class ZMonRestService extends AbstractZMonController {
                 : service.getCheckDefinitions(null, teams);
 
         return new ResponseEntity<>(defs, HttpStatus.OK);
+    }
+
+    @RequestMapping(value="/updateCheckDefinition")
+    public ResponseEntity<CheckDefinitionImport> updateCheckDefinition(@RequestBody(required=true) CheckDefinitionImport check) {
+        service.createOrUpdateCheckDefinition(check);
+        return new ResponseEntity<>(check, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/checkDefinition", method = RequestMethod.GET)
