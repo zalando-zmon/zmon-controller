@@ -68,27 +68,19 @@ angular.module('zmon2App').controller('CheckDefinitionEditCtrl', ['$scope', '$ro
             if ($scope.cdForm.$valid) {
                 try {
 
-                    var check_import = {};
-                    check_import.name = $scope.check.name;
-                    check_import.command = $scope.check.check_command;
-
                     if ($scope.entityFilter.textEntityFilters === '') {
                         delete $scope.check.entities;
                     } else {
                         $scope.check.entities = JSON.parse($scope.entityFilter.textEntityFilters);
-                        check_import.entities = $scope.check.entities;
                     }
 
                     if ($scope.oParams.length === 0) {
                         delete $scope.check.parameters;
                     } else {
                         $scope.check.parameters = $scope.formParametersObject();
-                        check_import.parameters = $scope.check.parameters;
                     }
 
-                    check_import.interval = $scope.check.interval;
-
-                    CommunicationService.updateCheckDefinition(check_import).then(function(data) {
+                    CommunicationService.updateCheckDefinition($scope.check).then(function(data) {
                         FeedbackMessageService.showSuccessMessage('Saved successfully; redirecting...', 500, function() {
                             $location.path('/check-details/' + data.id);
                         });
