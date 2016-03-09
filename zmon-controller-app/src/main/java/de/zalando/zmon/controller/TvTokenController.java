@@ -1,22 +1,25 @@
 package de.zalando.zmon.controller;
 
+import static de.zalando.zmon.security.tvtoken.TvTokenService.X_FORWARDED_FOR;
 import static java.util.concurrent.TimeUnit.DAYS;
+
+import java.util.UUID;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.util.Base64Utils;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.util.WebUtils;
 
-import com.google.common.base.Joiner;
-import com.google.common.base.Splitter;
-
-import de.zalando.zmon.persistence.OnetimeTokensSProcService;
 import de.zalando.zmon.security.tvtoken.TvTokenService;
 
 /**
@@ -27,10 +30,7 @@ import de.zalando.zmon.security.tvtoken.TvTokenService;
 @Controller
 public class TvTokenController {
 
-    private OnetimeTokensSProcService oneTimeTokenSProcService;
-
-    private final Joiner cookieValueJoiner = Joiner.on("|").useForNull("UNKNOWN");
-    private final Splitter cookieValueSplitter = Splitter.on("|").omitEmptyStrings();
+    private final Logger log = LoggerFactory.getLogger(TvTokenController.class);
 
     private final TvTokenService tvTokenService;
 
@@ -41,32 +41,45 @@ public class TvTokenController {
 
     @RequestMapping("/tv/{token}")
     public String handleToken(@PathVariable String token,
-            @RequestHeader(name = "X-FORWARDED-FOR", required = false) String bindIp,
-            @CookieValue(value = "JSESSIONID", required = false) String sessionId, HttpServletRequest request,
+            @RequestHeader(name = X_FORWARDED_FOR, required = false) String bindIp,
+            HttpServletRequest request,
             HttpServletResponse response) {
-        if (!token.isEmpty() && token.length() > 5) {
+        if (StringUtils.hasText(token) && token.length() > 5) {
             // check-token
             if (bindIp == null) {
                 bindIp = remoteIp(request);
             }
-            if (isValidToken(token, bindIp, sessionId)) {
-                String cookieValue = createCookieValue(token, bindIp, sessionId);
-                Cookie tokenCookie = new Cookie("ZMON_TV", cookieValue);
-                tokenCookie.setComment("ZMON_TV enables access for Team monitors.");
-                tokenCookie.setMaxAge((int) DAYS.toSeconds(365));
-                tokenCookie.setPath("/");
-                response.addCookie(tokenCookie);
+            String bindRandom = UUID.randomUUID().toString();
+            if (isValidToken(token, bindIp, bindRandom)) {
+                bindZmonTvCookie(token, request, response);
+                bindZmonUidCookie(bindRandom, request, response);
+            } else {
+                log.warn("INVALID TOKEN PASSED : {}. Delete existent Cookies.", token);
+                deleteCookiesIfExistent(request, response);
             }
+        } else {
+            log.warn("INVALID TOKEN PASSED : {}. Delete existent Cookies.", token);
+            deleteCookiesIfExistent(request, response);
         }
         return "redirect:/";
     }
 
-    protected boolean isValidToken(String token, String bindIp, String sessionId) {
-        return tvTokenService.isValidToken(token, bindIp, sessionId);
+
+    protected void deleteCookiesIfExistent(HttpServletRequest request, HttpServletResponse response) {
+        Cookie zmonTvCookie = WebUtils.getCookie(request, TvTokenService.ZMON_TV);
+        if (zmonTvCookie != null) {
+            zmonTvCookie.setMaxAge(0);
+            response.addCookie(zmonTvCookie);
+        }
+        Cookie zmonIdCookie = WebUtils.getCookie(request, TvTokenService.ZMON_TV_ID);
+        if (zmonIdCookie != null) {
+            zmonIdCookie.setMaxAge(0);
+            response.addCookie(zmonIdCookie);
+        }
     }
 
-    protected String createCookieValue(String token, String bindIp, String sessionId) {
-        return tvTokenService.createCookieValue(token, bindIp, sessionId);
+    protected boolean isValidToken(String token, String bindIp, String sessionId) {
+        return tvTokenService.isValidToken(token, bindIp, sessionId);
     }
 
     public static String remoteIp(HttpServletRequest request) {
@@ -76,4 +89,31 @@ public class TvTokenController {
         return "UNKNOWN";
     }
 
+    protected void bindZmonTvCookie(String token, HttpServletRequest request, HttpServletResponse response) {
+        String cookieValue = Base64Utils.encodeToString(token.getBytes());
+        Cookie cookie = WebUtils.getCookie(request, TvTokenService.ZMON_TV);
+        if (cookie == null) {
+            cookie = new Cookie(TvTokenService.ZMON_TV, cookieValue);
+        } else {
+            cookie.setValue(cookieValue);
+        }
+        cookie.setComment("ZMON_TV enables access for Team monitors.");
+        cookie.setMaxAge((int) DAYS.toSeconds(365));
+        cookie.setPath("/");
+        response.addCookie(cookie);
+    }
+
+    private void bindZmonUidCookie(String bindRandom, HttpServletRequest request, HttpServletResponse response) {
+        String cookieValue = Base64Utils.encodeToString(bindRandom.getBytes());
+        Cookie cookie = WebUtils.getCookie(request, TvTokenService.ZMON_TV_ID);
+        if (cookie == null) {
+            cookie = new Cookie(TvTokenService.ZMON_TV_ID, cookieValue);
+        } else {
+            cookie.setValue(cookieValue);
+        }
+        cookie.setComment("ZMON_TV_ID enables access for Team monitors.");
+        cookie.setMaxAge((int) DAYS.toSeconds(365));
+        cookie.setPath("/");
+        response.addCookie(cookie);
+    }
 }

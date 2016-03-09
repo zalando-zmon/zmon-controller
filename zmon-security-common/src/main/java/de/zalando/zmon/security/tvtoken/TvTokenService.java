@@ -1,6 +1,6 @@
 package de.zalando.zmon.security.tvtoken;
 
-import org.springframework.util.Base64Utils;
+import javax.servlet.http.HttpServletRequest;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
@@ -8,6 +8,12 @@ import com.google.common.base.Splitter;
 import de.zalando.zmon.persistence.OnetimeTokensSProcService;
 
 public class TvTokenService {
+
+    public static final String ZMON_TV_ID = "ZMON_TV_ID";
+
+    public static final String ZMON_TV = "ZMON_TV";
+
+    public static final String X_FORWARDED_FOR = "X-FORWARDED-FOR";
 
     private final OnetimeTokensSProcService oneTimeTokenSProcService;
 
@@ -18,15 +24,11 @@ public class TvTokenService {
         this.oneTimeTokenSProcService = onetimeTokensSProcService;
     }
 
-    public String createCookieValue(String token, String bindIp, String sessionId) {
-        String cookieValue = cookieValueJoiner.join(token, bindIp, sessionId);
-        String encodedValue = Base64Utils.encodeToString(cookieValue.getBytes());
-        return encodedValue;
-    }
-
-    public Iterable<String> decodeCookieValue(String encodedCookieValue) {
-        String decodedValue = new String(Base64Utils.decodeFromString(encodedCookieValue));
-        return cookieValueSplitter.split(decodedValue);
+    public static String remoteIp(HttpServletRequest request) {
+        if (request != null) {
+            return request.getRemoteAddr();
+        }
+        return "UNKNOWN";
     }
 
     // TODO use sproc

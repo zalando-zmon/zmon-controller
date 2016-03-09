@@ -13,6 +13,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.RememberMeServices;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
+import org.springframework.util.Base64Utils;
+import org.springframework.util.StringUtils;
 import org.springframework.web.util.WebUtils;
 
 import com.google.common.collect.ImmutableSet;
@@ -33,13 +35,24 @@ public class ZMonTvRememberMeServices implements RememberMeServices, LogoutHandl
     @Override
     public Authentication autoLogin(HttpServletRequest request, HttpServletResponse response) {
         log.warn("AUTO_LOGIN_CALLED : ");
-        Cookie cookie = WebUtils.getCookie(request, "ZMON_TV");
-        if (cookie != null) {
-            log.warn("COOKIE_WAS_FOUND_COULD_TRY_LOGIN");
-            List<String> values = Lists.newArrayList(tvTokenService.decodeCookieValue(cookie.getValue()));
-            log.warn("FOUND_VALUES : {}", values.toString());
-            List<GrantedAuthority> authorities = Lists.newArrayList(new ZMonViewerAuthority("ZMON_TV", ImmutableSet.of()));
-            return new RememberMeAuthenticationToken("ZMON_TV", "ZMON_TV_" + values.get(0), authorities);
+        Cookie zmonTvToken = WebUtils.getCookie(request, TvTokenService.ZMON_TV);
+        Cookie zmonIdToken = WebUtils.getCookie(request, TvTokenService.ZMON_TV_ID);
+        if (zmonTvToken != null && zmonIdToken != null) {
+            log.warn("COOKIES_WERE_FOUND_COULD_TRY_LOGIN");
+
+            String token = new String(Base64Utils.decode(zmonTvToken.getValue().getBytes()));
+            String id = new String(Base64Utils.decode(zmonIdToken.getValue().getBytes()));
+            String ip = request.getHeader(TvTokenService.X_FORWARDED_FOR);
+            if (!StringUtils.hasText(ip)) {
+                ip = TvTokenService.remoteIp(request);
+            }
+
+            log.info("FOUND_VALUES - token: {}, id: {}, ip: {}", token, id, ip);
+            if (tvTokenService.isValidToken(token, ip, id)) {
+                List<GrantedAuthority> authorities = Lists
+                        .newArrayList(new ZMonViewerAuthority("ZMON_TV", ImmutableSet.of()));
+                return new RememberMeAuthenticationToken("ZMON_TV", "ZMON_TV_" + token, authorities);
+            }
         }
         // no success
         return null;
