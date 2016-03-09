@@ -40,6 +40,7 @@ public class ZauthTeamService implements TeamService {
 
         restTemplate = new StupsOAuth2RestTemplate(new StupsTokensAccessTokenProvider("team-service", accessTokens));
         log.info("Configured Team Service with URL {}", zauthProperties.getTeamServiceUrl());
+        log.info("Overlay configured: {}", zauthProperties.getTeamOverlay().entrySet());
     }
 
     @Override
@@ -59,7 +60,9 @@ public class ZauthTeamService implements TeamService {
         }
 
         if(zauthProperties.getTeamOverlay().containsKey(username)) {
-            result.addAll(zauthProperties.getTeamOverlay().get(username));
+            List<String> teams = zauthProperties.getTeamOverlay().get(username);
+            log.info("Adding teams from overlay to {}: {}", username, teams);
+            result.addAll(teams);
         }
 
         return result;
