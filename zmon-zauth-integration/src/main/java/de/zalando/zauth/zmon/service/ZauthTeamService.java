@@ -58,6 +58,10 @@ public class ZauthTeamService implements TeamService {
             log.error("Failed to call team service, no teams for now!", ex);
         }
 
+        if(zauthProperties.getTeamOverlay().containsKey(username)) {
+            result.addAll(zauthProperties.getTeamOverlay().get(username));
+        }
+
         return result;
     }
 }

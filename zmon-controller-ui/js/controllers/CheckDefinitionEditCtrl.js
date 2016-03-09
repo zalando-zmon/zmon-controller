@@ -53,6 +53,21 @@ angular.module('zmon2App').controller('CheckDefinitionEditCtrl', ['$scope', '$ro
             }
         ];
 
+        $scope.statusOptions = [
+            {
+                'value': 'ACTIVE',
+                'label': 'ACTIVE'
+            },
+            {
+                'value': 'INACTIVE',
+                'label': 'INACTIVE'
+            },
+            {
+                'value': 'DELETED',
+                'label': 'DELETED'
+            }
+        ];
+
         $scope.INDENT = '    ';
 
         // for route '/check-definitions/edit/:checkId' [edit existing check]
