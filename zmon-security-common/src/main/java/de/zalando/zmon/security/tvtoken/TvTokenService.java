@@ -4,9 +4,6 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.google.common.base.Joiner;
-import com.google.common.base.Splitter;
-
 import de.zalando.zmon.persistence.OnetimeTokensSProcService;
 
 public class TvTokenService {
@@ -18,9 +15,6 @@ public class TvTokenService {
     public static final String X_FORWARDED_FOR = "X-FORWARDED-FOR";
 
     private final OnetimeTokensSProcService oneTimeTokenSProcService;
-
-    private final Joiner cookieValueJoiner = Joiner.on("|").useForNull("UNKNOWN");
-    private final Splitter cookieValueSplitter = Splitter.on("|").omitEmptyStrings();
 
     public TvTokenService(OnetimeTokensSProcService onetimeTokensSProcService) {
         this.oneTimeTokenSProcService = onetimeTokensSProcService;
