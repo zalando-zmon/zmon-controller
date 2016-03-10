@@ -1,5 +1,7 @@
 package de.zalando.zmon.security.tvtoken;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 
 import com.google.common.base.Joiner;
@@ -33,10 +35,8 @@ public class TvTokenService {
 
     // TODO use sproc
     public boolean isValidToken(String token, String bindIp, String sessionId) {
-        return true;
-        // List<Integer> result =
-        // oneTimeTokenSProcService.bindOnetimeToken(token, bindIp, sessionId);
-        // return result.size() > 0 ? true : false;
+        List<Integer> result = oneTimeTokenSProcService.bindOnetimeToken(token, bindIp, sessionId);
+        return result.size() > 0 ? true : false;
     }
 
 
