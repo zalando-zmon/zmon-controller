@@ -67,18 +67,15 @@ public class ZMonTvRememberMeServices implements RememberMeServices, LogoutHandl
 
     @Override
     public void loginFail(HttpServletRequest request, HttpServletResponse response) {
-        log.warn("LOGIN_FAILED_CALLED");
     }
 
     @Override
     public void loginSuccess(HttpServletRequest request, HttpServletResponse response,
             Authentication successfulAuthentication) {
-        log.warn("LOGIN_SUCCESS_CALLED");
     }
 
     @Override
     public void logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
-        log.warn("LOGOUT_CALLED");
         tvTokenService.deleteCookiesIfExistent(request, response);
     }
 
