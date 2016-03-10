@@ -9,6 +9,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.codahale.metrics.Meter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +35,8 @@ public class TvTokenController {
 
     private final TvTokenService tvTokenService;
 
+    private final Meter rateLimit = new Meter();
+
     @Autowired
     public TvTokenController(TvTokenService tvTokenService) {
         this.tvTokenService = tvTokenService;
@@ -50,7 +53,8 @@ public class TvTokenController {
                 bindIp = remoteIp(request);
             }
             String bindRandom = UUID.randomUUID().toString();
-            if (isValidToken(token, bindIp, bindRandom)) {
+            rateLimit.mark();
+            if (rateLimit.getOneMinuteRate() < 5 && isValidToken(token, bindIp, bindRandom)) {
                 bindZmonTvCookie(token, request, response);
                 bindZmonUidCookie(bindRandom, request, response);
             } else {
