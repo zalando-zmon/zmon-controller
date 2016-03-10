@@ -2,9 +2,12 @@ package de.zalando.zmon.security.tvtoken;
 
 import java.util.List;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import de.zalando.zmon.persistence.OnetimeTokensSProcService;
+import org.springframework.web.util.WebUtils;
 
 public class TvTokenService {
 
@@ -33,5 +36,16 @@ public class TvTokenService {
         return result.size() > 0 ? true : false;
     }
 
-
+    public void deleteCookiesIfExistent(HttpServletRequest request, HttpServletResponse response) {
+        Cookie zmonTvCookie = WebUtils.getCookie(request, TvTokenService.ZMON_TV);
+        if (zmonTvCookie != null) {
+            zmonTvCookie.setMaxAge(0);
+            response.addCookie(zmonTvCookie);
+        }
+        Cookie zmonIdCookie = WebUtils.getCookie(request, TvTokenService.ZMON_TV_ID);
+        if (zmonIdCookie != null) {
+            zmonIdCookie.setMaxAge(0);
+            response.addCookie(zmonIdCookie);
+        }
+    }
 }

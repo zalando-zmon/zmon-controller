@@ -55,27 +55,13 @@ public class TvTokenController {
                 bindZmonUidCookie(bindRandom, request, response);
             } else {
                 log.warn("INVALID TOKEN PASSED : {}. Delete existent Cookies.", token);
-                deleteCookiesIfExistent(request, response);
+                tvTokenService.deleteCookiesIfExistent(request, response);
             }
         } else {
             log.warn("INVALID TOKEN PASSED : {}. Delete existent Cookies.", token);
-            deleteCookiesIfExistent(request, response);
+            tvTokenService.deleteCookiesIfExistent(request, response);
         }
         return "redirect:/";
-    }
-
-
-    protected void deleteCookiesIfExistent(HttpServletRequest request, HttpServletResponse response) {
-        Cookie zmonTvCookie = WebUtils.getCookie(request, TvTokenService.ZMON_TV);
-        if (zmonTvCookie != null) {
-            zmonTvCookie.setMaxAge(0);
-            response.addCookie(zmonTvCookie);
-        }
-        Cookie zmonIdCookie = WebUtils.getCookie(request, TvTokenService.ZMON_TV_ID);
-        if (zmonIdCookie != null) {
-            zmonIdCookie.setMaxAge(0);
-            response.addCookie(zmonIdCookie);
-        }
     }
 
     protected boolean isValidToken(String token, String bindIp, String sessionId) {
