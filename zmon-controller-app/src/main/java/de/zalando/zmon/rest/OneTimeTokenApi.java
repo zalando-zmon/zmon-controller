@@ -57,7 +57,7 @@ public class OneTimeTokenApi {
     }
 
     @ResponseBody
-    @RequestMapping(value="/", method=RequestMethod.GET)
+    @RequestMapping(value="", method=RequestMethod.GET)
     public List<OnetimeTokenInfo> getTokensByUser() {
         return dbService.getOnetimeTokensByUser(authService.getUserName());
     }
