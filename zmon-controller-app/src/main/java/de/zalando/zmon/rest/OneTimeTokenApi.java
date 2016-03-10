@@ -1,5 +1,6 @@
 package de.zalando.zmon.rest;
 
+import de.zalando.zmon.domain.OnetimeTokenInfo;
 import de.zalando.zmon.exception.ZMonException;
 import de.zalando.zmon.persistence.OnetimeTokensSProcService;
 import de.zalando.zmon.security.AuthorityService;
@@ -13,8 +14,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.websocket.server.PathParam;
 import java.io.IOException;
 import java.security.SecureRandom;
+import java.util.List;
 
 /**
  * Created by jmussler on 26.02.16.
@@ -51,5 +54,11 @@ public class OneTimeTokenApi {
         dbService.createOnetimeToken(authService.getUserName(), ipAddress, token);
 
         return new ResponseEntity<>(token, HttpStatus.OK);
+    }
+
+    @ResponseBody
+    @RequestMapping(value="/", method=RequestMethod.GET)
+    public List<OnetimeTokenInfo> getTokensByUser() {
+        return dbService.getOnetimeTokensByUser(authService.getUserName());
     }
 }
