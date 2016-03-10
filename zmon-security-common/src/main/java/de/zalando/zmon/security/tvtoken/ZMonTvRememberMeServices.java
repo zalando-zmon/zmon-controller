@@ -6,6 +6,8 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.codahale.metrics.Meter;
+import com.codahale.metrics.Timer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.RememberMeAuthenticationToken;
@@ -32,14 +34,13 @@ public class ZMonTvRememberMeServices implements RememberMeServices, LogoutHandl
         this.tvTokenService = tvTokenService;
     }
 
+    private Meter rateLimit = new Meter();
+
     @Override
     public Authentication autoLogin(HttpServletRequest request, HttpServletResponse response) {
-        log.warn("AUTO_LOGIN_CALLED : ");
         Cookie zmonTvToken = WebUtils.getCookie(request, TvTokenService.ZMON_TV);
         Cookie zmonIdToken = WebUtils.getCookie(request, TvTokenService.ZMON_TV_ID);
         if (zmonTvToken != null && zmonIdToken != null) {
-            log.warn("COOKIES_WERE_FOUND_COULD_TRY_LOGIN");
-
             String token = new String(Base64Utils.decode(zmonTvToken.getValue().getBytes()));
             String id = new String(Base64Utils.decode(zmonIdToken.getValue().getBytes()));
             String ip = request.getHeader(TvTokenService.X_FORWARDED_FOR);
@@ -47,8 +48,14 @@ public class ZMonTvRememberMeServices implements RememberMeServices, LogoutHandl
                 ip = TvTokenService.remoteIp(request);
             }
 
-            log.info("FOUND_VALUES - token: {}, id: {}, ip: {}", token, id, ip);
+            rateLimit.mark();
+            if(rateLimit.getOneMinuteRate()>5) {
+                // try not to hit database more than 5/sec for any given token
+                return null;
+            }
+
             if (tvTokenService.isValidToken(token, ip, id)) {
+                log.info("valid token found: {}, id: {}, ip: {}", token, id, ip);
                 List<GrantedAuthority> authorities = Lists
                         .newArrayList(new ZMonViewerAuthority("ZMON_TV", ImmutableSet.of()));
                 return new RememberMeAuthenticationToken("ZMON_TV", "ZMON_TV_" + token, authorities);
