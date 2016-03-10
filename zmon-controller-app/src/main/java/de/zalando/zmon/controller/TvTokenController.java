@@ -58,11 +58,9 @@ public class TvTokenController {
                 bindZmonTvCookie(token, request, response);
                 bindZmonUidCookie(bindRandom, request, response);
             } else {
-                log.warn("INVALID TOKEN PASSED : {}. Delete existent Cookies.", token);
                 tvTokenService.deleteCookiesIfExistent(request, response);
             }
         } else {
-            log.warn("INVALID TOKEN PASSED : {}. Delete existent Cookies.", token);
             tvTokenService.deleteCookiesIfExistent(request, response);
         }
         return "redirect:/";
