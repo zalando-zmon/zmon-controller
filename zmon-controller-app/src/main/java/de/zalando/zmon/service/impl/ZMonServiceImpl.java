@@ -3,6 +3,7 @@ package de.zalando.zmon.service.impl;
 import java.io.IOException;
 import java.util.*;
 
+import com.google.common.collect.Lists;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -112,7 +113,7 @@ public class ZMonServiceImpl implements ZMonService {
 
             p.sync();
         } finally {
-            redisPool.returnResource(jedis);
+            jedis.close();
         }
 
         return buildStatus(queueSize, lastUpdate, invocations);
@@ -271,7 +272,7 @@ public class ZMonServiceImpl implements ZMonService {
                 p.sync();
             }
         } finally {
-            redisPool.returnResource(jedis);
+            jedis.close();
         }
 
         final List<CheckResults> checkResults = buildCheckResults(results);
@@ -323,7 +324,7 @@ public class ZMonServiceImpl implements ZMonService {
                     p.sync();
                 }
             } finally {
-                redisPool.returnResource(jedis);
+                jedis.close();
             }
 
             checkResults = buildCheckResults(results);
@@ -373,7 +374,7 @@ public class ZMonServiceImpl implements ZMonService {
                 log.error("Failed retrieving auto complete properties");
             }
         } finally {
-            redisPool.returnResource(jedis);
+            jedis.close();
         }
         return null;
     }
@@ -415,7 +416,7 @@ public class ZMonServiceImpl implements ZMonService {
         try {
             values = jedis.lrange(RedisPattern.checkResult(checkId, entity), 0, limit);
         } finally {
-            redisPool.returnResource(jedis);
+            jedis.close();
         }
 
         if (null == values) {
@@ -489,7 +490,7 @@ public class ZMonServiceImpl implements ZMonService {
             }
             p.sync();
         } finally {
-            redisPool.returnResource(jedis);
+            jedis.close();
         }
 
         CheckChartResult cr = new CheckChartResult();
@@ -511,6 +512,6 @@ public class ZMonServiceImpl implements ZMonService {
 
     @Override
     public List<Integer> deleteUnusedCheckDef(int id, Collection<String> teams) {
-        return checkDefinitionSProc.deleteUnusedCheckDefinition(id, teams);
+        return checkDefinitionSProc.deleteUnusedCheckDefinition(id, Lists.newArrayList(teams));
     }
 }
