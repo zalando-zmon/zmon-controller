@@ -8,6 +8,9 @@ import de.zalando.zmon.exception.ZMonException;
 import de.zalando.zmon.security.permission.DefaultZMonPermissionService;
 import de.zalando.zmon.service.ZMonService;
 import javax.validation.Valid;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +26,8 @@ public class CheckDefinitionsApi extends AbstractZMonController {
     private final ZMonService zMonService;
 
     private final DefaultZMonPermissionService authorityService;
+
+    private static final Logger LOG = LoggerFactory.getLogger(CheckDefinitionsApi.class);
 
     @Autowired
     public CheckDefinitionsApi(final ZMonService zMonService, final DefaultZMonPermissionService authorityService) {
@@ -90,6 +95,8 @@ public class CheckDefinitionsApi extends AbstractZMonController {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public ResponseEntity<String> deleteUnusedCheck(@PathVariable(value = "id") int id) throws ZMonException {
+        LOG.info("Deleting unused check id={} user={} teams={}", id, authorityService.getUserName(), authorityService.getTeams());
+
         List<Integer> ids = zMonService.deleteUnusedCheckDef(id, authorityService.getTeams());
         if(ids.size() == 1) {
             return new ResponseEntity<>("Deleted", HttpStatus.OK);
