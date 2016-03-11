@@ -109,7 +109,7 @@ public class ZauthSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Bean
     public UserDetailsManager userDetailsManager() {
-        return new InMemoryUserDetailsManager(new ArrayList<UserDetails>());
+        return new InMemoryUserDetailsManager(new ArrayList<>());
     }
 
     @Bean
