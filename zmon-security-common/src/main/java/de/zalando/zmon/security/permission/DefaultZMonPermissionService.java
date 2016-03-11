@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import de.zalando.zmon.security.authority.ZMonUserAuthority;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -228,5 +229,9 @@ public class DefaultZMonPermissionService {
             throw new ZMonAuthorizationException(getUserName(), getUserAuthorities(),
                 "Your are not allowed to force alert evaluation");
         }
+    }
+
+    public boolean hasOnetimeTokenPrivilege() {
+        return getUserAuthorities().stream().anyMatch(x -> x instanceof ZMonUserAuthority);
     }
 }

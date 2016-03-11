@@ -45,6 +45,10 @@ public class OneTimeTokenApi {
     @ResponseBody
     @RequestMapping(value = "", method = RequestMethod.POST)
     public ResponseEntity<String> getNewToken(HttpServletRequest request) throws ZMonException, IOException {
+        if(!authService.hasOnetimeTokenPrivilege()) {
+            return new ResponseEntity<>("", HttpStatus.UNAUTHORIZED);
+        }
+
         String token = randomString(8);
 
         String ipAddress = request.getHeader("X-FORWARDED-FOR");
