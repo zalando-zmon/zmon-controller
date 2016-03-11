@@ -7,7 +7,17 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  */
 @ConfigurationProperties(prefix = "zmon")
 public class ControllerProperties {
+
+    public String staticUrl = "";
     public int grafanaMinInterval;
+
+    public String getStaticUrl() {
+        return staticUrl;
+    }
+
+    public void setStaticUrl(String staticUrl) {
+        this.staticUrl = staticUrl;
+    }
 
     public int getGrafanaMinInterval() {
         return grafanaMinInterval;

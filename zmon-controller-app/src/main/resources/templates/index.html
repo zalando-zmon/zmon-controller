@@ -9,51 +9,51 @@
     <meta property="sessionExpiredUrl" content="logout?error=session_expired" ></meta>
     <title>ZMON</title>
 
-    <link rel="stylesheet" type="text/css" href="asset/css/zalando-bootstrap.css?t=${buildTime}" />
-    <link rel="stylesheet" type="text/css" href="asset/css/font-awesome.min.css?t=${buildTime}" />
-    <link rel="stylesheet" type="text/css" href="styles/main.css?t=${buildTime}" />
-    <link rel="stylesheet" type="text/css" href="styles/charts.css?t=${buildTime}" />
-    <link rel="stylesheet" type="text/css" href="styles/dashboard.css?t=${buildTime}" />
-    <link rel="stylesheet" type="text/css" href="styles/errors.css?t=${buildTime}" />
-    <link rel="stylesheet" type="text/css" href="styles/forms.css?t=${buildTime}" />
-    <link rel="stylesheet" type="text/css" href="styles/performance.css?t=${buildTime}" />
-    <link rel="stylesheet" type="text/css" href="styles/cloud.css?t=${buildTime}" />
-    <link rel="stylesheet" type="text/css" href="styles/select2/zmon-select2.css?t=${buildTime}" />
-    <link rel="stylesheet" type="text/css" href="styles/select2/select2-bootstrap.css?t=${buildTime}" />
-    <link rel="stylesheet" type="text/css" href="styles/select2/select2.css?t=${buildTime}" />
-    <link rel="stylesheet" type="text/css" href="styles/nvd3/nv.d3.min.css?t=${buildTime}" />
+    <link rel="stylesheet" type="text/css" th:href="${staticUrl} + '/asset/css/zalando-bootstrap.css?t=@buildTime@'" />
+    <link rel="stylesheet" type="text/css" th:href="${staticUrl} + '/asset/css/font-awesome.min.css?t=@buildTime@'" />
+    <link rel="stylesheet" type="text/css" th:href="${staticUrl} + '/styles/main.css?t=@buildTime@'" />
+    <link rel="stylesheet" type="text/css" th:href="${staticUrl} + '/styles/charts.css?t=@buildTime@'" />
+    <link rel="stylesheet" type="text/css" th:href="${staticUrl} + '/styles/dashboard.css?t=@buildTime@'" />
+    <link rel="stylesheet" type="text/css" th:href="${staticUrl} + '/styles/errors.css?t=@buildTime@'" />
+    <link rel="stylesheet" type="text/css" th:href="${staticUrl} + '/styles/forms.css?t=@buildTime@'" />
+    <link rel="stylesheet" type="text/css" th:href="${staticUrl} + '/styles/performance.css?t=@buildTime@'" />
+    <link rel="stylesheet" type="text/css" th:href="${staticUrl} + '/styles/cloud.css?t=@buildTime@'" />
+    <link rel="stylesheet" type="text/css" th:href="${staticUrl} + '/styles/select2/zmon-select2.css?t=@buildTime@'" />
+    <link rel="stylesheet" type="text/css" th:href="${staticUrl} + '/styles/select2/select2-bootstrap.css?t=@buildTime@'" />
+    <link rel="stylesheet" type="text/css" th:href="${staticUrl} + '/styles/select2/select2.css?t=@buildTime@'" />
+    <link rel="stylesheet" type="text/css" th:href="${staticUrl} + '/styles/nvd3/nv.d3.min.css?t=@buildTime@'" />
 
-    <script src="lib/stacktrace/stacktrace.js?t=${buildTime}"></script>
-    <script src="lib/jquery/jquery.min.js?t=${buildTime}"></script>
-    <script src="lib/bootstrap/bootstrap.min.js?t=${buildTime}"></script>
-    <script src="lib/angularjs/angular.min.js?t=${buildTime}"></script>
-    <script src="lib/angular-local-storage/angular-local-storage.min.js?t=${buildTime}"></script>
-    <script src="lib/angularjs/angular-cookies.min.js?t=${buildTime}"></script>
-    <script src="lib/angularjs/angular-sanitize.min.js?t=${buildTime}"></script>
-    <script src="lib/angularjs/angular-route.min.js?t=${buildTime}"></script>
-    <script src="lib/ui-bootstrap/ui-bootstrap.min.js?t=${buildTime}"></script>
+    <script th:src="${staticUrl} + '/lib/stacktrace/stacktrace.js?t=@buildTime@'"></script>
+    <script th:src="${staticUrl} + '/lib/jquery/jquery.min.js?t=@buildTime@'"></script>
+    <script th:src="${staticUrl} + '/lib/bootstrap/bootstrap.min.js?t=@buildTime@'"></script>
+    <script th:src="${staticUrl} + '/lib/angularjs/angular.min.js?t=@buildTime@'"></script>
+    <script th:src="${staticUrl} + '/lib/angular-local-storage/angular-local-storage.min.js?t=@buildTime@'"></script>
+    <script th:src="${staticUrl} + '/lib/angularjs/angular-cookies.min.js?t=@buildTime@'"></script>
+    <script th:src="${staticUrl} + '/lib/angularjs/angular-sanitize.min.js?t=@buildTime@'"></script>
+    <script th:src="${staticUrl} + '/lib/angularjs/angular-route.min.js?t=@buildTime@'"></script>
+    <script th:src="${staticUrl} + '/lib/ui-bootstrap/ui-bootstrap.min.js?t=@buildTime@'"></script>
 
-    <script src="lib/flot/jquery.flot.min.js?t=${buildTime}"></script>
-    <script src="lib/flot/jquery.flot.time.min.js?t=${buildTime}"></script>
-    <script src="lib/flot/jquery.flot.selection.min.js?t=${buildTime}"></script>
-    <script src="lib/flot/jquery.flot.stack.min.js?t=${buildTime}"></script>
-    <script src="lib/flot/jquery.flot.tooltip.min.js?t=${buildTime}"></script>
-    <script src="lib/lodash/lodash.min.js?t=${buildTime}"></script>
-    <script src="lib/moment/moment.min.js?t=${buildTime}"></script>
-    <script src="lib/d3/d3.min.js?t=${buildTime}"></script>
+    <script th:src="${staticUrl} + '/lib/flot/jquery.flot.min.js?t=@buildTime@'"></script>
+    <script th:src="${staticUrl} + '/lib/flot/jquery.flot.time.min.js?t=@buildTime@'"></script>
+    <script th:src="${staticUrl} + '/lib/flot/jquery.flot.selection.min.js?t=@buildTime@'"></script>
+    <script th:src="${staticUrl} + '/lib/flot/jquery.flot.stack.min.js?t=@buildTime@'"></script>
+    <script th:src="${staticUrl} + '/lib/flot/jquery.flot.tooltip.min.js?t=@buildTime@'"></script>
+    <script th:src="${staticUrl} + '/lib/lodash/lodash.min.js?t=@buildTime@'"></script>
+    <script th:src="${staticUrl} + '/lib/moment/moment.min.js?t=@buildTime@'"></script>
+    <script th:src="${staticUrl} + '/lib/d3/d3.min.js?t=@buildTime@'"></script>
 
-    <script src="lib/raphael/raphael.2.1.0.min.js?t=${buildTime}"></script>
-    <script src="lib/justgage/justgage.1.0.1.js?t=${buildTime}"></script>
-    <script src="lib/showdown/showdown.js?t=${buildTime}"></script>
-    <script src="lib/ace/ace.js?t=${buildTime}" charset="utf-8"></script>
-    <script src="lib/jsonpath/jsonpath.js?t=${buildTime}" charset="utf-8"></script>
-    <script src="lib/js-yaml/js-yaml.min.js?t=${buildTime}"></script>
-    <script src="lib/angulartics/angulartics.min.js?t=${buildTime}" charset="utf-8"></script>
-    <script src="lib/angular-debounce/angular-debounce.js?t=${buildTime}" charset="utf-8"></script>
-    <script src="lib/select2/select2.min.js?t=${buildTime}" charset="utf-8"></script>
-    <script src="lib/colorhash/colorhash.js?t=${buildTime}" charset="utf-8"></script>
-    <script src="lib/d3/d3.min.js?t=${buildTime}" chartset="utf-8"></script>
-    <script src="lib/nvd3/build/nv.d3.min.js?t=${buildTime}" chartset="utf-8"></script>
+    <script th:src="${staticUrl} + '/lib/raphael/raphael.2.1.0.min.js?t=@buildTime@'"></script>
+    <script th:src="${staticUrl} + '/lib/justgage/justgage.1.0.1.js?t=@buildTime@'"></script>
+    <script th:src="${staticUrl} + '/lib/showdown/showdown.js?t=@buildTime@'"></script>
+    <script th:src="${staticUrl} + '/lib/ace/ace.js?t=@buildTime@'" charset="utf-8"></script>
+    <script th:src="${staticUrl} + '/lib/jsonpath/jsonpath.js?t=@buildTime@'" charset="utf-8"></script>
+    <script th:src="${staticUrl} + '/lib/js-yaml/js-yaml.min.js?t=@buildTime@'"></script>
+    <script th:src="${staticUrl} + '/lib/angulartics/angulartics.min.js?t=@buildTime@'" charset="utf-8"></script>
+    <script th:src="${staticUrl} + '/lib/angular-debounce/angular-debounce.js?t=@buildTime@'" charset="utf-8"></script>
+    <script th:src="${staticUrl} + '/lib/select2/select2.min.js?t=@buildTime@'" charset="utf-8"></script>
+    <script th:src="${staticUrl} + '/lib/colorhash/colorhash.js?t=@buildTime@'" charset="utf-8"></script>
+    <script th:src="${staticUrl} + '/lib/d3/d3.min.js?t=@buildTime@'" chartset="utf-8"></script>
+    <script th:src="${staticUrl} + '/lib/nvd3/build/nv.d3.min.js?t=@buildTime@'" chartset="utf-8"></script>
 
 </head>
 <body ng-class="activePage">
