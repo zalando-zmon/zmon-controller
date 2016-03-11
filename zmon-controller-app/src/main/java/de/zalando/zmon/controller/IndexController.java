@@ -1,5 +1,6 @@
 package de.zalando.zmon.controller;
 
+import de.zalando.zmon.config.ControllerProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -19,6 +20,7 @@ public class IndexController {
     private static final Joiner COMMA_JOINER = Joiner.on(',');
 
     // parameters
+    public static final String STATIC_URL = "staticUrl";
     private static final String HAS_SCHEDULE_DOWNTIME_PERMISSION = "hasScheduleDowntimePermission";
     private static final String HAS_DELETE_DOWNTIME_PERMISSION = "hasDeleteDowntimePermission";
     private static final String HAS_TRIAL_RUN_PERMISSION = "hasTrialRunPermission";
@@ -35,12 +37,16 @@ public class IndexController {
     @Autowired
     private DefaultZMonPermissionService authorityService;
 
+    @Autowired
+    private ControllerProperties controllerProperties;
+
     @Value("${zmon.cloud.checkid}")
     private int cloudCheckId;
 
     @RequestMapping(value = {"/"})
     public String index(Model model) {
 
+        model.addAttribute(STATIC_URL, controllerProperties.getStaticUrl());
 
         // TODO load all permissions in a single shot
         model.addAttribute(USER_NAME, authorityService.getUserName())

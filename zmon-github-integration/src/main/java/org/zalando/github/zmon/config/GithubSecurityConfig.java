@@ -31,6 +31,7 @@ import org.zalando.zmon.security.service.PresharedTokensResourceServerTokenServi
 import org.zalando.zmon.security.service.SimpleSocialUserDetailsService;
 
 import com.google.common.collect.ImmutableList;
+import de.zalando.zmon.security.WebSecurityConstants;
 
 import de.zalando.zmon.security.AuthorityService;
 import de.zalando.zmon.security.tvtoken.TvTokenService;
@@ -64,7 +65,7 @@ public class GithubSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(final WebSecurity web) throws Exception {
-        web.ignoring().antMatchers("/logo.png", "/favicon.ico", "/asset/**", "/styles/**", "/js/**", "/tv/**");
+        web.ignoring().antMatchers(WebSecurityConstants.IGNORED_PATHS);
     }
 
     @Override

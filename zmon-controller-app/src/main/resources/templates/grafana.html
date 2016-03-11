@@ -12,11 +12,11 @@
     <meta name="google" value="notranslate"></meta>
 
     <title>Grafana</title>
-    <link rel="stylesheet" href="css/grafana.dark.min.css" title="Dark" th:href="@{/grafana/css/grafana.dark.min.css}" />
-    <link rel="icon" type="image/png" href="img/fav32.png" th:href="@{/grafana/img/fav32.png}" />
+    <link rel="stylesheet" href="css/grafana.dark.min.css" title="Dark" th:href="${staticUrl} + '/grafana/css/grafana.dark.min.css'" />
+    <link rel="icon" type="image/png" href="img/fav32.png" th:href="${staticUrl} + '/grafana/img/fav32.png'" />
 
     <!-- build:js app/app.js -->
-    <script src="vendor/require/require.js" th:src="@{/grafana/vendor/require/require.js}"></script>
+    <script src="vendor/require/require.js" th:src="${staticUrl} + '/grafana/vendor/require/require.js'"></script>
     <script src="app/components/require.config.js" th:src="@{/grafana/app/components/require.config.js}"></script>
     <!-- endbuild -->
 

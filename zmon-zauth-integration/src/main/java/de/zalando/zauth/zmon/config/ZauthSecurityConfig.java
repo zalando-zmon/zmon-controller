@@ -26,6 +26,7 @@ import org.zalando.stups.oauth2.spring.server.DefaultAuthenticationExtractor;
 import org.zalando.stups.oauth2.spring.server.TokenInfoResourceServerTokenServices;
 import org.zalando.zmon.security.ZmonResourceServerConfigurer;
 import org.zalando.zmon.security.service.SimpleSocialUserDetailsService;
+import de.zalando.zmon.security.WebSecurityConstants;
 
 import de.zalando.zmon.security.tvtoken.TvTokenService;
 import de.zalando.zmon.security.tvtoken.ZMonTvRememberMeServices;
@@ -54,7 +55,7 @@ public class ZauthSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(final WebSecurity web) throws Exception {
-        web.ignoring().antMatchers("/logo.png", "/favicon.ico", "/asset/**", "/styles/**", "/js/**", "/tv/**");
+        web.ignoring().antMatchers(WebSecurityConstants.IGNORED_PATHS);
     }
 
     @Override
