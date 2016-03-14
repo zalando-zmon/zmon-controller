@@ -47,11 +47,11 @@ public class Grafana2Controller extends AbstractZMonController {
         dashboard.put("editable", true);
         dashboard.put("hideControls", true);
         dashboard.put("id", 36);
-        dashboard.put("oritinalTitle", "DashboardTest");
+        dashboard.put("originalTitle", "DashboardTest");
         dashboard.put("schemaVersion", 7);
         dashboard.put("sharedCrosshair", false);
         dashboard.put("timezone", "browser");
-        dashboard.put("title", "Grafana Zmon");
+        dashboard.put("title", "Grafana ZMON");
         dashboard.put("version", 26);
 
         ObjectNode annotations = mapper.createObjectNode();
