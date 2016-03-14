@@ -279,7 +279,7 @@ public class Grafana2Controller extends AbstractZMonController {
         ObjectNode model =  (ObjectNode) mapper.readTree(dashboard.dashboard);
         model.put("id", id);
 
-        if(model.has("refresh")) {
+        if(model.has("refresh") && model.get("refresh") != null) {
             String refresh = model.get("refresh").textValue();
             if (refresh.endsWith("s")) {
                 int interval = Integer.parseInt(refresh.replace("s", ""));
