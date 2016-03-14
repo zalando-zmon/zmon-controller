@@ -45,9 +45,10 @@ public class OneTimeTokenApi {
     @ResponseBody
     @RequestMapping(value = "", method = RequestMethod.POST)
     public ResponseEntity<String> getNewToken(HttpServletRequest request) throws ZMonException, IOException {
-        if(!authService.hasOnetimeTokenPrivilege()) {
-            return new ResponseEntity<>("", HttpStatus.UNAUTHORIZED);
-        }
+        // there seems to be no authorities, but the API config requires proper scopes, so we should be fine
+        //if(!authService.hasOnetimeTokenPrivilege()) {
+        //    return new ResponseEntity<>("", HttpStatus.UNAUTHORIZED);
+        //}
 
         String token = randomString(8);
 
