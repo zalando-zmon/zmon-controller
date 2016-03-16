@@ -1,6 +1,7 @@
 package de.zalando.zauth.zmon.config;
 
 import java.util.ArrayList;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -14,7 +15,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurer;
@@ -22,12 +22,14 @@ import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.social.security.SocialUserDetailsService;
 import org.springframework.social.security.SpringSocialConfigurer;
-import org.zalando.stups.oauth2.spring.server.DefaultAuthenticationExtractor;
 import org.zalando.stups.oauth2.spring.server.TokenInfoResourceServerTokenServices;
 import org.zalando.zmon.security.ZmonResourceServerConfigurer;
 import org.zalando.zmon.security.service.SimpleSocialUserDetailsService;
-import de.zalando.zmon.security.WebSecurityConstants;
 
+import com.google.common.collect.Sets;
+
+import de.zalando.zmon.security.TeamService;
+import de.zalando.zmon.security.WebSecurityConstants;
 import de.zalando.zmon.security.tvtoken.TvTokenService;
 import de.zalando.zmon.security.tvtoken.ZMonTvRememberMeServices;
 
@@ -116,8 +118,18 @@ public class ZauthSecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     public ResourceServerConfigurer zmonResourceServerConfigurer() {
         String tokenInfoUri = environment.getProperty("security.oauth2.resource.userInfoUri");
+
+        //TODO, we need a real 'teamService' here
+        TeamService teamService = new TeamService() {
+
+            @Override
+            public Set<String> getTeams(String username) {
+                return Sets.newHashSet();
+            }
+        };
+
         return new ZmonResourceServerConfigurer(
-                new TokenInfoResourceServerTokenServices(tokenInfoUri, new DefaultAuthenticationExtractor()));
+                new TokenInfoResourceServerTokenServices(tokenInfoUri, new ZmonAuthenticationExtractor(teamService)));
     }
 
 }
