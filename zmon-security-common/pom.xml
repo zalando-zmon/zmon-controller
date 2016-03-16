@@ -12,7 +12,7 @@
         <dependency>
             <groupId>org.zalando.stups</groupId>
             <artifactId>stups-spring-oauth2-server</artifactId>
-            <version>1.0.10</version>
+            <version>1.0.12</version>
         </dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
@@ -91,7 +91,6 @@
 		<dependency>
 			<groupId>io.dropwizard.metrics</groupId>
 			<artifactId>metrics-core</artifactId>
-			<version>3.1.2</version>
 		</dependency>
 	</dependencies>
 </project>
