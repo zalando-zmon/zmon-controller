@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.util.Assert;
 import org.zalando.stups.oauth2.spring.server.DefaultAuthenticationExtractor;
 
 import com.google.common.collect.ImmutableSet;
@@ -29,6 +30,7 @@ public class ZmonAuthenticationExtractor extends DefaultAuthenticationExtractor 
     @Override
     protected List<GrantedAuthority> createAuthorityList(Map<String, Object> map) {
         String uid = (String) map.get(UID);
+        Assert.hasText(uid, "'uid' should never be null or empty.");
         //
         ZMonUserAuthority userAuthority = new ZMonUserAuthority(uid, ImmutableSet.copyOf(teamService.getTeams(uid)));
         return Lists.newArrayList(userAuthority);

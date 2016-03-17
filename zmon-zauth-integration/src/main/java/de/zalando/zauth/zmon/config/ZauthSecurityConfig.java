@@ -1,7 +1,6 @@
 package de.zalando.zauth.zmon.config;
 
 import java.util.ArrayList;
-import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -26,8 +25,6 @@ import org.zalando.stups.oauth2.spring.server.TokenInfoResourceServerTokenServic
 import org.zalando.zmon.security.ZmonResourceServerConfigurer;
 import org.zalando.zmon.security.service.SimpleSocialUserDetailsService;
 
-import com.google.common.collect.Sets;
-
 import de.zalando.zmon.security.TeamService;
 import de.zalando.zmon.security.WebSecurityConstants;
 import de.zalando.zmon.security.tvtoken.TvTokenService;
@@ -49,6 +46,9 @@ public class ZauthSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private TvTokenService TvTokenService;
+
+    @Autowired
+    private TeamService teamService;
 
     @Autowired
     public void configureGlobal(final AuthenticationManagerBuilder auth) throws Exception {
@@ -118,16 +118,6 @@ public class ZauthSecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     public ResourceServerConfigurer zmonResourceServerConfigurer() {
         String tokenInfoUri = environment.getProperty("security.oauth2.resource.userInfoUri");
-
-        //TODO, we need a real 'teamService' here
-        TeamService teamService = new TeamService() {
-
-            @Override
-            public Set<String> getTeams(String username) {
-                return Sets.newHashSet();
-            }
-        };
-
         return new ZmonResourceServerConfigurer(
                 new TokenInfoResourceServerTokenServices(tokenInfoUri, new ZmonAuthenticationExtractor(teamService)));
     }
