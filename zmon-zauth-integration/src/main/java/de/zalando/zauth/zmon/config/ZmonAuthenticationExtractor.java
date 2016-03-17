@@ -28,8 +28,9 @@ public class ZmonAuthenticationExtractor extends DefaultAuthenticationExtractor 
     }
 
     @Override
-    protected List<GrantedAuthority> createAuthorityList(Map<String, Object> map) {
-        String uid = (String) map.get(UID);
+    protected List<GrantedAuthority> createAuthorityList(Map<String, Object> tokenInfoResponse) {
+        Assert.notNull(tokenInfoResponse, "'tokenInfoResponse' should never be null");
+        String uid = (String) tokenInfoResponse.get(UID);
         Assert.hasText(uid, "'uid' should never be null or empty.");
         //
         ZMonUserAuthority userAuthority = new ZMonUserAuthority(uid, ImmutableSet.copyOf(teamService.getTeams(uid)));
