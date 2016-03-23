@@ -6,6 +6,10 @@ angular.module('zmon2App').controller('DashboardCtrl', ['$scope', '$log', '$rout
         if (!$routeParams.dashboardId && $scope.dashboardId) {
             var p = '/dashboards/view/' + $scope.dashboardId;
             return $location.path(p);
+        } else if (!$scope.dashboardId) {
+            // No dashboard specified. Redirect to dashboard list.
+            var p = '/dashboards/';
+            return $location.path(p).search({'noFavourite':'true'});
         }
 
         $scope.DashboardCtrl = this;
@@ -191,9 +195,6 @@ angular.module('zmon2App').controller('DashboardCtrl', ['$scope', '$log', '$rout
                 });
                 return;
             }
-
-            // No dashboard specified. Redirect to dashboard list.
-            document.location.href = "#dashboards?noFavourite";
         };
 
 
@@ -361,7 +362,6 @@ angular.module('zmon2App').controller('DashboardCtrl', ['$scope', '$log', '$rout
          */
         $scope.startDashboardRefresh = function() {
             MainAlertService.startDataRefresh('DashboardCtrl', _.bind($scope.refreshDashboardAlerts, this), APP_CONST.DASHBOARD_REFRESH_RATE, true);
-
         };
 
         // Start data refresh
