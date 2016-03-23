@@ -4,6 +4,7 @@ div.demo {
   padding-top: 10px;
   padding-bottom: 10px;
 }
+
 div.demo:after {
   overflow: hidden;
   display: inline-block;
@@ -14,6 +15,30 @@ div.demo:after {
   animation:  ellipsis 2s infinite;
   content: "\2026"; /* ascii code for ellipsis */
 }
+
+.form-signin
+{
+    max-width: 400px;
+    margin: 30px auto 20px;
+    padding: 25px;
+    padding-top: 0px;
+    background-color: #fff;
+    border: 1px solid #e5e5e5;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.form-signin .form-control
+{
+    padding: 10px;
+}
+
+.form-signin h3.redirect-header
+{
+    padding-top: 20px;
+}
+
+
 @keyframes ellipsis {
   from {
     width: 2px;

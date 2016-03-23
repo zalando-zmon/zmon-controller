@@ -5,18 +5,6 @@ chart
     width: 95%;
 }
 
-.check-charts chart
-{
-    height: 200px;
-    margin: 20px;
-    margin-top: 0;
-}
-
-.check-charts .entity-charts
-{
-    margin-bottom: 20px;
-}
-
 label.check-chart-options
 {
     margin-left: 5px;

@@ -1,33 +1,8 @@
-/* LOGIN PAGE */
-/* -------------------------------------------------------------------------- */
-
-.form-signin
-{
-    max-width: 400px;
-    margin: 30px auto 20px;
-    padding: 25px;
-    padding-top: 0px;
-    background-color: #fff;
-    border: 1px solid #e5e5e5;
-    border-radius: 5px;
-    overflow: hidden;
-}
-
-.form-signin .form-control
-{
-    padding: 10px;
-}
-
 .form-control
 {
     font-size: 16px;
     height: auto;
     margin-bottom: 10px;
-}
-
-.form-signin h3.redirect-header
-{
-    padding-top: 20px;
 }
 
 .date-form a.apply
@@ -74,11 +49,6 @@
 .zmon-data-table th.name-col
 {
     width: 20%;
-}
-
-.zmon-data-table th.downtime-col
-{
-    width: 5%;
 }
 
 .zmon-data-table th.timestamp-col
@@ -189,11 +159,6 @@
     margin-top: 38px;
 }
 
-.reports-form button.export
-{
-    margin: 10px 5px 10px 0;
-}
-
 .reports-form input.radio
 {
     margin-right: 20px;
@@ -238,11 +203,6 @@
 select.parameter
 {
     height: 35px;
-}
-
-.btn-group.boolean
-{
-    float: left;
 }
 
 .parameter.has-error
@@ -299,11 +259,6 @@ select.parameter
     position: absolute;
     top: 5px;
     left: -3px;
-}
-
-.inheritance-overwrite .fa-warning
-{
-    color: #F08532;
 }
 
 .inheritance-template
