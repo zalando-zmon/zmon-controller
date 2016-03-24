@@ -29,7 +29,7 @@ angular.module('zmon2App').controller('AlertDefinitionCtrl', ['$scope', '$window
                     // remove saved team from local storage if it doesnt exist anymore
                     if ($scope.alertTeams.indexOf(localStorageService.get('teamFilter')) === -1) {
                         localStorageService.remove('teamFilter');
-                    };
+                    }
                 }
             );
 
@@ -59,7 +59,7 @@ angular.module('zmon2App').controller('AlertDefinitionCtrl', ['$scope', '$window
                     // Populate alert definition dict and set star to mark as new or old.
                     _.each(data, function(alert) {
                         var arr = alert.template ? $scope.templates : $scope.alertDefinitions;
-                        arr['All'].push(alert);
+                        arr.All.push(alert);
                         arr[alert.status].push(alert);
                         if (alert.last_modified > $scope.lastReviews[alert.status]) {
                             alert.star = true;
@@ -89,7 +89,7 @@ angular.module('zmon2App').controller('AlertDefinitionCtrl', ['$scope', '$window
             $scope.statusFilter = status;
             $scope.alertDefinitionsByStatus = $scope.alertDefinitions[status];
             $scope.templatesByStatus = $scope.templates[status];
-            if (typeof $scope.templatesByStatus === 'undefind' ||
+            if (typeof $scope.templatesByStatus === 'undefined' ||
                 ($scope.templatesByStatus && $scope.templatesByStatus.length === 0)) {
                     $scope.isFilteredByTemplate = false;
             }
@@ -102,11 +102,12 @@ angular.module('zmon2App').controller('AlertDefinitionCtrl', ['$scope', '$window
         $scope.setTemplateFilter = function(filter) {
             if (filter === 'template') {
                 $scope.isFilteredByTemplate = true;
-                return $scope.alertDefinitionsByStatus = $scope.templates[$scope.statusFilter];
+                $scope.alertDefinitionsByStatus = $scope.templates[$scope.statusFilter];
+                return;
             }
             $scope.isFilteredByTemplate = false;
             $scope.alertDefinitionsByStatus = $scope.alertDefinitions[$scope.statusFilter];
-        }
+        };
 
         // Check if tab contains new alerts
         $scope.tabHasStar = function(status) {

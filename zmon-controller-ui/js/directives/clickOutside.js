@@ -7,7 +7,7 @@ angular.module("zmon2App").directive('clickOutside', function($document){
             });
             $document.bind('click', function() {
                 scope.$apply(attr.clickOutside);
-            })
+            });
         }
-    }
+    };
 });

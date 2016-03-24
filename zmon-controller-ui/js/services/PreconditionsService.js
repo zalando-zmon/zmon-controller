@@ -11,14 +11,22 @@ angular.module('zmon2App').factory('PreconditionsService', ['FeedbackMessageServ
 
         service.isNotEmpty = function(expr, msg) {
             if (_.isEmpty(expr + '')) {
-                msg !== undefined ? FeedbackMessageService.showErrorMessage(msg) : FeedbackMessageService.showErrorMessage(IS_EMPTY_ERR);
+                if (msg !== undefined) {
+                    FeedbackMessageService.showErrorMessage(msg);
+                } else {
+                    FeedbackMessageService.showErrorMessage(IS_EMPTY_ERR);
+                }
                 throw new Error(' PreconditionsService: expr is empty when it should not be');
             }
         };
 
         service.isBoolean = function(expr, msg) {
             if (expr !== true && expr !== false) {
-                msg !== undefined ? FeedbackMessageService.showErrorMessage(msg) : FeedbackMessageService.showErrorMessage(IS_NOT_BOOLEAN_ERR);
+                if (msg !== undefined) {
+                    FeedbackMessageService.showErrorMessage(msg);
+                } else {
+                    FeedbackMessageService.showErrorMessage(IS_NOT_BOOLEAN_ERR);
+                }
                 throw new Error(' PreconditionsService: expr is !boolean when it should be');
             }
         };
@@ -28,21 +36,33 @@ angular.module('zmon2App').factory('PreconditionsService', ['FeedbackMessageServ
          */
         service.isNumber = function(expr, msg) {
             if (!_.isNumber(expr) && !_.isNumber(parseInt(expr, 2)) && !_.isNumber(parseInt(expr, 8)) && !_.isNumber(parseInt(expr, 10)) && !_.isNumber(parseInt(expr, 16))) {
-                msg !== undefined ? FeedbackMessageService.showErrorMessage(msg) : FeedbackMessageService.showErrorMessage(IS_NOT_NUMBER_ERR);
+                if (msg !== undefined) {
+                    FeedbackMessageService.showErrorMessage(msg);
+                } else {
+                    FeedbackMessageService.showErrorMessage(IS_NOT_NUMBER_ERR);
+                }
                 throw new Error(' PreconditionsService: expr is !number when it should be');
             }
         };
 
         service.isDate = function(expr, msg) {
             if (!_.isDate(expr)) {
-                msg !== undefined ? FeedbackMessageService.showErrorMessage(msg) : FeedbackMessageService.showErrorMessage(IS_NOT_DATE_ERR);
+                if (msg !== undefined) {
+                    FeedbackMessageService.showErrorMessage(msg);
+                } else {
+                    FeedbackMessageService.showErrorMessage(IS_NOT_DATE_ERR);
+                }
                 throw new Error(' PreconditionsService: expr is !date when it should be');
             }
         };
 
         service.isHTTPMethod = function(expr, msg) {
             if (!_.isString(expr) || (expr.toLowerCase() !== "get" && expr.toLowerCase() !== "post" && expr.toLowerCase() !== "delete" && expr.toLowerCase() !== "put")) {
-                msg !== undefined ? FeedbackMessageService.showErrorMessage(msg) : FeedbackMessageService.showErrorMessage(IS_NOT_HTTP_METHOD_ERR);
+                if (msg !== undefined) {
+                    FeedbackMessageService.showErrorMessage(msg);
+                } else {
+                    FeedbackMessageService.showErrorMessage(IS_NOT_HTTP_METHOD_ERR);
+                }
                 throw new Error(' PreconditionsService: expr is !http_method when it should be');
             }
         };

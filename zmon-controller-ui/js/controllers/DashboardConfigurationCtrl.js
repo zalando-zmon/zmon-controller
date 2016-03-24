@@ -109,12 +109,12 @@ angular.module('zmon2App').controller('DashboardConfigurationCtrl', ['$scope', '
 
         // Add a tag to the tags array
         $scope.addTag = function(tag) {
-            if (typeof $scope.dashboard.tags === 'undefined' || $scope.dashboard.tags == null) {
+            if (typeof $scope.dashboard.tags === 'undefined' || $scope.dashboard.tags === null) {
                 $scope.dashboard.tags = [];
             }
             if ($scope.dashboard.tags.indexOf(tag.text) === -1) {
                 $scope.dashboard.tags.push(tag.text);
-            };
+            }
         };
 
         // Remove a tag from the tags array

@@ -19,15 +19,15 @@ angular.module('zmon2App').directive('chartd3', [ function() {
                         .range([height, 0]);
 
             var yScale = d3.scale.ordinal()
-                        .range([height,0])
+                        .range([height,0]);
 
             var yAxis = d3.svg.axis()
                         .scale(yScale)
                         .orient("left")
                         .ticks(4)
                         .tickFormat(function(v) { 
-                            var p = d3.formatPrefix(v)
-                            return p.scale(v).toFixed() + p.symbol
+                            var p = d3.formatPrefix(v);
+                            return p.scale(v).toFixed() + p.symbol;
                         });
 
             var area = d3.svg.area()
@@ -66,13 +66,13 @@ angular.module('zmon2App').directive('chartd3', [ function() {
                         max: d3.max(data, function(d) {
                             return d3.max(d, function(_d) {
                                 return _d[1];
-                            })
+                            });
                         }),
                         min: 0
                     };
 
                     x.domain([px.min, px.max]);
-                    y.domain([py.min, py.max])
+                    y.domain([py.min, py.max]);
                     yScale.domain([py.min,py.max]);
 
                     _.each(data, function(d) {
@@ -105,7 +105,7 @@ angular.module('zmon2App').directive('chartd3', [ function() {
 
                     svg.selectAll(".hlines")
                         .filter(function(d, i) {
-                            return i == 0 ? null : d%3==0
+                            return i === 0 ? null : d%3 === 0;
                         })
                         .style("stroke-opacity",0.7);
 
@@ -121,7 +121,7 @@ angular.module('zmon2App').directive('chartd3', [ function() {
                         .attr("x", width - 32)
                         .attr("dy", ".71em")
                         .attr("class", "ts")
-                        .text(format(new Date(px.max*1000)))
+                        .text(format(new Date(px.max*1000)));
                 }
             });
         }

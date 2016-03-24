@@ -61,6 +61,21 @@ angular.module('zmon2App').controller('AlertDetailsCtrl', ['$scope', '$location'
             return timespanFilter(timeIntervalSinceLastUpdate);
         };
 
+        var setLinkToTrialRun = function () {
+            var params = {
+                name: $scope.alertDefinition.name,
+                description: $scope.alertDefinition.description,
+                check_command: $scope.checkDefinition.command,
+                alert_condition: $scope.alertDefinition.condition,
+                entities: $scope.entitiesFilter,
+                entities_exclude: $scope.entitiesExcludeFilter,
+                interval: $scope.checkDefinition.interval,
+                period: $scope.alertDefinition.period,
+                parameters: $scope.alertDefinition.parameters || []
+            };
+            $scope.alertJson = window.encodeURIComponent(JSON.stringify(params));
+        };
+
         $scope.refreshAlertDetails = function() {
             var now = new Date().getTime() / 1000;
             CommunicationService.getAlertDefinition($scope.alertDefinitionId).then(function(response) {
@@ -95,7 +110,7 @@ angular.module('zmon2App').controller('AlertDetailsCtrl', ['$scope', '$location'
 
                             // Remove entity filters with no "type".
                             $scope.entitiesFilter = _.reject($scope.entitiesFilter, function(eFilter) {
-                                return (eFilter.type === undefined || eFilter.type == null || eFilter.type == "");
+                                return (eFilter.type === undefined || eFilter.type === null || eFilter.type === "");
                             });
 
                             // Multiply and merge check entities EXCLUDE filter with alert entities EXCLUDE filter.
@@ -119,7 +134,7 @@ angular.module('zmon2App').controller('AlertDetailsCtrl', ['$scope', '$location'
 
                             // Remove entity EXCLUDE filters with no "type".
                             $scope.entitiesExcludeFilter = _.reject($scope.entitiesExcludeFilter, function(eFilter) {
-                                return (eFilter.type === undefined || eFilter.type == null || eFilter.type == "");
+                                return (eFilter.type === undefined || eFilter.type === null || eFilter.type === "");
                             });
 
                             // Get any children alerts that inherit from this alert
@@ -201,19 +216,14 @@ angular.module('zmon2App').controller('AlertDetailsCtrl', ['$scope', '$location'
             );
         };
 
-        var setLinkToTrialRun = function () {
-            var params = {
-                name: $scope.alertDefinition.name,
-                description: $scope.alertDefinition.description,
-                check_command: $scope.checkDefinition.command,
-                alert_condition: $scope.alertDefinition.condition,
-                entities: $scope.entitiesFilter,
-                entities_exclude: $scope.entitiesExcludeFilter,
-                interval: $scope.checkDefinition.interval,
-                period: $scope.alertDefinition.period,
-                parameters: $scope.alertDefinition.parameters || []
-            }
-            $scope.alertJson = window.encodeURIComponent(JSON.stringify(params));
+        var deleteAlertDefinitionModalCtrl = function($scope, $modalInstance, alertDefinition) {
+            $scope.alertDefinition = alertDefinition;
+            $scope.delete = function() {
+                $modalInstance.close();
+            };
+            $scope.cancel = function() {
+                $modalInstance.dismiss();
+            };
         };
 
         $scope.showDeleteAlertDefinitionModal = function() {
@@ -236,20 +246,6 @@ angular.module('zmon2App').controller('AlertDetailsCtrl', ['$scope', '$location'
                         $location.path('/alert-definitions');
                     });
                 });
-        };
-
-
-        var deleteAlertDefinitionModalCtrl = function($scope, $modalInstance, alertDefinition) {
-
-            $scope.alertDefinition = alertDefinition;
-
-            $scope.delete = function() {
-                $modalInstance.close();
-            };
-
-            $scope.cancel = function() {
-                $modalInstance.dismiss();
-            };
         };
 
         // Downtime modal window's controller
@@ -624,7 +620,7 @@ angular.module('zmon2App').controller('AlertDetailsCtrl', ['$scope', '$location'
         // Force evaluation of alert definition
         $scope.forceAlertEvaluation = function() {
             CommunicationService.forceAlertEvaluation($scope.alertDefinitionId)
-                .then(function() {;
+                .then(function() {
                     FeedbackMessageService.showSuccessMessage('Evaluation of alert successfully forced...');
                 }
             );
@@ -633,7 +629,7 @@ angular.module('zmon2App').controller('AlertDetailsCtrl', ['$scope', '$location'
         // Force cleanup of alert state
         $scope.forceAlertCleanup = function() {
             CommunicationService.forceAlertCleanup($scope.alertDefinitionId)
-                .then(function() {;
+                .then(function() {
                     FeedbackMessageService.showSuccessMessage('Cleanup of alert state successfully forced...');
                 }
             );

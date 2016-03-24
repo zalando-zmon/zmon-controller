@@ -34,15 +34,14 @@ angular.module('zmon2App').directive('dashboardWidget', ['CommunicationService',
                         'height': $scope.config.style.height,
                         '-webkit-transform': "scale("+ $scope.config.style.scale +")",
                         '-o-transform': "scale("+ $scope.config.style.scale +")",
-                        '-o-transform': "scale("+ $scope.config.style.scale + ")",
                         '-moz-transform': "scale("+ $scope.config.style.scale + ")",
                         '-ms-zoom': $scope.config.style.scale
-                    }
+                    };
                     // reload iframe periodically
                     if ($scope.config.refresh) {
                         reloadIframe();
                     }
-                };
+                }
 
                 var checkDefinitionId = $scope.config.checkDefinitionId;
                 var alertIds = $scope.config.options.alertIds || $scope.config.alertIds;
@@ -60,54 +59,6 @@ angular.module('zmon2App').directive('dashboardWidget', ['CommunicationService',
                     $scope.uniqId = $scope.config.type + '-' + Date.now();
                 }
 
-                var refreshWidgetData = function() {
-
-                    $scope.isOutdated =  new Date() / 1000 - $scope.lastUpdate > 30 ? true : false;
-                    alertIds = $scope.config.options.alertIds || $scope.config.alertIds;
-
-                    var limit = null;
-                    if ($scope.config.type === 'value') {
-                        limit = 1;
-                    }
-
-                    // Get data if alertId is specified
-                    if (alertIds != undefined && alertIds != null && alertIds != "") {
-                        var activeAlertIds = [];
-                        return CommunicationService.getAlertsById(alertIds).then(function(data) {
-                            _.each(data, function(alert) {
-                                if (!DowntimesService.hasAllEntitiesInDowntime(alert)) {
-                                    activeAlertIds.push(alert);
-                                }
-                            });
-                            $scope.activeAlertIds = activeAlertIds;
-                            setAlertStyles();
-                        });
-                    }
-
-                    // Get data if checkId is specified
-                    if (checkDefinitionId > 0) {
-                        return CommunicationService.getCheckResults(checkDefinitionId, entity, limit).then(
-                            function(response) {
-                                setWidgetData(response);
-                            }
-                        );
-                    }
-
-                    // Get data from KairosDB if Metrics options are specified
-                    if ($scope.config.options.metrics instanceof Array) {
-                        var metric = $scope.config.options.metrics[0];
-                        if (!metric.name) {
-                            return;
-                        }
-                        return CommunicationService.getKairosResults($scope.config.options).then(
-                            function(response) {
-                                setWidgetData(response);
-                            }
-                        );
-                    }
-
-                };
-
                 // Check if "alertStyles" is properly defined on the widget configuration, following the
                 // schema alertsyles: {"CLASS_NAME: [ARRAY_ALERT_IDS]}
                 var setAlertStyles = function(response) {
@@ -118,7 +69,7 @@ angular.module('zmon2App').directive('dashboardWidget', ['CommunicationService',
                         var isActive = false;
 
                         // No response? Get predefined alert ids from scope.
-                        if (response == undefined) {
+                        if (response === undefined) {
                             activeAlertIds = $scope.activeAlertIds;
                             activeAlertIds = _.pluck(activeAlertIds, "alert_definition");
                             activeAlertIds = _.pluck(activeAlertIds, "id");
@@ -144,6 +95,31 @@ angular.module('zmon2App').directive('dashboardWidget', ['CommunicationService',
                             $element.removeClass("active");
                         }
                     }
+                };
+
+                var selectSeries = function(chartData) {
+                    if (!($scope.config.series instanceof Array)) {
+                        return chartData;
+                    }
+                    var result = [];
+                    _.each(chartData, function(serie) {
+                        if ($scope.config.series.indexOf(serie.label) !== -1) {
+                            result.push(serie);
+                        }
+                    });
+                    return result;
+                };
+
+                var formatKairosData = function(data) {
+                    var r = [];
+                    _.each(data.queries, function(query) {
+                        if (query.results && query.results.length) {
+                            _.each(query.results, function(result) {
+                                r.push(result.values);
+                            });
+                        }
+                    });
+                    return r;
                 };
 
                 var setWidgetData = function(response) {
@@ -184,17 +160,19 @@ angular.module('zmon2App').directive('dashboardWidget', ['CommunicationService',
                                 }
                                 break;
                             case 'chart':
+                                var chartData = MainAlertService.transformResultsToChartData(response);
+
                                 // If jsonPath is specified, use it to get specific response
                                 if ($scope.config.jsonPath) {
                                     response = jsonPath(response, "$." + $scope.config.jsonPath);
                                 }
 
                                 if ($scope.config.options.metrics instanceof Array) {
-                                    var chartData = formatKairosData(response);
+                                    chartData = formatKairosData(response);
                                     $scope.chartData = $scope.config.series ? selectSeries(chartData) : chartData;
                                     break;
                                 }
-                                var chartData = MainAlertService.transformResultsToChartData(response);
+
                                 $scope.hasNonPlottableValues = chartData.hasNonPlottableValues;
                                 if (entity !== undefined) {
                                     $scope.chartData = $scope.config.series ? selectSeries(chartData[entity]) : chartData[entity];
@@ -233,29 +211,53 @@ angular.module('zmon2App').directive('dashboardWidget', ['CommunicationService',
                     }
                 };
 
-                var selectSeries = function(chartData) {
-                    if (!($scope.config.series instanceof Array)) {
-                        return chartData;
-                    }
-                    var result = [];
-                    _.each(chartData, function(serie) {
-                        if ($scope.config.series.indexOf(serie.label) !== -1) {
-                            result.push(serie);
-                        }
-                    });
-                    return result;
-                }
 
-                var formatKairosData = function(data) {
-                    var r = [];
-                    _.each(data.queries, function(query) {
-                        if (query.results && query.results.length) {
-                            _.each(query.results, function(result) {
-                                r.push(result.values);
+                var refreshWidgetData = function() {
+
+                    $scope.isOutdated =  new Date() / 1000 - $scope.lastUpdate > 30 ? true : false;
+                    alertIds = $scope.config.options.alertIds || $scope.config.alertIds;
+
+                    var limit = null;
+                    if ($scope.config.type === 'value') {
+                        limit = 1;
+                    }
+
+                    // Get data if alertId is specified
+                    if (alertIds !== undefined && alertIds !== null && alertIds !== "") {
+                        var activeAlertIds = [];
+                        return CommunicationService.getAlertsById(alertIds).then(function(data) {
+                            _.each(data, function(alert) {
+                                if (!DowntimesService.hasAllEntitiesInDowntime(alert)) {
+                                    activeAlertIds.push(alert);
+                                }
                             });
+                            $scope.activeAlertIds = activeAlertIds;
+                            setAlertStyles();
+                        });
+                    }
+
+                    // Get data if checkId is specified
+                    if (checkDefinitionId > 0) {
+                        return CommunicationService.getCheckResults(checkDefinitionId, entity, limit).then(
+                            function(response) {
+                                setWidgetData(response);
+                            }
+                        );
+                    }
+
+                    // Get data from KairosDB if Metrics options are specified
+                    if ($scope.config.options.metrics instanceof Array) {
+                        var metric = $scope.config.options.metrics[0];
+                        if (!metric.name) {
+                            return;
                         }
-                    });
-                    return r;
+                        return CommunicationService.getKairosResults($scope.config.options).then(
+                            function(response) {
+                                setWidgetData(response);
+                            }
+                        );
+                    }
+
                 };
 
                 // Watch for configuration changes on the widget and refetch data

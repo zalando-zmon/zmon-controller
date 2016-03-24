@@ -30,7 +30,7 @@ angular.module('zmon2App').controller('CheckChartsCtrl', ['$scope', '$routeParam
 
         // List of names of all available entities for this check
         $scope.availableEntities = [];
-        $scope.selectedEntities = []
+        $scope.selectedEntities = [];
 
         // Controls to enable and disable charts by type: 1 day or 2 weeks and date range.
         $scope.dayChartEnabled = true;
@@ -57,7 +57,7 @@ angular.module('zmon2App').controller('CheckChartsCtrl', ['$scope', '$routeParam
                 mstep: 15,
                 ismeridian: false
             }
-        }
+        };
 
         // Pop up calendar
         $scope.showCalendar = function($event, cal) {
@@ -73,7 +73,7 @@ angular.module('zmon2App').controller('CheckChartsCtrl', ['$scope', '$routeParam
         $scope.openedCalendars = {
             'from': false,
             'to': false
-        }
+        };
 
 
         /*
@@ -126,6 +126,281 @@ angular.module('zmon2App').controller('CheckChartsCtrl', ['$scope', '$routeParam
         $scope.chartOptionsHour.xaxis.timeformat = "%H:%M";
         $scope.chartOptionsDays.xaxis.timeformat = "%d.%m";
 
+        // Applies hour and minutes to custom date range dates
+        var setTimes = function() {
+            $scope.dates.startDate.setHours($scope.dates.startTime.getHours());
+            $scope.dates.startDate.setMinutes($scope.dates.startTime.getMinutes());
+            $scope.dates.endDate.setHours($scope.dates.endTime.getHours());
+            $scope.dates.endDate.setMinutes($scope.dates.endTime.getMinutes());
+        };
+
+        // Format date for url parameters
+        var formatDate = function(d) {
+            var f = '';
+            f = [ d.getFullYear(), d.getMonth()+1, d.getDate()  ].join('-');
+            f += ' ' + d.getHours() + ':' + d.getMinutes();
+            return f;
+        };
+
+        // Set application state in URL query string
+        var setStateToUrl = function() {
+
+            // Get list of selected entities
+            $scope.selectedEntities = [];
+            _.each($scope.availableEntities, function(entityId) {
+                if ($scope.entities[entityId].selected) {
+                    $scope.selectedEntities.push(entityId);
+                }
+            });
+
+            // Set entity ids on url
+            if ($scope.selectedEntities.length) {
+                $location.search('entity_id', $scope.selectedEntities.join(','));
+            } else {
+                $location.search('entity_id', null);
+            }
+
+            // Set custom date range
+            if ($scope.useDateRange) {
+                var sd = formatDate($scope.dates.startDate);
+                var ed = formatDate($scope.dates.endDate);
+                $location.search('startDate', sd);
+                $location.search('endDate', ed);
+            } else {
+                $location.search('startDate', null);
+                $location.search('endDate', null);
+            }
+        };
+
+        // Fin the maximum and minimum for vertical values for all data in all entities
+        var setMaxY = function(entity) {
+            var points = [];
+            for (var i = 0; i < entity.data.length; i++) {
+                var entityData = entity.data[i];
+                for (var j = 0; j < entityData.length; j++) {
+                    var serie = entityData[j].data;
+                    for (var k = 0; k < serie.length; k++) {
+                        var point = serie[k];
+                        if (point.length && point[1]) {
+                            var p = point[1];
+                            points.push(p);
+                        }
+                    }
+                }
+            }
+            var _max = Math.max.apply(this, points);
+            var _min = Math.min.apply(this, points);
+            max = _max > max ? _max : max;
+            min = _min < min || min === null ? _min : min;
+            if ($scope.compareMode) {
+                $scope.chartOptionsHour.yaxis.max = max;
+                $scope.chartOptionsDays.yaxis.max = max;
+                $scope.chartOptionsHour.yaxis.min = min;
+                $scope.chartOptionsDays.yaxis.min = min;
+            }
+        };
+
+        // Gets all data series for this alert, from all charts and derives
+        // state from querystring. None selected by default.
+        var getDataSeries = function(data) {
+            if ($location.search().series) {
+                $scope.selectedDataSeries = $location.search().series.split(',');
+            }
+            _.each(_.pluck(data.group_results, 'key').sort(), function(label, index) {
+                if (_.pluck($scope.dataSeries, 'name').indexOf(label) === -1) {
+                    var s = false;
+                    if ($location.search().series) {
+                        s = $location.search().series.split(',').indexOf(label) !== -1;
+                    } else if (index < 5) {
+                        s = true;
+                    }
+                    $scope.dataSeries.push({
+                        name: label,
+                        selected: s
+                    });
+                    if (s) {
+                        $scope.selectedDataSeries.push(label);
+                    }
+                }
+            });
+        };
+
+        // Fetch chart data from server. Dates in miliseconds.
+        var getChartsData = function(params, cb) {
+            params.start_date = params.start_date.getTime();
+            params.end_date = params.end_date.getTime();
+            CommunicationService.getCheckCharts(params).then(
+                function(data) {
+                    var chartData = {};
+                    getDataSeries(data);
+                    chartData[params.entity_id] = [];
+                    var labels = _.pluck(data.group_results, 'key').sort();
+                    var palette = getColorPalette(labels);
+                    _.each(data.group_results, function(gr, i) {
+                        if ($scope.selectedDataSeries.indexOf(gr.key) !== -1) {
+                            chartData[params.entity_id].push({
+                                label: gr.key,
+                                data: gr.values,
+                                color: palette[gr.key]
+                            });
+                        }
+                    });
+                    cb(chartData[params.entity_id]);
+                },
+                function(httpStatus) {
+                    cb();
+                }
+            );
+        };
+
+        // Sort chart data according to their labels
+        var sortChartData = function(data) {
+            return data.sort(function(a, b) {
+                if (typeof a.label === 'undefined' || typeof b.label === 'undefined') {
+                    return 0;
+                }
+                var labelA = a.label.toLowerCase();
+                var labelB = b.label.toLowerCase();
+                if (labelA < labelB) { return -1; }
+                if (labelA > labelB) { return 1; }
+                return 0;
+            });
+        };
+
+        // Normalize chart data to a specific time gap
+        var normalizeChartData = function(data, gap) {
+            if (!(data instanceof Array) || data.length === 0) {
+                return data;
+            }
+            var first = data[0][0];
+            var last = data[data.length-1][0];
+            if (first > last - gap) {
+                data = [ [last - gap, null] ].concat(data);
+            }
+            return data;
+        };
+
+        // Concatenates chart data for 1-day and custom-date charts
+        var mergeChartData = function(c1, c2) {
+            var data = {};
+
+            _.each(c1, function(cd1) {
+                data[cd1.label] = {
+                    data: cd1.data,
+                    label: cd1.label,
+                    color: cd1.color
+                };
+            });
+
+            _.each(c2, function(cd2) {
+                if (data[cd2.label]) {
+                    data[cd2.label].data = data[cd2.label].data.concat(cd2.data);
+                } else {
+                    data[cd2.label] = {
+                        label: cd2.label,
+                        data: cd2.data,
+                        color: cd2.color
+                    };
+                }
+            });
+
+            var customDateGap = $scope.dates.endDate - $scope.dates.startDate;
+
+            var arr = [];
+            _.each(data, function(d, label) {
+                d.data = normalizeChartData(d.data, $scope.useDateRange ? customDateGap : DAY);
+                arr.push(d);
+            });
+
+            arr = sortChartData(arr);
+
+            return arr;
+        };
+
+        // Gets chart data for the specified chart types and prepares it to be plotted.
+        var getEntityCharts = function(entity) {
+
+            var params = {
+                check_id: $scope.check_id,
+                entity_id: entity.name,
+                aggregate: 15,
+                aggregate_unit: "minutes",
+                start_date: new Date(),
+                end_date: new Date()
+            };
+
+            params.start_date.setDate(params.start_date.getDate() -1);
+
+            if ($scope.useDateRange) {
+                params.start_date = new Date($scope.dates.startDate);
+                params.end_date = new Date($scope.dates.endDate);
+            }
+
+            params.end_date.setHours(params.end_date.getHours() - 1);
+            getChartsData(params, function(cd1) {
+                params.start_date = $scope.useDateRange ? new Date($scope.dates.endDate) : new Date();
+                params.start_date.setHours(params.start_date.getHours() -1);
+                params.end_date = $scope.useDateRange ? $scope.dates.endDate : new Date();
+                params.aggregate = 1;
+                getChartsData(params, function(cd2) {
+                    entity.data[0] = mergeChartData(cd1, cd2);
+                });
+                LoadingIndicatorService.stop();
+                setStateToUrl();
+                setMaxY(entity);
+            });
+
+            // Fetch weeks chart if not using custom date range
+            if (!$scope.useDateRange) {
+                var start_date = new Date();
+                start_date.setDate(start_date.getDate() - 14);
+                params.start_date = start_date;
+                params.end_date = new Date();
+                params.aggregate = 30;
+                getChartsData(params, function(c3) {
+                    c3 = sortChartData(c3);
+                    _.each(c3, function(cd3) {
+                        cd3.data = normalizeChartData(cd3.data, 2*WEEK);
+                    });
+                    entity.data[1] = c3;
+                    setMaxY(entity);
+                });
+                setStateToUrl();
+            }
+        };
+
+        // Gets chart data for each of the selected entities
+        var fetchSelectedEntities = function() {
+            LoadingIndicatorService.start();
+            var isAnyEntitySelected = false;
+            _.each($scope.entities, function(e) {
+                if (e.selected) {
+                    isAnyEntitySelected = true;
+                    getEntityCharts(e);
+                }
+            });
+
+            // If no entity is selected (default), LoadIndicator must be stopped.
+            if (!isAnyEntitySelected) {
+                LoadingIndicatorService.stop();
+            }
+        };
+
+        // Set Selected Data Series state to URL
+        var setSelectedDataSeriesUrl = function() {
+            $location.search('series', null);
+            if ($scope.selectedDataSeries.length) {
+                $location.search('series', $scope.selectedDataSeries.join(','));
+            }
+        };
+
+        var setSelectedEntitiesUrl = function() {
+            $location.search('entity_id', null);
+            if ($scope.selectedEntities.length) {
+                $location.search('entity_id', $scope.selectedEntities.join(','));
+            }
+        };
+
         // Set custom date range and reload charts
         $scope.apply = function() {
             setTimes();
@@ -144,6 +419,32 @@ angular.module('zmon2App').controller('CheckChartsCtrl', ['$scope', '$routeParam
                 $scope.apply();
             }
             setStateToUrl();
+        };
+
+        // Set initial custom dates
+        var initDates = function() {
+
+            var now = new Date();
+            var startDate = new Date();
+            var endDate = new Date();
+
+            startDate.setDate(startDate.getDate() -1);
+
+            if ($location.search().startDate) {
+                startDate = new Date($location.search().startDate);
+            }
+
+            if ($location.search().endDate) {
+                endDate = new Date($location.search().endDate);
+            }
+
+            $scope.dates = {
+                startDate: startDate,
+                endDate: new Date(endDate),
+                startTime: new Date(startDate),
+                endTime: new Date(endDate)
+            };
+
         };
 
         // Show/hide 1 day and/or 2 weeks charts
@@ -197,10 +498,10 @@ angular.module('zmon2App').controller('CheckChartsCtrl', ['$scope', '$routeParam
                         $scope.selectedDataSeries.push(s.name);
                     }
                 });
-            };
+            }
             setSelectedDataSeriesUrl();
             fetchSelectedEntities();
-        }
+        };
 
         // Select/Unselect all available entities
         $scope.toggleAllEntities = function() {
@@ -216,17 +517,18 @@ angular.module('zmon2App').controller('CheckChartsCtrl', ['$scope', '$routeParam
                         $scope.selectedEntities.push(eid);
                     }
                 });
-            };
+            }
             setSelectedEntitiesUrl();
             fetchSelectedEntities();
-        }
+        };
 
         $scope.$watch('compareMode', function(mode) {
             if (mode) {
                 $scope.chartOptionsHour.yaxis.max = max;
                 $scope.chartOptionsDays.yaxis.max = max;
                 $scope.chartOptionsHour.yaxis.min = min;
-                return $scope.chartOptionsDays.yaxis.min = min;
+                $scope.chartOptionsDays.yaxis.min = min;
+                return;
             }
             delete $scope.chartOptionsHour.yaxis.max;
             delete $scope.chartOptionsDays.yaxis.max;
@@ -248,226 +550,6 @@ angular.module('zmon2App').controller('CheckChartsCtrl', ['$scope', '$routeParam
 
                 cb();
             });
-        };
-
-        // Gets chart data for the specified chart types and prepares it to be plotted.
-        var getEntityCharts = function(entity) {
-
-            var params = {
-                check_id: $scope.check_id,
-                entity_id: entity.name,
-                aggregate: 15,
-                aggregate_unit: "minutes",
-                start_date: new Date(),
-                end_date: new Date()
-            }
-
-            params.start_date.setDate(params.start_date.getDate() -1);
-
-            if ($scope.useDateRange) {
-                params.start_date = new Date($scope.dates.startDate);
-                params.end_date = new Date($scope.dates.endDate);
-            }
-
-            params.end_date.setHours(params.end_date.getHours() - 1);
-            getChartsData(params, function(cd1) {
-                params.start_date = $scope.useDateRange ? new Date($scope.dates.endDate) : new Date();
-                params.start_date.setHours(params.start_date.getHours() -1);
-                params.end_date = $scope.useDateRange ? $scope.dates.endDate : new Date();
-                params.aggregate = 1;
-                getChartsData(params, function(cd2) {
-                    entity.data[0] = mergeChartData(cd1, cd2);
-                });
-                LoadingIndicatorService.stop();
-                setStateToUrl();
-                setMaxY(entity);
-            });
-
-            // Fetch weeks chart if not using custom date range
-            if (!$scope.useDateRange) {
-                var start_date = new Date();
-                start_date.setDate(start_date.getDate() - 14);
-                params.start_date = start_date;
-                params.end_date = new Date();
-                params.aggregate = 30;
-                getChartsData(params, function(c3) {
-                    c3 = sortChartData(c3);
-                    _.each(c3, function(cd3) {
-                        cd3.data = normalizeChartData(cd3.data, 2*WEEK);
-                    });
-                    entity.data[1] = c3;
-                    setMaxY(entity);
-                });
-                setStateToUrl();
-            }
-        };
-
-        // Fetch chart data from server. Dates in miliseconds.
-        var getChartsData = function(params, cb) {
-            params.start_date = params.start_date.getTime();
-            params.end_date = params.end_date.getTime();
-            CommunicationService.getCheckCharts(params).then(
-                function(data) {
-                    var chartData = {};
-                    getDataSeries(data);
-                    chartData[params.entity_id] = [];
-                    var labels = _.pluck(data.group_results, 'key').sort();
-                    var palette = getColorPalette(labels);
-                    _.each(data.group_results, function(gr, i) {
-                        if ($scope.selectedDataSeries.indexOf(gr.key) !== -1) {
-                            chartData[params.entity_id].push({
-                                label: gr.key,
-                                data: gr.values,
-                                color: palette[gr.key]
-                            });
-                        }
-                    });
-                    cb(chartData[params.entity_id]);
-                },
-                function(httpStatus) {
-                    cb();
-                }
-            );
-        };
-
-        // Concatenates chart data for 1-day and custom-date charts
-        var mergeChartData = function(c1, c2) {
-            var data = {};
-
-            _.each(c1, function(cd1) {
-                data[cd1.label] = {
-                    data: cd1.data,
-                    label: cd1.label,
-                    color: cd1.color
-                }
-            });
-
-            _.each(c2, function(cd2) {
-                if (data[cd2.label]) {
-                    data[cd2.label].data = data[cd2.label].data.concat(cd2.data);
-                } else {
-                    data[cd2.label] = {
-                        label: cd2.label,
-                        data: cd2.data,
-                        color: cd2.color
-                    }
-                }
-            });
-
-            var customDateGap = $scope.dates.endDate - $scope.dates.startDate;
-
-            var arr = [];
-            _.each(data, function(d, label) {
-                d.data = normalizeChartData(d.data, $scope.useDateRange ? customDateGap : DAY);
-                arr.push(d);
-            });
-
-            arr = sortChartData(arr);
-
-            return arr;
-        };
-
-        // Sort chart data according to their labels
-        var sortChartData = function(data) {
-            return data.sort(function(a, b) {
-                if (typeof a.label === 'undefined' || typeof b.label === 'undefined') {
-                    return 0;
-                };
-                var labelA = a.label.toLowerCase();
-                var labelB = b.label.toLowerCase();
-                if (labelA < labelB) { return -1; };
-                if (labelA > labelB) { return 1; };
-                return 0;
-            });
-        };
-
-        // Normalize chart data to a specific time gap
-        var normalizeChartData = function(data, gap) {
-            if (!(data instanceof Array) || data.length === 0) {
-                return data;
-            }
-            var first = data[0][0];
-            var last = data[data.length-1][0];
-            if (first > last - gap) {
-                data = [ [last - gap, null] ].concat(data);
-            };
-            return data;
-        };
-
-        // Gets all data series for this alert, from all charts and derives
-        // state from querystring. None selected by default.
-        var getDataSeries = function(data) {
-            if ($location.search().series) {
-                $scope.selectedDataSeries = $location.search().series.split(',');
-            }
-            _.each(_.pluck(data.group_results, 'key').sort(), function(label, index) {
-                if (_.pluck($scope.dataSeries, 'name').indexOf(label) === -1) {
-                    var s = false;
-                    if ($location.search().series) {
-                        s = $location.search().series.split(',').indexOf(label) !== -1;
-                    } else if (index < 5) {
-                        s = true;
-                    }
-                    $scope.dataSeries.push({
-                        name: label,
-                        selected: s
-                    });
-                    if (s) {
-                        $scope.selectedDataSeries.push(label);
-                    };
-                }
-            });
-        };
-
-        // Set initial custom dates
-        var initDates = function() {
-
-            var now = new Date();
-            var startDate = new Date();
-            var endDate = new Date();
-
-            startDate.setDate(startDate.getDate() -1);
-
-            if ($location.search().startDate) {
-                startDate = new Date($location.search().startDate);
-            }
-
-            if ($location.search().endDate) {
-                endDate = new Date($location.search().endDate);
-            }
-
-            $scope.dates = {
-                startDate: startDate,
-                endDate: new Date(endDate),
-                startTime: new Date(startDate),
-                endTime: new Date(endDate)
-            }
-
-        };
-
-        // Applies hour and minutes to custom date range dates
-        var setTimes = function() {
-            $scope.dates.startDate.setHours($scope.dates.startTime.getHours());
-            $scope.dates.startDate.setMinutes($scope.dates.startTime.getMinutes());
-            $scope.dates.endDate.setHours($scope.dates.endTime.getHours());
-            $scope.dates.endDate.setMinutes($scope.dates.endTime.getMinutes());
-        };
-
-        // Gets chart data for each of the selected entities
-        var fetchSelectedEntities = function() {
-            LoadingIndicatorService.start();
-            var isAnyEntitySelected = false;
-            _.each($scope.entities, function(e) {
-                if (e.selected) {
-                    isAnyEntitySelected = true;
-                    getEntityCharts(e);
-                }
-            });
-
-            // If no entity is selected (default), LoadIndicator must be stopped.
-            if (!isAnyEntitySelected) {
-                LoadingIndicatorService.stop();
-            }
         };
 
         // Set application state from query string parameters
@@ -493,87 +575,6 @@ angular.module('zmon2App').controller('CheckChartsCtrl', ['$scope', '$routeParam
                 $scope.weeksChartEnabled = false;
             }
 
-        };
-
-        // Set application state in URL query string
-        var setStateToUrl = function() {
-
-            // Get list of selected entities
-            $scope.selectedEntities = [];
-            _.each($scope.availableEntities, function(entityId) {
-                if ($scope.entities[entityId].selected) {
-                    $scope.selectedEntities.push(entityId);
-                }
-            });
-
-            // Set entity ids on url
-            if ($scope.selectedEntities.length) {
-                $location.search('entity_id', $scope.selectedEntities.join(','));
-            } else {
-                $location.search('entity_id', null);
-            }
-
-            // Set custom date range
-            if ($scope.useDateRange) {
-                var sd = formatDate($scope.dates.startDate);
-                var ed = formatDate($scope.dates.endDate);;
-                $location.search('startDate', sd);
-                $location.search('endDate', ed);
-            } else {
-                $location.search('startDate', null);
-                $location.search('endDate', null);
-            }
-        };
-
-        // Set Selected Data Series state to URL
-        var setSelectedDataSeriesUrl = function() {
-            $location.search('series', null);
-            if ($scope.selectedDataSeries.length) {
-                $location.search('series', $scope.selectedDataSeries.join(','));
-            }
-        };
-
-        var setSelectedEntitiesUrl = function() {
-            $location.search('entity_id', null);
-            if ($scope.selectedEntities.length) {
-                $location.search('entity_id', $scope.selectedEntities.join(','));
-            }
-        };
-
-        // Format date for url parameters
-        var formatDate = function(d) {
-            var f = '';
-            f = [ d.getFullYear(), d.getMonth()+1, d.getDate()  ].join('-');
-            f += ' ' + d.getHours() + ':' + d.getMinutes();
-            return f;
-        };
-
-        // Fin the maximum and minimum for vertical values for all data in all entities
-        var setMaxY = function(entity) {
-            var points = [];
-            for (var i = 0; i < entity.data.length; i++) {
-                var entityData = entity.data[i];
-                for (var j = 0; j < entityData.length; j++) {
-                    var serie = entityData[j].data;
-                    for (var k = 0; k < serie.length; k++) {
-                        var point = serie[k];
-                        if (point.length && point[1]) {
-                            var p = point[1];
-                            points.push(p);
-                        }
-                    }
-                }
-            };
-            var _max = Math.max.apply(this, points);
-            var _min = Math.min.apply(this, points);
-            max = _max > max ? _max : max;
-            min = _min < min || min === null ? _min : min;
-            if ($scope.compareMode) {
-                $scope.chartOptionsHour.yaxis.max = max;
-                $scope.chartOptionsDays.yaxis.max = max;
-                $scope.chartOptionsHour.yaxis.min = min;
-                $scope.chartOptionsDays.yaxis.min = min;
-            }
         };
 
         // Non-refreshing; one-time listing

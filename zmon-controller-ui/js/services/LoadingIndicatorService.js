@@ -13,7 +13,7 @@ angular.module('zmon2App').factory('LoadingIndicatorService', ['$q', '$log', 'AP
 
         service.getState = function() {
             return isLoading;
-        }
+        };
 
         return service;
     }

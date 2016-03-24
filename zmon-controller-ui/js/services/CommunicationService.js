@@ -6,6 +6,60 @@ angular.module('zmon2App').factory('CommunicationService', ['$http', '$q', '$log
             checkIdCache = {},
             checkNameCache = {};
 
+        /**
+         * Covers all http methods; the arg postSuccessProcessing is a function which will receive as single argument
+         * the upon success response data in case it needs to go through additional processing before resolving the promise
+         */
+        var doHttpCall = function(httpMethod, endpoint, payload, extraHeaders, timeout, postSuccessProcessing) {
+            PreconditionsService.isNotEmpty(httpMethod);
+            PreconditionsService.isHTTPMethod(httpMethod);
+            PreconditionsService.isNotEmpty(endpoint);
+            /**
+             * Converts a simple object (flat key/value pairs; no nested objects|arrays) into a query string
+             * Used only for GETs/DELETEs; POST payload is sent as is
+             */
+            function objectToQueryString(obj) {
+                var str = [];
+                angular.forEach(obj, function(nextValue, nextKey) {
+                    str.push(encodeURIComponent(nextKey) + "=" + encodeURIComponent(nextValue));
+                });
+                return str.join("&");
+            }
+            var deferred = $q.defer();
+
+            // console.log(' method: ', httpMethod, ' / endpoint: ', endpoint, ' / payload: ', objectToQueryString(payload));
+            var httpConfig = {
+                method: httpMethod
+            };
+            if (httpMethod === "POST") {
+                httpConfig.url = endpoint;
+                httpConfig.data = payload;
+            } else {
+                // GETs & DELETEs
+                httpConfig.url = endpoint + "?" + objectToQueryString(payload);
+            }
+
+            if (extraHeaders) {
+                httpConfig.headers = extraHeaders;
+            }
+
+            if (timeout) {
+                httpConfig.timeout = timeout;
+            }
+
+            $http(httpConfig).success(function(response, status, headers, config) {
+                if (postSuccessProcessing) {
+                    var result = postSuccessProcessing(response);
+                    response = result ? result : response;
+                }
+                deferred.resolve(response);
+            }).error(function(response, status, headers, config) {
+                deferred.reject(status);
+            });
+
+            return deferred.promise;
+        };
+
         /*
          * Get all the alerts based on passed filter object (empty object to get everything).
          * Format of passed param object: {'team':'Platform/Software'}
@@ -217,7 +271,7 @@ angular.module('zmon2App').factory('CommunicationService', ['$http', '$q', '$log
                     tags.push({ 'id': t, 'text': t });
                 });
                 return tags;
-            }
+            };
             return doHttpCall("GET", "rest/allTags", null, null, null, postSuccessProcessing);
         };
 
@@ -495,60 +549,6 @@ angular.module('zmon2App').factory('CommunicationService', ['$http', '$q', '$log
         service.getEntityProperties = function() {
             return doHttpCall("GET", 'rest/entityProperties');
         };
-
-        /**
-         * Covers all http methods; the arg postSuccessProcessing is a function which will receive as single argument
-         * the upon success response data in case it needs to go through additional processing before resolving the promise
-         */
-        function doHttpCall(httpMethod, endpoint, payload, extraHeaders, timeout, postSuccessProcessing) {
-            PreconditionsService.isNotEmpty(httpMethod);
-            PreconditionsService.isHTTPMethod(httpMethod);
-            PreconditionsService.isNotEmpty(endpoint);
-            /**
-             * Converts a simple object (flat key/value pairs; no nested objects|arrays) into a query string
-             * Used only for GETs/DELETEs; POST payload is sent as is
-             */
-            function objectToQueryString(obj) {
-                var str = [];
-                angular.forEach(obj, function(nextValue, nextKey) {
-                    str.push(encodeURIComponent(nextKey) + "=" + encodeURIComponent(nextValue));
-                });
-                return str.join("&");
-            }
-            var deferred = $q.defer();
-
-            // console.log(' method: ', httpMethod, ' / endpoint: ', endpoint, ' / payload: ', objectToQueryString(payload));
-            var httpConfig = {
-                method: httpMethod
-            };
-            if (httpMethod === "POST") {
-                httpConfig.url = endpoint;
-                httpConfig.data = payload;
-            } else {
-                // GETs & DELETEs
-                httpConfig.url = endpoint + "?" + objectToQueryString(payload);
-            }
-
-            if (extraHeaders) {
-                httpConfig.headers = extraHeaders;
-            }
-
-            if (timeout) {
-                httpConfig.timeout = timeout;
-            }
-
-            $http(httpConfig).success(function(response, status, headers, config) {
-                if (postSuccessProcessing) {
-                    var result = postSuccessProcessing(response);
-                    response = result ? result : response;
-                }
-                deferred.resolve(response);
-            }).error(function(response, status, headers, config) {
-                deferred.reject(status);
-            });
-
-            return deferred.promise;
-        }
 
         return service;
     }

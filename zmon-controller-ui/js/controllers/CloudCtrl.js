@@ -44,7 +44,7 @@ angular.module('zmon2App').controller('CloudCtrl', ['$scope', '$interval', '$loc
                 }
             });
             return entityName;
-        }
+        };
 
         // determines if an app contains error code responses (4XX, 5XX, etc)
         var hasErrorCodes = function(app) {
@@ -57,7 +57,7 @@ angular.module('zmon2App').controller('CloudCtrl', ['$scope', '$interval', '$loc
                 });
             });
             return errd;
-        }
+        };
 
         // find team name from aws id last 3 digits, i.e.  701 -> stups
         var getTeamNameFromAwsId = function(awsId) {
@@ -84,7 +84,74 @@ angular.module('zmon2App').controller('CloudCtrl', ['$scope', '$interval', '$loc
             } else {
                 $scope.setTeam();
             }
-        }
+        };
+
+        // create application object and add to belonging team
+        var createApplications = function(applications) {
+            _.each(applications, function(app) {
+                app.team = getTeamNameFromAwsId(app.infrastructure_account);
+                app.instances = 0;
+                app.einstances = 0;
+                app.metrics = [];
+                $scope.applications[app.application_id] = app;
+                if (app.team && $scope.teams[app.team]) {
+                    $scope.teams[app.team].applications.push(app);
+                }
+            });
+        };
+
+        // create instances object and add to belonging team
+        var createInstances = function(instances) {
+            _.each(instances, function(instance) {
+                var teamId = getTeamNameFromAwsId(instance.infrastructure_account);
+                if ($scope.teams[teamId] !== undefined) {
+                    $scope.teams[teamId].instances.push(instance);
+                } 
+            });
+        };
+
+        // var create elbs object and add to belonging team
+        var createElbs = function(elbs) {
+            _.each(elbs, function(elb) {
+                elb.team = getTeamNameFromAwsId(elb.infrastructure_account);
+                if (elb.team && $scope.teams[elb.team]) {
+                    $scope.teams[elb.team].elbs.push(elb);
+                }
+            });
+        };
+
+        // set teams object with awsId as keys
+        var createTeams = function(teams) {
+            _.each(teams, function(team) {
+                team.awsId = team.infrastructure_account;
+                team.instances = [];
+                team.applications = [];
+                team.elbs = [];
+                team.name = team.account_alias;
+                $scope.teams[team.name] = team;
+            });
+        };
+
+        // fetch all necessary resources
+        var fetchCloudData = function() {
+            CommunicationService.getCloudData('local').then(function(teams) {
+                CommunicationService.getCloudData('application').then(function(applications) {
+                    CommunicationService.getCloudData('instance').then(function(instances) {
+                        CommunicationService.getCloudData('elb').then(function(elbs) {
+                            createTeams(teams);
+                            createApplications(applications);
+                            createInstances(instances);
+                            createElbs(elbs);
+
+                            setStateFromUrl();
+
+                            LoadingIndicatorService.stop();
+                            $scope.loading = false;
+                        });
+                    });
+                });
+            });
+        };
 
         // start data fetch intervals
         var startFetchInterval = function() {
@@ -126,7 +193,7 @@ angular.module('zmon2App').controller('CloudCtrl', ['$scope', '$interval', '$loc
 
             var r = app.results = {};
 
-            var r = app.results = {
+            r = app.results = {
                 r200: _.isEmpty(r200) ? 0 : Math.round(_.reduce(r200, function(m, n) { return m+n; }, 0)*60),
                 r400: _.isEmpty(r400) ? 0 : Math.round(_.reduce(r400, function(m, n) { return m+n; }, 0)*60),
                 r500: _.isEmpty(r500) ? 0 : Math.round(_.reduce(r500, function(m, n) { return m+n; }, 0)*60),
@@ -163,54 +230,8 @@ angular.module('zmon2App').controller('CloudCtrl', ['$scope', '$interval', '$loc
 
                 LoadingIndicatorService.stop();
                 $scope.loading = false;
-            })
-        }
-
-        // set teams object with awsId as keys
-        var createTeams = function(teams) {
-            _.each(teams, function(team) {
-                team.awsId = team.infrastructure_account;
-                team.instances = [];
-                team.applications = [];
-                team.elbs = [];
-                team.name = team.account_alias;
-                $scope.teams[team.name] = team;
             });
-        }
-
-        // create application object and add to belonging team
-        var createApplications = function(applications) {
-            _.each(applications, function(app) {
-                app.team = getTeamNameFromAwsId(app.infrastructure_account);
-                app.instances = 0;
-                app.einstances = 0;
-                app.metrics = [];
-                $scope.applications[app.application_id] = app;
-                if (app.team && $scope.teams[app.team]) {
-                    $scope.teams[app.team].applications.push(app);
-                }
-            });
-        }
-
-        // create instances object and add to belonging team
-        var createInstances = function(instances) {
-            _.each(instances, function(instance) {
-                var teamId = getTeamNameFromAwsId(instance.infrastructure_account);
-                if ($scope.teams[teamId] !== undefined) {
-                    $scope.teams[teamId].instances.push(instance);
-                } 
-            });
-        }
-
-        // var create elbs object and add to belonging team
-        var createElbs = function(elbs) {
-            _.each(elbs, function(elb) {
-                elb.team = getTeamNameFromAwsId(elb.infrastructure_account);
-                if (elb.team && $scope.teams[elb.team]) {
-                    $scope.teams[elb.team].elbs.push(elb);
-                }
-            });
-        }
+        };
 
         // set app on URL and let children controller CloudEntitirsCtrl take action
         $scope.showApp = function(appId) {
@@ -220,13 +241,13 @@ angular.module('zmon2App').controller('CloudCtrl', ['$scope', '$interval', '$loc
 
         // return number of ELBs for a given 'team' which are public.
         $scope.getPublicElbsByTeam = function(team) {
-            var i = 0
+            var i = 0;
             _.each(team.elbs, function(elb) {
                 if (!('scheme' in elb) || elb.scheme!='internal') {
-                    i++
+                    i++;
                 }
             });
-            return i
+            return i;
         };
 
         // user select team from teams dashboard
@@ -243,7 +264,7 @@ angular.module('zmon2App').controller('CloudCtrl', ['$scope', '$interval', '$loc
             } else if (team) {
                 fastFetchTeamApps(team);
             }
-        }
+        };
 
         // user select app from team apps list
         $scope.setApp = function(appId) {
@@ -253,7 +274,7 @@ angular.module('zmon2App').controller('CloudCtrl', ['$scope', '$interval', '$loc
             $('#overview-charts svg').empty();
 
             $location.search('app', appId);
-        }
+        };
 
         // user select endpoint from app list of endpoints
         $scope.setEndpoint = function(ep) {
@@ -262,7 +283,7 @@ angular.module('zmon2App').controller('CloudCtrl', ['$scope', '$interval', '$loc
             if (ep === null) {
                 $scope.showApp($scope.selectedApplication);
             }
-        }
+        };
 
         // a team has been selected by the user
         $scope.$watch('selectedTeam', function(teamName) {
@@ -293,38 +314,17 @@ angular.module('zmon2App').controller('CloudCtrl', ['$scope', '$interval', '$loc
                 return true;
             }
             return false;
-        }
+        };
 
         // filter for untracked applications
         $scope.notHasMetrics = function(app) {
             return !app.metrics.length;
-        }
+        };
 
         // check if teams object is populated
         $scope.haveTeams = function() {
             return !_.isEmpty($scope.teams);
-        }
-
-        // fetch all necessary resources
-        var fetchCloudData = function() {
-            CommunicationService.getCloudData('local').then(function(teams) {
-                CommunicationService.getCloudData('application').then(function(applications) {
-                    CommunicationService.getCloudData('instance').then(function(instances) {
-                        CommunicationService.getCloudData('elb').then(function(elbs) {
-                            createTeams(teams);
-                            createApplications(applications);
-                            createInstances(instances);
-                            createElbs(elbs);
-
-                            setStateFromUrl();
-
-                            LoadingIndicatorService.stop();
-                            $scope.loading = false;
-                        });
-                    });
-                });
-            });
-        }
+        };
 
         // initialize fetching
         startFetchInterval();

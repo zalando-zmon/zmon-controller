@@ -35,7 +35,7 @@ angular.module('zmon2App').directive('json', function() {
                             ctrl.$setValidity('non-empty-json', false);
                             return;
                         }
-                    };
+                    }
                 } catch (e) {
                     ctrl.$setValidity('valid-json', false);
                     ctrl.$setValidity('non-empty-json', false);

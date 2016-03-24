@@ -13,38 +13,11 @@ angular.module('zmon2App').directive('entityFilterContainer', ['$compile', '$log
             link: function (scope, element, attrs, controller) {
 
                 scope.inEditMode = false;
-                scope.selectedType = 'GLOBAL'
+                scope.selectedType = 'GLOBAL';
                 scope.globalIsUsed = false;
                 scope.config = {};
                 scope.availableEntityFilterTypes = [ 'GLOBAL' ];
                 scope.entityFilter = { type: scope.selectedType };
-
-                scope.addEntityFilter = function () {
-                    if (scope.selectedType === 'GLOBAL') {
-                        scope.entityFilter = { type: 'GLOBAL' };
-                        return scope.formEntityFilters.push(scope.entityFilter);
-                    }
-                    scope.config = getEntityFilterConfig(scope.selectedType);
-                    scope.entityFilter = { type: scope.selectedType };
-                    scope.inEditMode = true;
-                };
-
-                scope.editEntityFilter = function(i) {
-                    scope.definitionInEditModeIndex = i;
-                    scope.entityFilter = scope.formEntityFilters[i];
-
-                    if (typeof scope.entityFilter.type === 'undefined') {
-                        scope.entityFilter.type = getTypeFromCheck();
-                    };
-
-                    scope.config = getEntityFilterConfig(scope.entityFilter.type);
-                    scope.selectedType = scope.entityFilter.type;
-                    scope.inEditMode = true;
-                };
-
-                scope.removeEntityFilter = function (idx) {
-                    scope.formEntityFilters.splice(idx, 1);
-                };
 
                 var getEntityFilterConfig = function(type) {
                     var entityFilter = { type: type };
@@ -67,6 +40,33 @@ angular.module('zmon2App').directive('entityFilterContainer', ['$compile', '$log
                     return type;
                 };
 
+                scope.addEntityFilter = function () {
+                    if (scope.selectedType === 'GLOBAL') {
+                        scope.entityFilter = { type: 'GLOBAL' };
+                        return scope.formEntityFilters.push(scope.entityFilter);
+                    }
+                    scope.config = getEntityFilterConfig(scope.selectedType);
+                    scope.entityFilter = { type: scope.selectedType };
+                    scope.inEditMode = true;
+                };
+
+                scope.editEntityFilter = function(i) {
+                    scope.definitionInEditModeIndex = i;
+                    scope.entityFilter = scope.formEntityFilters[i];
+
+                    if (typeof scope.entityFilter.type === 'undefined') {
+                        scope.entityFilter.type = getTypeFromCheck();
+                    }
+
+                    scope.config = getEntityFilterConfig(scope.entityFilter.type);
+                    scope.selectedType = scope.entityFilter.type;
+                    scope.inEditMode = true;
+                };
+
+                scope.removeEntityFilter = function (idx) {
+                    scope.formEntityFilters.splice(idx, 1);
+                };
+
                 scope.$watch('entityFilterTypes', function(){
                     scope.availableEntityFilterTypes = _.map(_.pluck(scope.entityFilterTypes, 'type'), function(t) {
                         if (t === 'GLOBAL')
@@ -81,7 +81,8 @@ angular.module('zmon2App').directive('entityFilterContainer', ['$compile', '$log
                     scope.globalIsUsed = _.pluck(scope.formEntityFilters, 'type').indexOf('GLOBAL') !== -1;
                     if (scope.globalIsUsed && scope.availableEntityFilterTypes[0] === 'GLOBAL') {
                         scope.availableEntityFilterTypes.splice(0, 1);
-                        return scope.selectedType = 'appdomain';
+                        scope.selectedType = 'appdomain';
+                        return;
                     }
                     if (!scope.globalIsUsed && scope.availableEntityFilterTypes.indexOf('GLOBAL') === -1) {
                         scope.availableEntityFilterTypes = [ 'GLOBAL' ].concat(scope.availableEntityFilterTypes);

@@ -70,6 +70,45 @@ var TrialRunCtrl = function ($scope, $interval, timespanFilter, localStorageServ
 
     var trc = $scope.TrialRunCtrl = this;
 
+    var formParametersObject = function() {
+        var parameters = {};
+        _.each(trc.parameters, function(param) {
+            var val = param.value;
+
+            if (param.type === 'int') {
+                val = parseInt(param.value);
+            }
+            if (param.type === 'float') {
+                val = parseFloat(param.value);
+            }
+
+            parameters[param.name] = {
+                "value": val,
+                "comment": param.comment,
+                "type": param.type
+            };
+        });
+        return parameters;
+    };
+
+    var formParametersArray = function(pObj) {
+        var parameters = [];
+        _.each(pObj, function(p, name) {
+            parameters.push({
+                name: name,
+                value: p.value,
+                comment: p.comment,
+                type: p.type
+            });
+        });
+        return parameters;
+    };
+
+    var updateUrlParameters = function() {
+        $location.search('json', JSON.stringify($scope.alert));
+    };
+
+
     // Alert Parameters initial data
     trc.alertParameters = [];
     trc.paramTypes = ['string', 'int', 'boolean', 'date'];
@@ -302,7 +341,7 @@ var TrialRunCtrl = function ($scope, $interval, timespanFilter, localStorageServ
                 return FeedbackMessageService.showErrorMessage('JSON format is incorrect' + ex);
             }
 
-            var checkImport = {}
+            var checkImport = {};
             checkImport.name = $scope.alert.name;
             checkImport.entities = $scope.alert.entities;
             checkImport.command = $scope.alert.check_command;
@@ -431,7 +470,7 @@ var TrialRunCtrl = function ($scope, $interval, timespanFilter, localStorageServ
             description: $scope.alert.description || "TrialRun Test",
             status: 'ACTIVE',
             interval: $scope.alert.interval
-        }
+        };
 
         if (typeof $scope.alert.entities !== 'undefined' && $scope.alert.entities.length) {
             alert.entities = $scope.alert.entities;
@@ -465,9 +504,9 @@ var TrialRunCtrl = function ($scope, $interval, timespanFilter, localStorageServ
         _.each(trc.parameters, function(param, i) {
             if (param.name === name) {
                 index = i;
-            };
+            }
         });
-        if (index != null) {
+        if (index !== null) {
             trc.parameters.splice(index, 1);
         }
     };
@@ -484,44 +523,6 @@ var TrialRunCtrl = function ($scope, $interval, timespanFilter, localStorageServ
     };
 
     trc.format = 'dd.MM.yyyy';
-
-    function formParametersObject() {
-        var parameters = {};
-        _.each(trc.parameters, function(param) {
-            var val = param.value;
-
-            if (param.type === 'int') {
-                val = parseInt(param.value);
-            }
-            if (param.type === 'float') {
-                val = parseFloat(param.value);
-            }
-
-            parameters[param.name] = {
-                "value": val,
-                "comment": param.comment,
-                "type": param.type
-            }
-        });
-        return parameters;
-    };
-
-    function formParametersArray(pObj) {
-        var parameters = [];
-        _.each(pObj, function(p, name) {
-            parameters.push({
-                name: name,
-                value: p.value,
-                comment: p.comment,
-                type: p.type
-            });
-        });
-        return parameters;
-    }
-
-    function updateUrlParameters() {
-        $location.search('json', JSON.stringify($scope.alert));
-    }
 };
 
 

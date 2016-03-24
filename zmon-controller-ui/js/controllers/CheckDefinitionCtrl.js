@@ -12,6 +12,17 @@ angular.module('zmon2App').controller('CheckDefinitionCtrl', ['$scope', '$routeP
 
         var userInfo = UserInfoService.get();
 
+        var setLinkToTrialRun = function () {
+            if (typeof $scope.checkDefinition === 'undefined') return;
+            var params = {
+                name: $scope.checkDefinition.name,
+                check_command: $scope.checkDefinition.command,
+                entities: $scope.checkDefinition.entities,
+                interval: $scope.checkDefinition.interval,
+            };
+            $scope.checkJson = window.encodeURIComponent(JSON.stringify(params));
+        };
+
         this.fetchCheckDefinitions = function() {
 
             // Start loading animation
@@ -25,7 +36,7 @@ angular.module('zmon2App').controller('CheckDefinitionCtrl', ['$scope', '$routeP
                     // remove saved team from local storage if it doesnt exist anymore
                     if ($scope.checkTeams.indexOf(localStorageService.get('teamFilter')) === -1) {
                         localStorageService.remove('teamFilter');
-                    };
+                    }
                 }
             );
 
@@ -64,18 +75,6 @@ angular.module('zmon2App').controller('CheckDefinitionCtrl', ['$scope', '$routeP
             $location.search('tf', $scope.teamFilter ? $scope.teamFilter : 'all');
             localStorageService.set('teamFilter', $scope.teamFilter);
             localStorageService.set('returnTo', '/#' + $location.url());
-        };
-
-
-        var setLinkToTrialRun = function () {
-            if (typeof $scope.checkDefinition === 'undefined') return;
-            var params = {
-                name: $scope.checkDefinition.name,
-                check_command: $scope.checkDefinition.command,
-                entities: $scope.checkDefinition.entities,
-                interval: $scope.checkDefinition.interval,
-            }
-            $scope.checkJson = window.encodeURIComponent(JSON.stringify(params));
         };
 
         // Set team filter on load from userInfo

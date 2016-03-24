@@ -215,7 +215,7 @@ angular.module('zmon2App').factory('MainAlertService', ['$http', '$q', '$log', '
                     that.serviceStatus.checkInvocationsCache[worker.name] = worker.check_invocations;
 
                     // filter scheduler nodes from check count
-                    if(worker.name.indexOf('s-')!=0) {
+                    if (worker.name.indexOf('s-') !== 0) {
                         that.serviceStatus.checksPerSecond += worker.checksPerSecond;
                     }
                 });

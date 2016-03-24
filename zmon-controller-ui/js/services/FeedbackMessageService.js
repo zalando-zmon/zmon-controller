@@ -21,6 +21,15 @@ angular.module('zmon2App').factory('FeedbackMessageService', ['$q', '$window', '
             }
         };
 
+        var showMessage = function (type, message, delay, callback) {
+            initDom(type);
+            $message.html(message);
+            $wrapper.fadeIn(200);
+            $timeout(function() {
+                $wrapper.fadeOut(200, callback || angular.noop);
+            }, delay || APP_CONST.FEEBACK_MSG_SHOW_TIME);
+        };
+
         service.showSuccessMessage = function(message, delay, callback) {
             if (typeof delay === 'function') {
                 callback = delay;
@@ -38,15 +47,6 @@ angular.module('zmon2App').factory('FeedbackMessageService', ['$q', '$window', '
 
             showMessage('error', message, delay, callback);
         };
-
-        function showMessage(type, message, delay, callback) {
-            initDom(type);
-            $message.html(message);
-            $wrapper.fadeIn(200);
-            $timeout(function() {
-                $wrapper.fadeOut(200, callback || angular.noop);
-            }, delay || APP_CONST.FEEBACK_MSG_SHOW_TIME);
-        }
 
         return service;
     }

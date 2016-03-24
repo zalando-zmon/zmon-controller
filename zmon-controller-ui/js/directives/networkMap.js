@@ -53,7 +53,7 @@ angular.module('zmon2App').directive('networkmap', [ '$compile', '$http', '$temp
 
                     // Check if alert IDs are specified for the current div.
                     // If data is "", make the item dark-gray.
-                    if (divAlertIds != undefined && divAlertIds != null && divAlertIds != "") {
+                    if (divAlertIds !== undefined && divAlertIds !== null && divAlertIds !== "") {
                         var currentAlertIds = divAlertIds.toString().split(",");
 
                         // Clear priority from list of alert IDs.
@@ -62,13 +62,25 @@ angular.module('zmon2App').directive('networkmap', [ '$compile', '$http', '$temp
                         }
 
                         allAlertIds = allAlertIds.concat(currentAlertIds);
-                    } else if (divAlertIds == "") {
+                    } else if (divAlertIds === "") {
                         div.addClass("no-ids");
                     }
                 });
 
                 scope.options.alertIds = allAlertIds;
             }
+
+            var evalOldestStartTimes = function(allAlerts) {
+                if (typeof allAlerts === 'undefined') return;
+                allAlerts.forEach(function(nextAlert, idx, arr) {
+                    // Get the oldest start_time out of all of the entities of this specific allert
+                    var alertId = nextAlert.alert_definition.id;
+                    // Add the oldest entity's start_time for current alert as property 'oldestStartTime' of the alert
+                    _.extend(nextAlert, {
+                        'oldestStartTime': _.min(_.pluck(_.pluck(nextAlert.entities, 'result'), 'start_time'))
+                    });
+                });
+            };
 
             scope.getTooltip = function(ids) {
                 var hasAlert = false;
@@ -122,7 +134,7 @@ angular.module('zmon2App').directive('networkmap', [ '$compile', '$http', '$temp
                     div = $(div);
                     divAlertIds = div.data("alertids");
 
-                    if (divAlertIds != undefined && divAlertIds != null && divAlertIds != "") {
+                    if (divAlertIds !== undefined && divAlertIds !== null && divAlertIds !== "") {
                         var arrIds = div.data("alertids").toString().split(",");
                         var hasAlert = false;
                         var forcedPrio = 0;
@@ -164,18 +176,6 @@ angular.module('zmon2App').directive('networkmap', [ '$compile', '$http', '$temp
                     }
                 });
             });
-
-            var evalOldestStartTimes = function(allAlerts) {
-                if (typeof allAlerts === 'undefined') return;
-                allAlerts.forEach(function(nextAlert, idx, arr) {
-                    // Get the oldest start_time out of all of the entities of this specific allert
-                    var alertId = nextAlert.alert_definition.id;
-                    // Add the oldest entity's start_time for current alert as property 'oldestStartTime' of the alert
-                    _.extend(nextAlert, {
-                        'oldestStartTime': _.min(_.pluck(_.pluck(nextAlert.entities, 'result'), 'start_time'))
-                    });
-                });
-            };
         }
     };
 }]);

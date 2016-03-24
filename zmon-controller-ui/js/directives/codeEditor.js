@@ -55,7 +55,7 @@ angular.module("zmon2App").directive("codeEditor", ["$timeout",
                 // Add "required" validator handler.
                 var validator = function(value){
                     var isRequired = $(elem).attr("required");
-                    if (isRequired && isRequired != "") {
+                    if (isRequired && isRequired !== "") {
                         ngModel.$setValidity("required", editor.getSession().getValue().toString().length > 0);
                     }
                     return value;

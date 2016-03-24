@@ -141,7 +141,7 @@ angular.module('zmon2App').controller('CheckDefinitionEditCtrl', ['$scope', '$ro
 
         if ($scope.checkId) {
             getCheckDefinition($scope.checkId);
-        };
+        }
 
 
         // Add a new parameter with cleared values and type string by default
@@ -155,16 +155,16 @@ angular.module('zmon2App').controller('CheckDefinitionEditCtrl', ['$scope', '$ro
             _.each($scope.parameters, function(param, i) {
                 if (param.name === name) {
                     index = i;
-                };
+                }
             });
-            if (index != null) {
+            if (index !== null) {
                 $scope.parameters.splice(index, 1);
             }
         };
 
         // Get current parameters in form and generate a properly formatted
         // json to send to the backend.
-        function formParametersObject() {
+        var formParametersObject = function() {
             var parameters = {};
             _.each($scope.parameters, function(param) {
                 var val = param.value;
@@ -180,7 +180,7 @@ angular.module('zmon2App').controller('CheckDefinitionEditCtrl', ['$scope', '$ro
                     "value": val,
                     "comment": param.comment,
                     "type": param.type
-                }
+                };
             });
             return parameters;
         };

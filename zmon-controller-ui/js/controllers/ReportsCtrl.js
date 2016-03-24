@@ -17,6 +17,96 @@ angular.module('zmon2App').controller('ReportsCtrl', ['$scope', '$routeParams', 
         var fromDate = new Date();
         var toDate = new Date();
 
+        var setStateToUrl = function(scope) {
+            $location.url($location.path());
+            if (scope.useDateRange) {
+                $location.search('from', scope.dates.fromDate);
+                $location.search('to', scope.dates.toDate);
+                localStorageService.set('returnTo', '/#' + $location.url());
+            }
+            if (scope.teamFilter !== 'all') {
+                $location.search('team', scope.teamFilter);
+                localStorageService.set('returnTo', '/#' + $location.url());
+            }
+        };
+
+        var setTimes = function(d) {
+            d.fromDate.setHours(d.fromTime.getHours());
+            d.fromDate.setMinutes(d.fromTime.getMinutes());
+            d.toDate.setHours(d.toTime.getHours());
+            d.toDate.setMinutes(d.toTime.getMinutes());
+        };
+
+        var reportsModalCtrl = function($scope, $modalInstance, params) {
+
+            $scope.useDateRange = params.useDateRange;
+            $scope.dates = params.dates;
+            $scope.dateOptions = params.dateOptions;
+            $scope.teamFilter = params.teamFilter;
+            $scope.teams = params.teams;
+            $scope.showCalendar = params.showCalendar;
+            $scope.openedCalendars = params.openedCalendars;
+
+            //TODO Use parent setTeamFilter()
+            $scope.setTeamFilter = function(team) {
+                $scope.teamFilter = team;
+            };
+
+            $scope.ok = function() {
+                setTimes($scope.dates);
+                var params = {
+                    teamFilter: $scope.teamFilter,
+                    useDateRange: $scope.useDateRange,
+                    dates: $scope.dates,
+                };
+                $modalInstance.close(params);
+            };
+
+            $scope.cancel = function() {
+                $modalInstance.dismiss();
+            };
+        };
+
+        var fetchReports = function() {
+            var params = {};
+            //FIXME Temporarily hardcoding team to incident team, since we only have
+            //one report as dummy data. Later this parameter should be provided either
+            //from the report object or from a dropdown.
+            params.team = "Incident";
+            if ($scope.useDateRange) {
+                params.from = $scope.dates.fromDate.getTime() / 1000 | 0;
+                params.to = $scope.dates.toDate.getTime() / 1000 | 0;
+            }
+            if ($scope.teamFilter) {
+                params.responsible_team = $scope.teamFilter;
+            }
+            CommunicationService.getReports(params).then(function(data) {
+                $scope.reports = data;
+                console.log('REPORTS: ', data);
+                LoadingIndicatorService.stop();
+            });
+        };
+
+        var generateCSV = function() {
+            var csv = [];
+            var header = 'LastModified;ModifiedBy;ModifierTeam;Name;ModificationType;OriginalData;NewData';
+            csv.push(header);
+            _.each($scope.reports, function(report) {
+                var line = [];
+                var pfix = report.history_type === 'ALERT_DEFINITION' ? 'adt_' : 'cd_';
+                line.push(report.attributes[pfix + 'last_modified']);
+                line.push(report.attributes[pfix + 'last_modified_by']);
+                line.push(report.attributes[pfix + 'team']);
+                line.push(report.attributes[pfix + 'name']);
+                line.push(report.action);
+                line.push($scope.getChanges(report.attributes, true));
+                line.push($scope.getChanges(report.changed_attributes, true));
+                csv.push(line.join(';'));
+            });
+
+            return csv.join('\n');
+        };
+
         // Initialize date range as disabled
         $scope.useDateRange = false;
 
@@ -69,56 +159,6 @@ angular.module('zmon2App').controller('ReportsCtrl', ['$scope', '$routeParams', 
             setTimes($scope.dates);
             setStateToUrl($scope);
             fetchReports();
-        };
-
-        var setStateToUrl = function(scope) {
-            $location.url($location.path());
-            if (scope.useDateRange) {
-                $location.search('from', scope.dates.fromDate);
-                $location.search('to', scope.dates.toDate);
-                localStorageService.set('returnTo', '/#' + $location.url());
-            }
-            if (scope.teamFilter !== 'all') {
-                $location.search('team', scope.teamFilter);
-                localStorageService.set('returnTo', '/#' + $location.url());
-            }
-        };
-
-        var setTimes = function(d) {
-            d.fromDate.setHours(d.fromTime.getHours());
-            d.fromDate.setMinutes(d.fromTime.getMinutes());
-            d.toDate.setHours(d.toTime.getHours());
-            d.toDate.setMinutes(d.toTime.getMinutes());
-        };
-
-        var reportsModalCtrl = function($scope, $modalInstance, params) {
-
-            $scope.useDateRange = params.useDateRange;
-            $scope.dates = params.dates;
-            $scope.dateOptions = params.dateOptions;
-            $scope.teamFilter = params.teamFilter;
-            $scope.teams = params.teams;
-            $scope.showCalendar = params.showCalendar;
-            $scope.openedCalendars = params.openedCalendars;
-
-            //TODO Use parent setTeamFilter()
-            $scope.setTeamFilter = function(team) {
-                $scope.teamFilter = team;
-            };
-
-            $scope.ok = function() {
-                setTimes($scope.dates);
-                var params = {
-                    teamFilter: $scope.teamFilter,
-                    useDateRange: $scope.useDateRange,
-                    dates: $scope.dates,
-                };
-                $modalInstance.close(params);
-            };
-
-            $scope.cancel = function() {
-                $modalInstance.dismiss();
-            };
         };
 
         $scope.showReportsModal = function(reportId) {
@@ -224,46 +264,6 @@ angular.module('zmon2App').controller('ReportsCtrl', ['$scope', '$routeParams', 
                 type: 'text/plain'
             });
             $scope.csvBlobUrl = window.URL.createObjectURL($scope.blob);
-        };
-
-        var generateCSV = function() {
-            var csv = [];
-            var header = 'LastModified;ModifiedBy;ModifierTeam;Name;ModificationType;OriginalData;NewData';
-            csv.push(header);
-            _.each($scope.reports, function(report) {
-                var line = [];
-                var pfix = report.history_type === 'ALERT_DEFINITION' ? 'adt_' : 'cd_';
-                line.push(report.attributes[pfix + 'last_modified']);
-                line.push(report.attributes[pfix + 'last_modified_by']);
-                line.push(report.attributes[pfix + 'team']);
-                line.push(report.attributes[pfix + 'name']);
-                line.push(report.action);
-                line.push($scope.getChanges(report.attributes, true));
-                line.push($scope.getChanges(report.changed_attributes, true));
-                csv.push(line.join(';'));
-            });
-
-            return csv.join('\n');
-        };
-
-        var fetchReports = function() {
-            var params = {};
-            //FIXME Temporarily hardcoding team to incident team, since we only have
-            //one report as dummy data. Later this parameter should be provided either
-            //from the report object or from a dropdown.
-            params.team = "Incident";
-            if ($scope.useDateRange) {
-                params.from = $scope.dates.fromDate.getTime() / 1000 | 0;
-                params.to = $scope.dates.toDate.getTime() / 1000 | 0;
-            }
-            if ($scope.teamFilter) {
-                params.responsible_team = $scope.teamFilter;
-            }
-            CommunicationService.getReports(params).then(function(data) {
-                $scope.reports = data;
-                console.log('REPORTS: ', data);
-                LoadingIndicatorService.stop();
-            });
         };
 
         // Non-refreshing; one-time listing

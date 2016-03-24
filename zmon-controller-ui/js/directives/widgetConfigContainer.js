@@ -44,13 +44,13 @@ angular.module('zmon2App').directive('widgetConfigContainer', ['$compile', '$log
                                 unit: 'minutes'
                             }
                         }
-                    }
+                    };
 
                     if (scope.selectedWidgetType.type === "Kairos Chart") {
                         chart.options.metrics = [{
                             tags: {},
                             group_by: []
-                        }]
+                        }];
                     }
 
                     scope.widgets = [ chart ].concat(scope.widgets);
@@ -62,9 +62,9 @@ angular.module('zmon2App').directive('widgetConfigContainer', ['$compile', '$log
                     }
                     if (formIsVisible) {
                         try {
-                            return scope.widgets = JSON.parse(scope.widgetsJson);
-                        } catch (e) {
-                        }
+                            scope.widgets = JSON.parse(scope.widgetsJson);
+                            return;
+                        } catch (e) {}
                     }
                     scope.widgetsJson = angular.toJson(scope.widgets, true);
                 });

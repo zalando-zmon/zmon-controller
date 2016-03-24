@@ -39,7 +39,7 @@ angular.module('zmon2App').controller('AlertDefinitionEditCtrl', ['$scope', '$ro
 
         // List of properties that shouldn't be inherited from a parent alert
         $scope.nonInheritableProperties = [ 'id', 'check_definition_id', 'editable', 'cloneable', 'deleteable',
-            'template', 'last_modified', 'last_modified_by', 'parent_id', 'parameters' ]
+            'template', 'last_modified', 'last_modified_by', 'parent_id', 'parameters' ];
 
         $scope.priorityOptions = [
             {
@@ -121,6 +121,30 @@ angular.module('zmon2App').controller('AlertDefinitionEditCtrl', ['$scope', '$ro
 
         $scope.focusedElement = null;
 
+        // Add all overwritten properties from current alert to array
+        var markAllAsOverwritten = function() {
+            _.each($scope.alertDefinition, function(value, property) {
+                if (value !== null && $scope.nonInheritableProperties.indexOf(property) === -1) {
+                    $scope.markAsOverwritten(property);
+                }
+            });
+        };
+
+        // Deep copy an alert into a new object
+        var extendAlert = function(src) {
+            var n = _.extend({}, src);
+            if (src.entities) {
+                n.entities = angular.copy(src.entities);
+            }
+            if (src.entities_exclude) {
+                n.entities_exclude = angular.copy(src.entities_exclude);
+            }
+            if (src.notifications) {
+                n.notifications = angular.copy(src.notifications);
+            }
+            return n;
+        };
+
         $scope.save = function() {
             if ($scope.adForm.$valid) {
                 try {
@@ -137,7 +161,7 @@ angular.module('zmon2App').controller('AlertDefinitionEditCtrl', ['$scope', '$ro
                         $scope.alertDefinition.entities_exclude = JSON.parse($scope.entityExcludeFilter.textEntityFilters);
                     }
 
-                    if ($scope.alertDefinition.template && ($scope.notificationsJson == undefined || $scope.notificationsJson == '')) {
+                    if ($scope.alertDefinition.template && ($scope.notificationsJson === undefined || $scope.notificationsJson === '')) {
                         delete $scope.alertDefinition.notifications;
                     } else {
                         $scope.alertDefinition.notifications = JSON.parse($scope.notificationsJson);
@@ -276,7 +300,7 @@ angular.module('zmon2App').controller('AlertDefinitionEditCtrl', ['$scope', '$ro
                 $scope.parentAlertDefinition = data;
                 return cb();
             });
-        }
+        };
 
         // Merge Node (diff) with parent data to have a complete alert definition.
         $scope.mergeNode = function() {
@@ -286,7 +310,7 @@ angular.module('zmon2App').controller('AlertDefinitionEditCtrl', ['$scope', '$ro
                     $scope.alertDefinition[property] = angular.copy($scope.parentAlertDefinition[property]);
                 }
             });
-            if ($scope.alertDefinition.parameters == null && $scope.parentAlertDefinition.parameters) {
+            if ($scope.alertDefinition.parameters === null && $scope.parentAlertDefinition.parameters) {
                 $scope.alertDefinition.parameters = [];
             }
             _.each($scope.alertDefinition.parent_id && $scope.parentAlertDefinition.parameters, function(p, name) {
@@ -300,23 +324,14 @@ angular.module('zmon2App').controller('AlertDefinitionEditCtrl', ['$scope', '$ro
         // Manage key-up events
         $scope.markAsOverwritten = function(property) {
             if ($scope.oProps.indexOf(property) === -1) {
-                $scope.oProps.push(property)
-            };
+                $scope.oProps.push(property);
+            }
         };
 
         $scope.markAsOverwrittenParam = function(name) {
             if ($scope.oParams.indexOf(name) === -1) {
-                $scope.oParams.push(name)
+                $scope.oParams.push(name);
             }
-        };
-
-        // Add all overwritten properties from current alert to array
-        var markAllAsOverwritten = function() {
-            _.each($scope.alertDefinition, function(value, property) {
-                if (value !== null && $scope.nonInheritableProperties.indexOf(property) === -1) {
-                    $scope.markAsOverwritten(property);
-                }
-            });
         };
 
         // Reset entity filter to inherit values again
@@ -352,9 +367,9 @@ angular.module('zmon2App').controller('AlertDefinitionEditCtrl', ['$scope', '$ro
             _.each($scope.alertParameters, function(param, i) {
                 if (param.name === name) {
                     index = i;
-                };
+                }
             });
-            if (index != null) {
+            if (index !== null) {
                 $scope.alertParameters.splice(index, 1);
             }
         };
@@ -379,7 +394,7 @@ angular.module('zmon2App').controller('AlertDefinitionEditCtrl', ['$scope', '$ro
                             "value": val,
                             "comment": param.comment,
                             "type": param.type
-                        }
+                        };
                     }
                 });
             });
@@ -388,13 +403,13 @@ angular.module('zmon2App').controller('AlertDefinitionEditCtrl', ['$scope', '$ro
 
         // Add a tag to the tags array
         $scope.addTag = function(tag) {
-            if (typeof $scope.alertDefinition.tags === 'undefined' || $scope.alertDefinition.tags == null) {
+            if (typeof $scope.alertDefinition.tags === 'undefined' || $scope.alertDefinition.tags === null) {
                 $scope.alertDefinition.tags = [];
             }
             if ($scope.alertDefinition.tags.indexOf(tag.text) === -1) {
                 $scope.alertDefinition.tags.push(tag.text);
                 $scope.markAsOverwritten('tags');
-            };
+            }
         };
 
         // Remove a tag from the tags array
@@ -411,26 +426,32 @@ angular.module('zmon2App').controller('AlertDefinitionEditCtrl', ['$scope', '$ro
                 $scope.alertDefinition.entities = angular.copy($scope.parentAlertDefinition.entities);
                 $scope.entityFilter.formEntityFilters = $scope.alertDefinition.entities;
                 if ($scope.alertDefinition.entities) {
-                    return $scope.entityFilter.textEntityFilters = JSON.stringify($scope.alertDefinition.entities, null, $scope.INDENT);
+                    $scope.entityFilter.textEntityFilters = JSON.stringify($scope.alertDefinition.entities, null, $scope.INDENT);
+                    return;
                 }
-                return $scope.entityFilter.textEntityFilters = undefined;
+                $scope.entityFilter.textEntityFilters = undefined;
+                return;
             }
 
             if (property === 'entities_exclude') {
                 $scope.alertDefinition.entities_exclude = angular.copy($scope.parentAlertDefinition.entities_exclude);
                 $scope.entityExcludeFilter.formEntityFilters = $scope.alertDefinition.entities_exclude;
                 if ($scope.alertDefinition.entities_exclude) {
-                    return $scope.entityExcludeFilter.textEntityFilters = JSON.stringify($scope.alertDefinition.entities_exclude, null, $scope.INDENT);
+                    $scope.entityExcludeFilter.textEntityFilters = JSON.stringify($scope.alertDefinition.entities_exclude, null, $scope.INDENT);
+                    return;
                 }
-                return $scope.entityExcludeFilter.textEntityFilters = undefined;
+                $scope.entityExcludeFilter.textEntityFilters = undefined;
+                return;
             }
 
             if (property === 'notifications') {
                 if ($scope.parentAlertDefinition.notifications) {
                     $scope.alertDefinition.notifications = angular.copy($scope.parentAlertDefinition.notifications);
-                    return $scope.notificationsJson = JSON.stringify($scope.alertDefinition.notifications, null, $scope.INDENT);
+                    $scope.notificationsJson = JSON.stringify($scope.alertDefinition.notifications, null, $scope.INDENT);
+                    return;
                 }
-                return $scope.notificationsJson = undefined;
+                $scope.notificationsJson = undefined;
+                return;
             }
 
             $scope.alertDefinition[property] = $scope.parentAlertDefinition[property];
@@ -442,7 +463,7 @@ angular.module('zmon2App').controller('AlertDefinitionEditCtrl', ['$scope', '$ro
             _.each($scope.alertParameters, function(p) {
                 if (p.name === param) {
                     _.extend(p, $scope.parentAlertDefinition.parameters[param]);
-                };
+                }
             });
         };
 
@@ -559,21 +580,6 @@ angular.module('zmon2App').controller('AlertDefinitionEditCtrl', ['$scope', '$ro
             }
         }, true);
 
-        // Deep copy an alert into a new object
-        var extendAlert = function(src) {
-            var n = _.extend({}, src);
-            if (src.entities) {
-                n.entities = angular.copy(src.entities);
-            }
-            if (src.entities_exclude) {
-                n.entities_exclude = angular.copy(src.entities_exclude);
-            }
-            if (src.notifications) {
-                n.notifications = angular.copy(src.notifications);
-            }
-            return n;
-        };
-
         /** The getEntityProperties() returns an object with the data to populate the directives that represent the entity filter forms
          * We transform it to be an array of objects, one object per entity filter type with keys: "type" + keys that correspond to each filter type
          * E.g. [ {"type": "zomcat", "environment": "..", "project": "..", ...}, {"type": "host", "external_ip": "..", ...}, ... ]
@@ -631,15 +637,15 @@ angular.module('zmon2App').controller('AlertDefinitionEditCtrl', ['$scope', '$ro
                 $scope.getCheckDefinition();
                 $scope.alertDefinition = extendAlert($scope.parentAlertDefinition);
                 $scope.alertDefinition.template = false;
-                if ($scope.parentAlertDefinition.entities == null) {
+                if ($scope.parentAlertDefinition.entities === null) {
                     $scope.defaultEntitiesFilter = [];
                     $scope.markAsOverwritten('entities');
                 }
-                if ($scope.parentAlertDefinition.entities_exclude == null) {
+                if ($scope.parentAlertDefinition.entities_exclude === null) {
                     $scope.defaultEntitiesExcludeFilter = [];
                     $scope.markAsOverwritten('entities_exclude');
                 }
-                if ($scope.parentAlertDefinition.notifications == null) {
+                if ($scope.parentAlertDefinition.notifications === null) {
                     $scope.defaultNotifications = [];
                     $scope.markAsOverwritten('notifications');
                 }

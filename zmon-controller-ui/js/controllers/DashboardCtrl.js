@@ -3,12 +3,13 @@ angular.module('zmon2App').controller('DashboardCtrl', ['$scope', '$log', '$rout
 
         $scope.dashboardId = $routeParams.dashboardId || localStorageService.get('dashboardId');
 
+        var p = '/dashboards/';
+
         if (!$routeParams.dashboardId && $scope.dashboardId) {
-            var p = '/dashboards/view/' + $scope.dashboardId;
+            p += 'view/' + $scope.dashboardId;
             return $location.path(p);
         } else if (!$scope.dashboardId) {
             // No dashboard specified. Redirect to dashboard list.
-            var p = '/dashboards/';
             return $location.path(p).search({'noFavourite':'true'});
         }
 
@@ -197,6 +198,37 @@ angular.module('zmon2App').controller('DashboardCtrl', ['$scope', '$log', '$rout
             }
         };
 
+        var loadCheckResults = function(alert) {
+
+            // only get graphs for first entities
+            var entitiesWithChart = _.pluck(alert.entities, 'entity');
+            entitiesWithChart.sort();
+            entitiesWithChart = _.first(entitiesWithChart, APP_CONST.MAX_ENTITIES_WITH_CHARTS);
+
+            var alertId = alert.alert_definition.id;
+            var checkId = alert.alert_definition.check_definition_id;
+
+            _.each(entitiesWithChart, function(entity) {
+                CommunicationService.getCheckResultsChart(checkId, entity).then(
+                    function(response) {
+
+                        // Format to array of objects for d3 processing
+                        var r = [];
+                        _.each(response.values, function(data, key) {
+                            r.push(data);
+                        });
+                        $scope.charts[alertId] = r;
+
+                        // Store the response per checkId & per entity; to be used by the widgets
+                        // so they don't have to do async getCheckResults() calls each one by itself
+                        if ($scope.checkResultsByCheckIdByEntity[checkId] === null || typeof $scope.checkResultsByCheckIdByEntity[checkId] !== 'object') {
+                            $scope.checkResultsByCheckIdByEntity[checkId] = {};
+                        }
+                        $scope.checkResultsByCheckIdByEntity[checkId][entity] = response;
+                    }
+                );
+            });
+        };
 
         $scope.showAllDashboardAlerts = function(filter) {
             CommunicationService.getAllAlerts(filter).then(
@@ -230,38 +262,6 @@ angular.module('zmon2App').controller('DashboardCtrl', ['$scope', '$log', '$rout
                     }
                 }
             );
-        };
-
-        var loadCheckResults = function(alert) {
-
-            // only get graphs for first entities
-            var entitiesWithChart = _.pluck(alert.entities, 'entity');
-            entitiesWithChart.sort();
-            entitiesWithChart = _.first(entitiesWithChart, APP_CONST.MAX_ENTITIES_WITH_CHARTS);
-
-            var alertId = alert.alert_definition.id;
-            var checkId = alert.alert_definition.check_definition_id;
-
-            _.each(entitiesWithChart, function(entity) {
-                CommunicationService.getCheckResultsChart(checkId, entity).then(
-                    function(response) {
-
-                        // Format to array of objects for d3 processing
-                        var r = [];
-                        _.each(response.values, function(data, key) {
-                            r.push(data);
-                        });
-                        $scope.charts[alertId] = r;
-
-                        // Store the response per checkId & per entity; to be used by the widgets
-                        // so they don't have to do async getCheckResults() calls each one by itself
-                        if ($scope.checkResultsByCheckIdByEntity[checkId] === null || typeof $scope.checkResultsByCheckIdByEntity[checkId] !== 'object') {
-                            $scope.checkResultsByCheckIdByEntity[checkId] = {};
-                        }
-                        $scope.checkResultsByCheckIdByEntity[checkId][entity] = response;
-                    }
-                );
-            });
         };
 
         /**
@@ -301,8 +301,8 @@ angular.module('zmon2App').controller('DashboardCtrl', ['$scope', '$log', '$rout
             if (!alertInstance || !alertInstance.entities) return false;
             return _.every(alertInstance.entities, function(val) {
                 if (!val.result) return false;
-                if (val.result.captures && val.result.captures["exception"]) return true;
-                return val.result && val.result["exc"];
+                if (val.result.captures && val.result.captures.exception) return true;
+                return val.result && val.result.exc;
             });
         };
 
@@ -329,14 +329,14 @@ angular.module('zmon2App').controller('DashboardCtrl', ['$scope', '$log', '$rout
 
         // Add a tag to the tags array
         $scope.addTag = function(tag) {
-            if (typeof $scope.dashboardTags === 'undefined' || $scope.dashboardTags == null) {
+            if (typeof $scope.dashboardTags === 'undefined' || $scope.dashboardTags === null) {
                 $scope.dashboardTags = [];
             }
             if ($scope.dashboardTags.indexOf(tag.text) === -1) {
                 $scope.dashboardTags.push(tag.text);
                 $scope.filter.tags = $scope.dashboardTags.toString();
-            };
-            $location.search('tags', $scope.filter.tags)
+            }
+            $location.search('tags', $scope.filter.tags);
             $scope.showAllDashboardAlerts($scope.filter);
         };
 
@@ -347,8 +347,8 @@ angular.module('zmon2App').controller('DashboardCtrl', ['$scope', '$log', '$rout
             if ($scope.dashboardTags.length === 0) {
                 delete $scope.dashboardTags;
                 $scope.filter.tags = 'none';
-            };
-            $location.search('tags', $scope.filter.tags)
+            }
+            $location.search('tags', $scope.filter.tags);
             $scope.showAllDashboardAlerts($scope.filter);
         };
 
