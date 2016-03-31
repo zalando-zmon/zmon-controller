@@ -100,7 +100,7 @@ describe('AlertDetailsCtrl', function() {
         httpBackend.verifyNoOutstandingRequest();
     });
 
-    it('should initially have three alert teams and two alert statuses', function() {
+    it('should initially have one alert with id "1"', function() {
         httpBackend.expectGET('rest/comments?alert_definition_id=1&limit=6&offset=0');
         httpBackend.expectGET('rest/alertDefinition?id=1');
         httpBackend.expectGET('rest/checkDefinition?check_id=2');
@@ -108,4 +108,12 @@ describe('AlertDetailsCtrl', function() {
         expect(scope.alertDefinition.id).toBe(1);
     });
 
+    it('should display no alerts after filtering with inexisting id', function() {
+        httpBackend.expectGET('rest/comments?alert_definition_id=1&limit=6&offset=0');
+        httpBackend.expectGET('rest/alertDefinition?id=1');
+        httpBackend.expectGET('rest/checkDefinition?check_id=2');
+        httpBackend.flush();
+        scope.alertDetailsSearch = 'notExistingAlertId';
+        expect(scope.allAlertsAndChecks.length).toBe(0);
+    });
 });

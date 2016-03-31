@@ -51,6 +51,33 @@ describe('CloudCtrl', function() {
         httpBackend.flush();
         expect(_.keys(scope.teams).length).toBe(5);
         expect(_.keys(scope.applications).length).toBe(5);
-        expect(_.keys(scope.applications).length).toBe(5);
+    });
+
+    it('should return elbs for a given team', function() {
+        httpBackend.expectGET('rest/entities?query=%7B%22type%22%3A%22local%22%7D');
+        httpBackend.expectGET('rest/entities?query=%7B%22type%22%3A%22application%22%7D');
+        httpBackend.expectGET('rest/entities?query=%7B%22type%22%3A%22instance%22%7D');
+        httpBackend.expectGET('rest/entities?query=%7B%22type%22%3A%22elb%22%7D');
+        httpBackend.flush();
+        expect(scope.getPublicElbsByTeam(scope.teams['111'])).toBe(0);
+    });
+
+    it('should confirm there are teams available', function() {
+        httpBackend.expectGET('rest/entities?query=%7B%22type%22%3A%22local%22%7D');
+        httpBackend.expectGET('rest/entities?query=%7B%22type%22%3A%22application%22%7D');
+        httpBackend.expectGET('rest/entities?query=%7B%22type%22%3A%22instance%22%7D');
+        httpBackend.expectGET('rest/entities?query=%7B%22type%22%3A%22elb%22%7D');
+        httpBackend.flush();
+        expect(scope.haveTeams()).toBe(true);
+    });
+
+    it('should confirm there are no metrics available for a given app', function() {
+        httpBackend.expectGET('rest/entities?query=%7B%22type%22%3A%22local%22%7D');
+        httpBackend.expectGET('rest/entities?query=%7B%22type%22%3A%22application%22%7D');
+        httpBackend.expectGET('rest/entities?query=%7B%22type%22%3A%22instance%22%7D');
+        httpBackend.expectGET('rest/entities?query=%7B%22type%22%3A%22elb%22%7D');
+        httpBackend.flush();
+        expect(scope.hasMetrics(scope.applications['aaa'])).toBe(false);
+        expect(scope.notHasMetrics(scope.applications['aaa'])).toBe(true);
     });
 });
