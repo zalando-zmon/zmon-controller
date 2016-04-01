@@ -14,7 +14,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurer;
@@ -22,12 +21,12 @@ import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.social.security.SocialUserDetailsService;
 import org.springframework.social.security.SpringSocialConfigurer;
-import org.zalando.stups.oauth2.spring.server.DefaultAuthenticationExtractor;
 import org.zalando.stups.oauth2.spring.server.TokenInfoResourceServerTokenServices;
 import org.zalando.zmon.security.ZmonResourceServerConfigurer;
 import org.zalando.zmon.security.service.SimpleSocialUserDetailsService;
-import de.zalando.zmon.security.WebSecurityConstants;
 
+import de.zalando.zmon.security.TeamService;
+import de.zalando.zmon.security.WebSecurityConstants;
 import de.zalando.zmon.security.tvtoken.TvTokenService;
 import de.zalando.zmon.security.tvtoken.ZMonTvRememberMeServices;
 
@@ -47,6 +46,9 @@ public class ZauthSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private TvTokenService TvTokenService;
+
+    @Autowired
+    private TeamService teamService;
 
     @Autowired
     public void configureGlobal(final AuthenticationManagerBuilder auth) throws Exception {
@@ -117,7 +119,7 @@ public class ZauthSecurityConfig extends WebSecurityConfigurerAdapter {
     public ResourceServerConfigurer zmonResourceServerConfigurer() {
         String tokenInfoUri = environment.getProperty("security.oauth2.resource.userInfoUri");
         return new ZmonResourceServerConfigurer(
-                new TokenInfoResourceServerTokenServices(tokenInfoUri, new DefaultAuthenticationExtractor()));
+                new TokenInfoResourceServerTokenServices(tokenInfoUri, new ZmonAuthenticationExtractor(teamService)));
     }
 
 }
