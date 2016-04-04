@@ -4,15 +4,12 @@ import java.util.Collection;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.provisioning.UserDetailsManager;
-
 import org.springframework.social.connect.Connection;
 import org.springframework.social.connect.ConnectionSignUp;
 import org.springframework.social.connect.UserProfile;
-
 import org.springframework.util.Assert;
 import org.zalando.zmon.security.AuthorityService;
 
@@ -44,7 +41,7 @@ public class AccountConnectionSignupService implements ConnectionSignUp {
         }
 
         // hwo to use api
-        final String login = getLoginFromConnection(connection);
+        // final String login = getLoginFromConnection(connection);
 
         // or use more generic
         final UserProfile profile = connection.fetchUserProfile();
@@ -56,6 +53,8 @@ public class AccountConnectionSignupService implements ConnectionSignUp {
         if (authorities.isEmpty()) {
             log.info("Configure environment variable ZMON_AUTHORITIES_SIMPLE_USERS as * or {}", username);
             return null;
+        } else {
+            log.info("{} signed up with following authorities: {}", username, authoritiesToString(authorities));
         }
 
         // we create an new user
@@ -73,5 +72,13 @@ public class AccountConnectionSignupService implements ConnectionSignUp {
 
     protected String getLoginFromConnection(final Connection<?> connection) {
         return "not_found";
+    }
+
+    protected String authoritiesToString(Collection<? extends GrantedAuthority> authorities) {
+        StringBuilder sb = new StringBuilder();
+        for (GrantedAuthority auth : authorities) {
+            sb.append(auth.getAuthority());
+        }
+        return sb.toString();
     }
 }
