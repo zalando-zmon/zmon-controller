@@ -51,7 +51,7 @@
             <tbody>
                 <tr ng-repeat="def in checkDefinitions| orderBy:'name' | filter:checkFilter" repeat-monitor last="$last">
                     <td> <a href="#/check-definitions/view/{{ def.id }}">{{def.name}}</a></td>
-                    <td class="ellipsis" expand>{{def.command}}</td>
+                    <td class="ellipsis">{{def.command}}</td>
                     <td ng-bind-html="def.entities | entities"></td>
                     <td>{{def.owning_team}}</td>
                     <td class="text-right">{{def.interval| timespan:'s'}}</td>

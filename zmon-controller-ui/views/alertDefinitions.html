@@ -71,7 +71,7 @@
                         <i ng-switch-default class="fa fa-fw fa-edit semi-transparent"></i>
                     </td>
                     <td><a href="#/alert-details/{{def.id}}">{{def.name || '(no name)'}}</a></td>
-                    <td class="ellipsis" expand>{{def.condition}}</td>
+                    <td class="ellipsis">{{def.condition}}</td>
                     <td><span class="text-muted" ng-show="def.entities.length === 0">(no entity filter)</span><div ng-bind-html="def.entities | entities"></div></td>
                     <td><a href="#/check-definitions/view/{{def.check_definition_id}}">{{def.check_definition_id}}</a></td>
                     <td>{{def.team}}</td>
