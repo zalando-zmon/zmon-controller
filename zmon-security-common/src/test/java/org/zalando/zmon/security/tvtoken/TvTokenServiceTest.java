@@ -3,8 +3,7 @@ package org.zalando.zmon.security.tvtoken;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
-
-import de.zalando.zmon.persistence.OnetimeTokensSProcService;
+import org.zalando.zmon.persistence.OnetimeTokensSProcService;
 
 public class TvTokenServiceTest {
 
