@@ -1,23 +1,20 @@
 package de.zalando.zauth.zmon.config;
 
-import de.zalando.zauth.zmon.service.ZauthTeamService;
-import de.zalando.zmon.security.TeamService;
+import java.net.URISyntaxException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Profile;
-
-import org.zalando.stups.tokens.AccessToken;
-import org.zalando.stups.tokens.AccessTokenUnavailableException;
 import org.zalando.stups.tokens.AccessTokens;
 import org.zalando.stups.tokens.Tokens;
 import org.zalando.zmon.config.ZmonOAuth2Properties;
 import org.zalando.zmon.security.SigninController;
 
-import java.net.URISyntaxException;
+import de.zalando.zauth.zmon.service.ZauthTeamService;
+import de.zalando.zmon.security.TeamService;
 
 /**
  * @author jbellmann
