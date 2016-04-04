@@ -390,6 +390,8 @@ public class AlertServiceImpl implements AlertService {
     @Override
     public void forceAlertEvaluation(final int alertDefinitionId) throws IOException {
 
+        // TODO, use ForceAlertEvaluation
+
         final Executor executor = Executor.newInstance();
 
         final String url = schedulerProperties.getUrl().toString() + "/api/v1/alerts/" + alertDefinitionId + "/instant-eval";
