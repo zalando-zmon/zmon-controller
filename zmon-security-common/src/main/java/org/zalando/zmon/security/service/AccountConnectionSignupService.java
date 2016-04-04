@@ -14,8 +14,7 @@ import org.springframework.social.connect.ConnectionSignUp;
 import org.springframework.social.connect.UserProfile;
 
 import org.springframework.util.Assert;
-
-import de.zalando.zmon.security.AuthorityService;
+import org.zalando.zmon.security.AuthorityService;
 
 /**
  * @author jbellmann

@@ -1,4 +1,4 @@
 # Auto Configure
 #
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-de.zalando.zauth.zmon.config.ZauthAutoConfiguration
+org.zalando.zauth.zmon.config.ZauthAutoConfiguration

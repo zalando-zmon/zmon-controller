@@ -2,7 +2,7 @@ package org.zalando.zmon.security.service;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import de.zalando.zmon.security.AuthorityService;
+
 import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
@@ -12,6 +12,7 @@ import org.springframework.security.oauth2.common.exceptions.InvalidTokenExcepti
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.OAuth2Request;
 import org.springframework.security.oauth2.provider.token.ResourceServerTokenServices;
+import org.zalando.zmon.security.AuthorityService;
 
 import java.util.Collection;
 import java.util.Map;
