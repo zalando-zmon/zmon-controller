@@ -126,6 +126,73 @@ body.dashboard
     display: none;
 }
 
+/* SPECIAL STYLES FOR WIDGETS */
+/* -------------------------------------------------------------------------- */
+
+.dashboard-widget.huge-title h5
+{
+    font-size: 50px;
+}
+
+.dashboard-widget.big-title h5
+{
+    font-size: 30px;
+}
+
+.dashboard-widget.small-title
+{
+    font-size: 14px;
+}
+
+/* The active class will be appended automatically whenever any of the
+below styles are active for a widget */
+.dashboard-widget.active h5, .dashboard-widget.active .widget-time
+{
+    color: #EEEEEE;
+}
+
+/* Widget blink special effect */
+.dashboard-widget.blink .widget-bg
+{
+    -webkit-animation: widgetblink 1s linear infinite;
+    animation: widgetblink 1s linear infinite;
+    background: #555555;
+}
+
+/* Widget shake special effect */
+.dashboard-widget.shake
+{
+    -webkit-transform-origin: 50% 50%;
+    -webkit-animation: widgetshake 0.3s linear infinite;
+    animation: widgetshake 0.3s linear infinite;
+}
+
+.dashboard-widget.red .widget-bg
+{
+    background: #DD3010 !important
+}
+
+.dashboard-widget.orange .widget-bg
+{
+    background: #E77A1D !important;
+}
+
+.dashboard-widget.yellow .widget-bg
+{
+    background: #EBB129 !important
+}
+
+.dashboard-widget.green .widget-bg
+{
+    background: #78B924 !important;
+}
+
+.dashboard-widget.blue .widget-bg
+{
+    background: #008CF1 !important;
+}
+
+
 /* VALUE WIDGET */
 /* -------------------------------------------------------------------------- */
 
@@ -136,6 +203,40 @@ body.dashboard
     text-align: right;
     padding: 8px;
     overflow: hidden;
+}
+
+/* TREND WIDGET */
+/* -------------------------------------------------------------------------- */
+
+.dashboard-widget-trend .trend-arrow
+{
+    display: inline-block;
+    font-size: 9em;
+    text-align: center;
+    color: #ffff00;
+    opacity: 0.8;
+}
+
+/* Force height on block widgets */
+.dashboard-widget-chart,
+.dashboard-widget-gauge,
+.dashboard-widget-value,
+.dashboard-widget-trend
+{
+    text-align: center;
+    height: 210px;
+}
+
+.dashboard-widget-chart .widget-contents chart
+{
+    position: relative;
+    top: 30px;
+    height: 150px;
+}
+
+.dashboard-widget-trend .widget-contents .trend
+{
+    margin-top: 4px;
 }
 
 /* COP WIDGET */
@@ -252,7 +353,7 @@ body.dashboard
 }
 
 .dashboard-widget-networkmap .cloud-wrapper.active .fa
-
+{
     color: #008CF1;
 }
 

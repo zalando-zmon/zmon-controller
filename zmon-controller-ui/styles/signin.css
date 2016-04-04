@@ -38,7 +38,6 @@ div.demo:after {
     padding-top: 20px;
 }
 
-
 @keyframes ellipsis {
   from {
     width: 2px;
