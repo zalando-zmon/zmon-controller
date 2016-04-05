@@ -2,25 +2,19 @@ package org.zalando.zmon.controller;
 
 import java.io.IOException;
 import java.io.Writer;
-
 import java.net.URISyntaxException;
-
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletResponse;
-import javax.websocket.server.PathParam;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import org.apache.http.client.fluent.Executor;
 import org.apache.http.client.fluent.Request;
-import org.apache.http.entity.ContentType;
-
 import org.kairosdb.client.HttpClient;
 import org.kairosdb.client.builder.AggregatorFactory;
+import org.kairosdb.client.builder.DataFormatException;
 import org.kairosdb.client.builder.DataPoint;
 import org.kairosdb.client.builder.QueryBuilder;
 import org.kairosdb.client.builder.QueryMetric;
@@ -29,36 +23,39 @@ import org.kairosdb.client.builder.grouper.TagGrouper;
 import org.kairosdb.client.response.Queries;
 import org.kairosdb.client.response.QueryResponse;
 import org.kairosdb.client.response.Results;
-
+import org.kairosdb.client.response.grouping.TagGroupResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-
 import org.springframework.stereotype.Controller;
-
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.zalando.zmon.config.KairosDBProperties;
 import org.zalando.zmon.config.MetricCacheProperties;
-import org.zalando.zmon.domain.*;
+import org.zalando.zmon.domain.CheckDefinition;
+import org.zalando.zmon.domain.CheckDefinitionImport;
+import org.zalando.zmon.domain.CheckHistoryGroupResult;
+import org.zalando.zmon.domain.CheckHistoryResult;
+import org.zalando.zmon.domain.CheckResults;
+import org.zalando.zmon.domain.ExecutionStatus;
 import org.zalando.zmon.exception.ZMonException;
-import org.zalando.zmon.persistence.GrafanaDashboardSprocService;
 import org.zalando.zmon.rest.EntityApi;
-import org.zalando.zmon.rest.domain.*;
+import org.zalando.zmon.rest.domain.CheckChartResult;
 import org.zalando.zmon.security.permission.DefaultZMonPermissionService;
 import org.zalando.zmon.service.ZMonService;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.DoubleNode;
 import com.fasterxml.jackson.databind.node.LongNode;
-
 import com.google.common.collect.Lists;
-
-import org.kairosdb.client.builder.DataFormatException;
-import org.kairosdb.client.response.grouping.TagGroupResult;
 
 @Controller
 @RequestMapping(value = "/rest")
