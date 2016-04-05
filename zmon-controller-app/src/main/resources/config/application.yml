@@ -42,8 +42,8 @@ zmon:
 
     redis:
       write:
-        host: ${REDIS_WRITE_HOST:localhost}
-        port: ${REDIS_WRITE_PORT:6379}
+        host: ${REDIS_WRITE_HOST:${REDIS_HOST:localhost}}
+        port: ${REDIS_WRITE_PORT:${REDIS_PORT:6379}}
         pool:
           max-active: 8
           max-idle: 8
