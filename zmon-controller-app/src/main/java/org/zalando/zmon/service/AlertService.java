@@ -50,5 +50,7 @@ public interface AlertService {
 
     void forceAlertEvaluation(int alertDefinitionId) throws IOException;
 
+    void cleanAlertState(int alertDefinitionId);
+
     List<String> getAllTags();
 }

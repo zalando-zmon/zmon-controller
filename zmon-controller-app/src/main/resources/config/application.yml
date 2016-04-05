@@ -39,3 +39,13 @@ zmon:
         enabled: true
         url: http://localhost:38083/
     grafana-min-interval: 60
+
+    redis:
+      write:
+        host: ${REDIS_WRITE_HOST:localhost}
+        port: ${REDIS_WRITE_PORT:6379}
+        pool:
+          max-active: 8
+          max-idle: 8
+          min-idle: 0
+          max-wait: -1
