@@ -25,17 +25,16 @@ import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.social.security.SocialUserDetailsService;
 import org.springframework.social.security.SpringSocialConfigurer;
 import org.zalando.github.zmon.service.GithubResourceServerTokenServices;
+import org.zalando.zmon.security.AuthorityService;
+import org.zalando.zmon.security.WebSecurityConstants;
 import org.zalando.zmon.security.ZmonResourceServerConfigurer;
 import org.zalando.zmon.security.service.ChainedResourceServerTokenServices;
 import org.zalando.zmon.security.service.PresharedTokensResourceServerTokenServices;
 import org.zalando.zmon.security.service.SimpleSocialUserDetailsService;
+import org.zalando.zmon.security.tvtoken.TvTokenService;
+import org.zalando.zmon.security.tvtoken.ZMonTvRememberMeServices;
 
 import com.google.common.collect.ImmutableList;
-import de.zalando.zmon.security.WebSecurityConstants;
-
-import de.zalando.zmon.security.AuthorityService;
-import de.zalando.zmon.security.tvtoken.TvTokenService;
-import de.zalando.zmon.security.tvtoken.ZMonTvRememberMeServices;
 
 /**
  * Nothing to add here.

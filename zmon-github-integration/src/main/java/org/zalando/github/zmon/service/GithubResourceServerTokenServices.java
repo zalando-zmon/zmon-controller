@@ -16,11 +16,10 @@ import org.springframework.security.oauth2.provider.OAuth2Request;
 import org.springframework.security.oauth2.provider.token.ResourceServerTokenServices;
 import org.springframework.social.github.api.impl.GitHubTemplate;
 import org.springframework.web.client.HttpClientErrorException;
+import org.zalando.zmon.security.AuthorityService;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-
-import de.zalando.zmon.security.AuthorityService;
 
 /**
  * Created by hjacobs on 14.12.15.

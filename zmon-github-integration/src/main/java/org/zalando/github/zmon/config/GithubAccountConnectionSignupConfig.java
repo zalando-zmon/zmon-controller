@@ -8,9 +8,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.zalando.github.zmon.security.GithubSignupCondition;
 import org.zalando.github.zmon.service.GithubAccountConnectionSignupService;
+import org.zalando.zmon.security.AuthorityService;
 import org.zalando.zmon.security.service.AccountConnectionSignupService;
-
-import de.zalando.zmon.security.AuthorityService;
 
 /**
  * 
