@@ -1,5 +1,5 @@
 angular.module('zmon2App').controller('AlertDetailsCtrl', ['$scope', '$location', 'timespanFilter', '$routeParams', '$modal', 'MainAlertService', 'CommunicationService', 'DowntimesService', 'FeedbackMessageService', 'UserInfoService', 'APP_CONST',
-    function($scope, $location, timespanFilter, $routeParams, $modal, MainAlertService, CommunicationService, DowntimesService, FeedbackMessageService, UserInfoService, APP_CONST) {
+        function($scope, $location, timespanFilter, $routeParams, $modal, MainAlertService, CommunicationService, DowntimesService, FeedbackMessageService, UserInfoService, APP_CONST) {
 
         // Set in parent scope which page is active for the menu styling
         $scope.$parent.activePage = 'alert-details'; // is not a menu option, but still set

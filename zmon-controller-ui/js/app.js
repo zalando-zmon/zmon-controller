@@ -6,7 +6,8 @@ angular.module('zmon2App', [
     'LocalStorageModule',
     'ui.bootstrap',
     'angulartics',
-    'debounce'
+    'debounce',
+    'infinite-scroll'
 ])
     .config(['$routeProvider', '$compileProvider',
         function($routeProvider, $compileProvider) {

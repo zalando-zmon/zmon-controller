@@ -48,8 +48,8 @@
                     <th class="status-col">Status</th>
                 </tr>
             </thead>
-            <tbody>
-                <tr ng-repeat="def in checkDefinitions| orderBy:'name' | filter:checkFilter" repeat-monitor last="$last">
+            <tbody infinite-scroll="incLimit()">
+                <tr ng-repeat="def in checkDefinitions| orderBy:'name' | filter:checkFilter | limitTo: limit" last="$last">
                     <td> <a href="#/check-definitions/view/{{ def.id }}">{{def.name}}</a></td>
                     <td class="ellipsis">{{def.command}}</td>
                     <td ng-bind-html="def.entities | entities"></td>

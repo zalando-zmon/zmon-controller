@@ -64,8 +64,8 @@
                     <th class="status-col">Status</th>
                 </tr>
             </thead>
-            <tbody>
-                <tr ng-repeat="def in alertDefinitionsByStatus | filter: alertFilter | orderBy:'name'" repeat-monitor last="$last">
+            <tbody infinite-scroll="incLimit()">
+                <tr ng-repeat="def in alertDefinitionsByStatus | filter: alertFilter | orderBy:'name' | limitTo: limit" last="$last">
                     <td class="text-center" ng-switch on="def.editable">
                         <a ng-switch-when="true" href="#/alert-definitions/edit/{{def.id}}"><i class="fa fa-fw fa-edit"></i></a>
                         <i ng-switch-default class="fa fa-fw fa-edit semi-transparent"></i>
@@ -86,6 +86,5 @@
                 </tr>
             </tbody>
         </table>
-
     </div>
 </div>

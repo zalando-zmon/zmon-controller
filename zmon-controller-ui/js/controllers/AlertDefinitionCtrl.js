@@ -13,6 +13,7 @@ angular.module('zmon2App').controller('AlertDefinitionCtrl', ['$scope', '$window
         $scope.viewedTabs = [];
         $scope.lastReviews = {};
         $scope.isFilteredByTemplate = false;
+        $scope.limit = 100;
 
         var userInfo = UserInfoService.get();
 
@@ -172,6 +173,11 @@ angular.module('zmon2App').controller('AlertDefinitionCtrl', ['$scope', '$window
         if (!_.isEmpty($location.search().af)) {
             $scope.alertFilter = $location.search().af;
         }
+
+        $scope.incLimit = function() {
+            $scope.limit += 20;
+        };
+
         $scope.$watch('alertFilter', function(newVal) {
             $location.search('af', _.isEmpty(newVal) ? null : newVal);
             localStorageService.set('returnTo', '/#' + $location.url());

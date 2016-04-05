@@ -9,6 +9,7 @@ angular.module('zmon2App').controller('CheckDefinitionCtrl', ['$scope', '$routeP
         $scope.teamFilter = null;
         $scope.userInfo = UserInfoService.get();
         $scope.checkJson = '';
+        $scope.limit = 100;
 
         var userInfo = UserInfoService.get();
 
@@ -57,6 +58,7 @@ angular.module('zmon2App').controller('CheckDefinitionCtrl', ['$scope', '$routeP
                 });
             } else {
                 CommunicationService.getCheckDefinitions($scope.teamFilter).then(function(data) {
+
                     $scope.checkDefinitions = data;
 
                     // Stop loading indicator!
@@ -101,6 +103,11 @@ angular.module('zmon2App').controller('CheckDefinitionCtrl', ['$scope', '$routeP
         if (!_.isEmpty($location.search().cf)) {
             $scope.checkFilter = $location.search().cf;
         }
+
+        $scope.incLimit = function() {
+            $scope.limit += 20;
+        };
+
         $scope.$watch('checkFilter', function(newVal) {
             $location.search('cf', _.isEmpty(newVal) ? null : newVal);
             localStorageService.set('returnTo', '/#' + $location.url());
