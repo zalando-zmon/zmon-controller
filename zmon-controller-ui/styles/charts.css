@@ -52,6 +52,12 @@ span.select-boxes
     color: #ebb129;
 }
 
+.chart-widget-container
+{
+    margin-left: 30px;
+    margin-right: 10px;
+}
+
 /* d3 charts */
 
 .axis path, .axis line {

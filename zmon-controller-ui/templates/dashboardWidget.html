@@ -3,7 +3,7 @@
     <div class="widget-contents" ng-class="{warning:isOutdated}">
         <h5>{{ config.title }}</h5>
         <span class="fa fa-exclamation-triangle chart-data-warning" title="Chart presents incomplete data. Points that resulted in exception are ignored" ng-show="hasNonPlottableValues"></span>
-        <chart chart-data="chartData" options="config.options" ng-switch-when="chart"/>
+        <div class="chart-widget-container"><chart chart-data="chartData" options="config.options" ng-switch-when="chart"/></div>
         <gauge value="lastValue" max="maxValue" title="{{config.title}}" options="config.options" ng-switch-when="gauge"/>
         <trend class="trend" title="{{config.title}}" mean="mean" current="current" ng-switch-when="trend"/>
         <networkmap title="{{config.title}}" options="config.options" data="activeAlertIds" ng-switch-when="networkmap"/>
