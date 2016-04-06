@@ -212,7 +212,7 @@ public class AlertServiceImpl implements AlertService {
         try {
             return jedis.smembers(RedisPattern.alertIds());
         } finally {
-            redisPool.returnResource(jedis);
+            jedis.close();
         }
     }
 
@@ -230,7 +230,7 @@ public class AlertServiceImpl implements AlertService {
 
             p.sync();
         } finally {
-            redisPool.returnResource(jedis);
+            jedis.close();
         }
     }
 
@@ -272,7 +272,6 @@ public class AlertServiceImpl implements AlertService {
     }
 
     protected void getActiveAlertsForDefinitions(List<AlertDefinition> definitions, List<ResponseHolder<Integer, Set<String>>> results) {
-        long start = System.currentTimeMillis();
         final Jedis jedis = redisPool.getResource();
         try {
 
@@ -285,9 +284,8 @@ public class AlertServiceImpl implements AlertService {
 
             p.sync();
         } finally {
-            redisPool.returnResource(jedis);
+            jedis.close();
         }
-        long end = System.currentTimeMillis();
     }
 
     @Override
@@ -414,7 +412,7 @@ public class AlertServiceImpl implements AlertService {
             jedis.del(RedisPattern.alertEntities(alertDefinitionId));
             jedis.del(RedisPattern.alertFilterEntities(alertDefinitionId));
         } finally {
-            writeRedisPool.returnResource(jedis);
+            jedis.close();
         }
     }
 
@@ -459,7 +457,7 @@ public class AlertServiceImpl implements AlertService {
 
             p.sync();
         } finally {
-            redisPool.returnResource(jedis);
+            jedis.close();
         }
     }
 

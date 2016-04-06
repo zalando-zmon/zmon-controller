@@ -203,4 +203,10 @@ public class AlertController extends AbstractZMonController {
         return new ResponseEntity<>(service.getAllTags(), HttpStatus.OK);
     }
 
+    @ResponseBody
+    @RequestMapping(value = "cleanAlertState", method = RequestMethod.POST)
+    public void cleanAlertState(@Valid @RequestBody final InstantaneousAlertEvaluationRequest request) {
+        authorityService.verifyInstantaneousAlertEvaluationPermission();
+        service.cleanAlertState(request.getAlertDefinitionId());
+    }
 }
