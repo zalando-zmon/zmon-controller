@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.zalando.zmon.config.SchedulerProperties;
+import org.zalando.zmon.config.annotation.RedisWrite;
 import org.zalando.zmon.diff.AlertDefinitionsDiffFactory;
 import org.zalando.zmon.domain.Alert;
 import org.zalando.zmon.domain.AlertComment;
@@ -95,6 +96,10 @@ public class AlertServiceImpl implements AlertService {
 
     @Autowired
     private JedisPool redisPool;
+
+    @Autowired
+    @RedisWrite
+    private JedisPool writeRedisPool;
 
     @Autowired
     private ObjectMapper mapper;
@@ -390,6 +395,8 @@ public class AlertServiceImpl implements AlertService {
     @Override
     public void forceAlertEvaluation(final int alertDefinitionId) throws IOException {
 
+        // TODO, use ForceAlertEvaluation
+
         final Executor executor = Executor.newInstance();
 
         final String url = schedulerProperties.getUrl().toString() + "/api/v1/alerts/" + alertDefinitionId + "/instant-eval";
@@ -398,6 +405,17 @@ public class AlertServiceImpl implements AlertService {
 
         eventLog.log(ZMonEventType.INSTANTANEOUS_ALERT_EVALUATION_SCHEDULED, alertDefinitionId,
             authorityService.getUserName());
+    }
+
+    @Override
+    public void cleanAlertState(int alertDefinitionId) {
+        final Jedis jedis = writeRedisPool.getResource();
+        try {
+            jedis.del(RedisPattern.alertEntities(alertDefinitionId));
+            jedis.del(RedisPattern.alertFilterEntities(alertDefinitionId));
+        } finally {
+            writeRedisPool.returnResource(jedis);
+        }
     }
 
     @Override
