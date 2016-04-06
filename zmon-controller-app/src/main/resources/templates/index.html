@@ -124,7 +124,7 @@
                         data:instantaneous-alert-evaluation="${hasInstantaneousAlertEvaluationPermission}"
                         data:cloud-check="${cloudCheckId}">
 
-                        <button type="button" class="auth-user btn btn-default dropdown-toggle" data-toggle="dropdown" sec:authentication="name">
+                        <button type="button" class="auth-user btn btn-default dropdown-toggle" data-toggle="dropdown" popover="Teams: {{userTeams}}" popover-placement="left" popover-trigger="mouseenter" sec:authentication="name">
                             klaus
                             <span class="caret"></span>
                         </button>
