@@ -11,10 +11,12 @@ import com.fasterxml.jackson.databind.node.LongNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.Lists;
 
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.fluent.Executor;
 import org.apache.http.client.fluent.Request;
 import org.apache.http.entity.ContentType;
-import org.kairosdb.client.HttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.kairosdb.client.builder.*;
 import org.kairosdb.client.builder.grouper.TagGrouper;
 import org.kairosdb.client.response.Queries;
@@ -51,22 +53,31 @@ import java.util.Set;
 @RequestMapping(value = "/rest/kairosDBPost")
 public class KairosDBController extends AbstractZMonController {
 
-    @Autowired
-    private KairosDBProperties kairosDBProperties;
+    private final KairosDBProperties kairosDBProperties;
+
+    private final MetricRegistry metricRegistry;
+
+    private final DefaultZMonPermissionService authService;
+
+    private final Executor executor;
 
     @Autowired
-    private MetricRegistry metricRegistry;
+    public KairosDBController(
+            KairosDBProperties kairosDBProperties,
+            MetricRegistry metricRegistry,
+            DefaultZMonPermissionService authService
+    ) {
+        this.kairosDBProperties = kairosDBProperties;
+        this.metricRegistry = metricRegistry;
+        this.authService = authService;
 
-    @Autowired
-    DefaultZMonPermissionService authService;
+        executor = Executor.newInstance(kairosDBProperties.getHttpClient());
+    }
 
-    @Autowired
-    ObjectMapper mapper;
 
     /* For Grafana2 KairosDB plugin we need to prepend the original KairosDB URLs too */
-
     @ResponseBody
-    @RequestMapping(value = {"","/api/v1/datapoints/query"}, method = RequestMethod.POST, produces = "application/json")
+    @RequestMapping(value = {"", "/api/v1/datapoints/query"}, method = RequestMethod.POST, produces = "application/json")
     public void kairosDBPost(@RequestBody(required = true) final JsonNode node, final Writer writer,
                              final HttpServletResponse response) throws IOException {
 
@@ -77,8 +88,8 @@ public class KairosDBController extends AbstractZMonController {
             return;
         }
 
-        String checkId = node.get("metrics").get(0).get("name").textValue().replace("zmon\\.check\\.", "");
-        Timer.Context timer = metricRegistry.timer("kairosdb.check.query."+checkId).time();
+        final String checkId = node.get("metrics").get(0).get("name").textValue().replace("zmon.check.", "");
+        Timer.Context timer = metricRegistry.timer("kairosdb.check.query." + checkId).time();
 
         // align all queries to full minutes
         if (node instanceof ObjectNode) {
@@ -91,14 +102,12 @@ public class KairosDBController extends AbstractZMonController {
             }
         }
 
-        final Executor executor = Executor.newInstance();
-
         final String kairosDBURL = kairosDBProperties.getUrl() + "/api/v1/datapoints/query";
 
         final String r = executor.execute(Request.Post(kairosDBURL).addHeader("X-ZMON-CHECK-ID", checkId).useExpectContinue().bodyString(node.toString(),
                 ContentType.APPLICATION_JSON)).returnContent().asString();
 
-        if(timer!=null) {
+        if (timer != null) {
             timer.stop();
         }
 
@@ -106,7 +115,7 @@ public class KairosDBController extends AbstractZMonController {
     }
 
     @ResponseBody
-    @RequestMapping(value = {"/tags", "/api/v1/datapoints/query/tags"} , method = RequestMethod.POST, produces = "application/json")
+    @RequestMapping(value = {"/tags", "/api/v1/datapoints/query/tags"}, method = RequestMethod.POST, produces = "application/json")
     public void kairosDBtags(@RequestBody(required = true) final JsonNode node, final Writer writer,
                              final HttpServletResponse response) throws IOException {
 
@@ -116,8 +125,6 @@ public class KairosDBController extends AbstractZMonController {
             writer.write("");
             return;
         }
-
-        final Executor executor = Executor.newInstance();
 
         final String kairosDBURL = kairosDBProperties.getUrl() + "/api/v1/datapoints/query/tags";
 
@@ -140,7 +147,7 @@ public class KairosDBController extends AbstractZMonController {
 
         final String kairosDBURL = kairosDBProperties.getUrl() + "/api/v1/metricnames";
 
-        final String r = Request.Get(kairosDBURL).useExpectContinue().execute().returnContent().asString();
+        final String r = executor.execute(Request.Get(kairosDBURL).useExpectContinue()).returnContent().asString();
 
         writer.write(r);
     }
