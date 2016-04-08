@@ -94,7 +94,10 @@ public class ZauthSecurityConfig extends WebSecurityConfigurerAdapter {
             .rememberMeServices(new ZMonTvRememberMeServices(TvTokenService))
         .and()
             .csrf()
-                .disable();
+                .disable()
+            .headers()
+                .frameOptions()
+                    .disable();
     }
     // @formatter:on
     // J+
