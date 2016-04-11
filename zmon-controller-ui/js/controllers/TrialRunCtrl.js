@@ -16,7 +16,6 @@ var TrialRunCtrl = function ($scope, $interval, timespanFilter, localStorageServ
     var TrialRun = function (ctrl) {
         var self = this;
         this.uid = null;
-
         this.config = {};
 
         this.init = function (config) {
@@ -108,6 +107,7 @@ var TrialRunCtrl = function ($scope, $interval, timespanFilter, localStorageServ
         $location.search('json', JSON.stringify($scope.alert));
     };
 
+    trc.user = UserInfoService.get();
 
     // Alert Parameters initial data
     trc.alertParameters = [];
@@ -341,15 +341,17 @@ var TrialRunCtrl = function ($scope, $interval, timespanFilter, localStorageServ
                 return FeedbackMessageService.showErrorMessage('JSON format is incorrect' + ex);
             }
 
-            var checkImport = {};
-            checkImport.name = $scope.alert.name;
-            checkImport.entities = $scope.alert.entities;
-            checkImport.command = $scope.alert.check_command;
-            checkImport.interval = $scope.alert.interval;
-            checkImport.description = "";
-            checkImport.status = "ACTIVE";
+            var obj = {};
+            obj.name = $scope.alert.name;
+            obj.entities = $scope.alert.entities;
+            obj.command = $scope.alert.check_command;
+            obj.interval = $scope.alert.interval;
+            obj.description = $scope.alert.description;
+            obj.owning_team = $scope.alert.owning_team;
+            obj.technical_details = $scope.alert.technical_details;
+            obj.status = "ACTIVE";
 
-            CommunicationService.updateCheckDefinition(checkImport).then(function(data) {
+            CommunicationService.updateCheckDefinition(obj).then(function(data) {
                 FeedbackMessageService.showSuccessMessage('Saved successfully; redirecting...', 500, function() {
                     $location.path('/check-definitions/view/' + data.id);
                 });
