@@ -9,8 +9,9 @@ angular.module('zmon2App').controller('CheckDefinitionEditCtrl', ['$scope', '$ro
         $scope.paramTypes = ['string', 'int', 'boolean'];
         $scope.allTags = [];
         $scope.defaultEntitiesFilter = [];
-
         $scope.entityFilterInputMethod = 'text';
+
+        $scope.user = UserInfoService.get();
 
         // Keep account of overwritten Properties and Parameters on inherit mode
         $scope.oProps = [];
