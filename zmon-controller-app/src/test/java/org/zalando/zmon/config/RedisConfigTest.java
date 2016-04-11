@@ -11,7 +11,6 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.zalando.zmon.config.annotation.RedisWrite;
-import org.zalando.zmon.config.redis.DefaultRedisProperties;
 import org.zalando.zmon.config.redis.WriteRedisProperties;
 
 import redis.clients.jedis.JedisPool;
@@ -37,8 +36,8 @@ public class RedisConfigTest {
     static class TestConfig {
 
         @Bean
-        public DefaultRedisProperties redisProperties() {
-            DefaultRedisProperties properties = new DefaultRedisProperties();
+        public RedisProperties redisProperties() {
+            RedisProperties properties = new RedisProperties();
             properties.setPool(new RedisProperties.Pool());
 
             return properties;
