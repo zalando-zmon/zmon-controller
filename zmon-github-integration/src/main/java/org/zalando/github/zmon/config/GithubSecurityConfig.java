@@ -101,7 +101,11 @@ public class GithubSecurityConfig extends WebSecurityConfigurerAdapter {
                 .rememberMe()
                 .rememberMeServices(new ZMonTvRememberMeServices(TvTokenService))
             .and()
-                .csrf().disable();
+                .csrf()
+                    .disable()
+                .headers()
+                    .frameOptions()
+                        .disable();
     }
     // @formatter:on
     // J+
