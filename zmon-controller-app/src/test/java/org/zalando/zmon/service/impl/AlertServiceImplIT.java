@@ -10,6 +10,7 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 import org.zalando.zmon.domain.AlertComment;
@@ -38,6 +39,7 @@ import com.google.common.collect.Lists;
 // TODO test dst
 @ContextConfiguration(classes = ServiceTestConfiguration.class)
 @Transactional
+@DirtiesContext
 public class AlertServiceImplIT extends AbstractServiceIntegrationTest {
 
     @Autowired

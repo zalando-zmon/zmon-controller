@@ -22,11 +22,13 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.R
 import org.springframework.security.oauth2.provider.token.ResourceServerTokenServices;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.provisioning.UserDetailsManager;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.social.security.SocialUserDetailsService;
 import org.springframework.social.security.SpringSocialConfigurer;
 import org.zalando.github.zmon.service.GithubResourceServerTokenServices;
 import org.zalando.zmon.security.AuthorityService;
 import org.zalando.zmon.security.WebSecurityConstants;
+import org.zalando.zmon.security.ZmonAuthenticationEntrypoint;
 import org.zalando.zmon.security.ZmonResourceServerConfigurer;
 import org.zalando.zmon.security.service.ChainedResourceServerTokenServices;
 import org.zalando.zmon.security.service.PresharedTokensResourceServerTokenServices;
@@ -47,6 +49,8 @@ import com.google.common.collect.ImmutableList;
 @EnableResourceServer
 @Order(4)
 public class GithubSecurityConfig extends WebSecurityConfigurerAdapter {
+
+    private static final String LOGIN_PAGE_URL = "/signin";
 
     @Autowired
     AuthorityService authorityService;
@@ -83,6 +87,9 @@ public class GithubSecurityConfig extends WebSecurityConfigurerAdapter {
         http
             .apply(new SpringSocialConfigurer())
             .and()
+            .exceptionHandling()
+                .authenticationEntryPoint(zmonAuthenticationEntryPoint())
+            .and()
                 .formLogin()
                     .loginPage("/signin")
                     .failureUrl("/signin?error=bad_credentials")
@@ -101,10 +108,19 @@ public class GithubSecurityConfig extends WebSecurityConfigurerAdapter {
                 .rememberMe()
                 .rememberMeServices(new ZMonTvRememberMeServices(TvTokenService))
             .and()
-                .csrf().disable();
+                .csrf()
+                    .disable()
+                .headers()
+                    .frameOptions()
+                        .disable();
     }
     // @formatter:on
     // J+
+
+    @Bean
+    public AuthenticationEntryPoint zmonAuthenticationEntryPoint() {
+        return new ZmonAuthenticationEntrypoint(LOGIN_PAGE_URL);
+    }
 
     @Bean
     public SocialUserDetailsService socialUserDetailsService() {
