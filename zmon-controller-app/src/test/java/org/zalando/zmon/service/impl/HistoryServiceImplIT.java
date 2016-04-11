@@ -7,6 +7,7 @@ import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 import org.zalando.zmon.domain.ActivityDiff;
@@ -23,6 +24,7 @@ import org.zalando.zmon.service.ZMonService;
 
 @ContextConfiguration(classes = ServiceTestConfiguration.class)
 @Transactional
+@DirtiesContext
 public class HistoryServiceImplIT extends AbstractServiceIntegrationTest {
 
     @Autowired
