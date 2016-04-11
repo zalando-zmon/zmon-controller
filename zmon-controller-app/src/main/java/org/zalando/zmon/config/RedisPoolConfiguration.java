@@ -1,13 +1,13 @@
 package org.zalando.zmon.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.core.env.Environment;
 import org.zalando.zmon.config.annotation.RedisWrite;
+import org.zalando.zmon.config.redis.DefaultRedisProperties;
 import org.zalando.zmon.config.redis.WriteRedisProperties;
 
 import redis.clients.jedis.JedisPool;
@@ -23,9 +23,10 @@ import redis.clients.jedis.JedisPoolConfig;
 public class RedisPoolConfiguration {
 
     @Autowired
-    private RedisProperties redisProperties;
+    private DefaultRedisProperties redisProperties;
 
     @Autowired
+    @RedisWrite
     private WriteRedisProperties writeRedisProperties;
 
     // TODO, use this to fetch mission properties
