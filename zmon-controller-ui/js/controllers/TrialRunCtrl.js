@@ -397,6 +397,7 @@ var TrialRunCtrl = function ($scope, $interval, $timeout, timespanFilter, localS
             updateUrlParameters();
 
             if (!$scope.trForm.$valid) {
+                trc.formVisible = true;
                 $scope.trForm.submitted = true;
                 return true; // form validation check
             }
