@@ -1,13 +1,13 @@
 package org.zalando.zmon.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.core.env.Environment;
 import org.zalando.zmon.config.annotation.RedisWrite;
-import org.zalando.zmon.config.redis.DefaultRedisProperties;
 import org.zalando.zmon.config.redis.WriteRedisProperties;
 
 import redis.clients.jedis.JedisPool;
@@ -23,7 +23,7 @@ import redis.clients.jedis.JedisPoolConfig;
 public class RedisPoolConfiguration {
 
     @Autowired
-    private DefaultRedisProperties redisProperties;
+    private RedisProperties redisProperties;
 
     @Autowired
     @RedisWrite
@@ -50,6 +50,9 @@ public class RedisPoolConfiguration {
     @Bean
     public JedisPoolConfig jedisPoolConfig() {
         JedisPoolConfig poolConfig = new JedisPoolConfig();
+        if (redisProperties.getPool() == null) {
+            redisProperties.setPool(new RedisProperties.Pool());
+        }
 
         poolConfig.setMaxIdle(redisProperties.getPool().getMaxIdle());
         poolConfig.setMinIdle(redisProperties.getPool().getMinIdle());
@@ -79,6 +82,9 @@ public class RedisPoolConfiguration {
     @Bean
     public JedisPoolConfig writeJedisPoolConfig() {
         JedisPoolConfig poolConfig = new JedisPoolConfig();
+        if (writeRedisProperties.getPool() == null) {
+            writeRedisProperties.setPool(new RedisProperties.Pool());
+        }
 
         poolConfig.setMaxIdle(writeRedisProperties.getPool().getMaxIdle());
         poolConfig.setMinIdle(writeRedisProperties.getPool().getMinIdle());
