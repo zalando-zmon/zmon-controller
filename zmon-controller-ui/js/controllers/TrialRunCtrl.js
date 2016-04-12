@@ -1,4 +1,4 @@
-var TrialRunCtrl = function ($scope, $interval, timespanFilter, localStorageService, CommunicationService, MainAlertService, FeedbackMessageService, UserInfoService, $window, $location) {
+var TrialRunCtrl = function ($scope, $interval, $timeout, timespanFilter, localStorageService, CommunicationService, MainAlertService, FeedbackMessageService, UserInfoService, $window, $location) {
 
     $scope.$parent.activePage = 'trial-run';
     MainAlertService.removeDataRefresh();
@@ -180,6 +180,8 @@ var TrialRunCtrl = function ($scope, $interval, timespanFilter, localStorageServ
     trc.progress = 0;
     trc.authorized = Object.keys(UserInfoService.get()).length > 0;
 
+    $scope.onRun = false;
+
     /** The getEntityProperties() returns an object with the data to populate the directives that represent the entity filter forms
      * We transform it to be an array of objects, one object per entity filter type with keys: "type" + keys that correspond to each filter type
      * E.g. [ {"type": "zomcat", "environment": "..", "project": "..", ...}, {"type": "host", "external_ip": "..", ...}, ... ]
@@ -311,6 +313,7 @@ var TrialRunCtrl = function ($scope, $interval, timespanFilter, localStorageServ
 
     // save as new check
     trc.save = function () {
+
         if ($scope.trForm.$valid) {
             try {
 
@@ -383,53 +386,62 @@ var TrialRunCtrl = function ($scope, $interval, timespanFilter, localStorageServ
 
     // Start trial run
     trc.run = function ($event) {
-        $event.stopPropagation();
-        updateUrlParameters();
 
-        if (!$scope.trForm.$valid) {
-            $scope.trForm.submitted = true;
-            return true; // form validation check
-        }
+        $scope.onRun = true;
 
-        // Get the latest parameters from the parameters form in propper format
-        $scope.alert.parameters = formParametersObject();
-        // Get the latest entities filter content before saving to local storage
-        $scope.alert.entities = JSON.parse(trc.entityFilter.textEntityFilters);
-        $scope.alert.entities_exclude = JSON.parse(trc.entityExcludeFilter.textEntityFilters);
-        // Store this run's data in local storage for next time
-        localStorageService.set('lastTrialRun', $scope.alert);
+        // have to wait one digest cycle before the validity of the form is set according to
+        // the onRun requirements
+        $timeout(function() {
 
-        $scope.trForm.submitted = false;
+            $event.stopPropagation();
+            updateUrlParameters();
 
-        // Test run registration
-        tr.init($scope.alert).then(function (alert) {
-            // Settings for page state (opening/closing result/form panel, moving progress bar on 0 position...)
-            tr.uid = alert.id;
-            trc.running = true;
-            trc.progress = 0;
-            trc.formVisible = false;
-            trc.alertsVisible = true;
+            if (!$scope.trForm.$valid) {
+                $scope.trForm.submitted = true;
+                return true; // form validation check
+            }
 
-            // Fetching alerts for test run
-            tr.get().then(function (data) {
-                trc.progress = data.percentage || 5;
-                trc.alerts = data.results;
-                trc.counter();
-            });
+            // Get the latest parameters from the parameters form in propper format
+            $scope.alert.parameters = formParametersObject();
+            // Get the latest entities filter content before saving to local storage
+            $scope.alert.entities = JSON.parse(trc.entityFilter.textEntityFilters);
+            $scope.alert.entities_exclude = JSON.parse(trc.entityExcludeFilter.textEntityFilters);
+            // Store this run's data in local storage for next time
+            localStorageService.set('lastTrialRun', $scope.alert);
 
-            // Scheduling periodic pull requests
-            tr.periodically(3000, function (data) {
-                trc.progress = (data.percentage > 5) ? data.percentage : 5;
-                trc.alerts = data.results;
-                trc.counter();
+            $scope.trForm.submitted = false;
+            $scope.onRun = false;
 
-                // Terminating periodic pull requests after completing
-                if (trc.progress === 100) {
-                    trc.done();
-                    // Displaying alert
-                    var message = (trc.alerts.length === 0) ? 'Your request did\'t match any entity. Please check your entities and excluded entities filter and run test again.' : 'Trial run completed.';
-                    FeedbackMessageService.showSuccessMessage(message);
-                }
+            // Test run registration
+            tr.init($scope.alert).then(function (alert) {
+                // Settings for page state (opening/closing result/form panel, moving progress bar on 0 position...)
+                tr.uid = alert.id;
+                trc.running = true;
+                trc.progress = 0;
+                trc.formVisible = false;
+                trc.alertsVisible = true;
+
+                // Fetching alerts for test run
+                tr.get().then(function (data) {
+                    trc.progress = data.percentage || 5;
+                    trc.alerts = data.results;
+                    trc.counter();
+                });
+
+                // Scheduling periodic pull requests
+                tr.periodically(3000, function (data) {
+                    trc.progress = (data.percentage > 5) ? data.percentage : 5;
+                    trc.alerts = data.results;
+                    trc.counter();
+
+                    // Terminating periodic pull requests after completing
+                    if (trc.progress === 100) {
+                        trc.done();
+                        // Displaying alert
+                        var message = (trc.alerts.length === 0) ? 'Your request did\'t match any entity. Please check your entities and excluded entities filter and run test again.' : 'Trial run completed.';
+                        FeedbackMessageService.showSuccessMessage(message);
+                    }
+                });
             });
         });
     };
@@ -528,4 +540,4 @@ var TrialRunCtrl = function ($scope, $interval, timespanFilter, localStorageServ
 };
 
 
-angular.module('zmon2App').controller('TrialRunCtrl', ['$scope', '$interval', 'timespanFilter', 'localStorageService', 'CommunicationService', 'MainAlertService', 'FeedbackMessageService', 'UserInfoService', '$window', '$location', TrialRunCtrl]);
+angular.module('zmon2App').controller('TrialRunCtrl', ['$scope', '$interval', '$timeout', 'timespanFilter', 'localStorageService', 'CommunicationService', 'MainAlertService', 'FeedbackMessageService', 'UserInfoService', '$window', '$location', TrialRunCtrl]);
