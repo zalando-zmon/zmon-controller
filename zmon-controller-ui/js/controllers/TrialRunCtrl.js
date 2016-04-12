@@ -388,13 +388,12 @@ var TrialRunCtrl = function ($scope, $interval, $timeout, timespanFilter, localS
     trc.run = function ($event) {
 
         $scope.onRun = true;
+        $event.stopPropagation();
+        updateUrlParameters();
 
         // have to wait one digest cycle before the validity of the form is set according to
         // the onRun requirements
         $timeout(function() {
-
-            $event.stopPropagation();
-            updateUrlParameters();
 
             if (!$scope.trForm.$valid) {
                 trc.formVisible = true;
