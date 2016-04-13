@@ -11,7 +11,8 @@ angular.module('zmon2App').controller('CheckDefinitionEditCtrl', ['$scope', '$ro
         $scope.defaultEntitiesFilter = [];
         $scope.entityFilterInputMethod = 'text';
 
-        $scope.user = UserInfoService.get();
+        var user = UserInfoService.get();
+        $scope.teams = user.teams !== "" ? user.teams.split(',') : [];
 
         // Keep account of overwritten Properties and Parameters on inherit mode
         $scope.oProps = [];
@@ -133,6 +134,10 @@ angular.module('zmon2App').controller('CheckDefinitionEditCtrl', ['$scope', '$ro
                         $scope.oParams.push(name);
                         $scope.parameters.push(_.extend({'name': name}, response.parameters[name]));
                     });
+
+                    if ($scope.teams.indexOf($scope.check.owning_team) === -1) {
+                        $scope.teams.push($scope.check.owning_team);
+                    }
 
                     $scope.entityFilter.formEntityFilters = response.entities || [];
                     $scope.entityFilter.textEntityFilters = JSON.stringify(response.entities, null, $scope.INDENT) || '[]';

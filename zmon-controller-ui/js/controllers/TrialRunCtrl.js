@@ -107,7 +107,8 @@ var TrialRunCtrl = function ($scope, $interval, $timeout, timespanFilter, localS
         $location.search('json', JSON.stringify($scope.alert));
     };
 
-    trc.user = UserInfoService.get();
+    var user = UserInfoService.get();
+    trc.teams = user.teams !== "" ? user.teams.split(',') : [];
 
     // Alert Parameters initial data
     trc.alertParameters = [];

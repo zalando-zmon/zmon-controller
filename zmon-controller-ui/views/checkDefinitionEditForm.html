@@ -31,7 +31,7 @@
     <div class="form-group" ng-class="{'has-error': cdForm.submitted && cdForm.team.$error.required}">
         <label for="inp-owning-team" class="col-sm-2 control-label">Owner Team</label>
         <div class="col-sm-10">
-            <select class="form-control" id="inp-owning-team" name="owningTeam" ng-model="check.owning_team" ng-focus="cdForm.submitted && cdForm.owningTeam.$error.required" ng-options="team as team for team in user.teams" required></select>
+            <select class="form-control" id="inp-owning-team" name="owningTeam" ng-model="check.owning_team" ng-focus="cdForm.submitted && cdForm.owningTeam.$error.required" ng-options="team as team for team in teams" required></select>
         </div>
     </div>
 
