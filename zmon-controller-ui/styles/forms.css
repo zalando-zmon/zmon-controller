@@ -122,6 +122,17 @@
     width: 8%;
 }
 
+.zmon-data-table th i.sort-arrow
+{
+    position: relative;
+    float: right;
+}
+
+.zmon-data-table th i.fa-sort-asc
+{
+    top: 5px;
+}
+
 /* REPORTS FORM */
 /* -------------------------------------------------------------------------- */
 
