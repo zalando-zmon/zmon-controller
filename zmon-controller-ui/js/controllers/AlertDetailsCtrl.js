@@ -14,7 +14,8 @@ angular.module('zmon2App').controller('AlertDetailsCtrl', ['$scope', '$location'
         $scope.allAlertsAndChecks = null; // a concatenation of the (non-null) arrays activeAlerts, alertsInDowntime and checkResults
         $scope.allDowntimes = null; // 2nd tab content with all downtimes (for alerts + OK's, current and future)
         $scope.allHistory = null; // 3rd tab content with all history entries
-
+        $scope.sortType = 'result.ts'; // sort list of alerts by timestamp
+        $scope.sortOrder = false; // start with reverse sort order (-result.ts);
         $scope.showActiveAlerts = true; // 1st tab, 1st button
         $scope.showAlertsInDowntime = false; // 1st tab, 2nd button
         $scope.showCheckResults = false; // 1st tab, 3rd button

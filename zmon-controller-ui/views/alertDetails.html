@@ -116,15 +116,30 @@
                                     <input id="select-all-schedule-downtimes" type="checkbox" ng-checked="areAllDisplayedAlertsChecked()" ng-show="getTotalNumDisplayedAlerts()" ng-click="toggleAllEntitiesAddDowntime()">
                                     </div>
                                 </th>
-                                <th class="name-col">Name</th>
-                                <th class="last-run-col">Last run</th>
-                                <th class="active-since-col">Active since</th>
-                                <th class="value-col">Value</th>
-                                <th class="captures-col">Captures</th>
+                                <th class="name-col" ng-click="sortType = 'entity'; sortOrder = !sortOrder">Name
+                                    <i class="fa fa-fw fa-sort-asc sort-arrow" ng-show="sortType === 'entity' && sortOrder"></i>
+                                    <i class="fa fa-fw fa-sort-desc sort-arrow" ng-show="sortType === 'entity' && !sortOrder"></i>
+                                </th>
+                                <th class="last-run-col" ng-click="sortType = 'result.ts'; sortOrder = !sortOrder">Last run
+                                    <i class="fa fa-fw fa-sort-asc sort-arrow" ng-show="sortType === 'result.ts' && sortOrder"></i>
+                                    <i class="fa fa-fw fa-sort-desc sort-arrow" ng-show="sortType === 'result.ts' && !sortOrder"></i>
+                                </th>
+                                <th class="active-since-col" ng-click="sortType = 'result.start_time'; sortOrder = !sortOrder">Active since
+                                    <i class="fa fa-fw fa-sort-asc sort-arrow" ng-show="sortType === 'result.start_time' && sortOrder"></i>
+                                    <i class="fa fa-fw fa-sort-desc sort-arrow" ng-show="sortType === 'result.start_time' && !sortOrder"></i>
+                                </th>
+                                <th class="value-col" ng-click="sortType = 'result.value'; sortOrder = !sortOrder">Value
+                                    <i class="fa fa-fw fa-sort-asc sort-arrow" ng-show="sortType === 'result.value' && sortOrder"></i>
+                                    <i class="fa fa-fw fa-sort-desc sort-arrow" ng-show="sortType === 'result.value' && !sortOrder"></i>
+                                </th>
+                                <th class="captures-col" ng-click="sortType = 'result.captures'; sortOrder = !sortOrder">Captures
+                                    <i class="fa fa-fw fa-sort-asc sort-arrow" ng-show="sortType === 'result.captures' && sortOrder"></i>
+                                    <i class="fa fa-fw fa-sort-desc sort-arrow" ng-show="sortType === 'result.captures' && !sortOrder"></i>
+                                </th>
                             </tr>
                         </thead>
                         <tbody infinite-scroll visible-item-count="infScrollNumAlertsVisible" get-total-item-count="getTotalNumDisplayedAlerts()">
-                            <tr ng-repeat="entityInstance in allAlertsAndChecks | filter:alertDetailsSearch | inDisplayedGroup:showActiveAlerts:showAlertsInDowntime:showCheckResults | orderBy:'-result.ts' | limitTo:infScrollNumAlertsVisible track by entityInstance.entity" ng-class="{'danger': entityInstance.isActiveAlert == true, 'active-downtime': entityInstance.isAlertInDowntime == true, 'success': entityInstance.isCheckResult == true}">
+                            <tr ng-repeat="entityInstance in allAlertsAndChecks | filter:alertDetailsSearch | inDisplayedGroup:showActiveAlerts:showAlertsInDowntime:showCheckResults | orderBy:sortType:sortOrder | limitTo:infScrollNumAlertsVisible track by entityInstance.entity" ng-class="{'danger': entityInstance.isActiveAlert == true, 'active-downtime': entityInstance.isAlertInDowntime == true, 'success': entityInstance.isCheckResult == true}">
                                 <td class="text-center">
                                     <a href="/#/check-charts/{{checkDefinition.id}}?entity_id={{ entityInstance.entity }}"><i class="fa fa-fw fa-bar-chart-o"></i></a>
                                     <comment-dialog class="fake-link" uid="alertDefinition.id" entity="entityInstance.entity"  save="saveComment(comment, cb)" delete="deleteComment(id, cb)" load="getComments(id, limit, offset, cb)" show-count="false"></comment-dialog>
