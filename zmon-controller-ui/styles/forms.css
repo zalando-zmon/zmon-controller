@@ -125,18 +125,12 @@
 .zmon-data-table th i.sort-arrow
 {
     position: relative;
-    top: 5px;
     float: right;
 }
 
 .zmon-data-table th i.fa-sort-asc
 {
     top: 5px;
-}
-
-.zmon-data-table th i.fa-sort-desc
-{
-    top: 0;
 }
 
 /* REPORTS FORM */
