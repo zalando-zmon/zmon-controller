@@ -183,6 +183,9 @@ var TrialRunCtrl = function ($scope, $interval, $timeout, timespanFilter, localS
 
     $scope.onRun = false;
 
+    $scope.sortType = 'entity.id';
+    $scope.sortOrder = false;
+
     /** The getEntityProperties() returns an object with the data to populate the directives that represent the entity filter forms
      * We transform it to be an array of objects, one object per entity filter type with keys: "type" + keys that correspond to each filter type
      * E.g. [ {"type": "zomcat", "environment": "..", "project": "..", ...}, {"type": "host", "external_ip": "..", ...}, ... ]

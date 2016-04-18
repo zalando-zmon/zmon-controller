@@ -196,16 +196,31 @@
                     <table class="zmon-data-table table table-striped table-bordered table-hover table-condensed" id="result-table">
                         <thead>
                             <tr>
-                                <th class="name-col">Name</th>
-                                <th class="timestamp-col">Timestamp</th>
-                                <th class="last-run-col">Last run</th>
-                                <th>Value</th>
-                                <th class="captures-col">Captures</th>
+                                <th class="name-col" ng-click="sortType = 'entity.id'; sortOrder = !sortOrder">Name
+                                    <i class="fa fa-fw fa-sort-asc sort-arrow" ng-show="sortType === 'entity.id' && sortOrder"></i>
+                                    <i class="fa fa-fw fa-sort-desc sort-arrow" ng-show="sortType === 'entity.id' && !sortOrder"></i>
+                                </th>
+                                <th class="timestamp-col" ng-click="sortType = 'value.ts'; sortOrder = !sortOrder">Timestamp
+                                    <i class="fa fa-fw fa-sort-asc sort-arrow" ng-show="sortType === 'value.ts' && sortOrder"></i>
+                                    <i class="fa fa-fw fa-sort-desc sort-arrow" ng-show="sortType === 'value.ts' && !sortOrder"></i>
+                                </th>
+                                <th class="last-run-col" ng-click="sortType = 'value.td'; sortOrder = !sortOrder">Last run
+                                    <i class="fa fa-fw fa-sort-asc sort-arrow" ng-show="sortType === 'value.td' && sortOrder"></i>
+                                    <i class="fa fa-fw fa-sort-desc sort-arrow" ng-show="sortType === 'value.td' && !sortOrder"></i>
+                                </th>
+                                <th ng-click="sortType = 'value.value'; sortOrder = !sortOrder">Value
+                                    <i class="fa fa-fw fa-sort-asc sort-arrow" ng-show="sortType === 'value.value' && sortOrder"></i>
+                                    <i class="fa fa-fw fa-sort-desc sort-arrow" ng-show="sortType === 'value.value' && !sortOrder"></i>
+                                </th>
+                                <th class="captures-col" ng-click="sortType = 'captures'; sortOrder = !sortOrder">Captures
+                                    <i class="fa fa-fw fa-sort-asc sort-arrow" ng-show="sortType === 'captures' && sortOrder"></i>
+                                    <i class="fa fa-fw fa-sort-desc sort-arrow" ng-show="sortType === 'captures' && !sortOrder"></i>
+                                </th>
                             </tr>
                         </thead>
                         <tbody>
 
-                            <tr ng-show="TrialRunCtrl.criticalAlerts" class="danger" ng-repeat="alert in TrialRunCtrl.alerts | filter:{is_alert:true} | filter:search | orderBy:'entity.id'">
+                            <tr ng-show="TrialRunCtrl.criticalAlerts" class="danger" ng-repeat="alert in TrialRunCtrl.alerts | filter:{is_alert:true} | filter:search | orderBy:sortType:sortOrder">
                                 <td>{{alert.entity.id}}</td>
                                 <td>{{alert.value.ts|datetime}} ({{TrialRunCtrl.timeAgo(alert.value.ts)}} ago)</td>
                                 <td class="text-right">{{alert.value.td * 1000|timespan}}</td>
