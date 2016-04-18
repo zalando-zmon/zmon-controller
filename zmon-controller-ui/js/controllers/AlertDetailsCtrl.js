@@ -16,6 +16,10 @@ angular.module('zmon2App').controller('AlertDetailsCtrl', ['$scope', '$location'
         $scope.allHistory = null; // 3rd tab content with all history entries
         $scope.sortType = 'result.ts'; // sort list of alerts by timestamp
         $scope.sortOrder = false; // start with reverse sort order (-result.ts);
+        $scope.sortTypeDowntimes = 'entity';
+        $scope.sortOrderDowntimes = false;
+        $scope.sortTypeChildren = 'name';
+        $scope.sortOrderChildren = false;
         $scope.showActiveAlerts = true; // 1st tab, 1st button
         $scope.showAlertsInDowntime = false; // 1st tab, 2nd button
         $scope.showCheckResults = false; // 1st tab, 3rd button
