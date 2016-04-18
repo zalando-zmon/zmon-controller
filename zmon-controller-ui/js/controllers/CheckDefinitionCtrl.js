@@ -9,6 +9,8 @@ angular.module('zmon2App').controller('CheckDefinitionCtrl', ['$scope', '$routeP
         $scope.teamFilter = null;
         $scope.userInfo = UserInfoService.get();
         $scope.checkJson = '';
+        $scope.sortType = 'name';
+        $scope.sortOrder = false;
         $scope.limit = 100;
 
         var userInfo = UserInfoService.get();
