@@ -19,10 +19,14 @@ angular.module('zmon2App').controller('CheckDefinitionCtrl', ['$scope', '$routeP
             if (typeof $scope.checkDefinition === 'undefined') return;
             var params = {
                 name: $scope.checkDefinition.name,
+                description: $scope.checkDefinition.description,
+                owning_team: $scope.checkDefinition.owning_team,
                 check_command: $scope.checkDefinition.command,
                 entities: $scope.checkDefinition.entities,
                 interval: $scope.checkDefinition.interval,
+                technical_details: $scope.checkDefinition.technical_details
             };
+            console.log(params);
             $scope.checkJson = window.encodeURIComponent(JSON.stringify(params));
         };
 

@@ -300,6 +300,9 @@ var TrialRunCtrl = function ($scope, $interval, $timeout, timespanFilter, localS
     // Load values from querystrings.
     if ($location.search().json) {
         _.extend($scope.alert, JSON.parse($location.search().json));
+        if ($scope.alert.owning_team && trc.teams.indexOf($scope.alert.owning_team) === -1) {
+            trc.teams.push($scope.alert.owning_team);
+        }
     } else if (lastTrialRun) {
         _.each(_.keys(lastTrialRun.parameters).sort(), function(name) {
             trc.parameters.push(_.extend({'name': name}, lastTrialRun.parameters[name]));
