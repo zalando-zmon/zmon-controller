@@ -23,6 +23,7 @@ public class GrafanaUIController {
     @RequestMapping(value = "/grafana2")
     public String grafana2(Model model) {
         model.addAttribute(IndexController.STATIC_URL, controllerProperties.getStaticUrl());
+        model.addAttribute(IndexController.KAIROS_DB_BASE_URL, controllerProperties.getKairosDBBaseUrl());
         return "grafana2";
     }
 
