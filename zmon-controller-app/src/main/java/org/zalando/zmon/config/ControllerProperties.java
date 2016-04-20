@@ -10,15 +10,6 @@ public class ControllerProperties {
 
     public String staticUrl = "";
     public int grafanaMinInterval;
-    public String KairosDBBaseUrl = "";
-
-    public String getKairosDBBaseUrl() {
-        return KairosDBBaseUrl;
-    }
-
-    public void setKairosDBBaseUrl(String kairosDBBaseUrl) {
-        KairosDBBaseUrl = kairosDBBaseUrl;
-    }
 
     public String getStaticUrl() {
         return staticUrl;

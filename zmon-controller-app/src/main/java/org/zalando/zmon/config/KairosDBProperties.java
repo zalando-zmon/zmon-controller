@@ -19,6 +19,8 @@ public class KairosDBProperties {
 
     private boolean enabled;
 
+    private String frontendUrl = "";
+
     private int connectTimeout = 3000; // 3 seconds
     private int socketTimeout = 30000; // 30 seconds
     private int maxConnectionsPerRoute = 100;
@@ -30,6 +32,14 @@ public class KairosDBProperties {
 
     public void setMaxConnectionsPerRoute(int maxConnectionsPerRoute) {
         this.maxConnectionsPerRoute = maxConnectionsPerRoute;
+    }
+
+    public String getFrontendUrl() {
+        return frontendUrl;
+    }
+
+    public void setFrontendUrl(String frontendUrl) {
+        this.frontendUrl = frontendUrl;
     }
 
     public int getMaxConnectionsTotal() {
