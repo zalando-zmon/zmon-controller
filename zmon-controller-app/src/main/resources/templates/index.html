@@ -326,6 +326,13 @@
                 });
             };
 
+            // redirect to end url after successful authentication
+            var signinRedir = localStorageService.get('signinRedirTo');
+            if (signinRedir) {
+                localStorageService.set('signinRedirTo', null);
+                return $location.path(signinRedir);
+            }
+
         }]);
 </script>
 </html>
