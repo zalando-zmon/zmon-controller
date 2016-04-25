@@ -330,12 +330,7 @@
             var signinRedirTo = localStorageService.get('signinRedirTo');
             if (signinRedirTo) {
                 localStorageService.set('signinRedirTo', null);
-                var path = signinRedirTo.split('?')[0];
-                var search = signinRedirTo.split('?')[1] || '';
-                if (search) {
-                    search  = JSON.parse('{"' + decodeURI(search).replace(/"/g, '\\"').replace(/&/g, '","').replace(/=/g,'":"') + '"}');
-                }
-                return $location.path(path).search(search);
+                return $location.url(signinRedirTo);
             }
 
         }]);

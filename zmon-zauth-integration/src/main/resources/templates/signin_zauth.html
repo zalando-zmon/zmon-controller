@@ -45,10 +45,11 @@
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
         <script type="text/javascript">
 
-            var path = window.location.hash.split('#')[1];
-            if (path) {
-                localStorage.setItem('ls.signinRedirTo', path);
+            // save for redirection after successful login, without initial '#'
+            if (window.location.hash) {
+                localStorage.setItem('ls.signinRedirTo', window.location.hash.slice(1));
             }
+
 
             setTimeout(function() {
                 var a = document.getElementById("clickme");
