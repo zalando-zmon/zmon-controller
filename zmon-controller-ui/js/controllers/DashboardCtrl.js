@@ -4,7 +4,6 @@ angular.module('zmon2App').controller('DashboardCtrl', ['$scope', '$log', '$rout
         $scope.dashboardId = $routeParams.dashboardId || localStorageService.get('dashboardId');
 
         var p = '/dashboards/';
-
         if (!$routeParams.dashboardId && $scope.dashboardId) {
             p += 'view/' + $scope.dashboardId;
             return $location.path(p);

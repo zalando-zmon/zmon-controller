@@ -26,7 +26,6 @@ angular.module('zmon2App').controller('CheckDefinitionCtrl', ['$scope', '$routeP
                 interval: $scope.checkDefinition.interval,
                 technical_details: $scope.checkDefinition.technical_details
             };
-            console.log(params);
             $scope.checkJson = window.encodeURIComponent(JSON.stringify(params));
         };
 
