@@ -327,11 +327,11 @@
             };
 
             // redirect to end url after successful authentication
-            var signinRedir = localStorageService.get('signinRedirTo');
-            if (signinRedir) {
+            var signinRedirTo = localStorageService.get('signinRedirTo');
+            if (signinRedirTo) {
                 localStorageService.set('signinRedirTo', null);
-                var path = signinRedir.split('?')[0];
-                var search = signinRedir.split('?')[1] || '';
+                var path = signinRedirTo.split('?')[0];
+                var search = signinRedirTo.split('?')[1] || '';
                 if (search) {
                     search  = JSON.parse('{"' + decodeURI(search).replace(/"/g, '\\"').replace(/&/g, '","').replace(/=/g,'":"') + '"}');
                 }
