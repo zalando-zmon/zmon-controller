@@ -15,7 +15,7 @@ public class CorsConfiguration {
 
     private final Logger log = LoggerFactory.getLogger(CorsConfiguration.class);
 
-    @Value("${endpoints.cors.allowed-origin}")
+    @Value("${endpoints.cors.allowed-origins}")
     private String corsAllowedOrigins;
 
     //@formatter:off
