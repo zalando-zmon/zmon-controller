@@ -11,12 +11,6 @@ spring:
       min-idle: 0
       max-wait: -1
 
-  datasource:
-    driverClassName: org.postgresql.Driver
-    url: ${POSTGRES_URL:jdbc:postgresql://localhost:5432/local_zmon_db}
-    username: ${POSTGRES_USERNAME:postgres}
-    password: ${POSTGRES_PASSWORD:postgres}
-    initSQL: "SET search_path to zzm_api${zzm_api_version}, public;"
 
   thymeleaf:
     cache: false
@@ -31,6 +25,24 @@ server:
         key-alias: localhost
 
 zmon:
+    datasource:
+      jdbcUrl: ${POSTGRES_URL:jdbc:postgresql://localhost:5432/local_zmon_db}
+      username: ${POSTGRES_USERNAME:postgres}
+      password: ${POSTGRES_PASSWORD:postgres}
+      initSQL: "SET search_path to zzm_api${zzm_api_version}, public;"
+      idleConnectionTestPeriodInMinutes: 5
+      idleMaxAgeInMinutes: 15
+      maxConnectionsPerPartition: 8
+      minConnectionsPerPartition: 1
+      partitionCount: 2
+      acquireIncrement: 2
+      acquireRetryAttempts: 3
+      acquireRetryDelayInMs: 500
+      releaseHelperThreads: 2
+      connectionTimeoutInMs: 5000
+      maxConnectionAgeInSeconds: 43200
+      maxConnectionAgeDeviationInSeconds: 1000
+
     cloud:
       checkid: 9
     eventlog:
