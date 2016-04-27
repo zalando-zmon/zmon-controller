@@ -1,38 +1,30 @@
 package org.zalando.zmon.config;
 
-import javax.sql.DataSource;
-
+import com.jolbox.bonecp.BoneCPDataSource;
+import de.zalando.sprocwrapper.dsprovider.DataSourceProvider;
+import de.zalando.sprocwrapper.dsprovider.SingleDataSourceProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.env.Environment;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-import com.jolbox.bonecp.BoneCPDataSource;
+import javax.sql.DataSource;
 
-import de.zalando.sprocwrapper.dsprovider.DataSourceProvider;
-import de.zalando.sprocwrapper.dsprovider.SingleDataSourceProvider;
-
-/**
- * Created by hjacobs on 16.12.15.
- */
 @Configuration
 @EnableTransactionManagement
+@EnableConfigurationProperties({ DataSourceProperties.class })
 public class DataSourceProviderConfiguration {
 
     @Autowired
-    private Environment environment;
+    private DataSourceProperties dataSourceProperties;
 
     @Bean
     public DataSource dataSource() {
-        BoneCPDataSource dataSource = new BoneCPDataSource();
-        dataSource.setDriverClass(environment.getRequiredProperty("spring.datasource.driverClassName"));
-        dataSource.setInitSQL(environment.getRequiredProperty("spring.datasource.initSQL"));
-        dataSource.setJdbcUrl(environment.getRequiredProperty("spring.datasource.url"));
-        dataSource.setUsername(environment.getRequiredProperty("spring.datasource.username"));
-        dataSource.setPassword(environment.getRequiredProperty("spring.datasource.password"));
+        BoneCPDataSource dataSource = new BoneCPDataSource(dataSourceProperties);
+        dataSource.setDriverClass("org.postgresql.Driver");
         return dataSource;
     }
 
