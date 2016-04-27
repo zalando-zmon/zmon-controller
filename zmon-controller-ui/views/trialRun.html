@@ -32,6 +32,20 @@
                         </div>
                     </div>
 
+                    <div class="form-group" ng-class="{'has-error': trForm.submitted && trForm.description.$error.required}">
+                        <label for="inp-description" class="col-sm-2 control-label">Description</label>
+                        <div class="col-sm-10">
+                            <textarea class="form-control" id="inp-description" name="description" placeholder="Short descriptive text about the check" ng-model="alert.description" ng-focus="trForm.submitted && trForm.description.$error.required" ng-required="!onRun"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-group" ng-class="{'has-error': trForm.submitted && trForm.owningTeam.$error.required}">
+                        <label for="inp-owning-team" class="col-sm-2 control-label">Owner Team</label>
+                        <div class="col-sm-10">
+                            <select class="form-control" id="inp-owning-team" name="owningTeam" ng-model="alert.owning_team" ng-focus="trForm.submitted && trForm.owningTeam.$error.required" ng-options="team as team for team in TrialRunCtrl.teams" ng-required="!onRun"></select>
+                        </div>
+                    </div>
+
                     <div class="form-group" ng-class="{'has-error': trForm.submitted && trForm.check_command.$error.required}">
                         <label for="inp-command" class="col-sm-2 control-label"><a href="/docs/check-definitions.html" rel="help" target="docs">Check Command</a></label>
                         <div class="col-sm-10">
@@ -133,6 +147,13 @@
                     </div>
 
                     <div class="form-group">
+                        <label for="inp-technical-details" class="col-sm-2 control-label">Technical Details</label>
+                        <div class="col-sm-10">
+                            <textarea class="form-control" id="inp-technical-details" name="technicalDetails" placeholder="Add any technical details this check may have" ng-model="alert.technical_details"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
                         <div class="col-sm-12 text-right">
                             <button class="btn btn-primary" ng-click="TrialRunCtrl.save()"><i class="fa fa-fw fa-save" ></i>Save as New Check    </button>
                             <button id="download-button" class="btn btn-warning" ng-click="TrialRunCtrl.download($event)"><i class="fa fa-fw fa-download" ></i>Download</button>
@@ -175,16 +196,31 @@
                     <table class="zmon-data-table table table-striped table-bordered table-hover table-condensed" id="result-table">
                         <thead>
                             <tr>
-                                <th class="name-col">Name</th>
-                                <th class="timestamp-col">Timestamp</th>
-                                <th class="last-run-col">Last run</th>
-                                <th>Value</th>
-                                <th class="captures-col">Captures</th>
+                                <th class="name-col" ng-click="sortType = 'entity.id'; sortOrder = !sortOrder">Name
+                                    <i class="fa fa-fw fa-sort-asc sort-arrow" ng-show="sortType === 'entity.id' && sortOrder"></i>
+                                    <i class="fa fa-fw fa-sort-desc sort-arrow" ng-show="sortType === 'entity.id' && !sortOrder"></i>
+                                </th>
+                                <th class="timestamp-col" ng-click="sortType = 'value.ts'; sortOrder = !sortOrder">Timestamp
+                                    <i class="fa fa-fw fa-sort-asc sort-arrow" ng-show="sortType === 'value.ts' && sortOrder"></i>
+                                    <i class="fa fa-fw fa-sort-desc sort-arrow" ng-show="sortType === 'value.ts' && !sortOrder"></i>
+                                </th>
+                                <th class="last-run-col" ng-click="sortType = 'value.td'; sortOrder = !sortOrder">Last run
+                                    <i class="fa fa-fw fa-sort-asc sort-arrow" ng-show="sortType === 'value.td' && sortOrder"></i>
+                                    <i class="fa fa-fw fa-sort-desc sort-arrow" ng-show="sortType === 'value.td' && !sortOrder"></i>
+                                </th>
+                                <th ng-click="sortType = 'value.value'; sortOrder = !sortOrder">Value
+                                    <i class="fa fa-fw fa-sort-asc sort-arrow" ng-show="sortType === 'value.value' && sortOrder"></i>
+                                    <i class="fa fa-fw fa-sort-desc sort-arrow" ng-show="sortType === 'value.value' && !sortOrder"></i>
+                                </th>
+                                <th class="captures-col" ng-click="sortType = 'captures'; sortOrder = !sortOrder">Captures
+                                    <i class="fa fa-fw fa-sort-asc sort-arrow" ng-show="sortType === 'captures' && sortOrder"></i>
+                                    <i class="fa fa-fw fa-sort-desc sort-arrow" ng-show="sortType === 'captures' && !sortOrder"></i>
+                                </th>
                             </tr>
                         </thead>
                         <tbody>
 
-                            <tr ng-show="TrialRunCtrl.criticalAlerts" class="danger" ng-repeat="alert in TrialRunCtrl.alerts | filter:{is_alert:true} | filter:search | orderBy:'entity.id'">
+                            <tr ng-show="TrialRunCtrl.criticalAlerts" class="danger" ng-repeat="alert in TrialRunCtrl.alerts | filter:{is_alert:true} | filter:search | orderBy:sortType:sortOrder">
                                 <td>{{alert.entity.id}}</td>
                                 <td>{{alert.value.ts|datetime}} ({{TrialRunCtrl.timeAgo(alert.value.ts)}} ago)</td>
                                 <td class="text-right">{{alert.value.td * 1000|timespan}}</td>

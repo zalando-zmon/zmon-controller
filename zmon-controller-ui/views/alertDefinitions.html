@@ -54,18 +54,42 @@
             <thead>
                 <tr>
                     <th class="actions-col">Actions</th>
-                    <th class="name-col">Name</th>
-                    <th>Condition</th>
-                    <th class="entities-col">Entities</th>
-                    <th class="check-id-col">Check ID</th>
-                    <th class="team-col">Team</th>
-                    <th class="responsible-team-col">Responsible Team</th>
-                    <th class="priority-col">Priority</th>
-                    <th class="status-col">Status</th>
+                    <th class="name-col" ng-click="sortType = 'name'; sortOrder = !sortOrder">Name
+                        <i class="fa fa-fw fa-sort-asc sort-arrow" ng-show="sortType === 'name' && sortOrder"></i>
+                        <i class="fa fa-fw fa-sort-desc sort-arrow" ng-show="sortType === 'name' && !sortOrder"></i>
+                    </th>
+                    <th ng-click="sortType = 'condition'; sortOrder = !sortOrder">Condition
+                        <i class="fa fa-fw fa-sort-asc sort-arrow" ng-show="sortType === 'condition' && sortOrder"></i>
+                        <i class="fa fa-fw fa-sort-desc sort-arrow" ng-show="sortType === 'condition' && !sortOrder"></i>
+                    </th>
+                    <th class="entities-col" ng-click="sortType = 'entities'; sortOrder = !sortOrder">Entities
+                        <i class="fa fa-fw fa-sort-asc sort-arrow" ng-show="sortType === 'entities' && sortOrder"></i>
+                        <i class="fa fa-fw fa-sort-desc sort-arrow" ng-show="sortType === 'entities' && !sortOrder"></i>
+                    </th>
+                    <th class="check-id-col" ng-click="sortType = 'check_definition_id'; sortOrder = !sortOrder">Check ID
+                        <i class="fa fa-fw fa-sort-asc sort-arrow" ng-show="sortType === 'check_definition_id' && sortOrder"></i>
+                        <i class="fa fa-fw fa-sort-desc sort-arrow" ng-show="sortType === 'check_definition_id' && !sortOrder"></i>
+                    </th>
+                    <th class="team-col" ng-click="sortType = 'team'; sortOrder = !sortOrder">Team
+                        <i class="fa fa-fw fa-sort-asc sort-arrow" ng-show="sortType === 'team' && sortOrder"></i>
+                        <i class="fa fa-fw fa-sort-desc sort-arrow" ng-show="sortType === 'team' && !sortOrder"></i>
+                    </th>
+                    <th class="responsible-team-col" ng-click="sortType = 'responsible_team'; sortOrder = !sortOrder">Responsible Team
+                        <i class="fa fa-fw fa-sort-asc sort-arrow" ng-show="sortType === 'responsible_team' && sortOrder"></i>
+                        <i class="fa fa-fw fa-sort-desc sort-arrow" ng-show="sortType === 'responsibl_team' && !sortOrder"></i>
+                    </th>
+                    <th class="priority-col" ng-click="sortType = 'priority'; sortOrder = !sortOrder">Priority
+                        <i class="fa fa-fw fa-sort-asc sort-arrow" ng-show="sortType === 'priority' && sortOrder"></i>
+                        <i class="fa fa-fw fa-sort-desc sort-arrow" ng-show="sortType === 'priority' && !sortOrder"></i>
+                    </th>
+                    <th class="status-col" ng-click="sortType = 'status'; sortOrder = !sortOrder">Status
+                        <i class="fa fa-fw fa-sort-asc sort-arrow" ng-show="sortType === 'status' && sortOrder"></i>
+                        <i class="fa fa-fw fa-sort-desc sort-arrow" ng-show="sortType === 'status' && !sortOrder"></i>
+                    </th>
                 </tr>
             </thead>
             <tbody infinite-scroll="incLimit()">
-                <tr ng-repeat="def in alertDefinitionsByStatus | filter: alertFilter | orderBy:'name' | limitTo: limit" last="$last">
+                <tr ng-repeat="def in alertDefinitionsByStatus | filter: alertFilter | orderBy:sortType:sortOrder | limitTo: limit" last="$last">
                     <td class="text-center" ng-switch on="def.editable">
                         <a ng-switch-when="true" href="#/alert-definitions/edit/{{def.id}}"><i class="fa fa-fw fa-edit"></i></a>
                         <i ng-switch-default class="fa fa-fw fa-edit semi-transparent"></i>

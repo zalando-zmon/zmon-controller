@@ -102,9 +102,6 @@
                         </a>
                     </span>
                     <span class="app-status">
-                     <a title="Grafana" target="_blank" href="/grafana/">
-                            <i class="fa fa-fw fa-bar-chart-o fa-lg"></i>
-                        </a>
                         <a title="Grafana 2" target="_blank" href="/grafana2/">
                             <i class="fa fa-fw fa-area-chart fa-lg"></i>
                         </a>
@@ -124,7 +121,7 @@
                         data:instantaneous-alert-evaluation="${hasInstantaneousAlertEvaluationPermission}"
                         data:cloud-check="${cloudCheckId}">
 
-                        <button type="button" class="auth-user btn btn-default dropdown-toggle" data-toggle="dropdown" sec:authentication="name">
+                        <button type="button" class="auth-user btn btn-default dropdown-toggle" data-toggle="dropdown" popover="Teams: {{userTeamsOnPopover}}" popover-placement="left" popover-trigger="mouseenter" sec:authentication="name">
                             klaus
                             <span class="caret"></span>
                         </button>
@@ -211,24 +208,15 @@
             $scope.checksPerSecond = 0;
             $scope.serviceStatus = {};
             $scope.checkInvocationsCache = {};
+            $scope.userTeamsOnPopover = '(no team)';
 
             this.userInfo = UserInfoService.get();
 
-            // Helper, decides if support icon should be shown based
-            // on the user team (Incident team only for now).
-            this.showSupportIcon = function() {
-                var userTeams = " ";
-
-                if ($scope.IndexCtrl.userInfo.teams) {
-                    userTeams = $scope.IndexCtrl.userInfo.teams;
-                }
-
-                if (_.isArray(userTeams)) {
-                    userTeams = userTeams.join();
-                }
-
-                return userTeams.toLowerCase().indexOf("incident") >= 0;
-            };
+            // limit list of teams on popover to 5
+            if (this.userInfo.teams) {
+                var teams = this.userInfo.teams.split(',');
+                $scope.userTeamsOnPopover = teams.slice(-5).join(', ') + (teams.length > 5 ? '...' : '');
+            }
 
             this.getLoadingIndicatorState = function() {
                 return LoadingIndicatorService.getState();
@@ -328,6 +316,13 @@
                     return value;
                 });
             };
+
+            // redirect to end url after successful authentication
+            var signinRedirTo = localStorageService.get('signinRedirTo');
+            if (signinRedirTo) {
+                localStorageService.set('signinRedirTo', null);
+                return $location.url(signinRedirTo);
+            }
 
         }]);
 </script>

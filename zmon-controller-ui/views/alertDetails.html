@@ -116,15 +116,30 @@
                                     <input id="select-all-schedule-downtimes" type="checkbox" ng-checked="areAllDisplayedAlertsChecked()" ng-show="getTotalNumDisplayedAlerts()" ng-click="toggleAllEntitiesAddDowntime()">
                                     </div>
                                 </th>
-                                <th class="name-col">Name</th>
-                                <th class="last-run-col">Last run</th>
-                                <th class="active-since-col">Active since</th>
-                                <th class="value-col">Value</th>
-                                <th class="captures-col">Captures</th>
+                                <th class="name-col" ng-click="sortType = 'entity'; sortOrder = !sortOrder">Name
+                                    <i class="fa fa-fw fa-sort-asc sort-arrow" ng-show="sortType === 'entity' && sortOrder"></i>
+                                    <i class="fa fa-fw fa-sort-desc sort-arrow" ng-show="sortType === 'entity' && !sortOrder"></i>
+                                </th>
+                                <th class="last-run-col" ng-click="sortType = 'result.ts'; sortOrder = !sortOrder">Last run
+                                    <i class="fa fa-fw fa-sort-asc sort-arrow" ng-show="sortType === 'result.ts' && sortOrder"></i>
+                                    <i class="fa fa-fw fa-sort-desc sort-arrow" ng-show="sortType === 'result.ts' && !sortOrder"></i>
+                                </th>
+                                <th class="active-since-col" ng-click="sortType = 'result.start_time'; sortOrder = !sortOrder">Active since
+                                    <i class="fa fa-fw fa-sort-asc sort-arrow" ng-show="sortType === 'result.start_time' && sortOrder"></i>
+                                    <i class="fa fa-fw fa-sort-desc sort-arrow" ng-show="sortType === 'result.start_time' && !sortOrder"></i>
+                                </th>
+                                <th class="value-col" ng-click="sortType = 'result.value'; sortOrder = !sortOrder">Value
+                                    <i class="fa fa-fw fa-sort-asc sort-arrow" ng-show="sortType === 'result.value' && sortOrder"></i>
+                                    <i class="fa fa-fw fa-sort-desc sort-arrow" ng-show="sortType === 'result.value' && !sortOrder"></i>
+                                </th>
+                                <th class="captures-col" ng-click="sortType = 'result.captures'; sortOrder = !sortOrder">Captures
+                                    <i class="fa fa-fw fa-sort-asc sort-arrow" ng-show="sortType === 'result.captures' && sortOrder"></i>
+                                    <i class="fa fa-fw fa-sort-desc sort-arrow" ng-show="sortType === 'result.captures' && !sortOrder"></i>
+                                </th>
                             </tr>
                         </thead>
                         <tbody infinite-scroll visible-item-count="infScrollNumAlertsVisible" get-total-item-count="getTotalNumDisplayedAlerts()">
-                            <tr ng-repeat="entityInstance in allAlertsAndChecks | filter:alertDetailsSearch | inDisplayedGroup:showActiveAlerts:showAlertsInDowntime:showCheckResults | orderBy:'-result.ts' | limitTo:infScrollNumAlertsVisible track by entityInstance.entity" ng-class="{'danger': entityInstance.isActiveAlert == true, 'active-downtime': entityInstance.isAlertInDowntime == true, 'success': entityInstance.isCheckResult == true}">
+                            <tr ng-repeat="entityInstance in allAlertsAndChecks | filter:alertDetailsSearch | inDisplayedGroup:showActiveAlerts:showAlertsInDowntime:showCheckResults | orderBy:sortType:sortOrder | limitTo:infScrollNumAlertsVisible track by entityInstance.entity" ng-class="{'danger': entityInstance.isActiveAlert == true, 'active-downtime': entityInstance.isAlertInDowntime == true, 'success': entityInstance.isCheckResult == true}">
                                 <td class="text-center">
                                     <a href="/#/check-charts/{{checkDefinition.id}}?entity_id={{ entityInstance.entity }}"><i class="fa fa-fw fa-bar-chart-o"></i></a>
                                     <comment-dialog class="fake-link" uid="alertDefinition.id" entity="entityInstance.entity"  save="saveComment(comment, cb)" delete="deleteComment(id, cb)" load="getComments(id, limit, offset, cb)" show-count="false"></comment-dialog>
@@ -162,16 +177,31 @@
                                 <button id="delete-downtimes-button" ng-disabled="deleteDowntimeUUIDs.length == 0" ng-click="deleteMultiDowntimes()" class="fa fa-trash-o btn btn-primary"> </button>
                                 <input id="select-all-delete-downtimes" type="checkbox" ng-checked="areAllDowntimesChecked()" ng-click="toggleAllDeleteDowntimes()">
                             </th>
-                            <th class="name-col">Entity</th>
-                            <th class="timestamp-col">Start time</th>
-                            <th class="timestamp-col">End time</th>
-                            <th>Comment</th>
-                            <th class="modified-by-col">Created by</th>
+                            <th class="name-col" ng-click="sortType = 'entity'; sortOrder = !sortOrder">Entity
+                                    <i class="fa fa-fw fa-sort-asc sort-arrow" ng-show="sortType === 'entity' && sortOrder"></i>
+                                    <i class="fa fa-fw fa-sort-desc sort-arrow" ng-show="sortType === 'entity' && !sortOrder"></i>
+                            </th>
+                            <th class="timestamp-col" ng-click="sortType = 'start_time'; sortOrder = !sortOrder">Start time
+                                    <i class="fa fa-fw fa-sort-asc sort-arrow" ng-show="sortType === 'start_time' && sortOrder"></i>
+                                    <i class="fa fa-fw fa-sort-desc sort-arrow" ng-show="sortType === 'start_time' && !sortOrder"></i>
+                            </th>
+                            <th class="timestamp-col" ng-click="sortType = 'end_time'; sortOrder = !sortOrder">End time
+                                    <i class="fa fa-fw fa-sort-asc sort-arrow" ng-show="sortType === 'end_time' && sortOrder"></i>
+                                    <i class="fa fa-fw fa-sort-desc sort-arrow" ng-show="sortType === 'end_time' && !sortOrder"></i>
+                            </th>
+                            <th ng-click="sortType = 'comment'; sortOrder = !sortOrder">Comment
+                                    <i class="fa fa-fw fa-sort-asc sort-arrow" ng-show="sortType === 'comment' && sortOrder"></i>
+                                    <i class="fa fa-fw fa-sort-desc sort-arrow" ng-show="sortType === 'comment' && !sortOrder"></i>
+                            </th>
+                            <th class="modified-by-col" ng-click="sortType = 'created_by'; sortOrder = !sortOrder">Created by
+                                    <i class="fa fa-fw fa-sort-asc sort-arrow" ng-show="sortType === 'created_by' && sortOrder"></i>
+                                    <i class="fa fa-fw fa-sort-desc sort-arrow" ng-show="sortType === 'created_by' && !sortOrder"></i>
+                            </th>
                         </tr>
                     </thead>
                     <tbody infinite-scroll visible-item-count="infScrollNumDowntimesVisible" get-total-item-count="getTotalNumDowntimes()">
                         <!-- And then show the entities downtimes -->
-                        <tr class="warning" ng-repeat="downtimeInstance in allDowntimes| filter:alertDetailsSearch | orderBy:'entity_id' | limitTo:infScrollNumDowntimesVisible">
+                        <tr class="warning" ng-repeat="downtimeInstance in allDowntimes| filter:alertDetailsSearch | orderBy:sortTypeDowntimes:sortOrderDowntimes | limitTo:infScrollNumDowntimesVisible">
                             <td ng-if="userInfo['delete-downtime']" class="text-center"><input type="checkbox" ng-checked="deleteDowntimeUUIDs.indexOf(downtimeInstance.id) > -1" ng-click="toggleSingleDeleteDowntime(downtimeInstance.id)"></td>
                             <td>{{downtimeInstance.entity}}</td>
                             <td>{{downtimeInstance.start_time | epochToDate}}</td>
@@ -217,19 +247,43 @@
                 <table class="zmon-data-table table table-striped table-bordered table-hover table-condensed">
                     <thead>
                         <tr>
-                            <th class="name-col">Name</th>
-                            <th>Condition</th>
+                            <th class="name-col" ng-click="sortType = 'name'; sortOrder = !sortOrder">Name
+                                    <i class="fa fa-fw fa-sort-asc sort-arrow" ng-show="sortType === 'name' && sortOrder"></i>
+                                    <i class="fa fa-fw fa-sort-desc sort-arrow" ng-show="sortType === 'name' && !sortOrder"></i>
+                            </th>
+                            <th ng-click="sortType = 'condition'; sortOrder = !sortOrder">Condition
+                                    <i class="fa fa-fw fa-sort-asc sort-arrow" ng-show="sortType === 'condition' && sortOrder"></i>
+                                    <i class="fa fa-fw fa-sort-desc sort-arrow" ng-show="sortType === 'condition' && !sortOrder"></i>
+                            </th>
                             <th>Parameters</th>
-                            <th class="entities-col">Entities</th>
-                            <th class="check-id-col">Check ID</th>
-                            <th class="team-col">Team</th>
-                            <th class="responsible-team-col">Responsible Team</th>
-                            <th class="priority-col">Priority</th>
-                            <th class="status-col">Status</th>
+                            <th class="entities-col" ng-click="sortType = 'entities'; sortOrder = !sortOrder">Entities
+                                    <i class="fa fa-fw fa-sort-asc sort-arrow" ng-show="sortType === 'entities' && sortOrder"></i>
+                                    <i class="fa fa-fw fa-sort-desc sort-arrow" ng-show="sortType === 'entities' && !sortOrder"></i>
+                            </th>
+                            <th class="check-id-col" ng-click="sortType = 'check_definition_id'; sortOrder = !sortOrder">Check ID
+                                    <i class="fa fa-fw fa-sort-asc sort-arrow" ng-show="sortType === 'check_definition_id' && sortOrder"></i>
+                                    <i class="fa fa-fw fa-sort-desc sort-arrow" ng-show="sortType === 'check_definition_id' && !sortOrder"></i>
+                            </th>
+                            <th class="team-col" ng-click="sortType = 'team'; sortOrder = !sortOrder">Team
+                                    <i class="fa fa-fw fa-sort-asc sort-arrow" ng-show="sortType === 'team' && sortOrder"></i>
+                                    <i class="fa fa-fw fa-sort-desc sort-arrow" ng-show="sortType === 'team' && !sortOrder"></i>
+                            </th>
+                            <th class="responsible-team-col" ng-click="sortType = 'responsible_team'; sortOrder = !sortOrder">Responsible Team
+                                    <i class="fa fa-fw fa-sort-asc sort-arrow" ng-show="sortType === 'responsible_team' && sortOrder"></i>
+                                    <i class="fa fa-fw fa-sort-desc sort-arrow" ng-show="sortType === 'responsible_team' && !sortOrder"></i>
+                            </th>
+                            <th class="priority-col" ng-click="sortType = 'priority'; sortOrder = !sortOrder">Priority
+                                    <i class="fa fa-fw fa-sort-asc sort-arrow" ng-show="sortType === 'priority' && sortOrder"></i>
+                                    <i class="fa fa-fw fa-sort-desc sort-arrow" ng-show="sortType === 'priority' && !sortOrder"></i>
+                            </th>
+                            <th class="status-col" ng-click="sortType = 'status'; sortOrder = !sortOrder">Status
+                                    <i class="fa fa-fw fa-sort-asc sort-arrow" ng-show="sortType === 'status' && sortOrder"></i>
+                                    <i class="fa fa-fw fa-sort-desc sort-arrow" ng-show="sortType === 'status' && !sortOrder"></i>
+                            </th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr ng-repeat="def in alertDefinitionChildren | orderBy:'name'" repeat-monitor last="$last">
+                        <tr ng-repeat="def in alertDefinitionChildren | orderBy:sortTypeChildren:sortOrderChildren" repeat-monitor last="$last">
                             <td><a tooltip-html-unsafe="{{def.description | markdown}}" tooltip-placement="right" href="#/alert-details/{{def.id}}">{{def.name || '(no name)'}}</a></td>
                             <td class="ellipsis" expand>{{def.condition}}</td>
                             <td><dd ng-repeat="(name, parameter) in def.parameters">{{name}} = {{parameter.value}}</dd></td>

@@ -19,8 +19,36 @@ public class KairosDBProperties {
 
     private boolean enabled;
 
+    private String frontendUrl = "";
+
     private int connectTimeout = 3000; // 3 seconds
     private int socketTimeout = 30000; // 30 seconds
+    private int maxConnectionsPerRoute = 100;
+    private int maxConnectionsTotal = 200;
+
+    public int getMaxConnectionsPerRoute() {
+        return maxConnectionsPerRoute;
+    }
+
+    public void setMaxConnectionsPerRoute(int maxConnectionsPerRoute) {
+        this.maxConnectionsPerRoute = maxConnectionsPerRoute;
+    }
+
+    public String getFrontendUrl() {
+        return frontendUrl;
+    }
+
+    public void setFrontendUrl(String frontendUrl) {
+        this.frontendUrl = frontendUrl;
+    }
+
+    public int getMaxConnectionsTotal() {
+        return maxConnectionsTotal;
+    }
+
+    public void setMaxConnectionsTotal(int maxConnectionsTotal) {
+        this.maxConnectionsTotal = maxConnectionsTotal;
+    }
 
     public URL getUrl() {
         return url;
@@ -60,6 +88,6 @@ public class KairosDBProperties {
      */
     public HttpClient getHttpClient() {
         RequestConfig config = RequestConfig.custom().setSocketTimeout(getSocketTimeout()).setConnectTimeout(getConnectTimeout()).build();
-        return HttpClients.custom().setDefaultRequestConfig(config).build();
+        return HttpClients.custom().setMaxConnPerRoute(maxConnectionsPerRoute).setMaxConnTotal(maxConnectionsTotal).setDefaultRequestConfig(config).build();
     }
 }

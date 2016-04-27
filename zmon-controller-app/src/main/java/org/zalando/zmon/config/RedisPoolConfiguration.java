@@ -26,6 +26,7 @@ public class RedisPoolConfiguration {
     private RedisProperties redisProperties;
 
     @Autowired
+    @RedisWrite
     private WriteRedisProperties writeRedisProperties;
 
     // TODO, use this to fetch mission properties
@@ -49,6 +50,9 @@ public class RedisPoolConfiguration {
     @Bean
     public JedisPoolConfig jedisPoolConfig() {
         JedisPoolConfig poolConfig = new JedisPoolConfig();
+        if (redisProperties.getPool() == null) {
+            redisProperties.setPool(new RedisProperties.Pool());
+        }
 
         poolConfig.setMaxIdle(redisProperties.getPool().getMaxIdle());
         poolConfig.setMinIdle(redisProperties.getPool().getMinIdle());
@@ -78,6 +82,9 @@ public class RedisPoolConfiguration {
     @Bean
     public JedisPoolConfig writeJedisPoolConfig() {
         JedisPoolConfig poolConfig = new JedisPoolConfig();
+        if (writeRedisProperties.getPool() == null) {
+            writeRedisProperties.setPool(new RedisProperties.Pool());
+        }
 
         poolConfig.setMaxIdle(writeRedisProperties.getPool().getMaxIdle());
         poolConfig.setMinIdle(writeRedisProperties.getPool().getMinIdle());

@@ -77,18 +77,39 @@
         <thead>
             <tr>
                 <th>Actions</th>
-                <th>Name</th>
-                <th>Condition</th>
-                <th>Entities</th>
-                <th>Team</th>
-                <th>Responsible Team</th>
-                <th>Priority</th>
-                <th>Status</th>
+                <th ng-click="sortType = 'name'; sortOrder = !sortOrder">Name
+                    <i class="fa fa-fw fa-sort-asc sort-arrow" ng-show="sortType === 'name' && sortOrder"></i>
+                    <i class="fa fa-fw fa-sort-desc sort-arrow" ng-show="sortType === 'name' && !sortOrder"></i>
+                </th>
+                <th ng-click="sortType = 'condition'; sortOrder = !sortOrder">Condition
+                    <i class="fa fa-fw fa-sort-asc sort-arrow" ng-show="sortType === 'condition' && sortOrder"></i>
+                    <i class="fa fa-fw fa-sort-desc sort-arrow" ng-show="sortType === 'condition' && !sortOrder"></i>
+                </th>
+                <th ng-click="sortType = 'entities'; sortOrder = !sortOrder">Entities
+                    <i class="fa fa-fw fa-sort-asc sort-arrow" ng-show="sortType === 'entities' && sortOrder"></i>
+                    <i class="fa fa-fw fa-sort-desc sort-arrow" ng-show="sortType === 'entities' && !sortOrder"></i>
+                </th>
+                <th ng-click="sortType = 'team'; sortOrder = !sortOrder">Team
+                    <i class="fa fa-fw fa-sort-asc sort-arrow" ng-show="sortType === 'team' && sortOrder"></i>
+                    <i class="fa fa-fw fa-sort-desc sort-arrow" ng-show="sortType === 'team' && !sortOrder"></i>
+                </th>
+                <th ng-click="sortType = 'responsible_team'; sortOrder = !sortOrder">Responsible Team
+                    <i class="fa fa-fw fa-sort-asc sort-arrow" ng-show="sortType === 'responsible_team' && sortOrder"></i>
+                    <i class="fa fa-fw fa-sort-desc sort-arrow" ng-show="sortType === 'responsible_team' && !sortOrder"></i>
+                </th>
+                <th ng-click="sortType = 'priority'; sortOrder = !sortOrder">Priority
+                    <i class="fa fa-fw fa-sort-asc sort-arrow" ng-show="sortType === 'priority' && sortOrder"></i>
+                    <i class="fa fa-fw fa-sort-desc sort-arrow" ng-show="sortType === 'priority' && !sortOrder"></i>
+                </th>
+                <th ng-click="sortType = 'status'; sortOrder = !sortOrder">Status
+                    <i class="fa fa-fw fa-sort-asc sort-arrow" ng-show="sortType === 'status' && sortOrder"></i>
+                    <i class="fa fa-fw fa-sort-desc sort-arrow" ng-show="sortType === 'status' && !sortOrder"></i>
+                </th>
             </tr>
         </thead>
         <tbody>
             <!-- First show the entities with alerts -->
-            <tr ng-repeat="def in alertDefinitions| filter:alertDefinitionFilter | orderBy:'name'" repeat-monitor last="$last">
+            <tr ng-repeat="def in alertDefinitions| filter:alertDefinitionFilter | orderBy:sortType:sortOrder" repeat-monitor last="$last">
                 <td class="text-center">
                     <a ng-show="def.editable" href="#/alert-definitions/edit/{{def.id}}" title="Edit"><i class="fa fa-fw fa-edit"></i></a>
                     <i ng-hide="def.editable" class="fa fa-fw fa-edit semi-transparent"></i>

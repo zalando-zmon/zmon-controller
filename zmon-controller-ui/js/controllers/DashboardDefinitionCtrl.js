@@ -12,6 +12,9 @@ angular.module('zmon2App').controller('DashboardDefinitionCtrl', ['$scope', 'loc
         $scope.dashboardDefinitions = [];
         $scope.userInfo = UserInfoService.get();
 
+        $scope.sortType = 'name';
+        $scope.sortOrder = false;
+
         this.fetchDashboardDefinitions = function() {
             CommunicationService.getAllDashboards().then(
                 function(data) {

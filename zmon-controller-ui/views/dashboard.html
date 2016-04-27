@@ -86,7 +86,7 @@
                 <span ng-show="!compact">{{alertInstance.alert_definition.responsible_team}}</span>
                 <a ng-if="alertInstance.numEntitiesInDowntimeNow" class="fa fa-flag" tooltip="{{alertInstance.numEntitiesInDowntimeNow}} entities in downtime now" tooltip-placement="left" ng-href="/#/alert-details/{{alertInstance.alert_definition.id}}?downtimes"></a>
             </div>
-            <div ng-show="!compact" class="text-right oldest-timestamp">
+            <div class="text-right oldest-timestamp">
                 {{timeSinceLastUpdate(alertInstance.oldestStartTime) | timespan}}
             </div>
         </div>

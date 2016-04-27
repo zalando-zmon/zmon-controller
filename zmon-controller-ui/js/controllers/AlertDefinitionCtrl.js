@@ -13,6 +13,8 @@ angular.module('zmon2App').controller('AlertDefinitionCtrl', ['$scope', '$window
         $scope.viewedTabs = [];
         $scope.lastReviews = {};
         $scope.isFilteredByTemplate = false;
+        $scope.sortType = 'name';
+        $scope.sortOrder = false;
         $scope.limit = 100;
 
         var userInfo = UserInfoService.get();

@@ -21,6 +21,20 @@
         </div>
     </div>
 
+    <div class="form-group" ng-class="{'has-error': cdForm.submitted && cdForm.description.$error.required}">
+        <label for="inp-description" class="col-sm-2 control-label">Description</label>
+        <div class="col-sm-10">
+            <textarea class="form-control" id="inp-description" name="description" placeholder="Short descriptive text about the check" ng-model="check.description" ng-focus="cdForm.submitted && cdForm.description.$error.required" required></textarea>
+        </div>
+    </div>
+
+    <div class="form-group" ng-class="{'has-error': cdForm.submitted && cdForm.team.$error.required}">
+        <label for="inp-owning-team" class="col-sm-2 control-label">Owner Team</label>
+        <div class="col-sm-10">
+            <select class="form-control" id="inp-owning-team" name="owningTeam" ng-model="check.owning_team" ng-focus="cdForm.submitted && cdForm.owningTeam.$error.required" ng-options="team as team for team in teams" required></select>
+        </div>
+    </div>
+
     <div class="form-group" ng-class="{'has-error': cdForm.submitted && cdForm.check_command.$error.required}" ng-focus="cdForm.submitted">
         <label for="inp-command" class="col-sm-2 control-label"><a href="/docs/check-definitions.html" rel="help" target="docs">Check Command</a></label>
         <div class="col-sm-10">
@@ -90,10 +104,17 @@
         </div>
     </div>
 
-    <div class="form-group" ng-class="{'has-error': adForm.submitted && adForm.status.$error.required}">
+    <div class="form-group" ng-class="{'has-error': cdForm.submitted && cdForm.status.$error.required}">
         <label for="inp-status" class="col-sm-2 control-label">Status</label>
         <div class="col-sm-10">
-            <select class="form-control" id="inp-status" name="status" ng-model="check.status"  ng-focus="adForm.submitted && adForm.status.$error.required" ng-options="item.value as item.label for item in statusOptions" required></select>
+            <select class="form-control" id="inp-status" name="status" ng-model="check.status"  ng-focus="cdForm.submitted && cdForm.status.$error.required" ng-options="item.value as item.label for item in statusOptions" required></select>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="inp-technical-details" class="col-sm-2 control-label">Technical Details</label>
+        <div class="col-sm-10">
+            <textarea class="form-control" id="inp-technical-details" name="technicalDetails" placeholder="Add any technical details this check may have" ng-model="check.technical_details"></textarea>
         </div>
     </div>
 

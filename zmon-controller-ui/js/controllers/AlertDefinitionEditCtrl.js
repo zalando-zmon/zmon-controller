@@ -13,7 +13,8 @@ angular.module('zmon2App').controller('AlertDefinitionEditCtrl', ['$scope', '$ro
         $scope.defaultEntitiesFilter = [];
         $scope.defaultEntitiesExcludeFilter = [];
         $scope.defaultNotifications = [];
-        var userInfo = UserInfoService.get();
+        var user = UserInfoService.get();
+        $scope.teams = user.teams !== "" ? user.teams.split(',') : [];
 
         // Entity filter types initialized by default with GLOBAL (which is not provided by backend as separate type) and the rest comes from backend
         $scope.entityFilter.types = [{
@@ -273,6 +274,10 @@ angular.module('zmon2App').controller('AlertDefinitionEditCtrl', ['$scope', '$ro
                     $scope.oParams.push(name);
                     $scope.alertParameters.push(_.extend({'name': name}, data.parameters[name]));
                 });
+
+                if ($scope.teams.indexOf($scope.alertDefinition.team) === -1) {
+                    $scope.teams.push($scope.alertDefinition.team);
+                }
 
                 // When the alert has a parent, get data from parent and merge into empty fields.
                 if ($scope.alertDefinition.parent_id) {
