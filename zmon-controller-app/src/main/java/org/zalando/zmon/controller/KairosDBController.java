@@ -89,23 +89,7 @@ public class KairosDBController extends AbstractZMonController {
 
         ListenableFuture<ResponseEntity<String>> lf = asyncRestTemplate.exchange(queryKairosDBURL, HttpMethod.POST,
                 httpEntity, String.class);
-
-        lf.addCallback(new ListenableFutureCallback<Object>() {
-
-            @Override
-            public void onSuccess(Object result) {
-                if (timer != null) {
-                    timer.stop();
-                }
-            }
-
-            @Override
-            public void onFailure(Throwable ex) {
-                if (timer != null) {
-                    timer.stop();
-                }
-            }
-        });
+        lf.addCallback(new StopTimerCallback(timer));
 
         return lf;
         // final String r =
@@ -152,5 +136,30 @@ public class KairosDBController extends AbstractZMonController {
         // executor.execute(Request.Get(kairosDBURL).useExpectContinue()).returnContent().asString();
         //
         // writer.write(r);
+    }
+
+    static class StopTimerCallback implements ListenableFutureCallback<Object> {
+
+        private final Timer.Context timer;
+
+        StopTimerCallback(Timer.Context timer) {
+            this.timer = timer;
+        }
+
+        @Override
+        public void onSuccess(Object result) {
+            closeTimer();
+        }
+
+        @Override
+        public void onFailure(Throwable ex) {
+            closeTimer();
+        }
+
+        protected void closeTimer() {
+            if (timer != null) {
+                timer.stop();
+            }
+        }
     }
 }
