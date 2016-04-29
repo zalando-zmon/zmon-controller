@@ -282,7 +282,7 @@ public class Grafana2Controller extends AbstractZMonController {
 
         if(model.has("refresh") && model.get("refresh") != null) {
             String refresh = model.get("refresh").textValue();
-            if (refresh.endsWith("s")) {
+            if (refresh!=null && refresh.endsWith("s")) {
                 int interval = Integer.parseInt(refresh.replace("s", ""));
                 if (interval < controllerProperties.getGrafanaMinInterval()) {
                     model.put("refresh", controllerProperties.getGrafanaMinInterval() + "s");
