@@ -61,7 +61,7 @@
         </thead>
         <tr ng-repeat="def in dashboardDefinitions | orderBy:sortType:sortOrder | filter:dashboardFilter track by def.id" repeat-monitor last="$last">
             <td class="text-center">
-                <a href="#" ng-click="setDefaultDashboard(def.id)">
+                <a href="#/" ng-click="setDefaultDashboard(def.id)">
                     <i ng-show="def.id == defaultDashboardId" tooltip-html-unsafe="it is default" tooltip-placement="right" class="fa fa-fw fa-star"></i>
                     <i ng-hide="def.id == defaultDashboardId" tooltip-html-unsafe="set as default" tooltip-placement="right" class="fa fa-fw fa-star-o"></i>
                 </a>
