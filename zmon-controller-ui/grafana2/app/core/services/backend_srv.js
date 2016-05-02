@@ -80,10 +80,16 @@ function (angular, _, coreModule, config) {
       }, function(err) {
         // handle unauthorized
         if (err.status === 401 && firstAttempt) {
+          // reload page on 401. Backend will redirect to auth dance and back.
+          return location.reload();
+
+          // No need to do this anymore since we are not using grafana2's backend
+          /*
           return self.loginPing().then(function() {
             options.retry = 1;
             return self.request(options);
           });
+          */
         }
 
         $timeout(self._handleError(err), 50);
@@ -99,10 +105,16 @@ function (angular, _, coreModule, config) {
       return $http(options).then(null, function(err) {
         // handle unauthorized for backend requests
         if (requestIsLocal && firstAttempt  && err.status === 401) {
+          // reload page on 401. Backend will redirect to auth dance and back.
+          return location.reload();
+
+          // No need to do this anymore since we are not using grafana2's backend
+          /*
           return self.loginPing().then(function() {
             options.retry = 1;
             return self.datasourceRequest(options);
           });
+          */
         }
 
         // for Prometheus
