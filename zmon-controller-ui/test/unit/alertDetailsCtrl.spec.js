@@ -16,6 +16,30 @@ describe('AlertDetailsCtrl', function() {
         });
 
         angular.mock.inject(function($rootScope, $controller, $routeParams, $httpBackend) {
+
+            var params =  {
+                "param_4": JSON.stringify({
+                    "value":false,
+                    "comment":"test boolean",
+                    "type":"bool"
+                }),
+                "param_5": JSON.stringify({
+                    "value":"text",
+                    "comment":null,
+                    "type":"str"
+                }),
+                "param_1": JSON.stringify({
+                    "value":20,
+                    "comment":"test",
+                    "type":"float"
+                }),
+                "param_7": JSON.stringify({
+                    "value":20,
+                    "comment":"test conversion",
+                    "type":"int"
+                })
+            };
+
             scope = $rootScope.$new();
 
             $routeParams.alertId = 1;
@@ -65,28 +89,7 @@ describe('AlertDetailsCtrl', function() {
                 "last_modified_by":"userZ",
                 "period":"",
                 "template":true,
-                "parameters": {
-                    "param_4": {
-                        "value":false,
-                        "comment":"test boolean",
-                        "type":"bool"
-                    },
-                    "param_5": {
-                        "value":"text",
-                        "comment":null,
-                        "type":"str"
-                    },
-                    "param_1": {
-                        "value":20,
-                        "comment":"test",
-                        "type":"float"
-                    },
-                    "param_7": {
-                        "value":20,
-                        "comment":"test conversion",
-                        "type":"int"
-                    }
-                },
+                "parameters": '',
                 "tags":[],
                 "editable":true,
                 "cloneable":true,
