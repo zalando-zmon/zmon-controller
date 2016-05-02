@@ -19,7 +19,8 @@ angular.module('zmon2App').factory('HttpResponseInterceptorService', ['$q', '$lo
                     FeedbackMessageService.showErrorMessage(message, callback);
                 } else if (rejection.status === 401) {
                     // Just redirect
-                    window.location.href = '/login.jsp?next_page=' + encodeURIComponent(localStorageService.get('returnTo'));
+                    localStorageService.set('signinRedirTo', window.location.hash.slice(1))
+                    window.location.href = '/signin';
                 } else {
                     // resolve the message and display
                     if (rejection.status === 403) { // Loged in, but insufficient rights

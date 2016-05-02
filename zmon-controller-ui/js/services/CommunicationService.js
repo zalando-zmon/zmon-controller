@@ -216,6 +216,11 @@ angular.module('zmon2App').factory('CommunicationService', ['$http', '$q', '$log
             var postSuccessProcessing = function(data) {
                 alertNameCache[data.name] = 1;
                 alertIdCache[data.id] = data.name;
+
+                // parameters come as a JSON of stringified JSON objects. i.e. { 'key': "{}" }
+                _.each(data.parameters, function(param, key) {
+                    data.parameters[key] = JSON.parse(param);
+                });
             };
             return doHttpCall("GET", "rest/alertDefinition", params, null, null, postSuccessProcessing);
         };
@@ -229,6 +234,11 @@ angular.module('zmon2App').factory('CommunicationService', ['$http', '$q', '$log
             var postSuccessProcessing = function(data) {
                 alertNameCache[data.name] = 1;
                 alertIdCache[data.id] = data.name;
+
+                // parameters come as a JSON of stringified JSON objects. i.e. { 'key': "{}" }
+                _.each(data.parameters, function(param, key) {
+                    data.parameters[key] = JSON.parse(param);
+                });
             };
             return doHttpCall("GET", "rest/alertDefinitionNode", params, null, null, postSuccessProcessing);
         };
@@ -239,7 +249,14 @@ angular.module('zmon2App').factory('CommunicationService', ['$http', '$q', '$log
                 PreconditionsService.isNumber(id);
                 params.id = id;
             }
-            return doHttpCall("GET", "rest/alertDefinitionChildren", params);
+            var postSuccessProcessing = function(data) {
+
+                // parameters come as a JSON of stringified JSON objects. i.e. { 'key': "{}" }
+                _.each(data.parameters, function(param, key) {
+                    data.parameters[key] = JSON.parse(param);
+                });
+            };
+            return doHttpCall("GET", "rest/alertDefinitionChildren", params, null, null, postSuccessProcessing);
         };
 
         service.forceAlertEvaluation = function(id) {
