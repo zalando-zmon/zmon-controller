@@ -193,10 +193,13 @@ angular.module('zmon2App').factory('CommunicationService', ['$http', '$q', '$log
             return doHttpCall("GET", "rest/lastResults/"+id+"/"+filter);
         };
 
-        service.getAlertDefinitions = function(team) {
+        service.getAlertDefinitions = function(team, checkId) {
             var params = {};
             if (team) {
                 params.team = team;
+            }
+            if (checkId) {
+                params.check_id = checkId;
             }
             var postSuccessProcessing = function(data) {
                 _.each(data, function(item) {
