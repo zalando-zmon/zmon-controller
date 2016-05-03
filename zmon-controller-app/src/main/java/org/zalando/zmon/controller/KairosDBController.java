@@ -1,92 +1,72 @@
 package org.zalando.zmon.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.util.concurrent.ListenableFuture;
+import org.springframework.util.concurrent.ListenableFutureCallback;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.AsyncRestTemplate;
+import org.zalando.zmon.config.KairosDBProperties;
+
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.DoubleNode;
-import com.fasterxml.jackson.databind.node.LongNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.google.common.collect.Lists;
 
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.config.RequestConfig;
-import org.apache.http.client.fluent.Executor;
-import org.apache.http.client.fluent.Request;
-import org.apache.http.entity.ContentType;
-import org.apache.http.impl.client.HttpClients;
-import org.kairosdb.client.builder.*;
-import org.kairosdb.client.builder.grouper.TagGrouper;
-import org.kairosdb.client.response.Queries;
-import org.kairosdb.client.response.QueryResponse;
-import org.kairosdb.client.response.Results;
-import org.kairosdb.client.response.grouping.TagGroupResult;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
-import org.zalando.zmon.config.KairosDBProperties;
-import org.zalando.zmon.config.MetricCacheProperties;
-import org.zalando.zmon.domain.*;
-import org.zalando.zmon.exception.ZMonException;
-import org.zalando.zmon.persistence.GrafanaDashboardSprocService;
-import org.zalando.zmon.rest.EntityApi;
-import org.zalando.zmon.rest.domain.CheckChartResult;
-import org.zalando.zmon.security.permission.DefaultZMonPermissionService;
-import org.zalando.zmon.service.ZMonService;
-
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.Writer;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
-
-@Controller
+@RestController
 @RequestMapping(value = "/rest/kairosDBPost")
 public class KairosDBController extends AbstractZMonController {
 
-    private final KairosDBProperties kairosDBProperties;
+    // private final KairosDBProperties kairosDBProperties;
 
     private final MetricRegistry metricRegistry;
 
-    private final DefaultZMonPermissionService authService;
+    // private final Executor executor;
 
-    private final Executor executor;
+    private final AsyncRestTemplate asyncRestTemplate;
+
+    private final String metricNamesKairosDBURL;
+
+    private final String tagsKairosDBURL;
+
+    private final String queryKairosDBURL;
 
     @Autowired
     public KairosDBController(
             KairosDBProperties kairosDBProperties,
-            MetricRegistry metricRegistry,
-            DefaultZMonPermissionService authService
+            MetricRegistry metricRegistry, AsyncRestTemplate asyncRestTemplate
     ) {
-        this.kairosDBProperties = kairosDBProperties;
+        // this.kairosDBProperties = kairosDBProperties;
         this.metricRegistry = metricRegistry;
-        this.authService = authService;
-
-        executor = Executor.newInstance(kairosDBProperties.getHttpClient());
+        this.asyncRestTemplate = asyncRestTemplate;
+        if (kairosDBProperties.isEnabled()) {
+            metricNamesKairosDBURL = kairosDBProperties.getUrl() + "/api/v1/metricnames";
+            tagsKairosDBURL = kairosDBProperties.getUrl() + "/api/v1/datapoints/query/tags";
+            queryKairosDBURL = kairosDBProperties.getUrl() + "/api/v1/datapoints/query";
+        } else {
+            metricNamesKairosDBURL = "";
+            tagsKairosDBURL = "";
+            queryKairosDBURL = "";
+        }
+        // executor = Executor.newInstance(kairosDBProperties.getHttpClient());
     }
 
 
     /* For Grafana2 KairosDB plugin we need to prepend the original KairosDB URLs too */
-    @ResponseBody
     @RequestMapping(value = {"", "/api/v1/datapoints/query"}, method = RequestMethod.POST, produces = "application/json")
-    public void kairosDBPost(@RequestBody(required = true) final JsonNode node, final Writer writer,
-                             final HttpServletResponse response) throws IOException {
+    public ListenableFuture<ResponseEntity<String>> kairosDBPost(@RequestBody(required = true) final JsonNode node) {
 
-        response.setContentType("application/json");
-
-        if (!kairosDBProperties.isEnabled()) {
-            writer.write("");
-            return;
-        }
+        // if (!kairosDBProperties.isEnabled()) {
+        // writer.write("");
+        // return;
+        // }
 
         final String checkId = node.get("metrics").get(0).get("name").textValue().replace("zmon.check.", "");
         Timer.Context timer = metricRegistry.timer("kairosdb.check.query." + checkId).time();
@@ -102,53 +82,84 @@ public class KairosDBController extends AbstractZMonController {
             }
         }
 
-        final String kairosDBURL = kairosDBProperties.getUrl() + "/api/v1/datapoints/query";
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.add("X-ZMON-CHECK-ID", checkId);
+        HttpEntity<String> httpEntity = new HttpEntity<>(node.toString(), headers);
 
-        final String r = executor.execute(Request.Post(kairosDBURL).addHeader("X-ZMON-CHECK-ID", checkId).useExpectContinue().bodyString(node.toString(),
-                ContentType.APPLICATION_JSON)).returnContent().asString();
+        ListenableFuture<ResponseEntity<String>> lf = asyncRestTemplate.exchange(queryKairosDBURL, HttpMethod.POST,
+                httpEntity, String.class);
+        lf.addCallback(new StopTimerCallback(timer));
 
-        if (timer != null) {
-            timer.stop();
-        }
+        return lf;
+        // final String r =
+        // executor.execute(Request.Post(queryKairosDBURL).addHeader("X-ZMON-CHECK-ID",
+        // checkId).useExpectContinue().bodyString(node.toString(),
+        // ContentType.APPLICATION_JSON)).returnContent().asString();
 
-        writer.write(r);
+        // if (timer != null) {
+        // timer.stop();
+        // }
+
     }
 
-    @ResponseBody
     @RequestMapping(value = {"/tags", "/api/v1/datapoints/query/tags"}, method = RequestMethod.POST, produces = "application/json")
-    public void kairosDBtags(@RequestBody(required = true) final JsonNode node, final Writer writer,
-                             final HttpServletResponse response) throws IOException {
+    public ListenableFuture<ResponseEntity<String>> kairosDBtags(@RequestBody(required = true) final JsonNode node) {
+        //
+        // if (!kairosDBProperties.isEnabled()) {
+        // writer.write("");
+        // return;
+        // }
 
-        response.setContentType("application/json");
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<String> httpEntity = new HttpEntity<>(node.toString(), headers);
+        return asyncRestTemplate.exchange(tagsKairosDBURL, HttpMethod.POST, httpEntity, String.class);
 
-        if (!kairosDBProperties.isEnabled()) {
-            writer.write("");
-            return;
-        }
-
-        final String kairosDBURL = kairosDBProperties.getUrl() + "/api/v1/datapoints/query/tags";
-
-        final String r = executor.execute(Request.Post(kairosDBURL).useExpectContinue().bodyString(node.toString(),
-                ContentType.APPLICATION_JSON)).returnContent().asString();
-
-        writer.write(r);
+        // final String r =
+        // executor.execute(Request.Post(tagsKairosDBURL).useExpectContinue().bodyString(node.toString(),
+        // ContentType.APPLICATION_JSON)).returnContent().asString();
+        //
+        // writer.write(r);
     }
 
-    @ResponseBody
     @RequestMapping(value = {"/metrics", "/api/v1/metricnames"}, method = RequestMethod.GET, produces = "application/json")
-    public void kairosDBmetrics(final Writer writer, final HttpServletResponse response) throws IOException {
+    public ListenableFuture<ResponseEntity<String>> kairosDBmetrics() {
 
-        response.setContentType("application/json");
+        // if (!kairosDBProperties.isEnabled()) {
+        // writer.write("");
+        // return;
+        // }
+        return asyncRestTemplate.getForEntity(metricNamesKairosDBURL, String.class);
 
-        if (!kairosDBProperties.isEnabled()) {
-            writer.write("");
-            return;
+        // final String r =
+        // executor.execute(Request.Get(kairosDBURL).useExpectContinue()).returnContent().asString();
+        //
+        // writer.write(r);
+    }
+
+    static class StopTimerCallback implements ListenableFutureCallback<Object> {
+
+        private final Timer.Context timer;
+
+        StopTimerCallback(Timer.Context timer) {
+            this.timer = timer;
         }
 
-        final String kairosDBURL = kairosDBProperties.getUrl() + "/api/v1/metricnames";
+        @Override
+        public void onSuccess(Object result) {
+            closeTimer();
+        }
 
-        final String r = executor.execute(Request.Get(kairosDBURL).useExpectContinue()).returnContent().asString();
+        @Override
+        public void onFailure(Throwable ex) {
+            closeTimer();
+        }
 
-        writer.write(r);
+        protected void closeTimer() {
+            if (timer != null) {
+                timer.stop();
+            }
+        }
     }
 }
