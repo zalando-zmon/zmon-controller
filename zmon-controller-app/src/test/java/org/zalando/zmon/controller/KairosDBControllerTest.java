@@ -4,18 +4,23 @@ import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.asyncDispatch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.concurrent.TimeUnit;
 
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.springframework.http.MediaType;
 import org.springframework.http.client.HttpComponentsAsyncClientHttpRequestFactory;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -37,7 +42,7 @@ public class KairosDBControllerTest {
     public void setUp() throws MalformedURLException {
 
         wireMockRule.stubFor(post(urlPathEqualTo("/api/v1/datapoints/query/tags"))
-                .willReturn(aResponse().withStatus(200).withBody("{}").withFixedDelay(100)));
+                .willReturn(aResponse().withStatus(200).withBody("{\"key\":\"value\"}").withFixedDelay(100)));
         wireMockRule.stubFor(post(urlPathEqualTo("/api/v1/metricnames"))
                 .willReturn(aResponse().withStatus(200).withBody("{}").withFixedDelay(100)));
 
@@ -61,9 +66,16 @@ public class KairosDBControllerTest {
 
     @Test
     public void testKairosDbTags() throws Exception {
-        mockMvc.perform(post("/rest/kairosDBPost/api/v1/datapoints/query/tags")
+        MvcResult result = mockMvc.perform(post("/rest/kairosDBPost/api/v1/datapoints/query/tags")
                 .content("{\"key\":\"value\"}").contentType(APPLICATION_JSON))
-                .andExpect(status().isOk());
+                .andExpect(MockMvcResultMatchers.request().asyncStarted())
+                .andExpect(status().isOk()).andReturn();
+
+        mockMvc.perform(asyncDispatch(result)).andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().string("{\"key\":\"value\"}"));
+
+        TimeUnit.SECONDS.sleep(3);
     }
 
     @Test
