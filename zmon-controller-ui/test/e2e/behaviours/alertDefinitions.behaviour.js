@@ -4,7 +4,7 @@ exports.searchAlert = function(input, cb) {
     search.clear();
     search.sendKeys(input).then(function() {
         browser.driver.sleep(1000);
-        browser.findElements(by.repeater("def in alertDefinitionsByStatus | filter: alertFilter | orderBy:'name'"))
+        browser.findElements(by.repeater("def in alertDefinitionsByStatus | filter: alertFilter | orderBy:sortType:sortOrder | limitTo: limit"))
             .then(cb);
     });
 };
