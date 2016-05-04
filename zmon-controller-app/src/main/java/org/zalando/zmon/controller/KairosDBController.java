@@ -61,7 +61,7 @@ public class KairosDBController extends AbstractZMonController {
 
     /* For Grafana2 KairosDB plugin we need to prepend the original KairosDB URLs too */
     @RequestMapping(value = {"", "/api/v1/datapoints/query"}, method = RequestMethod.POST, produces = "application/json")
-    public ListenableFuture<ResponseEntity<String>> kairosDBPost(@RequestBody(required = true) final JsonNode node) {
+    public ListenableFuture<ResponseEntity<JsonNode>> kairosDBPost(@RequestBody(required = true) final JsonNode node) {
 
         // if (!kairosDBProperties.isEnabled()) {
         // writer.write("");
@@ -87,8 +87,8 @@ public class KairosDBController extends AbstractZMonController {
         headers.add("X-ZMON-CHECK-ID", checkId);
         HttpEntity<String> httpEntity = new HttpEntity<>(node.toString(), headers);
 
-        ListenableFuture<ResponseEntity<String>> lf = asyncRestTemplate.exchange(queryKairosDBURL, HttpMethod.POST,
-                httpEntity, String.class);
+        ListenableFuture<ResponseEntity<JsonNode>> lf = asyncRestTemplate.exchange(queryKairosDBURL, HttpMethod.POST,
+                httpEntity, JsonNode.class);
         lf.addCallback(new StopTimerCallback(timer));
 
         return lf;
