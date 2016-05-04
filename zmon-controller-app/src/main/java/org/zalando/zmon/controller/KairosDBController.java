@@ -104,7 +104,7 @@ public class KairosDBController extends AbstractZMonController {
     }
 
     @RequestMapping(value = {"/tags", "/api/v1/datapoints/query/tags"}, method = RequestMethod.POST, produces = "application/json")
-    public ListenableFuture<ResponseEntity<String>> kairosDBtags(@RequestBody(required = true) final JsonNode node) {
+    public ListenableFuture<ResponseEntity<JsonNode>> kairosDBtags(@RequestBody(required = true) final JsonNode node) {
         //
         // if (!kairosDBProperties.isEnabled()) {
         // writer.write("");
@@ -114,7 +114,7 @@ public class KairosDBController extends AbstractZMonController {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<String> httpEntity = new HttpEntity<>(node.toString(), headers);
-        return asyncRestTemplate.exchange(tagsKairosDBURL, HttpMethod.POST, httpEntity, String.class);
+        return asyncRestTemplate.exchange(tagsKairosDBURL, HttpMethod.POST, httpEntity, JsonNode.class);
 
         // final String r =
         // executor.execute(Request.Post(tagsKairosDBURL).useExpectContinue().bodyString(node.toString(),
@@ -124,13 +124,13 @@ public class KairosDBController extends AbstractZMonController {
     }
 
     @RequestMapping(value = {"/metrics", "/api/v1/metricnames"}, method = RequestMethod.GET, produces = "application/json")
-    public ListenableFuture<ResponseEntity<String>> kairosDBmetrics() {
+    public ListenableFuture<ResponseEntity<JsonNode>> kairosDBmetrics() {
 
         // if (!kairosDBProperties.isEnabled()) {
         // writer.write("");
         // return;
         // }
-        return asyncRestTemplate.getForEntity(metricNamesKairosDBURL, String.class);
+        return asyncRestTemplate.getForEntity(metricNamesKairosDBURL, JsonNode.class);
 
         // final String r =
         // executor.execute(Request.Get(kairosDBURL).useExpectContinue()).returnContent().asString();
