@@ -24,10 +24,6 @@ angular.module('zmon2App').controller('AlertDetailsCtrl', ['$scope', '$location'
         $scope.showAlertsInDowntime = false; // 1st tab, 2nd button
         $scope.showCheckResults = false; // 1st tab, 3rd button
 
-        // Total number of alerts/checksResults visible on screen (used by alert-details-infinit-scroll directive)
-        $scope.infScrollNumAlertsVisible = APP_CONST.INFINITE_SCROLL_VISIBLE_ENTITIES_INCREMENT;
-        // Total number of downtimes visible on screen
-        $scope.infScrollNumDowntimesVisible = APP_CONST.INFINITE_SCROLL_VISIBLE_ENTITIES_INCREMENT;
         $scope.checkDefinition = null;
         $scope.addDowntimeEntities = [];
         $scope.deleteDowntimeUUIDs = [];
@@ -157,9 +153,6 @@ angular.module('zmon2App').controller('AlertDetailsCtrl', ['$scope', '$location'
                             if ($scope.alertDefinition.status === 'ACTIVE') {
                                 CommunicationService.getAlertDetails($scope.alertDefinitionId).then(function(response) {
                                     $scope.alertDetails = response;
-                                    // TBD: decide whether we want to reset the number of displayed entities on each refresh
-                                    // or whether we want to keep the extended # displayed on previous refresh (the only way to reset back is by page refresh)
-                                    // $scope.infScrollNumAlertsVisible = APP_CONST.INFINITE_SCROLL_VISIBLE_ENTITIES_INCREMENT;
 
                                     // Split into 2 sets: active alerts and alerts currently in downtime additionally flagging each item accordingly
                                     // so we can discriminate them in the allAlertAndChecks array
