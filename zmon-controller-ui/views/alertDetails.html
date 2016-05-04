@@ -138,8 +138,8 @@
                                 </th>
                             </tr>
                         </thead>
-                        <tbody infinite-scroll visible-item-count="infScrollNumAlertsVisible" get-total-item-count="getTotalNumDisplayedAlerts()">
-                            <tr ng-repeat="entityInstance in allAlertsAndChecks | filter:alertDetailsSearch | inDisplayedGroup:showActiveAlerts:showAlertsInDowntime:showCheckResults | orderBy:sortType:sortOrder | limitTo:infScrollNumAlertsVisible track by entityInstance.entity" ng-class="{'danger': entityInstance.isActiveAlert == true, 'active-downtime': entityInstance.isAlertInDowntime == true, 'success': entityInstance.isCheckResult == true}">
+                        <tbody>
+                            <tr ng-repeat="entityInstance in allAlertsAndChecks | filter:alertDetailsSearch | inDisplayedGroup:showActiveAlerts:showAlertsInDowntime:showCheckResults | orderBy:sortType:sortOrder track by entityInstance.entity" ng-class="{'danger': entityInstance.isActiveAlert == true, 'active-downtime': entityInstance.isAlertInDowntime == true, 'success': entityInstance.isCheckResult == true}">
                                 <td class="text-center">
                                     <a href="/#/check-charts/{{checkDefinition.id}}?entity_id={{ entityInstance.entity }}"><i class="fa fa-fw fa-bar-chart-o"></i></a>
                                     <comment-dialog class="fake-link" uid="alertDefinition.id" entity="entityInstance.entity"  save="saveComment(comment, cb)" delete="deleteComment(id, cb)" load="getComments(id, limit, offset, cb)" show-count="false"></comment-dialog>
@@ -199,9 +199,9 @@
                             </th>
                         </tr>
                     </thead>
-                    <tbody infinite-scroll visible-item-count="infScrollNumDowntimesVisible" get-total-item-count="getTotalNumDowntimes()">
+                    <tbody>
                         <!-- And then show the entities downtimes -->
-                        <tr class="warning" ng-repeat="downtimeInstance in allDowntimes| filter:alertDetailsSearch | orderBy:sortTypeDowntimes:sortOrderDowntimes | limitTo:infScrollNumDowntimesVisible">
+                        <tr class="warning" ng-repeat="downtimeInstance in allDowntimes| filter:alertDetailsSearch | orderBy:sortTypeDowntimes:sortOrderDowntimes">
                             <td ng-if="userInfo['delete-downtime']" class="text-center"><input type="checkbox" ng-checked="deleteDowntimeUUIDs.indexOf(downtimeInstance.id) > -1" ng-click="toggleSingleDeleteDowntime(downtimeInstance.id)"></td>
                             <td>{{downtimeInstance.entity}}</td>
                             <td>{{downtimeInstance.start_time | epochToDate}}</td>

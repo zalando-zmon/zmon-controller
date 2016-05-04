@@ -74,6 +74,11 @@
                     <i class="fa fa-fw fa-copy" tooltip-html-unsafe="clone" tooltip-placement="right"></i>
                 </a>
                 <i ng-hide="def.cloneable" class="fa fa-fw fa-copy semi-transparent"></i>
+
+                <a ng-show="def.editable" ng-click="deleteDashboard(def.id)" href="#">
+                    <i class="fa fa-fw fa-trash" tooltip-html-unsafe="delete" tooltip-placement="right"></i>
+                </a>
+                <i ng-hide="def.editable" class="fa fa-fw fa-trash semi-transparent"></i>
             </td>
             <td>
                 <a tooltip-html-unsafe="{{def.name | markdown}}" tooltip-placement="right" href="#/dashboards/view/{{def.id}}">{{def.name}}</a>

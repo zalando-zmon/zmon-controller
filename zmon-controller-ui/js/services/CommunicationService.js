@@ -305,6 +305,15 @@ angular.module('zmon2App').factory('CommunicationService', ['$http', '$q', '$log
             return doHttpCall("GET", "rest/allDashboards");
         };
 
+        service.deleteDashboard = function(id) {
+            PreconditionsService.isNotEmpty(id);
+            PreconditionsService.isNumber(id);
+            var params = {
+                "id": id
+            };
+            return doHttpCall("DELETE", "rest/deleteDashboard", params);
+        };
+
         service.getCheckDefinitions = function(team) {
             var params = {};
 
