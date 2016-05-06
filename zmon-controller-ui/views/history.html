@@ -109,7 +109,7 @@
                 <th class="link-icon-col">Changed in Parent</th>
             </tr>
         </thead>
-        <tbody infinite-scroll visible-item-count="HistoryCtrl.limit" get-total-item-count="HistoryCtrl.total()">
+        <tbody>
             <tr ng-repeat="record in HistoryCtrl.history| filter:search | limitTo:HistoryCtrl.limit">
                 <td><span class="history-tag" style="background-color: {{HistoryCtrl.hslFromEventType(record.type_id)}}">{{record.action}}</span></td>
                 <td>{{ record.changed_attributes.cd_last_modified_by || record.changed_attributes.adt_last_modified_by || record.attributes.cd_last_modified_by || record.attributes.adt_last_modified_by}}</td>

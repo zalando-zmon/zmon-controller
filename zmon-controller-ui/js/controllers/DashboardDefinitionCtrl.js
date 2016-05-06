@@ -31,6 +31,17 @@ angular.module('zmon2App').controller('DashboardDefinitionCtrl', ['$scope', 'loc
             localStorageService.add(STORAGE_KEY, dashboardID);
         };
 
+        $scope.deleteDashboard = function(dashboardID) {
+            if (confirm('Really delete dashboard ' + dashboardID + '?')) {
+                CommunicationService.deleteDashboard(dashboardID).then(
+                    function() {
+                        $location.path('/dashboards');
+                    }
+                );
+            }
+            return false;
+        };
+
     }
 
 ]);
