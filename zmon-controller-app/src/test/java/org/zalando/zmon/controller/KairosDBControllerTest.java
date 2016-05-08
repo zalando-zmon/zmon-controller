@@ -42,9 +42,9 @@ public class KairosDBControllerTest {
     public void setUp() throws MalformedURLException {
 
         wireMockRule.stubFor(post(urlPathEqualTo("/api/v1/datapoints/query/tags"))
-                .willReturn(aResponse().withStatus(200).withBody("{\"key\":\"value\"}").withFixedDelay(100)));
+                .willReturn(aResponse().withStatus(200).withBody("{\"key\":\"value\"}").withHeader("Content-Type", "application/json").withFixedDelay(100)));
         wireMockRule.stubFor(post(urlPathEqualTo("/api/v1/metricnames"))
-                .willReturn(aResponse().withStatus(200).withBody("{}").withFixedDelay(100)));
+                .willReturn(aResponse().withStatus(200).withBody("{}").withHeader("Content-Type","appplication/json").withFixedDelay(100)));
 
         this.metricsRegistry = new MetricRegistry();
 
