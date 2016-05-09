@@ -201,11 +201,6 @@
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-validator</artifactId>
         </dependency>
-        <!-- Soap web services -->
-        <!-- <dependency> <groupId>org.apache.cxf</groupId> <artifactId>cxf-rt-frontend-jaxws</artifactId>
-            <version>2.7.5</version> </dependency> <dependency> <groupId>org.apache.cxf</groupId>
-            <artifactId>cxf-rt-transports-http</artifactId> <version>2.7.5</version>
-            </dependency> -->
         <dependency>
             <groupId>org.xerial.snappy</groupId>
             <artifactId>snappy-java</artifactId>
