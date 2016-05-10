@@ -1,5 +1,8 @@
 package org.zalando.zmon.controller;
 
+import static java.util.Optional.ofNullable;
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -9,11 +12,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.util.concurrent.ListenableFuture;
 import org.springframework.util.concurrent.ListenableFutureCallback;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.AsyncRestTemplate;
 import org.zalando.zmon.config.KairosDBProperties;
+import org.zalando.zmon.config.OAuth2TokenExtractor;
 
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
@@ -26,6 +31,8 @@ public class KairosDBController extends AbstractZMonController {
 
     // private final KairosDBProperties kairosDBProperties;
 
+    private static final String BEARER = "Bearer ";
+
     private final MetricRegistry metricRegistry;
 
     // private final Executor executor;
@@ -37,6 +44,8 @@ public class KairosDBController extends AbstractZMonController {
     private final String tagsKairosDBURL;
 
     private final String queryKairosDBURL;
+
+    private final OAuth2TokenExtractor tokenExtractor = new OAuth2TokenExtractor();
 
     @Autowired
     public KairosDBController(
@@ -61,7 +70,8 @@ public class KairosDBController extends AbstractZMonController {
 
     /* For Grafana2 KairosDB plugin we need to prepend the original KairosDB URLs too */
     @RequestMapping(value = {"", "/api/v1/datapoints/query"}, method = RequestMethod.POST, produces = "application/json")
-    public ListenableFuture<ResponseEntity<String>> kairosDBPost(@RequestBody(required = true) final JsonNode node) {
+    public ListenableFuture<ResponseEntity<String>> kairosDBPost(@RequestBody(required = true) final JsonNode node,
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
 
         // if (!kairosDBProperties.isEnabled()) {
         // writer.write("");
@@ -85,6 +95,9 @@ public class KairosDBController extends AbstractZMonController {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.add("X-ZMON-CHECK-ID", checkId);
+
+        tokenExtractor.apply(ofNullable(authHeader)).ifPresent(token -> headers.set(AUTHORIZATION, BEARER + token));
+
         HttpEntity<String> httpEntity = new HttpEntity<>(node.toString(), headers);
 
         ListenableFuture<ResponseEntity<String>> lf = asyncRestTemplate.exchange(queryKairosDBURL, HttpMethod.POST,
@@ -104,7 +117,8 @@ public class KairosDBController extends AbstractZMonController {
     }
 
     @RequestMapping(value = {"/tags", "/api/v1/datapoints/query/tags"}, method = RequestMethod.POST, produces = "application/json")
-    public ListenableFuture<ResponseEntity<String>> kairosDBtags(@RequestBody(required = true) final JsonNode node) {
+    public ListenableFuture<ResponseEntity<String>> kairosDBtags(@RequestBody(required = true) final JsonNode node,
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
         //
         // if (!kairosDBProperties.isEnabled()) {
         // writer.write("");
@@ -113,7 +127,11 @@ public class KairosDBController extends AbstractZMonController {
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
+
+        tokenExtractor.apply(ofNullable(authHeader)).ifPresent(token -> headers.set(AUTHORIZATION, BEARER + token));
+
         HttpEntity<String> httpEntity = new HttpEntity<>(node.toString(), headers);
+
         return asyncRestTemplate.exchange(tagsKairosDBURL, HttpMethod.POST, httpEntity, String.class);
 
         // final String r =
@@ -124,13 +142,22 @@ public class KairosDBController extends AbstractZMonController {
     }
 
     @RequestMapping(value = {"/metrics", "/api/v1/metricnames"}, method = RequestMethod.GET, produces = "application/json")
-    public ListenableFuture<ResponseEntity<String>> kairosDBmetrics() {
+    public ListenableFuture<ResponseEntity<String>> kairosDBmetrics(
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
 
         // if (!kairosDBProperties.isEnabled()) {
         // writer.write("");
         // return;
         // }
-        return asyncRestTemplate.getForEntity(metricNamesKairosDBURL, String.class);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        tokenExtractor.apply(ofNullable(authHeader)).ifPresent(token -> headers.set(AUTHORIZATION, "Bearer " + token));
+
+        HttpEntity<String> httpEntity = new HttpEntity<>(headers);
+
+        return asyncRestTemplate.exchange(metricNamesKairosDBURL, HttpMethod.GET, httpEntity, String.class);
 
         // final String r =
         // executor.execute(Request.Get(kairosDBURL).useExpectContinue()).returnContent().asString();

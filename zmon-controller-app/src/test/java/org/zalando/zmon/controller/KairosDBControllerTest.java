@@ -17,6 +17,7 @@ import java.util.concurrent.TimeUnit;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.client.HttpComponentsAsyncClientHttpRequestFactory;
 import org.springframework.test.web.servlet.MockMvc;
@@ -60,13 +61,15 @@ public class KairosDBControllerTest {
 
     @Test
     public void testKairosDbMetrics() throws Exception {
-        mockMvc.perform(get("/rest/kairosDBPost/api/v1/metricnames"))
+        mockMvc.perform(
+                get("/rest/kairosDBPost/api/v1/metricnames").header(HttpHeaders.AUTHORIZATION, "Bearer 123456789"))
                 .andExpect(MockMvcResultMatchers.status().isOk());
     }
 
     @Test
     public void testKairosDbTags() throws Exception {
         MvcResult result = mockMvc.perform(post("/rest/kairosDBPost/api/v1/datapoints/query/tags")
+                .header(HttpHeaders.AUTHORIZATION, "Bearer 123456789")
                 .content("{\"key\":\"value\"}").contentType(APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.request().asyncStarted())
                 .andExpect(status().isOk()).andReturn();
@@ -81,6 +84,7 @@ public class KairosDBControllerTest {
     @Test
     public void testKairosDbPost() throws Exception {
         mockMvc.perform(post("/rest/kairosDBPost/api/v1/datapoints/query")
+                .header(HttpHeaders.AUTHORIZATION, "Bearer 123456789")
                 .content("{\"metrics\":[{\"name\":\"value\"}]}")
                 .contentType(APPLICATION_JSON)).andExpect(status().isOk());
     }
