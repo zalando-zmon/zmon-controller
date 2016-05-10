@@ -6,47 +6,40 @@
   <!--[if IE 8]>         <html class="no-js lt-ie9" lang="en"> <![endif]-->
   <!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
   <head>
-    <meta charset="utf-8"></meta>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"></meta>
-    <meta name="viewport" content="width=device-width"></meta>
-    <meta name="google" value="notranslate"></meta>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width">
+    <meta name="theme-color" content="#000">
 
     <base href="/grafana2/">
 
-    <title>Grafana 2</title>
-    <link rel="stylesheet" href="css/grafana.dark.min.css" title="Dark" th:href="${staticUrl} + '/grafana2/css/grafana.dark.min.css'" />
-    <link rel="icon" type="image/png" href="img/fav32.png" th:href="${staticUrl} + '/grafana2/img/fav32.png'" />
-
-    <!-- build:js app/app.js -->
-    <script src="vendor/require/require.js" th:src="${staticUrl} + '/grafana2/vendor/requirejs/require.js'"></script>
-    <script src="app/components/require.config.js" th:src="@{/grafana2/app/require_config.js}"></script>
-    <!-- endbuild -->
+    <title>Grafana</title>
+    <link href='public/css/fonts.min.css' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" th:href="${staticUrl} + '/grafana2/public/css/grafana.dark.min.css'" />
+    <link rel="icon" type="image/png" href="img/fav32.png" th:href="${staticUrl} + '/grafana2/public/img/fav32.png'" />
 
   </head>
 
-  <body ng-cloak ng-controller="GrafanaCtrl" ng-class="{'sidemenu-open': contextSrv.sidemenu}">
+    <body ng-cloak>
+        <grafana-app class="grafana-app">
 
-      <div class="sidemenu-canvas">
+            <aside class="sidemenu-wrapper">
+                <sidemenu ng-if="contextSrv.sidemenu"></sidemenu>
+            </aside>
 
-        <aside class="sidemenu-wrapper" ng-if="contextSrv.sidemenu">
-          <div ng-include="'app/partials/sidemenu.html'"></div>
-        </aside>
-
-        <div class="page-alert-list">
-          <div ng-repeat='alert in dashAlerts.list' class="alert-{{alert.severity}} alert">
-            <button type="button" class="alert-close" ng-click="dashAlerts.clear(alert)">
-              <i class="fa fa-times-circle"></i>
-            </button>
-            <div class="alert-title">{{alert.title}}</div>
-            <div ng-bind='alert.text'></div>
+            <div class="page-alert-list">
+                <div ng-repeat='alert in dashAlerts.list' class="alert-{{alert.severity}} alert">
+                    <button type="button" class="alert-close" ng-click="dashAlerts.clear(alert)">
+                        <i class="fa fa-times-circle"></i>
+                    </button>
+                    <div class="alert-title">{{alert.title}}</div>
+                    <div ng-bind='alert.text'></div>
+                </div>
             </div>
-          </div>
 
-          <div ng-view class="main-view"></div>
-
-        </div>
-
-    </body>
+            <div ng-view class="main-view"></div>
+        </grafana-app>
+  </body>
 
   <script th:inline="javascript">
 
@@ -60,34 +53,20 @@
         "orgId":2,
         "orgName":"ZMON",
         "orgRole":"Admin",
-        "isGrafanaAdmin":false,
+        "isGrafanaAdmin":true,
         "gravatarUrl":""
     };
 
-    var dummySettings = {
-        "allowOrgCreate":true,
-        "appSubUrl":"",
-        "buildInfo": {
-            "buildstamp":1448355841,
-            "commit":"v2.5.0+199-g85382dc-dirty",
-            "version":"2.6.0-pre1"
-        },
-        "datasources": {
-            "-- Grafana --":{"meta":{"builtIn":true,"metrics":true,"module":"app/plugins/datasource/grafana/datasource","name":"Grafana","pluginType":"datasource","serviceName":"GrafanaDatasource","type":"grafana"},"type":"grafana"},
-            "-- Mixed --":{"meta":{"builtIn":true,"metrics":true,"mixed":true,"module":"app/plugins/datasource/mixed/datasource","name":"Mixed datasource","pluginType":"datasource","serviceName":"MixedDatasource","type":"mixed"},"type":"mixed"},
-            "kairos":{"meta":{"annotations":false,"metrics":true,"module":"app/plugins/datasource/kairosdb/datasource","name":"KairosDB","partials":{"config":"app/plugins/datasource/kairosdb/partials/config.html"},"pluginType":"datasource","serviceName":"KairosDBDatasource","type":"kairosdb"},"name":"kairos","type":"kairosdb","url": [[${KairosDBBaseUrl}]] + "/rest/kairosDBPost"},
+    var dummySettings =  {"allowOrgCreate":true,"appSubUrl":"/grafana2","authProxyEnabled":false,"buildInfo":{"buildstamp":1463042611,"commit":"v3.0.1+11-g9f9f4e7","hasUpdate":true,"latestVersion":"3.0.1","version":"3.0.2"},"datasources":{"-- Grafana --":{"meta":{"type":"datasource","name":"Grafana","id":"grafana","info":{"author":{"name":"","url":""},"description":"","links":null,"logos":{"small":"public/img/icn-datasource.svg","large":"public/img/icn-datasource.svg"},"screenshots":null,"version":"","updated":""},"dependencies":{"grafanaVersion":"*","plugins":[]},"includes":null,"module":"app/plugins/datasource/grafana/module","baseUrl":"public/app/plugins/datasource/grafana","annotations":false,"metrics":true,"builtIn":true,"mixed":false,"app":""},"type":"grafana"},"-- Mixed --":{"meta":{"type":"datasource","name":"Mixed datasource","id":"mixed","info":{"author":{"name":"","url":""},"description":"","links":null,"logos":{"small":"public/img/icn-datasource.svg","large":"public/img/icn-datasource.svg"},"screenshots":null,"version":"","updated":""},"dependencies":{"grafanaVersion":"*","plugins":[]},"includes":null,"module":"app/plugins/datasource/mixed/module","baseUrl":"public/app/plugins/datasource/mixed","annotations":false,"metrics":true,"builtIn":true,"mixed":true,"app":""},"type":"mixed"}},"defaultDatasource":"-- Grafana --","panels":{"dashlist":{"baseUrl":"public/app/plugins/panel/dashlist","id":"dashlist","info":{"author":{"name":"Grafana Project","url":"http://grafana.org"},"description":"","links":null,"logos":{"small":"public/app/plugins/panel/dashlist/img/icn-dashlist-panel.svg","large":"public/app/plugins/panel/dashlist/img/icn-dashlist-panel.svg"},"screenshots":null,"version":"","updated":""},"module":"app/plugins/panel/dashlist/module","name":"Dashboard list"},"graph":{"baseUrl":"public/app/plugins/panel/graph","id":"graph","info":{"author":{"name":"Grafana Project","url":"http://grafana.org"},"description":"","links":null,"logos":{"small":"public/app/plugins/panel/graph/img/icn-graph-panel.svg","large":"public/app/plugins/panel/graph/img/icn-graph-panel.svg"},"screenshots":null,"version":"","updated":""},"module":"app/plugins/panel/graph/module","name":"Graph"},"pluginlist":{"baseUrl":"public/app/plugins/panel/pluginlist","id":"pluginlist","info":{"author":{"name":"Grafana Project","url":"http://grafana.org"},"description":"","links":null,"logos":{"small":"public/app/plugins/panel/pluginlist/img/icn-dashlist-panel.svg","large":"public/app/plugins/panel/pluginlist/img/icn-dashlist-panel.svg"},"screenshots":null,"version":"","updated":""},"module":"app/plugins/panel/pluginlist/module","name":"Plugin list"},"singlestat":{"baseUrl":"public/app/plugins/panel/singlestat","id":"singlestat","info":{"author":{"name":"Grafana Project","url":"http://grafana.org"},"description":"","links":null,"logos":{"small":"public/app/plugins/panel/singlestat/img/icn-singlestat-panel.svg","large":"public/app/plugins/panel/singlestat/img/icn-singlestat-panel.svg"},"screenshots":null,"version":"","updated":""},"module":"app/plugins/panel/singlestat/module","name":"Singlestat"},"table":{"baseUrl":"public/app/plugins/panel/table","id":"table","info":{"author":{"name":"Grafana Project","url":"http://grafana.org"},"description":"","links":null,"logos":{"small":"public/app/plugins/panel/table/img/icn-table-panel.svg","large":"public/app/plugins/panel/table/img/icn-table-panel.svg"},"screenshots":null,"version":"","updated":""},"module":"app/plugins/panel/table/module","name":"Table"},"text":{"baseUrl":"public/app/plugins/panel/text","id":"text","info":{"author":{"name":"Grafana Project","url":"http://grafana.org"},"description":"","links":null,"logos":{"small":"public/app/plugins/panel/text/img/icn-text-panel.svg","large":"public/app/plugins/panel/text/img/icn-text-panel.svg"},"screenshots":null,"version":"","updated":""},"module":"app/plugins/panel/text/module","name":"Text"}}};
 
-            "dashboards":{"index":"d","jsonData":{"timeField":"@timestamp"},"meta":{"annotations":true,"defaultMatchFormat":"lucene","metrics":true,"module":"app/plugins/datasource/elasticsearch/datasource","name":"Elasticsearch","partials":{"annotations":"app/plugins/datasource/elasticsearch/partials/annotations.editor.html","config":"app/plugins/datasource/elasticsearch/partials/config.html"},"pluginType":"datasource","serviceName":"ElasticDatasource","type":"elasticsearch"},"name":"dashboards","type":"elasticsearch","url":"/rest/grafana/dashboard"}
+        window.grafanaBootData = {
+            user: dummyUser,
+            settings: dummySettings
+        };
+    </script>
 
-        },"defaultDatasource":"kairos"};
-
-    window.grafanaBootData = {
-        user: dummyUser,
-        settings: dummySettings
-    };
-    require(['app/app'], function (app) {
-        app.boot();
-    })
-  </script>
-
+    <script src="public/vendor/npm/es6-shim/es6-shim.js"></script>
+    <script src="public/vendor/npm/systemjs/dist/system.src.js"></script>
+    <script src="public/app/system.conf.js"></script>
+    <script src="public/app/boot.js"></script>
 </html>
