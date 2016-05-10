@@ -104,10 +104,10 @@ angular.module('zmon2App').controller('DashboardCtrl', ['$scope', '$log', '$rout
             // Reflect it in URL
             if($scope.compact) {
                 $location.search('compact', 'true');
-                localStorageService.set('returnTo', '/#' + $location.url());
+                localStorageService.set('returnTo', '#/' + $location.url());
             } else {
                 $location.search('compact', null);
-                localStorageService.set('returnTo', '/#' + $location.url());
+                localStorageService.set('returnTo', '#/' + $location.url());
             }
         };
 

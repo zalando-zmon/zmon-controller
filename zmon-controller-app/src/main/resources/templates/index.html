@@ -26,11 +26,11 @@
     <script th:src="${staticUrl} + '/lib/stacktrace/stacktrace.js?t=@buildTime@'"></script>
     <script th:src="${staticUrl} + '/lib/jquery/jquery.min.js?t=@buildTime@'"></script>
     <script th:src="${staticUrl} + '/lib/bootstrap/bootstrap.min.js?t=@buildTime@'"></script>
-    <script th:src="${staticUrl} + '/lib/angularjs/angular.min.js?t=@buildTime@'"></script>
+    <script th:src="${staticUrl} + '/lib/angular/angular.min.js?t=@buildTime@'"></script>
     <script th:src="${staticUrl} + '/lib/angular-local-storage/angular-local-storage.min.js?t=@buildTime@'"></script>
-    <script th:src="${staticUrl} + '/lib/angularjs/angular-cookies.min.js?t=@buildTime@'"></script>
-    <script th:src="${staticUrl} + '/lib/angularjs/angular-sanitize.min.js?t=@buildTime@'"></script>
-    <script th:src="${staticUrl} + '/lib/angularjs/angular-route.min.js?t=@buildTime@'"></script>
+    <script th:src="${staticUrl} + '/lib/angular-cookies/angular-cookies.min.js?t=@buildTime@'"></script>
+    <script th:src="${staticUrl} + '/lib/angular-sanitize/angular-sanitize.min.js?t=@buildTime@'"></script>
+    <script th:src="${staticUrl} + '/lib/angular-route/angular-route.min.js?t=@buildTime@'"></script>
     <script th:src="${staticUrl} + '/lib/ui-bootstrap/ui-bootstrap.min.js?t=@buildTime@'"></script>
 
     <script th:src="${staticUrl} + '/lib/flot/jquery.flot.min.js?t=@buildTime@'"></script>
@@ -49,7 +49,6 @@
     <script th:src="${staticUrl} + '/lib/jsonpath/jsonpath.js?t=@buildTime@'" charset="utf-8"></script>
     <script th:src="${staticUrl} + '/lib/js-yaml/js-yaml.min.js?t=@buildTime@'"></script>
     <script th:src="${staticUrl} + '/lib/angulartics/angulartics.min.js?t=@buildTime@'" charset="utf-8"></script>
-    <script th:src="${staticUrl} + '/lib/angular-debounce/angular-debounce.js?t=@buildTime@'" charset="utf-8"></script>
     <script th:src="${staticUrl} + '/lib/select2/select2.min.js?t=@buildTime@'" charset="utf-8"></script>
     <script th:src="${staticUrl} + '/lib/colorhash/colorhash.js?t=@buildTime@'" charset="utf-8"></script>
     <script th:src="${staticUrl} + '/lib/d3/d3.min.js?t=@buildTime@'" chartset="utf-8"></script>
@@ -64,7 +63,7 @@
     <nav class="navbar navbar-inverse" role="navigation">
         <div class="span12">
             <div class="navbar-header">
-                <a class="navbar-brand" href="#"><img src="/logo.png" th:src="@{/logo.png}" /> ZMON</a>
+                <a class="navbar-brand" href="#/"><img src="/logo.png" th:src="@{/logo.png}" /> ZMON</a>
                 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
                   <span class="sr-only">Toggle navigation</span>
                   <span class="icon-bar"></span>
