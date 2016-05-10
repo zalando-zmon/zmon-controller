@@ -86,7 +86,7 @@
                     <span ng-class="{invisible: !serviceStatus.hasDataRefresh}">
                         <start-stop refreshing="serviceStatus.isDataRefreshing" start-refresh-callback="resumeDataRefresh()" stop-refresh-callback="pauseDataRefresh()" ></start-stop>
                     </span>
-                    <span class="app-status" ng-show="serviceStatus.isStatusRefreshing" tooltip-html-unsafe="{{statusTooltip}}" tooltip-placement="bottom">
+                    <span class="app-status" ng-show="serviceStatus.isStatusRefreshing" tooltip-html-unsafe="{{statusTooltip}}" tooltip-placement="bottom" tooltip-trigger="mouseenter">
                         <strong ng-class="serviceStatus.queueSize > 1000 ? 'warning' : 'ok'">{{serviceStatus.queueSize}}</strong> in queue,
                         <strong ng-class="serviceStatus.workersActive < serviceStatus.workersTotal ? 'warning' : 'ok'">{{ serviceStatus.workersActive}}/{{ serviceStatus.workersTotal}}</strong> active workers,
                         <strong>{{ checksPerSecond | number:2 }}</strong>/s
