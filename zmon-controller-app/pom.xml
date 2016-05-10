@@ -151,6 +151,10 @@
             <artifactId>fluent-hc</artifactId>
             <version>4.5.1</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpasyncclient</artifactId>
+        </dependency>
         <!-- Testing -->
         <dependency>
             <groupId>junit</groupId>
@@ -197,11 +201,6 @@
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-validator</artifactId>
         </dependency>
-        <!-- Soap web services -->
-        <!-- <dependency> <groupId>org.apache.cxf</groupId> <artifactId>cxf-rt-frontend-jaxws</artifactId>
-            <version>2.7.5</version> </dependency> <dependency> <groupId>org.apache.cxf</groupId>
-            <artifactId>cxf-rt-transports-http</artifactId> <version>2.7.5</version>
-            </dependency> -->
         <dependency>
             <groupId>org.xerial.snappy</groupId>
             <artifactId>snappy-java</artifactId>
@@ -218,6 +217,13 @@
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
             <version>3.1.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.github.tomakehurst</groupId>
+            <artifactId>wiremock</artifactId>
+            <version>1.58</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.zalando.stups</groupId>

@@ -52,6 +52,10 @@ public class DashboardController extends AbstractZMonController {
     @ResponseBody
     @RequestMapping(value = "/deleteDashboard", method = RequestMethod.DELETE)
     public void deleteDashboard(@RequestParam(value = "id", required = true) final int id) throws ZMonException {
+        final List<Dashboard> dashboards = service.getDashboards(Lists.newArrayList(id));
+        for (final Dashboard dashboard : dashboards) {
+            authorityService.verifyEditDashboardPermission(dashboard);
+        }
         this.service.deleteDashboard(id);
     }
 
