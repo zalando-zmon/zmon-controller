@@ -24,11 +24,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 @RequestMapping(value = "/rest/kairosDBPost")
 public class KairosDBController extends AbstractZMonController {
 
-    // private final KairosDBProperties kairosDBProperties;
-
     private final MetricRegistry metricRegistry;
-
-    // private final Executor executor;
 
     private final AsyncRestTemplate asyncRestTemplate;
 
@@ -43,7 +39,6 @@ public class KairosDBController extends AbstractZMonController {
             KairosDBProperties kairosDBProperties,
             MetricRegistry metricRegistry, AsyncRestTemplate asyncRestTemplate
     ) {
-        // this.kairosDBProperties = kairosDBProperties;
         this.metricRegistry = metricRegistry;
         this.asyncRestTemplate = asyncRestTemplate;
         if (kairosDBProperties.isEnabled()) {
@@ -55,19 +50,12 @@ public class KairosDBController extends AbstractZMonController {
             tagsKairosDBURL = "";
             queryKairosDBURL = "";
         }
-        // executor = Executor.newInstance(kairosDBProperties.getHttpClient());
     }
 
 
     /* For Grafana2 KairosDB plugin we need to prepend the original KairosDB URLs too */
     @RequestMapping(value = {"", "/api/v1/datapoints/query"}, method = RequestMethod.POST, produces = "application/json")
     public ListenableFuture<ResponseEntity<JsonNode>> kairosDBPost(@RequestBody(required = true) final JsonNode node) {
-
-        // if (!kairosDBProperties.isEnabled()) {
-        // writer.write("");
-        // return;
-        // }
-
         final String checkId = node.get("metrics").get(0).get("name").textValue().replace("zmon.check.", "");
         Timer.Context timer = metricRegistry.timer("kairosdb.check.query." + checkId).time();
 
@@ -92,50 +80,19 @@ public class KairosDBController extends AbstractZMonController {
         lf.addCallback(new StopTimerCallback(timer));
 
         return lf;
-        // final String r =
-        // executor.execute(Request.Post(queryKairosDBURL).addHeader("X-ZMON-CHECK-ID",
-        // checkId).useExpectContinue().bodyString(node.toString(),
-        // ContentType.APPLICATION_JSON)).returnContent().asString();
-
-        // if (timer != null) {
-        // timer.stop();
-        // }
-
     }
 
     @RequestMapping(value = {"/tags", "/api/v1/datapoints/query/tags"}, method = RequestMethod.POST, produces = "application/json")
     public ListenableFuture<ResponseEntity<JsonNode>> kairosDBtags(@RequestBody(required = true) final JsonNode node) {
-        //
-        // if (!kairosDBProperties.isEnabled()) {
-        // writer.write("");
-        // return;
-        // }
-
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<String> httpEntity = new HttpEntity<>(node.toString(), headers);
         return asyncRestTemplate.exchange(tagsKairosDBURL, HttpMethod.POST, httpEntity, JsonNode.class);
-
-        // final String r =
-        // executor.execute(Request.Post(tagsKairosDBURL).useExpectContinue().bodyString(node.toString(),
-        // ContentType.APPLICATION_JSON)).returnContent().asString();
-        //
-        // writer.write(r);
     }
 
     @RequestMapping(value = {"/metrics", "/api/v1/metricnames"}, method = RequestMethod.GET, produces = "application/json")
     public ListenableFuture<ResponseEntity<JsonNode>> kairosDBmetrics() {
-
-        // if (!kairosDBProperties.isEnabled()) {
-        // writer.write("");
-        // return;
-        // }
         return asyncRestTemplate.getForEntity(metricNamesKairosDBURL, JsonNode.class);
-
-        // final String r =
-        // executor.execute(Request.Get(kairosDBURL).useExpectContinue()).returnContent().asString();
-        //
-        // writer.write(r);
     }
 
     static class StopTimerCallback implements ListenableFutureCallback<Object> {

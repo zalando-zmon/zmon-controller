@@ -67,7 +67,8 @@ public class AlertController extends AbstractZMonController {
 
     @RequestMapping(value = "/alertDefinitions", method = RequestMethod.GET)
     public ResponseEntity<List<AlertDefinitionAuth>> getAllAlertDefinitions(
-            @RequestParam(value = "team", required = false) final Set<String> teams) {
+            @RequestParam(value = "team", required = false) final Set<String> teams,
+            @RequestParam(value = "check_id", required = false) final Integer checkId) {
         List<AlertDefinitionAuth> response = Collections.emptyList();
 
         final List<AlertDefinition> defs = teams == null ? service.getAllAlertDefinitions()
@@ -76,7 +77,9 @@ public class AlertController extends AbstractZMonController {
         if (defs != null && !defs.isEmpty()) {
             response = new ArrayList<>(defs.size());
             for (final AlertDefinition def : defs) {
-                response.add(resolveAlertDefinitionAuth(def));
+                if (checkId == null || checkId.equals(def.getCheckDefinitionId())) {
+                    response.add(resolveAlertDefinitionAuth(def));
+                }
             }
         }
 
