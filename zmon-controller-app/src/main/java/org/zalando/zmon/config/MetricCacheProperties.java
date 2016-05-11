@@ -11,6 +11,15 @@ import java.net.URL;
 public class MetricCacheProperties {
 
     private URL url;
+    private int nodes = 3;
+
+    public int getNodes() {
+        return nodes;
+    }
+
+    public void setNodes(int nodes) {
+        this.nodes = nodes;
+    }
 
     public URL getUrl() {
         return url;

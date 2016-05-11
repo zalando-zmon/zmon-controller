@@ -11,7 +11,7 @@
                         <span class="input-group-btn">
                             <button class="btn btn-primary"><i class="fa fa-fw fa-search"></i></button>
                         </span>
-                        <input class="form-control" placeholder="Filter dashboards"  type="text" ng-model="dashboardFilter" debounce="500" autofocus />
+                        <input class="form-control" placeholder="Filter dashboards"  type="text" ng-model="dashboardFilter" ng-model-options="{debounce:500}" autofocus />
                     </div>
                 </div>
             </form>
@@ -61,7 +61,7 @@
         </thead>
         <tr ng-repeat="def in dashboardDefinitions | orderBy:sortType:sortOrder | filter:dashboardFilter track by def.id" repeat-monitor last="$last">
             <td class="text-center">
-                <a href="#" ng-click="setDefaultDashboard(def.id)">
+                <a href="#/" ng-click="setDefaultDashboard(def.id)">
                     <i ng-show="def.id == defaultDashboardId" tooltip-html-unsafe="it is default" tooltip-placement="right" class="fa fa-fw fa-star"></i>
                     <i ng-hide="def.id == defaultDashboardId" tooltip-html-unsafe="set as default" tooltip-placement="right" class="fa fa-fw fa-star-o"></i>
                 </a>

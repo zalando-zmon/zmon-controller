@@ -5,18 +5,12 @@ angular.module('zmon2App').controller('CheckDefinitionEditCtrl', ['$scope', '$ro
 
         $scope.$parent.activePage = 'check-definitions';
         $scope.invalidFormat = false;
-        $scope.parameters = [];
-        $scope.paramTypes = ['string', 'int', 'boolean'];
         $scope.allTags = [];
         $scope.defaultEntitiesFilter = [];
         $scope.entityFilterInputMethod = 'text';
 
         var user = UserInfoService.get();
         $scope.teams = user.teams !== "" ? user.teams.split(',') : [];
-
-        // Keep account of overwritten Properties and Parameters on inherit mode
-        $scope.oProps = [];
-        $scope.oParams = [];
 
         $scope.entityFilter = {
             "types":
@@ -26,34 +20,6 @@ angular.module('zmon2App').controller('CheckDefinitionEditCtrl', ['$scope', '$ro
             formEntityFilters: [],
             textEntityFilters: '[]'
         };
-
-        $scope.parameterTypeOptions = [
-            {
-                'value': 'str',
-                'label': 'String'
-            },
-            {   'value': 'int',
-                'label': 'Integer'
-            },
-            {   'value': 'float',
-                'label': 'Float'
-            },
-            {
-                'value': 'bool',
-                'label': 'Boolean'
-            }
-        ];
-
-        $scope.parameterTypeBooleanOptions = [
-            {
-                'value': true,
-                'label': 'True'
-            },
-            {
-                'value': false,
-                'label': 'False'
-            }
-        ];
 
         $scope.statusOptions = [
             {
@@ -91,12 +57,6 @@ angular.module('zmon2App').controller('CheckDefinitionEditCtrl', ['$scope', '$ro
                         $scope.check.entities = JSON.parse($scope.entityFilter.textEntityFilters);
                     }
 
-                    if ($scope.oParams.length === 0) {
-                        delete $scope.check.parameters;
-                    } else {
-                        $scope.check.parameters = $scope.formParametersObject();
-                    }
-
                     CommunicationService.updateCheckDefinition($scope.check).then(function(data) {
                         FeedbackMessageService.showSuccessMessage('Saved successfully; redirecting...', 500, function() {
                             $location.path('/check-definitions/view/' + data.id);
@@ -129,12 +89,6 @@ angular.module('zmon2App').controller('CheckDefinitionEditCtrl', ['$scope', '$ro
                 function(response) {
                     $scope.check = response;
 
-                    $scope.parameters = [];
-                    _.each(_.keys(response.parameters).sort(), function(name) {
-                        $scope.oParams.push(name);
-                        $scope.parameters.push(_.extend({'name': name}, response.parameters[name]));
-                    });
-
                     if ($scope.teams.indexOf($scope.check.owning_team) === -1) {
                         $scope.teams.push($scope.check.owning_team);
                     }
@@ -148,54 +102,6 @@ angular.module('zmon2App').controller('CheckDefinitionEditCtrl', ['$scope', '$ro
         if ($scope.checkId) {
             getCheckDefinition($scope.checkId);
         }
-
-
-        // Add a new parameter with cleared values and type string by default
-        $scope.addParameter = function() {
-            $scope.parameters.push({type: 'str'});
-        };
-
-        // Remove a parameter from the parameters json object
-        $scope.removeParameter = function(name) {
-            var index = null;
-            _.each($scope.parameters, function(param, i) {
-                if (param.name === name) {
-                    index = i;
-                }
-            });
-            if (index !== null) {
-                $scope.parameters.splice(index, 1);
-            }
-        };
-
-        // Get current parameters in form and generate a properly formatted
-        // json to send to the backend.
-        var formParametersObject = function() {
-            var parameters = {};
-            _.each($scope.parameters, function(param) {
-                var val = param.value;
-
-                if (param.type === 'int') {
-                    val = parseInt(param.value);
-                }
-                if (param.type === 'float') {
-                    val = parseFloat(param.value);
-                }
-
-                parameters[param.name] = {
-                    "value": val,
-                    "comment": param.comment,
-                    "type": param.type
-                };
-            });
-            return parameters;
-        };
-
-        // Validate a parameter's name to be a valid python variable name
-        $scope.paramNameIsValid = function(name) {
-            var re = /^[_a-zA-Z][_a-zA-Z0-9]*/;
-            return re.test(name);
-        };
 
         $scope.dateOptions = {
             formatYear: 'yy',
@@ -246,10 +152,6 @@ angular.module('zmon2App').controller('CheckDefinitionEditCtrl', ['$scope', '$ro
                 }
             }
         }, true);
-
-       $scope.$watch('parameters', function() {
-           $scope.check.parameters = formParametersObject($scope.parameters);
-       }, true);
     }
 ]);
 

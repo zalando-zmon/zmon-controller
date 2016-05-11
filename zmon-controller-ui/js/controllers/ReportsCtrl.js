@@ -245,14 +245,6 @@ angular.module('zmon2App').controller('ReportsCtrl', ['$scope', '$routeParams', 
             return inPlainTxt ? '"' + res.join('\r') + '"' : res.join('<br/>');
         };
 
-        $scope.handleDateRangeClick = function() {
-            $scope.useDateRange = !$scope.useDateRange;
-            if (!$scope.useDateRange) {
-                setStateToUrl($scope);
-                fetchReports();
-            }
-        };
-
         // Calculating the background color of event labels
         $scope.hslFromEventType = function(id) {
             return "hsla(" + ((id * 6151 % 1000 / 1000.0) * 360) + ", 50%, 50%, 1);";
@@ -280,6 +272,13 @@ angular.module('zmon2App').controller('ReportsCtrl', ['$scope', '$routeParams', 
         $scope.$watch('reportsFilter', function(newVal) {
             $location.search('rf', _.isEmpty(newVal) ? null : newVal);
             localStorageService.set('returnTo', '/#' + $location.url());
+        });
+
+        $scope.$watch('useDateRange', function(udr) {
+            if (!udr) {
+                setStateToUrl($scope);
+                fetchReports();
+            }
         });
     }
 ]);

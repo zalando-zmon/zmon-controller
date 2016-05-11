@@ -1,23 +1,12 @@
 package org.zalando.zmon.webservice.service;
 
-import java.util.Set;
-
-import javax.validation.ConstraintViolation;
-import javax.validation.Validator;
-
 import org.springframework.beans.factory.annotation.Autowired;
-
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
-import org.zalando.zmon.domain.AlertDefinitions;
-import org.zalando.zmon.domain.AlertDefinitionsDiff;
-import org.zalando.zmon.domain.CheckDefinitionImport;
-import org.zalando.zmon.domain.CheckDefinitions;
-import org.zalando.zmon.domain.CheckDefinitionsDiff;
-import org.zalando.zmon.domain.DefinitionStatus;
-import org.zalando.zmon.exception.ZMonFault;
+import org.zalando.zmon.domain.*;
 import org.zalando.zmon.service.AlertService;
 import org.zalando.zmon.service.ZMonService;
+
+import javax.validation.Validator;
 
 // TODO check validation
 // TODO handle errors
@@ -59,34 +48,6 @@ public class ZMonWebServiceImpl implements ZMonWebService {
     @Override
     public AlertDefinitionsDiff getAlertDefinitionsDiff(final Long snapshotId) {
         return alertService.getAlertDefinitionsDiff(snapshotId);
-    }
-
-    @Override
-    public void createOrUpdateCheckDefinition(final CheckDefinitionImport checkDefinition) throws ZMonFault {
-        if (checkDefinition == null) {
-            throw new ZMonFault("check definition is mandatory");
-        }
-
-        final Set<ConstraintViolation<CheckDefinitionImport>> results = validator.validate(checkDefinition);
-        if (!results.isEmpty()) {
-            throw new ZMonFault(results.iterator().next().getMessage());
-        }
-
-        zMonService.createOrUpdateCheckDefinition(checkDefinition);
-    }
-
-    @Override
-    public void deleteCheckDefinition(final String name, final String owningTeam) throws ZMonFault {
-        if (name == null) {
-            throw new ZMonFault("name is mandatory");
-        }
-
-        if (owningTeam == null) {
-            throw new ZMonFault("owning team is mandatory");
-        }
-
-        // TODO get user as parameter
-        zMonService.deleteCheckDefinition("DISCOVERY", name, owningTeam);
     }
 
 }

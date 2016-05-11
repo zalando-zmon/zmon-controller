@@ -49,10 +49,8 @@ angular.module('zmon2App').controller('CheckDefinitionCtrl', ['$scope', '$routeP
             if ($scope.checkDefinitionId) {
                 CommunicationService.getCheckDefinition($scope.checkDefinitionId).then(function(data) {
                     $scope.checkDefinition = data;
-                    CommunicationService.getAlertDefinitions().then(function(data) {
-                        $scope.alertDefinitions = _.filter(data, function(def) {
-                            return def.check_definition_id === $scope.checkDefinitionId;
-                        });
+                    CommunicationService.getAlertDefinitions(null, data.id).then(function(data) {
+                        $scope.alertDefinitions = data;
                         setLinkToTrialRun();
                     });
 

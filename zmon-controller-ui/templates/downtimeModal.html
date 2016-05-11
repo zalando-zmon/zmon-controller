@@ -8,8 +8,8 @@
                         <div>
                             <p style="margin-top: 20px">Downtime ends at <em>{{calcDowntimeEndtime() | date:'HH:mm'}}</em></p>
                             <i class="fa fa-clock-o"> </i>
-                            <div ng-model="models.downtimeDuration" class="downtime-section">
-                                <timepicker hour-step="1" minute-step="15" show-meridian="false"></timepicker>
+                            <div class="downtime-section">
+                                <timepicker ng-model="models.downtimeDuration" hour-step="1" minute-step="15" show-meridian="false"></timepicker>
                             </div>
                         </div>
                         <div>
@@ -41,8 +41,8 @@
                                 </table>
                             </div>
                             <div class="col-md-4">
-                                <div ng-model="models.downStartTime" style="display:inline-block; width: 190px">
-                                    <timepicker hour-step="1" minute-step="1" show-meridian="false"></timepicker>
+                                <div style="display:inline-block; width: 190px">
+                                    <timepicker ng-model="models.downStartTime" hour-step="1" minute-step="1" show-meridian="false"></timepicker>
                                 </div>
                             </div>
                         </div>
@@ -68,8 +68,8 @@
                                 </table>
                             </div>
                             <div class="col-md-4">
-                                <div ng-model="models.downEndTime" style="display:inline-block; width: 190px">
-                                    <timepicker hour-step="1" minute-step="1" show-meridian="false"></timepicker>
+                                <div style="display:inline-block; width: 190px">
+                                    <timepicker ng-model="models.downEndTime" hour-step="1" minute-step="1" show-meridian="false"></timepicker>
                                 </div>
                             </div>
                         </div>
