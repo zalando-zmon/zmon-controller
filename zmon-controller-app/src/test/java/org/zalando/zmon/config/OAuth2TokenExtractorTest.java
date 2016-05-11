@@ -31,4 +31,11 @@ public class OAuth2TokenExtractorTest {
         result.ifPresent(t -> Assertions.fail("Not expecting any value here"));
     }
 
+    @Test
+    public void testExtractorOnlyBearer() {
+        Optional<String> result = extractor.apply(Optional.of("Bearer "));
+        Assertions.assertThat(result).isNotNull();
+        result.ifPresent(t -> Assertions.fail("Not expecting any value here"));
+    }
+
 }

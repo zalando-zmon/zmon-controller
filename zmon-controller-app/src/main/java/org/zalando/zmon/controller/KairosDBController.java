@@ -115,7 +115,7 @@ public class KairosDBController extends AbstractZMonController {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
-        tokenExtractor.apply(ofNullable(authHeader)).ifPresent(token -> headers.set(AUTHORIZATION, "Bearer " + token));
+        tokenExtractor.apply(ofNullable(authHeader)).ifPresent(token -> headers.set(AUTHORIZATION, BEARER + token));
 
         HttpEntity<String> httpEntity = new HttpEntity<>(headers);
 
