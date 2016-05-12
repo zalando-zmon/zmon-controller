@@ -17,6 +17,7 @@ import java.util.concurrent.TimeUnit;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.mockito.Mockito;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.client.HttpComponentsAsyncClientHttpRequestFactory;
@@ -26,6 +27,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.client.AsyncRestTemplate;
+import org.zalando.stups.tokens.AccessTokens;
 import org.zalando.zmon.config.KairosDBProperties;
 
 import com.codahale.metrics.MetricRegistry;
@@ -49,12 +51,14 @@ public class KairosDBControllerTest {
 
         this.metricsRegistry = new MetricRegistry();
 
+        AccessTokens accessTokens = Mockito.mock(AccessTokens.class);
+        Mockito.when(accessTokens.get(Mockito.any(String.class))).thenReturn("123456789");
         KairosDBProperties properties = new KairosDBProperties();
         properties.setEnabled(true);
         properties.setUrl(new URL("http://localhost:9998"));
         this.mockMvc = MockMvcBuilders
                 .standaloneSetup(new KairosDBController(properties, metricsRegistry,
-                        new AsyncRestTemplate(new HttpComponentsAsyncClientHttpRequestFactory())))
+                        new AsyncRestTemplate(new HttpComponentsAsyncClientHttpRequestFactory()), accessTokens))
                 .alwaysDo(MockMvcResultHandlers.print())
                 .build();
     }
