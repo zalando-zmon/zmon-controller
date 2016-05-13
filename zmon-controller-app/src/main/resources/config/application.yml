@@ -61,3 +61,14 @@ zmon:
           max-idle: 8
           min-idle: 0
           max-wait: -1
+#
+# OAuth2
+#
+tokens:
+  access-token-uri: ${OAUTH2_ACCESS_TOKEN_URL}
+  credentials-directory: ${CREDENTIALS_DIR}
+  token-configuration-list:
+    - token-id: zmon-data-service
+      scopes: scope
+    - token-id: team-service
+      scopes: uid
