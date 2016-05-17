@@ -23,11 +23,11 @@
         <div class="row">
             <div class="col-md-12">
                 <div class="no-teams" ng-hide="haveTeams()"><h4>No teams available.</h4></div>
-                <div ng-repeat="team in teams" class="clickable card" ng-hide="selectedTeam" ng-click="setTeam(team.name)">
-                    <a><h4>{{team.name}}</h4></a>
-                    <div><span class="number">{{team.applications.length}}</span><span class="lbl">apps</span></div>
-                    <div><span class="number">{{team.instances.length}}</span><span class="lbl">instances</span></div>
-                    <div><span class="number">{{getPublicElbsByTeam(team)}}/{{team.elbs.length}}</span><span class="lbl">Public/ELBs</span></div>
+                <div ng-repeat="teamName in teamNames" class="clickable card" ng-hide="selectedTeam" ng-click="setTeam(teamName)">
+                    <a><h4>{{teamName}}</h4></a>
+                    <div><span class="number">{{teams[teamName].applications.length}}</span><span class="lbl">apps</span></div>
+                    <div><span class="number">{{teams[teamName].instances.length}}</span><span class="lbl">instances</span></div>
+                    <div><span class="number">{{getPublicElbsByTeam(teams[teamName])}}/{{teams[teamName].elbs.length}}</span><span class="lbl">Public/ELBs</span></div>
                 </div>
             </div>
         </div>
