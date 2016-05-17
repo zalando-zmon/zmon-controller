@@ -69,6 +69,6 @@ tokens:
   credentials-directory: ${CREDENTIALS_DIR}
   token-configuration-list:
     - token-id: zmon-data-service
-      scopes: scope
+      scopes: uid
     - token-id: team-service
       scopes: uid
