@@ -66,10 +66,13 @@ function (angular, _, coreModule, config) {
       var firstAttempt = options.retry === 0;
 
       if (requestIsLocal && !options.hasSubUrl) {
-        options.url = '/rest' + config.appSubUrl + options.url;
+        options.url = config.appSubUrl + options.url;
         options.hasSubUrl = true;
+      } else {
+          options.url = '/grafana2/' + options.url;
       }
 
+      options.url =  '/rest' + options.url;
       return $http(options).then(function(results) {
         if (options.method !== 'GET') {
           if (results && results.data.message) {

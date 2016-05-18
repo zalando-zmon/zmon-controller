@@ -346,7 +346,7 @@ public class Grafana2Controller extends AbstractZMonController {
         ArrayNode arr = mapper.createArrayNode();
         ObjectNode k = mapper.createObjectNode();
         k.put("id", 1);
-        k.put("orgId", "2");
+        k.put("orgId", "1");
         k.put("name", "kairos");
         k.put("access", "direct");
         k.put("url", "/rest/kairosDBPost");
@@ -357,11 +357,14 @@ public class Grafana2Controller extends AbstractZMonController {
         k.put("basicAuthUser", "");
         k.put("basicAuthPassword", "");
         k.put("isDefault", true);
+        k.put("type", "grafana-kairosdb-datasource");
+        k.put("typeLogoUrl", "public/plugins/grafana-kairosdb-datasource/img/kairosdb_logo_small.png");
         arr.add(k);
 
+        /*
         ObjectNode e = mapper.createObjectNode();
         e.put("id", 2);
-        e.put("orgId", "2");
+        e.put("orgId", "1");
         e.put("name", "elasticsearch");
         e.put("access", "direct");
         e.put("url", "/rest/grafana/dashboard/_search");
@@ -373,8 +376,88 @@ public class Grafana2Controller extends AbstractZMonController {
         e.put("basicAuthPassword", "");
         e.put("isDefault", true);
         arr.add(e);
+        */
         return arr;
     }
+
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    @RequestMapping(value = "/api/datasources/{id}", method = RequestMethod.GET)
+    public JsonNode g2getDatasource(@PathVariable(value="id") String id) throws ZMonException {
+        ObjectNode k = mapper.createObjectNode();
+        k.put("id", 1);
+        k.put("orgId", "1");
+        k.put("name", "kairos");
+        k.put("access", "direct");
+        k.put("url", "/rest/kairosDBPost");
+        k.put("password", "");
+        k.put("user", "");
+        k.put("database", "");
+        k.put("basicAuth", false);
+        k.put("basicAuthUser", "");
+        k.put("basicAuthPassword", "");
+        k.put("isDefault", true);
+        k.put("type", "grafana-kairosdb-datasource");
+        k.put("typeLogoUrl", "public/plugins/grafana-kairosdb-datasource/img/kairosdb_logo_small.png");
+        return k;
+    }
+
+    // returns a list of all available plugins
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    @RequestMapping(value = "/api/plugins", method = RequestMethod.GET)
+    public JsonNode g2getPlugins() throws ZMonException {
+        ArrayNode arr = mapper.createArrayNode();
+
+        ObjectNode k = mapper.createObjectNode();
+        k.put("defaultNavUrl", "plugins/grafana-kairosdb-datasource/edit");
+        k.put("enabled", true);
+        k.put("hasUpdate", false);
+        k.put("id", "grafana-kairosdb-datasource");
+        k.put("latestVersion", "1.0.1");
+        k.put("name", "kairos");
+        k.put("pinned", false);
+        k.put("type", "datasource");
+        arr.add(k);
+
+        ObjectNode j = mapper.createObjectNode();
+        j.put("defaultNavUrl", "/plugins/grafana-piechart-panel/edit");
+        j.put("enabled", true);
+        j.put("hasUpdate", false);
+        j.put("id", "grafana-piechart-panel");
+        j.put("latestVersion", "1.1.1");
+        j.put("name", "Pie Chart");
+        j.put("pinned", false);
+        j.put("type", "panel");
+        arr.add(j);
+
+        return arr;
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    @RequestMapping(value = "/api/plugins/grafana-kairosdb-datasource/settings", method = RequestMethod.GET)
+    public JsonNode g2getPluginsKairosSettings() throws ZMonException {
+        ObjectNode k = mapper.createObjectNode();
+        k.put("baseUrl", "public/plugins/grafana-kairosdb-datasource");
+        k.put("defaultNavUrl", "");
+        k.put("enabled", true);
+        k.put("hasUpdate", false);
+        k.put("id", "grafana-kairosdb-datasource");
+        k.put("module", "plugins/grafana-kairosdb-datasource/module");
+        k.put("name", "kairos");
+        k.put("pinned", false);
+        k.put("type", "datasource");
+
+        ObjectNode d = mapper.createObjectNode();
+        ArrayNode emptyArr = mapper.createArrayNode();
+        d.put("grafanaVersion", "3.x.x");
+        d.put("plugins", emptyArr);
+        k.put("dependencies", d);
+
+        return k;
+    }
+
 
     @RequestMapping(value="/api/user/orgs", method = RequestMethod.GET)
     @ResponseBody

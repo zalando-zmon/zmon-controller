@@ -37,6 +37,7 @@ System.register(['angular', 'lodash'], function(exports_1) {
                 };
                 AppPageCtrl.prototype.loadPluginInfo = function () {
                     var _this = this;
+
                     this.backendSrv.get("/api/plugins/" + this.pluginId + "/settings").then(function (app) {
                         _this.initPage(app);
                     });
