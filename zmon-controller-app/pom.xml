@@ -22,6 +22,12 @@
         </dependency>
 
         <dependency>
+            <groupId>org.zalando.stups</groupId>
+            <artifactId>spring-boot-zalando-stups-tokens</artifactId>
+            <version>0.9.11.M2</version>
+        </dependency>
+
+        <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>zmon-common</artifactId>
             <version>${project.version}</version>
@@ -189,9 +195,6 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        <!-- <dependency> <groupId>org.zalando</groupId> <artifactId>eventlog</artifactId>
-            <version>1.0.8</version> </dependency> -->
-        <!-- Validation -->
         <dependency>
             <groupId>javax.validation</groupId>
             <artifactId>validation-api</artifactId>
@@ -201,11 +204,6 @@
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-validator</artifactId>
         </dependency>
-        <!-- Soap web services -->
-        <!-- <dependency> <groupId>org.apache.cxf</groupId> <artifactId>cxf-rt-frontend-jaxws</artifactId>
-            <version>2.7.5</version> </dependency> <dependency> <groupId>org.apache.cxf</groupId>
-            <artifactId>cxf-rt-transports-http</artifactId> <version>2.7.5</version>
-            </dependency> -->
         <dependency>
             <groupId>org.xerial.snappy</groupId>
             <artifactId>snappy-java</artifactId>

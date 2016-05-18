@@ -8,7 +8,7 @@ exports.searchAlert = function(input, cb) {
     search.clear();
     search.sendKeys(input).then(function() {
         browser.driver.sleep(1000);
-        browser.findElements(by.repeater("entityInstance in AlertDetailsCtrl.allAlertsAndChecks | filter:alertDetailsSearch | inDisplayedGroup:AlertDetailsCtrl.showActiveAlerts:AlertDetailsCtrl.showAlertsInDowntime:AlertDetailsCtrl.showCheckResults | orderBy:'-result.ts' | limitTo:AlertDetailsCtrl.infScrollNumAlertsVisible track by entityInstance.entity")).then(cb);
+        browser.findElements(by.repeater("entityInstance in allAlertsAndChecks | filter:alertDetailsSearch | inDisplayedGroup:showActiveAlerts:showAlertsInDowntime:showCheckResults | orderBy:sortType:sortOrder track by entityInstance.entity")).then(cb);
     });
 };
 
@@ -20,7 +20,7 @@ exports.openDetails = function(cb) {
 
 exports.openHistoryTab = function(cb) {
     history.click().then(function() {
-        browser.findElements(by.css('[ng-click="AlertDetailsCtrl.fetchHistoryLastNDays(1)"]')).then(cb);
+        browser.findElements(by.css('[ng-click="fetchHistoryLastNDays(1)"]')).then(cb);
     });
 };
 

@@ -4,3 +4,12 @@ zmon:
   oauth2:
     sso:
       credentials-directory-path: ${CREDENTIALS_DIR}
+
+tokens:
+  access-token-uri: ${OAUTH2_ACCESS_TOKEN_URL}
+  credentials-directory: ${CREDENTIALS_DIR}
+  token-configuration-list:
+    - token-id: kairosdb
+      scopes: uid
+    - token-id: team-service
+      scopes: uid

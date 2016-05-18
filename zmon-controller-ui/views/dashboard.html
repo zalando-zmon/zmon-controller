@@ -13,7 +13,7 @@
                         <span class="input-group-btn">
                             <button class="btn"><i class="fa fa-fw fa-search"></i></button>
                         </span>
-                        <input class="form-control" placeholder="Filter alerts"  type="text" ng-model="alertSearch" autofocus />
+                        <input class="form-control" placeholder="Filter alerts"  type="text" ng-model="alertSearch" ng-model-options="{debounce:500}" autofocus />
                     </div>
                 </div>
             </form>

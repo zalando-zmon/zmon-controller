@@ -9,6 +9,7 @@ angular.module('zmon2App').controller('CloudCtrl', ['$scope', '$interval', '$loc
 
         // infrastructure Teams and Applications (some times called Entities)
         $scope.teams = {};
+        $scope.teamNames = [];
         $scope.applications = {};
 
         // current selections
@@ -130,6 +131,7 @@ angular.module('zmon2App').controller('CloudCtrl', ['$scope', '$interval', '$loc
                 team.name = team.account_alias;
                 $scope.teams[team.name] = team;
             });
+            $scope.teamNames = _.uniq(Object.keys($scope.teams)).sort();
         };
 
         // fetch all necessary resources
