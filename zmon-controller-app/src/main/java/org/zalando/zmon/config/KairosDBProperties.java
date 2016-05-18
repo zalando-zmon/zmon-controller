@@ -2,6 +2,7 @@ package org.zalando.zmon.config;
 
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
@@ -86,7 +87,7 @@ public class KairosDBProperties {
      * get HttpClient with appropriate timeouts
      * @return
      */
-    public HttpClient getHttpClient() {
+    public CloseableHttpClient getHttpClient() {
         RequestConfig config = RequestConfig.custom().setSocketTimeout(getSocketTimeout()).setConnectTimeout(getConnectTimeout()).build();
         return HttpClients.custom().setMaxConnPerRoute(maxConnectionsPerRoute).setMaxConnTotal(maxConnectionsTotal).setDefaultRequestConfig(config).build();
     }

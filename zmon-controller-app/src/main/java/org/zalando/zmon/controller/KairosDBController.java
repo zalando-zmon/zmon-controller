@@ -11,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.util.concurrent.ListenableFuture;
 import org.springframework.util.concurrent.ListenableFutureCallback;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -35,7 +34,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 @RequestMapping(value = "/rest/kairosDBPost")
 public class KairosDBController extends AbstractZMonController {
 
-    private static final String ZMON_DATA_SERVICE_TOKEN_ID = "zmon-data-service";
+    public static final String KAIROSDB_TOKEN_ID = "kairosdb";
 
     private static final String BEARER = "Bearer ";
 
@@ -92,7 +91,7 @@ public class KairosDBController extends AbstractZMonController {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.add("X-ZMON-CHECK-ID", checkId);
-        headers.add(AUTHORIZATION, BEARER + accessTokens.get(ZMON_DATA_SERVICE_TOKEN_ID));
+        headers.add(AUTHORIZATION, BEARER + accessTokens.get(KAIROSDB_TOKEN_ID));
 
         HttpEntity<String> httpEntity = new HttpEntity<>(node.toString(), headers);
 
@@ -108,7 +107,7 @@ public class KairosDBController extends AbstractZMonController {
     public ListenableFuture<ResponseEntity<JsonNode>> kairosDBtags(@RequestBody(required = true) final JsonNode node) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.add(AUTHORIZATION, BEARER + accessTokens.get(ZMON_DATA_SERVICE_TOKEN_ID));
+        headers.add(AUTHORIZATION, BEARER + accessTokens.get(KAIROSDB_TOKEN_ID));
 
         HttpEntity<String> httpEntity = new HttpEntity<>(node.toString(), headers);
 
@@ -121,7 +120,7 @@ public class KairosDBController extends AbstractZMonController {
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.add(AUTHORIZATION, BEARER + accessTokens.get(ZMON_DATA_SERVICE_TOKEN_ID));
+        headers.add(AUTHORIZATION, BEARER + accessTokens.get(KAIROSDB_TOKEN_ID));
 
         HttpEntity<String> httpEntity = new HttpEntity<>(headers);
 
