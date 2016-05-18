@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.http.client.fluent.Executor;
 import org.apache.http.client.fluent.Request;
-import org.kairosdb.client.HttpClient;
+import org.kairosdb.client.KairosDBOAuthHttpClient;
 import org.kairosdb.client.builder.AggregatorFactory;
 import org.kairosdb.client.builder.DataFormatException;
 import org.kairosdb.client.builder.DataPoint;
@@ -37,6 +37,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.zalando.stups.tokens.AccessTokens;
 import org.zalando.zmon.config.KairosDBProperties;
 import org.zalando.zmon.config.MetricCacheProperties;
 import org.zalando.zmon.domain.CheckDefinition;
@@ -81,6 +82,9 @@ public class ZMonRestService extends AbstractZMonController {
     @Autowired
     ObjectMapper mapper;
 
+    @Autowired
+    AccessTokens accessTokens;
+
     @RequestMapping(value = "/status", method = RequestMethod.GET)
     public ResponseEntity<ExecutionStatus> getStatus() {
         return new ResponseEntity<>(service.getStatus(), HttpStatus.OK);
@@ -100,14 +104,13 @@ public class ZMonRestService extends AbstractZMonController {
         return new ResponseEntity<>(defs, HttpStatus.OK);
     }
 
-    @RequestMapping(value="/updateCheckDefinition")
-    public ResponseEntity<CheckDefinition> updateCheckDefinition(@RequestBody(required=true) CheckDefinitionImport check) {
-        if(check.getOwningTeam() == null || check.getOwningTeam().equals("")) {
-            if(authService.getTeams().isEmpty()) {
+    @RequestMapping(value = "/updateCheckDefinition")
+    public ResponseEntity<CheckDefinition> updateCheckDefinition(@RequestBody(required = true) CheckDefinitionImport check) {
+        if (check.getOwningTeam() == null || check.getOwningTeam().equals("")) {
+            if (authService.getTeams().isEmpty()) {
                 check.setOwningTeam("ZMON");
-            }
-            else {
-                check.setOwningTeam((String)authService.getTeams().toArray()[0]);
+            } else {
+                check.setOwningTeam((String) authService.getTeams().toArray()[0]);
             }
         }
 
@@ -233,7 +236,7 @@ public class ZMonRestService extends AbstractZMonController {
             metric.addAggregator(AggregatorFactory.createAverageAggregator(aggregate, TimeUnit.MINUTES));
         }
 
-        final HttpClient client = new HttpClient(kairosDBProperties.getUrl().toString());
+        final KairosDBOAuthHttpClient client = new KairosDBOAuthHttpClient(kairosDBProperties.getUrl().toString(), kairosDBProperties.getHttpClient(), accessTokens.get(KairosDBController.KAIROSDB_TOKEN_ID));
         try {
             final Long queryStart = System.currentTimeMillis();
             final QueryResponse response = client.query(builder);
