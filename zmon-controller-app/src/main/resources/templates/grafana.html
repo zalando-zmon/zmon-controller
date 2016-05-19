@@ -1,44 +1,77 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
-	xmlns:data="https://github.com/mxab/thymeleaf-extras-data-attribute">
+    xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+    xmlns:data="https://github.com/mxab/thymeleaf-extras-data-attribute">
 
   <!--[if IE 8]>         <html class="no-js lt-ie9" lang="en"> <![endif]-->
   <!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
   <head>
-    <meta charset="utf-8"></meta>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"></meta>
-    <meta name="viewport" content="width=device-width"></meta>
-    <meta name="google" value="notranslate"></meta>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width">
+    <meta name="theme-color" content="#000">
+
+    <base href="/grafana/">
 
     <title>Grafana</title>
-    <link rel="stylesheet" href="css/grafana.dark.min.css" title="Dark" th:href="${staticUrl} + '/grafana/css/grafana.dark.min.css'" />
-    <link rel="icon" type="image/png" href="img/fav32.png" th:href="${staticUrl} + '/grafana/img/fav32.png'" />
-
-    <!-- build:js app/app.js -->
-    <script src="vendor/require/require.js" th:src="${staticUrl} + '/grafana/vendor/require/require.js'"></script>
-    <script src="app/components/require.config.js" th:src="@{/grafana/app/components/require.config.js}"></script>
-    <!-- endbuild -->
-
-    <script>require(['app'], function (app) { app.boot(); })</script>
+    <link href='public/css/fonts.min.css' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" th:href="${staticUrl} + '/grafana/public/css/grafana.dark.min.css'" />
+    <link rel="icon" type="image/png" href="img/fav32.png" th:href="${staticUrl} + '/grafana/public/img/fav32.png'" />
 
   </head>
 
-  <body ng-cloak ng-controller="GrafanaCtrl">
+    <body ng-cloak>
+        <grafana-app class="grafana-app">
 
-    <link rel="stylesheet" href="css/grafana.light.min.css" th:href="@{/grafana/css/grafana.light.min.css}" ng-if="grafana.style === 'light'">
+            <aside class="sidemenu-wrapper">
+                <sidemenu ng-if="contextSrv.sidemenu"></sidemenu>
+            </aside>
 
-		<div class="page-alert-list">
-			<div ng-repeat='alert in dashAlerts.list' class="alert-{{alert.severity}} alert">
-				<button type="button" class="alert-close" ng-click="dashAlerts.clear(alert)">
-					<i class="fa fa-times-circle"></i>
-				</button>
-				<div class="alert-title">{{alert.title}}</div>
-				<div ng-bind-html='alert.text'></div>
-			</div>
-		</div>
+            <div class="page-alert-list">
+                <div ng-repeat='alert in dashAlerts.list' class="alert-{{alert.severity}} alert">
+                    <button type="button" class="alert-close" ng-click="dashAlerts.clear(alert)">
+                        <i class="fa fa-times-circle"></i>
+                    </button>
+                    <div class="alert-title">{{alert.title}}</div>
+                    <div ng-bind='alert.text'></div>
+                </div>
+            </div>
 
-		<div ng-view></div>
+            <div ng-view class="main-view"></div>
+        </grafana-app>
+  </body>
 
-	</body>
+  <script th:inline="javascript">
+
+        var user = {
+            "isSignedIn":true,
+            "id":1,
+            "login": [[${@defaultZMONPermissionService.getUserName()}]],
+            "name": [[${@defaultZMONPermissionService.getUserName()}]],
+            "email":"",
+            "lightTheme":false,
+            "orgId":1,
+            "orgName":"ZMON",
+            "orgRole":"Admin",
+            "isGrafanaAdmin":true,
+            "gravatarUrl":"",
+            "timezone":"browser"
+        };
+
+
+        var settings =  {"allowOrgCreate":true,"appSubUrl":"/grafana","authProxyEnabled":false,"buildInfo":{"buildstamp":1463565877,"commit":"v3.0.2+44-gc41e3dc","env":"production","hasUpdate":true,"latestVersion":"3.0.2","version":"3.1.0"},"datasources":{"-- Grafana --":{"meta":{"type":"datasource","name":"Grafana","id":"grafana","info":{"author":{"name":"","url":""},"description":"","links":null,"logos":{"small":"public/img/icn-datasource.svg","large":"public/img/icn-datasource.svg"},"screenshots":null,"version":"","updated":""},"dependencies":{"grafanaVersion":"*","plugins":[]},"includes":null,"module":"app/plugins/datasource/grafana/module","baseUrl":"public/app/plugins/datasource/grafana","annotations":false,"metrics":true,"builtIn":true,"mixed":false,"app":""},"type":"grafana"},"-- Mixed --":{"meta":{"type":"datasource","name":"Mixed datasource","id":"mixed","info":{"author":{"name":"","url":""},"description":"","links":null,"logos":{"small":"public/img/icn-datasource.svg","large":"public/img/icn-datasource.svg"},"screenshots":null,"version":"","updated":""},"dependencies":{"grafanaVersion":"*","plugins":[]},"includes":null,"module":"app/plugins/datasource/mixed/module","baseUrl":"public/app/plugins/datasource/mixed","annotations":false,"metrics":true,"builtIn":true,"mixed":true,"app":""},"type":"mixed"},"KairosDB":{"jsonData":{},"meta":{"type":"datasource","name":"KairosDB","id":"grafana-kairosdb-datasource","info":{"author":{"name":"Raintank Inc.","url":"http://raintank.io"},"description":"datasource plugin for KairosDB","links":[{"name":"GitHub","url":"https://github.com/grafana/kairosdb-datasource"},{"name":"License","url":"https://github.com/grafana/kairosdb-datasource/blob/master/LICENSE"}],"logos":{"small":"public/plugins/grafana-kairosdb-datasource/img/kairosdb_logo_small.png","large":"public/plugins/grafana-kairosdb-datasource/img/kairosdb_logo_large.png"},"screenshots":null,"version":"1.0.1","updated":"2016-02-10"},"dependencies":{"grafanaVersion":"3.x.x","plugins":[]},"includes":null,"module":"plugins/grafana-kairosdb-datasource/module","baseUrl":"public/plugins/grafana-kairosdb-datasource","annotations":false,"metrics":true,"builtIn":false,"mixed":false,"app":""},"name":"KairosDB","type":"grafana-kairosdb-datasource","url":"/rest/kairosDBPost/"}},"defaultDatasource":"KairosDB","panels":{"dashlist":{"baseUrl":"public/app/plugins/panel/dashlist","id":"dashlist","info":{"author":{"name":"Grafana Project","url":"http://grafana.org"},"description":"","links":null,"logos":{"small":"public/app/plugins/panel/dashlist/img/icn-dashlist-panel.svg","large":"public/app/plugins/panel/dashlist/img/icn-dashlist-panel.svg"},"screenshots":null,"version":"","updated":""},"module":"app/plugins/panel/dashlist/module","name":"Dashboard list"},"grafana-piechart-panel":{"baseUrl":"public/plugins/grafana-piechart-panel","id":"grafana-piechart-panel","info":{"author":{"name":"Raintank Inc.","url":"http://raintank.io"},"description":"Pie chart panel for grafana","links":[{"name":"Project site","url":"https://github.com/grafana/piechart-panel"},{"name":"Blog Post","url":"https://blog.raintank.io/friends-dont-let-friends-abuse-pie-charts/"},{"name":"MIT License","url":"https://github.com/grafana/piechart-panel/blob/master/LICENSE"}],"logos":{"small":"public/plugins/grafana-piechart-panel/src/img/piechart_logo_small.png","large":"public/plugins/grafana-piechart-panel/src/img/piechart_logo_large.png"},"screenshots":[{"path":"public/plugins/grafana-piechart-panel/src/img/piechart-donut.png","name":"Donut!"},{"path":"public/plugins/grafana-piechart-panel/src/img/piechart-legend-on-graph.png","name":"Legend on the graph"},{"path":"public/plugins/grafana-piechart-panel/src/img/piechart-legend-rhs.png","name":"Legend to the right"},{"path":"public/plugins/grafana-piechart-panel/src/img/piechart-legend-under.png","name":"Legend underneath"},{"path":"public/plugins/grafana-piechart-panel/src/img/piechart-options.png","name":"Piechart options"}],"version":"1.1.1","updated":"2015-02-10"},"module":"plugins/grafana-piechart-panel/module","name":"Pie Chart"}, "graph":{"baseUrl":"public/app/plugins/panel/graph","id":"graph","info":{"author":{"name":"Grafana Project","url":"http://grafana.org"},"description":"","links":null,"logos":{"small":"public/app/plugins/panel/graph/img/icn-graph-panel.svg","large":"public/app/plugins/panel/graph/img/icn-graph-panel.svg"},"screenshots":null,"version":"","updated":""},"module":"app/plugins/panel/graph/module","name":"Graph"},"pluginlist":{"baseUrl":"public/app/plugins/panel/pluginlist","id":"pluginlist","info":{"author":{"name":"Grafana Project","url":"http://grafana.org"},"description":"","links":null,"logos":{"small":"public/app/plugins/panel/pluginlist/img/icn-dashlist-panel.svg","large":"public/app/plugins/panel/pluginlist/img/icn-dashlist-panel.svg"},"screenshots":null,"version":"","updated":""},"module":"app/plugins/panel/pluginlist/module","name":"Plugin list"},"singlestat":{"baseUrl":"public/app/plugins/panel/singlestat","id":"singlestat","info":{"author":{"name":"Grafana Project","url":"http://grafana.org"},"description":"","links":null,"logos":{"small":"public/app/plugins/panel/singlestat/img/icn-singlestat-panel.svg","large":"public/app/plugins/panel/singlestat/img/icn-singlestat-panel.svg"},"screenshots":null,"version":"","updated":""},"module":"app/plugins/panel/singlestat/module","name":"Singlestat"},"table":{"baseUrl":"public/app/plugins/panel/table","id":"table","info":{"author":{"name":"Grafana Project","url":"http://grafana.org"},"description":"","links":null,"logos":{"small":"public/app/plugins/panel/table/img/icn-table-panel.svg","large":"public/app/plugins/panel/table/img/icn-table-panel.svg"},"screenshots":null,"version":"","updated":""},"module":"app/plugins/panel/table/module","name":"Table"},"text":{"baseUrl":"public/app/plugins/panel/text","id":"text","info":{"author":{"name":"Grafana Project","url":"http://grafana.org"},"description":"","links":null,"logos":{"small":"public/app/plugins/panel/text/img/icn-text-panel.svg","large":"public/app/plugins/panel/text/img/icn-text-panel.svg"},"screenshots":null,"version":"","updated":""},"module":"app/plugins/panel/text/module","name":"Text"}}};
+
+        var mainNavLinks =  [{"text":"Dashboards","icon":"icon-gf icon-gf-dashboard","url":"/grafana/","children":[{"text":"Home","url":"/grafana/"},{"text":"Playlists","url":"/grafana/playlists"},{"text":"Snapshots","url":"/grafana/dashboard/snapshots"},{"divider":true},{"text":"New","icon":"fa fa-plus","url":"/grafana/dashboard/new"},{"text":"Import","icon":"fa fa-download","url":"/grafana/import/dashboard"}]},{"text":"Data Sources","icon":"icon-gf icon-gf-datasources","url":"/grafana/datasources"},{"text":"Plugins","icon":"icon-gf icon-gf-apps","url":"/grafana/plugins"},{"text":"Admin","icon":"fa fa-fw fa-cogs","url":"/grafana/admin","children":[{"text":"Global Users","url":"/grafana/admin/users"},{"text":"Global Orgs","url":"/grafana/admin/orgs"},{"text":"Server Settings","url":"/grafana/admin/settings"},{"text":"Server Stats","url":"/grafana/admin/stats"}]}];
+
+        window.grafanaBootData = {
+            user: user,
+            settings: settings,
+            mainNavLinks: mainNavLinks
+        };
+    </script>
+
+    <script src="public/vendor/npm/es6-shim/es6-shim.js"></script>
+    <script src="public/vendor/npm/systemjs/dist/system.src.js"></script>
+    <script src="public/app/system.conf.js"></script>
+    <script src="public/app/boot.js"></script>
 </html>
