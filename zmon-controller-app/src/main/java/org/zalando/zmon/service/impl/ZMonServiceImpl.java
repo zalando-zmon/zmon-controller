@@ -7,6 +7,7 @@ import com.google.common.collect.Lists;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.actuate.metrics.export.MetricExportProperties;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.xerial.snappy.Snappy;
@@ -92,6 +93,7 @@ public class ZMonServiceImpl implements ZMonService {
     @Override
     public ExecutionStatus getStatus() {
 
+        int alertsActive = 0;
         final Map<String, Response<Long>> queueSize = new HashMap<>();
         final Map<String, Response<String>> lastUpdate = new HashMap<>();
         final Map<String, Response<String>> invocations = new HashMap<>();
@@ -99,6 +101,7 @@ public class ZMonServiceImpl implements ZMonService {
         final Jedis jedis = redisPool.getResource();
         try {
             final Set<String> workerNames = jedis.smembers(RedisPattern.workerNames());
+            alertsActive = Optional.of(jedis.scard(RedisPattern.alertIds())).orElse(Long.valueOf(0)).intValue();
 
             final Pipeline p = jedis.pipelined();
 
@@ -116,13 +119,15 @@ public class ZMonServiceImpl implements ZMonService {
             jedis.close();
         }
 
-        return buildStatus(queueSize, lastUpdate, invocations);
+        return buildStatus(alertsActive, queueSize, lastUpdate, invocations);
     }
 
-    private ExecutionStatus buildStatus(final Map<String, Response<Long>> queueSize,
+    private ExecutionStatus buildStatus(int alertsActive, final Map<String, Response<Long>> queueSize,
             final Map<String, Response<String>> lastUpdates, final Map<String, Response<String>> invocations) {
 
         final ExecutionStatus.Builder builder = ExecutionStatus.builder();
+
+        builder.withAlertsActive(alertsActive);
 
         // add queue info
         for (final Map.Entry<String, Response<Long>> size : queueSize.entrySet()) {
