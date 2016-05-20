@@ -10,6 +10,7 @@ import com.google.common.collect.ImmutableSet;
  */
 public class ExecutionStatus {
 
+    private final int alertsActive;
     private final int workersActive;
     private final int workersTotal;
     private final int checkInvocations;
@@ -18,12 +19,17 @@ public class ExecutionStatus {
     private final Set<Queue> queues;
 
     private ExecutionStatus(final Builder builder) {
+        this.alertsActive = builder.alertsActive;
         this.workersActive = builder.workersActive;
         this.workers = builder.workers.build();
         this.queues = builder.queues.build();
         this.workersTotal = this.workers.size();
         this.checkInvocations = checkInvocations(this.workers);
         this.queueSize = totalQueueSize(this.queues);
+    }
+
+    public int getAlertsActive() {
+        return alertsActive;
     }
 
     public int getWorkersActive() {
@@ -88,11 +94,19 @@ public class ExecutionStatus {
     public static final class Builder {
 
         // optional
+        private int alertsActive = 0;
         private int workersActive = 0;
         private final ImmutableSet.Builder<Worker> workers = ImmutableSet.builder();
         private final ImmutableSet.Builder<Queue> queues = ImmutableSet.builder();
 
         private Builder() { }
+
+        public Builder withAlertsActive(final int alertsActive) {
+            Preconditions.checkNotNull(alertsActive >= 0);
+            this.alertsActive = alertsActive;
+
+            return this;
+        }
 
         public Builder withWorkersActive(final int workersActive) {
             Preconditions.checkNotNull(workersActive >= 0);
