@@ -4,13 +4,16 @@ import java.io.IOException;
 import java.util.*;
 
 import com.google.common.collect.Lists;
+import org.apache.http.client.fluent.Executor;
+import org.apache.http.client.fluent.Request;
+import org.apache.http.entity.ContentType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.actuate.metrics.export.MetricExportProperties;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.xerial.snappy.Snappy;
+import org.zalando.zmon.config.SchedulerProperties;
 import org.zalando.zmon.diff.CheckDefinitionsDiffFactory;
 import org.zalando.zmon.domain.AlertDefinition;
 import org.zalando.zmon.domain.CheckDefinition;
@@ -68,7 +71,7 @@ import redis.clients.jedis.Response;
 @Transactional
 public class ZMonServiceImpl implements ZMonService {
 
-    private final Logger log = LoggerFactory.getLogger(ZMonServiceImpl.class);
+    private final Logger LOG = LoggerFactory.getLogger(ZMonServiceImpl.class);
 
     private static final long MAX_ACTIVE_WORKER_TIMESTAMP_MILLIS_AGO = 24 * 1000;
 
@@ -203,7 +206,7 @@ public class ZMonServiceImpl implements ZMonService {
     @Override
     public CheckDefinition createOrUpdateCheckDefinition(final CheckDefinitionImport checkDefinition) {
         Preconditions.checkNotNull(checkDefinition);
-        log.info("Saving check definition '{}' from team '{}'", checkDefinition.getName(),
+        LOG.info("Saving check definition '{}' from team '{}'", checkDefinition.getName(),
                 checkDefinition.getOwningTeam());
 
         final CheckDefinitionImportResult operationResult = checkDefinitionSProc
@@ -224,7 +227,7 @@ public class ZMonServiceImpl implements ZMonService {
         Preconditions.checkNotNull(name);
         Preconditions.checkNotNull(owningTeam);
 
-        log.info("Deleting check definition with name {} and team {}", name, owningTeam);
+        LOG.info("Deleting check definition with name {} and team {}", name, owningTeam);
 
         final CheckDefinition checkDefinition = checkDefinitionSProc.deleteCheckDefinition(userName, name, owningTeam);
 
@@ -236,7 +239,7 @@ public class ZMonServiceImpl implements ZMonService {
 
     @Override
     public void deleteDetachedCheckDefinitions() {
-        log.info("Deleting detached check definitions");
+        LOG.info("Deleting detached check definitions");
 
         List<Integer> checkIds = Collections.emptyList();
         final List<CheckDefinition> deletedChecks = checkDefinitionSProc.deleteDetachedCheckDefinitions();
@@ -247,7 +250,7 @@ public class ZMonServiceImpl implements ZMonService {
             }
         }
 
-        log.info("Detached check definitions: {}", checkIds);
+        LOG.info("Detached check definitions: {}", checkIds);
     }
 
     @Override
@@ -376,7 +379,7 @@ public class ZMonServiceImpl implements ZMonService {
                     return null;
                 return new String(Snappy.uncompress(bs), "UTF-8");
             } catch (IOException ex) {
-                log.error("Failed retrieving auto complete properties");
+                LOG.error("Failed retrieving auto complete properties");
             }
         } finally {
             jedis.close();
@@ -508,7 +511,7 @@ public class ZMonServiceImpl implements ZMonService {
                     cr.values.put(rh.getKey(), vs);
                 }
             } catch (IOException e) {
-                log.error("Could not read data from redis for {}", rh.getKey());
+                LOG.error("Could not read data from redis for {}", rh.getKey());
             }
         }
 
@@ -518,5 +521,24 @@ public class ZMonServiceImpl implements ZMonService {
     @Override
     public List<Integer> deleteUnusedCheckDef(int id, Collection<String> teams) {
         return checkDefinitionSProc.deleteUnusedCheckDefinition(id, Lists.newArrayList(teams));
+    }
+
+    @Autowired
+    SchedulerProperties schedulerProperties;
+
+    @Override
+    public JsonNode getAlertOverlap(final JsonNode filter) {
+        final Executor executor = Executor.newInstance();
+        final String schedulerUrl = schedulerProperties.getUrl() + "/api/v1/alert-overlap";
+
+        try {
+            final String r = executor.execute(Request.Post(schedulerUrl).bodyString(mapper.writeValueAsString(filter), ContentType.APPLICATION_JSON)).returnContent().asString();
+            final JsonNode node = mapper.readTree(r);
+            return node;
+        }
+        catch(IOException ex) {
+            LOG.error("Getting overlap failed", ex);
+            return null;
+        }
     }
 }
