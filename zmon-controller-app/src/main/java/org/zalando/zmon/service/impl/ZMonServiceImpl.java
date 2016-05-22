@@ -71,7 +71,7 @@ import redis.clients.jedis.Response;
 @Transactional
 public class ZMonServiceImpl implements ZMonService {
 
-    private final Logger LOG = LoggerFactory.getLogger(ZMonServiceImpl.class);
+    private final Logger log = LoggerFactory.getLogger(ZMonServiceImpl.class);
 
     private static final long MAX_ACTIVE_WORKER_TIMESTAMP_MILLIS_AGO = 24 * 1000;
 
@@ -126,7 +126,7 @@ public class ZMonServiceImpl implements ZMonService {
     }
 
     private ExecutionStatus buildStatus(int alertsActive, final Map<String, Response<Long>> queueSize,
-            final Map<String, Response<String>> lastUpdates, final Map<String, Response<String>> invocations) {
+                                        final Map<String, Response<String>> lastUpdates, final Map<String, Response<String>> invocations) {
 
         final ExecutionStatus.Builder builder = ExecutionStatus.builder();
 
@@ -170,7 +170,7 @@ public class ZMonServiceImpl implements ZMonService {
 
     @Override
     public List<CheckDefinition> getCheckDefinitions(final DefinitionStatus status,
-            final List<Integer> checkDefinitionIds) {
+                                                     final List<Integer> checkDefinitionIds) {
         return checkDefinitionSProc.getCheckDefinitions(status, checkDefinitionIds);
     }
 
@@ -206,7 +206,7 @@ public class ZMonServiceImpl implements ZMonService {
     @Override
     public CheckDefinition createOrUpdateCheckDefinition(final CheckDefinitionImport checkDefinition) {
         Preconditions.checkNotNull(checkDefinition);
-        LOG.info("Saving check definition '{}' from team '{}'", checkDefinition.getName(),
+        log.info("Saving check definition '{}' from team '{}'", checkDefinition.getName(),
                 checkDefinition.getOwningTeam());
 
         final CheckDefinitionImportResult operationResult = checkDefinitionSProc
@@ -227,7 +227,7 @@ public class ZMonServiceImpl implements ZMonService {
         Preconditions.checkNotNull(name);
         Preconditions.checkNotNull(owningTeam);
 
-        LOG.info("Deleting check definition with name {} and team {}", name, owningTeam);
+        log.info("Deleting check definition with name {} and team {}", name, owningTeam);
 
         final CheckDefinition checkDefinition = checkDefinitionSProc.deleteCheckDefinition(userName, name, owningTeam);
 
@@ -239,7 +239,7 @@ public class ZMonServiceImpl implements ZMonService {
 
     @Override
     public void deleteDetachedCheckDefinitions() {
-        LOG.info("Deleting detached check definitions");
+        log.info("Deleting detached check definitions");
 
         List<Integer> checkIds = Collections.emptyList();
         final List<CheckDefinition> deletedChecks = checkDefinitionSProc.deleteDetachedCheckDefinitions();
@@ -250,7 +250,7 @@ public class ZMonServiceImpl implements ZMonService {
             }
         }
 
-        LOG.info("Detached check definitions: {}", checkIds);
+        log.info("Detached check definitions: {}", checkIds);
     }
 
     @Override
@@ -379,7 +379,7 @@ public class ZMonServiceImpl implements ZMonService {
                     return null;
                 return new String(Snappy.uncompress(bs), "UTF-8");
             } catch (IOException ex) {
-                LOG.error("Failed retrieving auto complete properties");
+                log.error("Failed retrieving auto complete properties");
             }
         } finally {
             jedis.close();
@@ -511,7 +511,7 @@ public class ZMonServiceImpl implements ZMonService {
                     cr.values.put(rh.getKey(), vs);
                 }
             } catch (IOException e) {
-                LOG.error("Could not read data from redis for {}", rh.getKey());
+                log.error("Could not read data from redis for {}", rh.getKey());
             }
         }
 
@@ -527,17 +527,16 @@ public class ZMonServiceImpl implements ZMonService {
     SchedulerProperties schedulerProperties;
 
     @Override
-    public JsonNode getAlertOverlap(final JsonNode filter) {
-        final Executor executor = Executor.newInstance();
-        final String schedulerUrl = schedulerProperties.getUrl() + "/api/v1/alert-overlap";
+    public JsonNode getAlertCoverage(final JsonNode filter) {
+        final Executor executor = Executor.newInstance(schedulerProperties.getHttpClient());
+        final String schedulerUrl = schedulerProperties.getUrl() + "/api/v1/alert-coverage";
 
         try {
             final String r = executor.execute(Request.Post(schedulerUrl).bodyString(mapper.writeValueAsString(filter), ContentType.APPLICATION_JSON)).returnContent().asString();
             final JsonNode node = mapper.readTree(r);
             return node;
-        }
-        catch(IOException ex) {
-            LOG.error("Getting overlap failed", ex);
+        } catch (IOException ex) {
+            log.error("Getting overlap failed", ex);
             return null;
         }
     }

@@ -52,5 +52,5 @@ public interface ZMonService {
 
     CheckChartResult getFilteredLastResults(String checkId, String filter, int limit);
 
-    JsonNode getAlertOverlap(JsonNode filter);
+    JsonNode getAlertCoverage(JsonNode filter);
 }
