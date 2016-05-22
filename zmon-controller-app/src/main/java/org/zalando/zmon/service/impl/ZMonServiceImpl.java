@@ -529,7 +529,7 @@ public class ZMonServiceImpl implements ZMonService {
     @Override
     public JsonNode getAlertCoverage(final JsonNode filter) {
         // TODO: use proper connection pool and timeout settings
-        final Executor executor = Executor.newInstance();
+        final Executor executor = Executor.newInstance(schedulerProperties.getHttpClient());
         final String schedulerUrl = schedulerProperties.getUrl() + "/api/v1/alert-coverage";
 
         try {
