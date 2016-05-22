@@ -108,9 +108,9 @@ public class AlertStatusAPI {
     }
 
     @ResponseBody
-    @RequestMapping(value="/alert-overlap", method = RequestMethod.POST)
-    public ResponseEntity<JsonNode> getAlertOverlap(@RequestBody JsonNode filter) {
-        JsonNode node = service.getAlertOverlap(filter);
+    @RequestMapping(value="/alert-coverage", method = RequestMethod.POST)
+    public ResponseEntity<JsonNode> getAlertCoverage(@RequestBody JsonNode filter) {
+        JsonNode node = service.getAlertCoverage(filter);
         if(null==node) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }

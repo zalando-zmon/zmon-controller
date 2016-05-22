@@ -527,9 +527,10 @@ public class ZMonServiceImpl implements ZMonService {
     SchedulerProperties schedulerProperties;
 
     @Override
-    public JsonNode getAlertOverlap(final JsonNode filter) {
+    public JsonNode getAlertCoverage(final JsonNode filter) {
+        // TODO: use proper connection pool and timeout settings
         final Executor executor = Executor.newInstance();
-        final String schedulerUrl = schedulerProperties.getUrl() + "/api/v1/alert-overlap";
+        final String schedulerUrl = schedulerProperties.getUrl() + "/api/v1/alert-coverage";
 
         try {
             final String r = executor.execute(Request.Post(schedulerUrl).bodyString(mapper.writeValueAsString(filter), ContentType.APPLICATION_JSON)).returnContent().asString();
