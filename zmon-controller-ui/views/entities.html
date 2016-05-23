@@ -1,4 +1,4 @@
-<h1>Entitites</h1>
+<h1>Entities</h1>
 
 <div class="zmon-controls row">
     <div class="row">
@@ -45,7 +45,8 @@
                     <td>{{entity.type}}</td>
                     <td>
                         <div ng-repeat="alert in entity.alerts">
-                            <span><a href="#/alert-details/{{alert.id}}">{{alert.name || '(no name)'}}</a></span>
+                            <span ng-show="alert.entities[entity.id]">ALERT</span>
+                            <span ng-class="'alert-status-' + (alert.entities[entity.id] ? 'active' : 'inactive')"><a href="#/alert-details/{{alert.id}}">{{alert.name || '(no name)'}}</a></span>
                         </div>
                         <span ng-show="entity.alerts.length < 1">(no alerts)</span>
                     </td>

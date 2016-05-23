@@ -30,6 +30,7 @@ angular.module('zmon2App').controller('EntityCtrl', ['$scope', '$window', '$rout
                }
 
             var entities = [];
+            var alertsById = {};
 
             CommunicationService.getAlertCoverage(entityFilter).then(function(data) {
             var entitiesById = {};
@@ -39,12 +40,30 @@ angular.module('zmon2App').controller('EntityCtrl', ['$scope', '$window', '$rout
                         entitiesById[entity.id] = {'id': entity.id, 'alerts': []};
                     }
                     entitiesById[entity.id].alerts = entitiesById[entity.id].alerts.concat(group.alerts);
+                    _.each(group.alerts, function(alert) {
+                    if (typeof alertsById[alert.id] === 'undefined') {
+                    alert.entities = {};
+                    alertsById[alert.id] = alert;
+
+                    }
+                    });
                 });
 
             });
             _.each(entitiesById, function(v, k) {
                 entities.push(v)
             });
+
+            CommunicationService.getAlertsById(_.keys(alertsById)).then(function(data) {
+            _.each(data, function(alert) {
+                _.each(alert.entities, function(entity) {
+
+                alertsById[alert.alert_definition.id].entities[entity.entity] = entity;
+                });
+
+            });
+            });
+
             $scope.entities = entities;
                     // Stop loading indicator!
                     LoadingIndicatorService.stop();
