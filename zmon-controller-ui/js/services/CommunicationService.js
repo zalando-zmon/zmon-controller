@@ -579,6 +579,14 @@ angular.module('zmon2App').factory('CommunicationService', ['$http', '$q', '$log
             return doHttpCall("GET", 'rest/entityProperties');
         };
 
+        service.getAlertCoverage = function(entityFilter) {
+            var postData = entityFilter;
+            var headers = {
+                'Content-Type': 'application/json'
+            };
+            return doHttpCall("POST", "rest/alertCoverage", postData, headers);
+        };
+
         return service;
     }
 ]);

@@ -107,6 +107,11 @@ angular.module('zmon2App', [
                     controller: 'CloudCtrl',
                     reloadOnSearch: false
                 })
+                .when('/entities', {
+                    templateUrl: 'views/entities.html',
+                    controller: 'EntityCtrl',
+                    reloadOnSearch: false
+                })
                 .otherwise({
                     redirectTo: '/'
                 });

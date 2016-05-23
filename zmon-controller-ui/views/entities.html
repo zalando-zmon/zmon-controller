@@ -1,0 +1,56 @@
+<h1>Entitites</h1>
+
+<div class="zmon-controls row">
+    <div class="row">
+        <div class="col-md-12 text-left">
+            <form id="searchbar" class="form-inline">
+                <div class="form-group">
+                    <div class="input-group">
+                        <span class="input-group-btn">
+                            <button class="btn btn-primary"><i class="fa fa-fw fa-search"></i></button>
+                        </span>
+                        <input class="form-control" placeholder="Filter entities" type="text" ng-model="entityFilter" ng-model-options="{debounce:500}" constant-focus />
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="table-responsive col-md-12">
+        <table class="zmon-data-table table table-striped table-bordered table-hover table-condensed">
+            <thead>
+                <tr>
+                    <th class="actions-col">Actions</th>
+                    <th class="id-col" ng-click="sortType = 'id'; sortOrder = !sortOrder">ID
+                        <i class="fa fa-fw fa-sort-asc sort-arrow" ng-show="sortType === 'id' && sortOrder"></i>
+                        <i class="fa fa-fw fa-sort-desc sort-arrow" ng-show="sortType === 'id' && !sortOrder"></i>
+                    </th>
+                    <th class="type-col" ng-click="sortType = 'type'; sortOrder = !sortOrder">Type
+                        <i class="fa fa-fw fa-sort-asc sort-arrow" ng-show="sortType === 'type' && sortOrder"></i>
+                        <i class="fa fa-fw fa-sort-desc sort-arrow" ng-show="sortType === 'type' && !sortOrder"></i>
+                    </th>
+                    <th class="alerts-col" ng-click="sortType = 'alerts'; sortOrder = !sortOrder">Alerts
+                        <i class="fa fa-fw fa-sort-asc sort-arrow" ng-show="sortType === 'alerts' && sortOrder"></i>
+                        <i class="fa fa-fw fa-sort-desc sort-arrow" ng-show="sortType === 'alerts' && !sortOrder"></i>
+                    </th>
+                </tr>
+            </thead>
+            <tbody infinite-scroll="incLimit()">
+                <tr ng-repeat="entity in entities | orderBy:sortType:sortOrder | limitTo: limit" last="$last">
+                    <td>
+                    </td>
+                    <td><a href="#/entities/{{entity.id}}">{{entity.id}}</a></td>
+                    <td>{{entity.type}}</td>
+                    <td>{{entity.alerts}}</td>
+                </tr>
+                <tr ng-show="!initialLoading && entities.length < 1">
+                    <td colspan="9">
+                        No entities found for the specified filter.
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
