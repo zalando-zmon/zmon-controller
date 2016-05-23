@@ -38,14 +38,12 @@ angular.module('zmon2App').controller('EntityCtrl', ['$scope', '$window', '$rout
                     if (typeof entitiesById[entity.id] === 'undefined') {
                         entitiesById[entity.id] = {'id': entity.id, 'alerts': []};
                     }
-                    entitiesById[entity.id].alerts.concat(group.alerts);
+                    entitiesById[entity.id].alerts = entitiesById[entity.id].alerts.concat(group.alerts);
                 });
-                console.log(group);
 
             });
             _.each(entitiesById, function(v, k) {
                 entities.push(v)
-                console.log(k, v);
             });
             $scope.entities = entities;
                     // Stop loading indicator!

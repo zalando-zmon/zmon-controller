@@ -41,9 +41,14 @@
                 <tr ng-repeat="entity in entities | orderBy:sortType:sortOrder | limitTo: limit" last="$last">
                     <td>
                     </td>
-                    <td><a href="#/entities/{{entity.id}}">{{entity.id}}</a></td>
+                    <td><a href="#/entities?ef=id:{{entity.id}}">{{entity.id}}</a></td>
                     <td>{{entity.type}}</td>
-                    <td>{{entity.alerts}}</td>
+                    <td>
+                        <div ng-repeat="alert in entity.alerts">
+                            <span><a href="#/alert-details/{{alert.id}}">{{alert.name || '(no name)'}}</a></span>
+                        </div>
+                        <span ng-show="entity.alerts.length < 1">(no alerts)</span>
+                    </td>
                 </tr>
                 <tr ng-show="!initialLoading && entities.length < 1">
                     <td colspan="9">
