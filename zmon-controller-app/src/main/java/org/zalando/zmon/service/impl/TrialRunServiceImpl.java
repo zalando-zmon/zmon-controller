@@ -54,7 +54,7 @@ public class TrialRunServiceImpl implements TrialRunService {
         final String id = UUID.randomUUID().toString();
         request.setId(id);
 
-        final Executor executor = Executor.newInstance();
+        final Executor executor = Executor.newInstance(schedulerProperties.getHttpClient());
 
         final String url = schedulerProperties.getUrl().toString() + SCHEDULER_TRIAL_RUN_PATH;
 

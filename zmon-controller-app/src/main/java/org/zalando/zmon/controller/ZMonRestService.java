@@ -301,4 +301,14 @@ public class ZMonRestService extends AbstractZMonController {
         return new ResponseEntity<>(cr, HttpStatus.OK);
     }
 
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    @RequestMapping(value = "alertCoverage", method = RequestMethod.POST)
+    public ResponseEntity<JsonNode> getAlertCoverage(@RequestBody JsonNode filter) {
+        JsonNode node = service.getAlertCoverage(filter);
+        if (null == node) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<>(node, HttpStatus.OK);
+    }
 }

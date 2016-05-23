@@ -395,7 +395,7 @@ public class AlertServiceImpl implements AlertService {
 
         // TODO, use ForceAlertEvaluation
 
-        final Executor executor = Executor.newInstance();
+        final Executor executor = Executor.newInstance(schedulerProperties.getHttpClient());
 
         final String url = schedulerProperties.getUrl().toString() + "/api/v1/alerts/" + alertDefinitionId + "/instant-eval";
 

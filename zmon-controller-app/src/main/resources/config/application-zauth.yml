@@ -6,6 +6,7 @@ zmon:
       credentials-directory-path: ${CREDENTIALS_DIR}
 
 tokens:
+  enableMock: false
   access-token-uri: ${OAUTH2_ACCESS_TOKEN_URL}
   credentials-directory: ${CREDENTIALS_DIR}
   token-configuration-list:

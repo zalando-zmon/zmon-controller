@@ -52,9 +52,6 @@
             </resource>
             <resource>
                 <directory>grafana</directory>
-                <includes>
-                    <include>config.js</include>
-                </includes>
                 <targetPath>${output-directory}/grafana</targetPath>
             </resource>
             <resource>
