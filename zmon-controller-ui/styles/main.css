@@ -454,6 +454,11 @@ a[rel=help]
     font-size: 150%;
 }
 
+/* orange link would be hard to read on red background */
+.danger a, .danger i {
+    color: #262626;
+}
+
 .downtime-reason
 {
     width: 95%;
@@ -944,4 +949,30 @@ a.non-href-anchor
 }
 :-ms-input-placeholder { /* Internet Explorer 10+ */
    color:    #ccc !important;
+}
+
+/* Entities page */
+.entities-alert-coverage .id-col {
+    width: 220px;
+}
+.entities-alert-coverage .type-col {
+    width: 150px;
+}
+
+.entity-alerts a {
+    display: block;
+    float: left;
+    color: #fff;
+    padding: 2px 4px;
+    width: 50px;
+    overflow: hidden;
+    white-space: nowrap;
+    border-width: 1px;
+    border-style: solid;
+    margin-right: 8px;
+    text-align: center;
+}
+.entity-alerts a.alert-status-inactive {
+    background-color: #78B924 !important;
+    border: 1px solid #6aa320 !important;
 }
