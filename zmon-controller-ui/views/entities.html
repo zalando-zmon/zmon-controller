@@ -44,8 +44,8 @@
                     <td><a href="#/entities?ef=id:{{entity.id}}">{{entity.id}}</a></td>
                     <td>{{entity.type}}</td>
                     <td>
-                        <div class="entity-alerts" ng-repeat="alert in entity.alerts">
-                            <a href="#/alert-details/{{alert.id}}" title="{{alert.name}}"
+                        <div class="entity-alerts" ng-repeat="alert in entity.alerts | orderBy:'id'">
+                            <a href="#/alert-details/{{alert.id}}" title="{{ alert.name + ' ' + formatCaptures(alert.entities[entity.id].result.captures)}}"
                                ng-class="['alert-prio-' + alert.definition.priority, 'alert-status-' + (alert.entities[entity.id] ? 'active' : 'inactive')]"
                                 >{{ alert.entities[entity.id] ? timeAgo(alert.entities[entity.id].result.start_time) : 'OK'}}</a>
                         </div>

@@ -454,6 +454,11 @@ a[rel=help]
     font-size: 150%;
 }
 
+/* orange link would be hard to read on red background */
+.danger a, .danger i {
+    color: #262626;
+}
+
 .downtime-reason
 {
     width: 95%;

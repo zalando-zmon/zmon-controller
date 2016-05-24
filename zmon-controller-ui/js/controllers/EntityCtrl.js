@@ -12,6 +12,13 @@ angular.module('zmon2App').controller('EntityCtrl', ['$scope', '$window', '$rout
             var timeIntervalSinceLastUpdate = MainAlertService.millisecondsApart(epochPastTs, MainAlertService.getLastUpdate());
             return timespanFilter(timeIntervalSinceLastUpdate);
         };
+        $scope.formatCaptures = function(captures) {
+            var s = '';
+            _.each(captures, function(v, k) {
+                s += k + ': ' + v;
+            });
+            return s;
+        };
 
 
         var userInfo = UserInfoService.get();
@@ -60,6 +67,7 @@ angular.module('zmon2App').controller('EntityCtrl', ['$scope', '$window', '$rout
 
                 // load alert state for all alert IDs (also returns alert definition)
                 CommunicationService.getAlertsById(_.keys(alertsById)).then(function(data) {
+                    console.log(data);
                     _.each(data, function(alert) {
                         alertsById[alert.alert_definition.id].definition = alert.alert_definition;
                         _.each(alert.entities, function(entity) {
