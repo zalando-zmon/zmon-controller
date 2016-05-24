@@ -38,7 +38,7 @@
             <ul class="list-unstyled">
                 <li ng-repeat="id in availableEntities">
                 <input type="checkbox" ng-model="entities[id].selected" ng-click="toggleEntity(entities[id])"/>
-                {{ id | awsName }}
+                {{ id | entityName }}
                 </li>
             </ul>
         </div>
