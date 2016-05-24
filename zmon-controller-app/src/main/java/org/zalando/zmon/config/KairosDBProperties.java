@@ -59,16 +59,6 @@ public class KairosDBProperties {
     private int maxConnectionsPerRoute = 100;
     private int maxConnectionsTotal = 200;
 
-    public String frontendUrl = "";
-
-    public String getFrontendUrl() {
-        return frontendUrl;
-    }
-
-    public void setFrontendUrl(String frontendUrl) {
-        this.frontendUrl = frontendUrl;
-    }
-
     private List<KairosDBServiceConfig> kairosdbs;
 
     public List<KairosDBServiceConfig> getKairosdbs() {

@@ -31,6 +31,14 @@ public class GrafanaUIController {
             name = n;
             url = u;
         }
+
+        public String getName() {
+            return name;
+        }
+
+        public String getUrl() {
+            return url;
+        }
     }
 
     private final List<KairosDBEntry> kairosdbServices = new ArrayList<>();
@@ -41,7 +49,7 @@ public class GrafanaUIController {
         this.controllerProperties = controllerProperties;
 
         for(KairosDBProperties.KairosDBServiceConfig c : kairosdbProperties.getKairosdbs()) {
-            kairosdbServices.add(new KairosDBEntry(c.getName(), "/rest/kairosdbs/" + c.getName() + "/api/v1/"));
+            kairosdbServices.add(new KairosDBEntry(c.getName(), "/rest/kairosdbs/" + c.getName()));
         }
     }
 

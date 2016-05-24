@@ -128,7 +128,7 @@
                     }, "type": "mixed"
                 }
             },
-            "defaultDatasource": "KairosDB",
+            "defaultDatasource": "kairosdb",
             "panels": {
                 "dashlist": {
                     "baseUrl": "public/app/plugins/panel/dashlist",
@@ -283,7 +283,7 @@
             }
         };
 
-        var kairosDbSources = /* [[${KairosDBServices}]] */ [{"name":"KairosDB", "url": "/rest/kairosdbs/kairosdb/"}];
+        var kairosDbSources = /*[[${KairosDBServices}]]*/ [{"name":"KairosDB", "url": "/rest/kairosdbs/kairosdb/"}];
 
         var populateKairosdbSource = function(kairosdb) {
             var kairosdbSettings = {
@@ -331,7 +331,7 @@
             settings.datasources[kairosdb.name] = kairosdbSettings;
         };
 
-        _each(kairosDbSources, populateKairosdbSource);
+        kairosDbSources.forEach(populateKairosdbSource);
 
         var mainNavLinks =  [{"text":"Dashboards","icon":"icon-gf icon-gf-dashboard","url":"/grafana/","children":[{"text":"Home","url":"/grafana/"},{"text":"Playlists","url":"/grafana/playlists"},{"text":"Snapshots","url":"/grafana/dashboard/snapshots"},{"divider":true},{"text":"New","icon":"fa fa-plus","url":"/grafana/dashboard/new"},{"text":"Import","icon":"fa fa-download","url":"/grafana/import/dashboard"}]},{"text":"Data Sources","icon":"icon-gf icon-gf-datasources","url":"/grafana/datasources"},{"text":"Plugins","icon":"icon-gf icon-gf-apps","url":"/grafana/plugins"},{"text":"Admin","icon":"fa fa-fw fa-cogs","url":"/grafana/admin","children":[{"text":"Global Users","url":"/grafana/admin/users"},{"text":"Global Orgs","url":"/grafana/admin/orgs"},{"text":"Server Settings","url":"/grafana/admin/settings"},{"text":"Server Stats","url":"/grafana/admin/stats"}]}];
 
