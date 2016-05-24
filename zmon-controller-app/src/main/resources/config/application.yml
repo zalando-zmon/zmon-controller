@@ -51,7 +51,7 @@ zmon:
         enabled: true
         kairosdbs:
         - name: kairosdb
-          url: http://localhost:38083/
+          url: ${ZMON_KAIROSDB_URL:http://localhost:38083/}
           oauth2: false
     grafana-min-interval: 60
 
