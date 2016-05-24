@@ -1,5 +1,5 @@
-angular.module('zmon2App').controller('EntityCtrl', ['$scope', '$window', '$routeParams', '$location', 'timespanFilter', 'MainAlertService', 'CommunicationService', 'localStorageService', 'UserInfoService', 'LoadingIndicatorService', 'APP_CONST',
-    function($scope, $window, $routeParams, $location, timespanFilter, MainAlertService, CommunicationService, localStorageService, UserInfoService, LoadingIndicatorService, APP_CONST) {
+angular.module('zmon2App').controller('EntityCtrl', ['$scope', '$window', '$routeParams', '$location', 'timespanFilter', 'MainAlertService', 'CommunicationService', 'localStorageService', 'LoadingIndicatorService', 'APP_CONST',
+    function($scope, $window, $routeParams, $location, timespanFilter, MainAlertService, CommunicationService, localStorageService, LoadingIndicatorService, APP_CONST) {
         $scope.EntityCtrl = this;
         $scope.initialLoading = true;
 
@@ -21,8 +21,6 @@ angular.module('zmon2App').controller('EntityCtrl', ['$scope', '$window', '$rout
         };
 
 
-        var userInfo = UserInfoService.get();
-
         this.fetchAlertCoverage = function() {
             // Start loading animation
             LoadingIndicatorService.start();
@@ -32,7 +30,7 @@ angular.module('zmon2App').controller('EntityCtrl', ['$scope', '$window', '$rout
             var parts = ($scope.entityFilter || '').split(/\s+/);
             var filt = {}
             _.each(parts, function(part) {
-                var keyVal = part.split(":");
+                var keyVal = part.split(":", 2);
                 if (keyVal.length == 2) {
                     filt[keyVal[0]] = keyVal[1];
                 }
