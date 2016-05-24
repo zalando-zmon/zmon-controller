@@ -32,9 +32,7 @@ angular.module('zmon2App').controller('EntityCtrl', ['$scope', '$window', '$rout
                         });
                     });
                 });
-                suggestions = _.keys(suggestions);
-                suggestions.sort();
-                $scope.filterSuggestions = suggestions;
+                $scope.filterSuggestions = _.keys(suggestions).sort();
             });
         };
 
