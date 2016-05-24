@@ -24,17 +24,17 @@ angular.module('zmon2App').controller('EntityCtrl', ['$scope', '$window', '$rout
 
         this.fetchEntityProperties = function() {
             CommunicationService.getEntityProperties().then(function(data) {
-                var sugg = {};
+                var suggestions = {};
                 _.each(data, function(props, entityType) {
                     _.each(props, function(values, name) {
                         _.each(values, function(val) {
-                            sugg[name + ':' + val] = null;
+                            suggestions[name + ':' + val] = null;
                         });
                     });
                 });
-                sugg = _.keys(sugg);
-                sugg.sort();
-                $scope.filterSuggestions = sugg;
+                suggestions = _.keys(suggestions);
+                suggestions.sort();
+                $scope.filterSuggestions = suggestions;
             });
         };
 
