@@ -32,7 +32,7 @@ angular.module('zmon2App').factory('HttpResponseInterceptorService', ['$q', '$lo
                         };
                     } else if (rejection.status === 500) {
                         message = 'Something went really bad requesting [' + rejection.config.method + ' ' + rejection.config.url + '] Please contact the platform team.';
-                    } else if (rejection.data.message) {
+                    } else if (rejection.data && rejection.data.message) {
                         message = rejection.data.message;
                     }
                     showErrorMessageDebounced(message, callback);
