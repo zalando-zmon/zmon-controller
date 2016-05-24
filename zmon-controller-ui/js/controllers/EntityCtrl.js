@@ -1,5 +1,5 @@
-angular.module('zmon2App').controller('EntityCtrl', ['$scope', '$window', '$routeParams', '$location', 'timespanFilter', 'MainAlertService', 'CommunicationService', 'localStorageService', 'UserInfoService', 'LoadingIndicatorService', 'APP_CONST',
-    function($scope, $window, $routeParams, $location, timespanFilter, MainAlertService, CommunicationService, localStorageService, UserInfoService, LoadingIndicatorService, APP_CONST) {
+angular.module('zmon2App').controller('EntityCtrl', ['$scope', '$window', '$routeParams', '$location', 'timespanFilter', 'MainAlertService', 'CommunicationService', 'localStorageService', 'LoadingIndicatorService', 'APP_CONST',
+    function($scope, $window, $routeParams, $location, timespanFilter, MainAlertService, CommunicationService, localStorageService, LoadingIndicatorService, APP_CONST) {
         $scope.EntityCtrl = this;
         $scope.initialLoading = true;
 
@@ -21,8 +21,6 @@ angular.module('zmon2App').controller('EntityCtrl', ['$scope', '$window', '$rout
         };
 
 
-        var userInfo = UserInfoService.get();
-
         this.fetchAlertCoverage = function() {
             // Start loading animation
             LoadingIndicatorService.start();
@@ -33,8 +31,8 @@ angular.module('zmon2App').controller('EntityCtrl', ['$scope', '$window', '$rout
             var filt = {}
             _.each(parts, function(part) {
                 var keyVal = part.split(":");
-                if (keyVal.length == 2) {
-                    filt[keyVal[0]] = keyVal[1];
+                if (keyVal.length >= 2) {
+                    filt[keyVal[0]] = keyVal.splice(1).join(':');
                 }
             });
             if (!_.isEmpty(filt)) {
@@ -67,7 +65,6 @@ angular.module('zmon2App').controller('EntityCtrl', ['$scope', '$window', '$rout
 
                 // load alert state for all alert IDs (also returns alert definition)
                 CommunicationService.getAlertsById(_.keys(alertsById)).then(function(data) {
-                    console.log(data);
                     _.each(data, function(alert) {
                         alertsById[alert.alert_definition.id].definition = alert.alert_definition;
                         _.each(alert.entities, function(entity) {
@@ -98,6 +95,11 @@ angular.module('zmon2App').controller('EntityCtrl', ['$scope', '$window', '$rout
             $location.search('ef', _.isEmpty(newVal) ? null : newVal);
             localStorageService.set('returnTo', '/#' + $location.url());
             $scope.EntityCtrl.fetchAlertCoverage();
+        });
+
+        // we have reloadOnSearch=false, so watch for route changes
+        $scope.$on('$routeUpdate', function(event) {
+            $scope.entityFilter = $location.search().ef;
         });
     }
 ]);
