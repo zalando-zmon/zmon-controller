@@ -7,8 +7,9 @@ fi
 echo 'Make sure the provided Vagrant-Box is up and all services are running.'
 
 export SPRING_PROFILES_ACTIVE=github     # use GitHub auth
-export ZMON_OAUTH2_SSO_CLIENT_ID=344c9a90fc697fe6662a
-export ZMON_OAUTH2_SSO_CLIENT_SECRET=a2bbb03a29f6737af04c77f2d88e8f8199ff179b
+export SERVER_PORT=8444
+export ZMON_OAUTH2_SSO_CLIENT_ID=3a115b9b22f5e5d59c60
+export ZMON_OAUTH2_SSO_CLIENT_SECRET=4935052ba99afedbb7d6bc186715742db904e393
 export ZMON_AUTHORITIES_SIMPLE_ADMINS=*  # everybody is admin!
 export REDIS_PORT=38086                  # use Redis in Vagrant box
 export POSTGRES_URL=jdbc:postgresql://localhost:38088/local_zmon_db

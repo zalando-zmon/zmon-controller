@@ -952,11 +952,11 @@ a.non-href-anchor
 }
 
 /* Entities page */
-.entities-alert-coverage .id-col {
-    width: 220px;
+body.entities-page .id-col {
+    width: 10%;
 }
-.entities-alert-coverage .type-col {
-    width: 150px;
+body.entities-page .type-col {
+    width: 10%;
 }
 
 .entity-alerts a {

@@ -22,7 +22,6 @@
         <table class="zmon-data-table table table-striped table-bordered table-hover table-condensed">
             <thead>
                 <tr>
-                    <th class="actions-col">Actions</th>
                     <th class="id-col" ng-click="sortType = 'id'; sortOrder = !sortOrder">ID
                         <i class="fa fa-fw fa-sort-asc sort-arrow" ng-show="sortType === 'id' && sortOrder"></i>
                         <i class="fa fa-fw fa-sort-desc sort-arrow" ng-show="sortType === 'id' && !sortOrder"></i>
@@ -39,8 +38,6 @@
             </thead>
             <tbody infinite-scroll="incLimit()">
                 <tr ng-repeat="entity in entities | orderBy:sortType:sortOrder | limitTo: limit" last="$last">
-                    <td>
-                    </td>
                     <td><a href="#/entities?ef=id:{{entity.id}}">{{entity.id}}</a></td>
                     <td><a href="#/entities?ef=type:{{entity.type}}">{{entity.type}}</a></td>
                     <td>
@@ -53,7 +50,7 @@
                     </td>
                 </tr>
                 <tr ng-show="entities.length < 1">
-                    <td colspan="4" style="text-align:center">
+                    <td colspan="3" style="text-align:center">
                         No entities found for the specified filter. Please filter by entity attributes (e.g. "type:foo").
                     </td>
                 </tr>

@@ -74,10 +74,10 @@
                     <ul class="nav navbar-nav">
                         <li ng-class="{'active-page': activePage == 'dashboards'}"><a href="#dashboards">Dashboards</a></li>
                         <!--/** <sec:authorize="isAuthenticated()"> **/-->
-                            <li sec:authorize="isAuthenticated()" ng-class="{'active-page': activePage == 'cloud'}"><a href="#cloud" >Cloud</a></li>
-                            <li sec:authorize="isAuthenticated()" ng-class="{'active-page': activePage == 'check-definitions'}"><a href="#check-definitions" >Check defs</a></li>
-                            <li sec:authorize="isAuthenticated()" ng-class="{'active-page': activePage == 'alert-definitions'}"><a href="#alert-definitions" >Alert defs</a></li>
-                            <li sec:authorize="isAuthenticated()" ng-class="{'active-page': activePage == 'reports'}" ng-show="IndexCtrl.userInfo['history-report-access']"><a href="#reports" >Reports</a></li>
+                            <li sec:authorize="isAuthenticated()" ng-class="{'active-page': activePage == 'cloud'}"><a href="#/cloud" >Cloud</a></li>
+                            <li sec:authorize="isAuthenticated()" ng-class="{'active-page': activePage == 'entities-page'}"><a href="#/entities" >Entities</a></li>
+                            <li sec:authorize="isAuthenticated()" ng-class="{'active-page': activePage == 'check-definitions'}"><a href="#/check-definitions" >Check defs</a></li>
+                            <li sec:authorize="isAuthenticated()" ng-class="{'active-page': activePage == 'alert-definitions'}"><a href="#/alert-definitions" >Alert defs</a></li>
                         <!--/** </sec:authorize> **/-->
                         <li th:if="${hasTrialRunPermission}" ng-class="{'active-page': activePage == 'trial-run'}"><a href="#trial-run" >Trial Run</a></li>
                     </ul>

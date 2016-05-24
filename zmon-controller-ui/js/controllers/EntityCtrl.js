@@ -3,7 +3,7 @@ angular.module('zmon2App').controller('EntityCtrl', ['$scope', '$window', '$rout
         $scope.EntityCtrl = this;
         $scope.initialLoading = true;
 
-        $scope.$parent.activePage = 'entities-alert-coverage'; // NOTE "entities" would destroy CSS
+        $scope.$parent.activePage = 'entities-page'; // NOTE "entities" would destroy CSS
         $scope.entities = []
         $scope.sortType = 'id';
         $scope.sortOrder = false;
