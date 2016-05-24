@@ -17,7 +17,7 @@ angular.module('zmon2App').controller('EntityCtrl', ['$scope', '$window', '$rout
         $scope.formatResult = function(result) {
             if (!_.isEmpty(result.captures)) {
                 var s = '';
-                _.each(captures, function(v, k) {
+                _.each(result.captures, function(v, k) {
                     s += k + ': ' + JSON.stringify(v).slice(0, 100);
                 });
                 return s;
