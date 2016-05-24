@@ -14,12 +14,16 @@ angular.module('zmon2App').controller('EntityCtrl', ['$scope', '$window', '$rout
             var timeIntervalSinceLastUpdate = MainAlertService.millisecondsApart(epochPastTs, MainAlertService.getLastUpdate());
             return timespanFilter(timeIntervalSinceLastUpdate);
         };
-        $scope.formatCaptures = function(captures) {
-            var s = '';
-            _.each(captures, function(v, k) {
-                s += k + ': ' + v;
-            });
-            return s;
+        $scope.formatResult = function(result) {
+            if (!_.isEmpty(result.captures)) {
+                var s = '';
+                _.each(captures, function(v, k) {
+                    s += k + ': ' + JSON.stringify(v).slice(0, 100);
+                });
+                return s;
+            } else {
+                return 'value: ' + JSON.stringify(result.value).slice(0, 100);
+            }
         };
 
         this.fetchEntityProperties = function() {

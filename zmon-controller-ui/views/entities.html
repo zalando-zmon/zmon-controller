@@ -38,11 +38,11 @@
             </thead>
             <tbody infinite-scroll="incLimit()">
                 <tr ng-repeat="entity in entities | orderBy:sortType:sortOrder | limitTo: limit" last="$last">
-                    <td><a href="#/entities?ef=id:{{entity.id}}">{{entity.id}}</a></td>
+                    <td><a href="#/entities?ef=id:{{entity.id}}" title="{{entity.id}}">{{entity.id | entityName}}</a></td>
                     <td><a href="#/entities?ef=type:{{entity.type}}">{{entity.type}}</a></td>
                     <td>
                         <div class="entity-alerts" ng-repeat="alert in entity.alerts | orderBy:'id'">
-                            <a href="#/alert-details/{{alert.id}}" title="{{ alert.name + ' ' + formatCaptures(alert.entities[entity.id].result.captures)}}"
+                            <a href="#/alert-details/{{alert.id}}" title="{{ alert.name + (alert.entities[entity.id].result ? ' (' + formatResult(alert.entities[entity.id].result) + ')' : '')}}"
                                ng-class="['alert-prio-' + alert.definition.priority, 'alert-status-' + (alert.entities[entity.id] ? 'active' : 'inactive')]"
                                 >{{ alert.entities[entity.id] ? timeAgo(alert.entities[entity.id].result.start_time) : 'OK'}}</a>
                         </div>

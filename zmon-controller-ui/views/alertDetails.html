@@ -145,7 +145,7 @@
                                     <comment-dialog class="fake-link" uid="alertDefinition.id" entity="entityInstance.entity"  save="saveComment(comment, cb)" delete="deleteComment(id, cb)" load="getComments(id, limit, offset, cb)" show-count="false"></comment-dialog>
                                     <input ng-if="userInfo['schedule-downtime']" class="set-downtime-checkbox" type="checkbox" ng-checked="addDowntimeEntities.indexOf(entityInstance.entity) > -1" ng-click="toggleEntityAddDowntime(entityInstance.entity)">
                                 </td>
-                                <td><a href="/#/entities?ef=id:{{entityInstance.entity}}" title="{{entityInstance.entity}}">{{entityInstance.entity | awsName}}</a></td>
+                                <td><a href="/#/entities?ef=id:{{entityInstance.entity}}" title="{{entityInstance.entity}}">{{entityInstance.entity | entityName}}</a></td>
                                 <td><div title="{{entityInstance.result.td * 1000|timespan}} {{entityInstance.result.worker}}">
                                         <span ng-class="{'alert-is-too-old': timestampIsOld(entityInstance)}">{{entityInstance.result.ts|datetime}} ({{timeAgo(entityInstance.result.ts)}} ago)</span></div></td>
                                 <td>
