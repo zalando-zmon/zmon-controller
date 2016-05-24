@@ -20,7 +20,7 @@ public class IndexController {
 
     // parameters
     public static final String STATIC_URL = "staticUrl";
-    public static final String KAIROS_DB_BASE_URL = "KairosDBBaseUrl";
+    public static final String KAIROSDB_SERVICES = "KairosDBServices";
     private static final String HAS_SCHEDULE_DOWNTIME_PERMISSION = "hasScheduleDowntimePermission";
     private static final String HAS_DELETE_DOWNTIME_PERMISSION = "hasDeleteDowntimePermission";
     private static final String HAS_TRIAL_RUN_PERMISSION = "hasTrialRunPermission";
