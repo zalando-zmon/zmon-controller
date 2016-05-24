@@ -1,7 +1,10 @@
 package org.zalando.zmon.config;
 
+import java.nio.file.Paths;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -22,13 +25,20 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @EnableWebMvc
 public class WebMvcConfig {
 
+    private final Logger log = LoggerFactory.getLogger(WebMvcConfig.class);
+
     @Bean
     public WebMvcConfigurer resourcesHandler() {
         return new WebMvcConfigurerAdapter() {
+
+
             @Override
             public void addResourceHandlers(ResourceHandlerRegistry registry) {
+                final String localStaticResources = "file:" + Paths.get("zmon-controller-ui").toAbsolutePath().toString() + "/";
+                log.info("Using local static resources from {}", localStaticResources);
+
                 // automatically serve/expose all static files in the "public" folder
-                registry.addResourceHandler("/**").addResourceLocations("classpath:public/");
+                registry.addResourceHandler("/**").addResourceLocations(localStaticResources, "classpath:public/");
             }
         };
     }
