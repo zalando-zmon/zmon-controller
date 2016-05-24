@@ -30,9 +30,9 @@ angular.module('zmon2App').controller('EntityCtrl', ['$scope', '$window', '$rout
             var parts = ($scope.entityFilter || '').split(/\s+/);
             var filt = {}
             _.each(parts, function(part) {
-                var keyVal = part.split(":", 2);
-                if (keyVal.length == 2) {
-                    filt[keyVal[0]] = keyVal[1];
+                var keyVal = part.split(":");
+                if (keyVal.length >= 2) {
+                    filt[keyVal[0]] = keyVal.splice(1).join(':');
                 }
             });
             if (!_.isEmpty(filt)) {
