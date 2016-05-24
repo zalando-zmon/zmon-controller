@@ -197,22 +197,23 @@ public class Grafana2Controller extends AbstractZMonController {
             target.put("downsampling", "(NONE)");
         }
 
-        ArrayNode oldTags = (ArrayNode)target.get("tags");
-        ObjectNode newTags = target.putObject("tags");
+        if(target.get("tags") instanceof  ArrayNode) {
+            ArrayNode oldTags = (ArrayNode) target.get("tags");
+            ObjectNode newTags = target.putObject("tags");
 
-        // convert tag filter
-        if(oldTags!=null && oldTags.size()>0) {
-            for(int t = 0; t < oldTags.size(); ++t) {
-                ObjectNode tf = (ObjectNode)oldTags.get(t);
-                String tk = tf.get("key").textValue();
-                String tv = tf.get("value").textValue();
-                if(newTags.has(tk)) {
-                    ArrayNode vs = (ArrayNode)newTags.get(tk);
-                    vs.add(tv);
-                }
-                else {
-                    ArrayNode vs = newTags.putArray(tk);
-                    vs.add(tv);
+            // convert tag filter
+            if (oldTags != null && oldTags.size() > 0) {
+                for (int t = 0; t < oldTags.size(); ++t) {
+                    ObjectNode tf = (ObjectNode) oldTags.get(t);
+                    String tk = tf.get("key").textValue();
+                    String tv = tf.get("value").textValue();
+                    if (newTags.has(tk)) {
+                        ArrayNode vs = (ArrayNode) newTags.get(tk);
+                        vs.add(tv);
+                    } else {
+                        ArrayNode vs = newTags.putArray(tk);
+                        vs.add(tv);
+                    }
                 }
             }
         }
