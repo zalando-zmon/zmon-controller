@@ -49,7 +49,7 @@ angular.module('zmon2App').controller('AlertDetailsCtrl', ['$scope', '$location'
         }
 
         $scope.$watch('[activeAlerts, alertsInDowntime, checkResults]', function() {
-            $scope.allAlertsAndChecks = _.foldl([$scope.activeAlerts, $scope.alertsInDowntime, $scope.checkResults], function(result, nextDataArray) {
+            $scope.allAlertsAndChecks = _.reduce([$scope.activeAlerts, $scope.alertsInDowntime, $scope.checkResults], function(result, nextDataArray) {
                 if (nextDataArray && nextDataArray.length !== 0) {
                     return result.concat(nextDataArray);
                 }
@@ -176,7 +176,7 @@ angular.module('zmon2App').controller('AlertDetailsCtrl', ['$scope', '$location'
                                         }
                                     });
 
-                                    $scope.namesOfEntitiesWithAlert = _.foldl($scope.alertDetails.entities, function(prev, curr) {
+                                    $scope.namesOfEntitiesWithAlert = _.reduce($scope.alertDetails.entities, function(prev, curr) {
                                         prev[curr.entity] = true;
                                         return prev;
                                     }, {});
@@ -418,7 +418,7 @@ angular.module('zmon2App').controller('AlertDetailsCtrl', ['$scope', '$location'
             if (!$scope.areAllDowntimesChecked()) {
                 $scope.deleteDowntimeUUIDs = [];
                 // Delete downtimes checkboxes are partially checked; proceed to check all of them
-                _.each(_.pluck($scope.allDowntimes, 'id'), function(nextUUID) {
+                _.each(_.map($scope.allDowntimes, 'id'), function(nextUUID) {
                     $scope.deleteDowntimeUUIDs.push(nextUUID);
                 });
             } else {
@@ -449,17 +449,17 @@ angular.module('zmon2App').controller('AlertDetailsCtrl', ['$scope', '$location'
                 $scope.addDowntimeEntities = [];
                 // Check all
                 if ($scope.showActiveAlerts) {
-                    _.each(_.pluck($scope.activeAlerts, 'entity'), function(entity) {
+                    _.each(_.map($scope.activeAlerts, 'entity'), function(entity) {
                         $scope.addDowntimeEntities.push(entity);
                     });
                 }
                 if ($scope.showAlertsInDowntime) {
-                    _.each(_.pluck($scope.alertsInDowntime, 'entity'), function(entity) {
+                    _.each(_.map($scope.alertsInDowntime, 'entity'), function(entity) {
                         $scope.addDowntimeEntities.push(entity);
                     });
                 }
                 if ($scope.showCheckResults) {
-                    _.each(_.pluck($scope.checkResults, 'entity'), function(entity) {
+                    _.each(_.map($scope.checkResults, 'entity'), function(entity) {
                         $scope.addDowntimeEntities.push(entity);
                     });
                 }
@@ -512,7 +512,7 @@ angular.module('zmon2App').controller('AlertDetailsCtrl', ['$scope', '$location'
                 $scope.showActiveAlerts = !$scope.showActiveAlerts;
                 if ($scope.showActiveAlerts === false) {
                     // Active alerts no longer displayed; remove from addDowntimeEntities any references to them
-                    _.each(_.pluck($scope.activeAlerts, 'entity'), function(entity) {
+                    _.each(_.map($scope.activeAlerts, 'entity'), function(entity) {
                         var idx = $scope.addDowntimeEntities.indexOf(entity);
                         if (idx > -1) {
                             $scope.addDowntimeEntities.splice(idx, 1);
@@ -523,7 +523,7 @@ angular.module('zmon2App').controller('AlertDetailsCtrl', ['$scope', '$location'
                 $scope.showAlertsInDowntime = !$scope.showAlertsInDowntime;
                 if ($scope.showAlertsInDowntime === false) {
                     // Alerts in downtime no longer displayed; remove from addDowntimeEntities any references to them
-                    _.each(_.pluck($scope.alertsInDowntime, 'entity'), function(entity) {
+                    _.each(_.map($scope.alertsInDowntime, 'entity'), function(entity) {
                         var idx = $scope.addDowntimeEntities.indexOf(entity);
                         if (idx > -1) {
                             $scope.addDowntimeEntities.splice(idx, 1);
@@ -534,7 +534,7 @@ angular.module('zmon2App').controller('AlertDetailsCtrl', ['$scope', '$location'
                 $scope.showCheckResults = !$scope.showCheckResults;
                 if ($scope.showCheckResults === false) {
                     // Check results no longer displayed; remove from addDowntimeEntities any references to them
-                    _.each(_.pluck($scope.checkResults, 'entity'), function(entity) {
+                    _.each(_.map($scope.checkResults, 'entity'), function(entity) {
                         var idx = $scope.addDowntimeEntities.indexOf(entity);
                         if (idx > -1) {
                             $scope.addDowntimeEntities.splice(idx, 1);

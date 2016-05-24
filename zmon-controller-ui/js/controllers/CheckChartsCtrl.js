@@ -206,8 +206,8 @@ angular.module('zmon2App').controller('CheckChartsCtrl', ['$scope', '$routeParam
             if ($location.search().series) {
                 $scope.selectedDataSeries = $location.search().series.split(',');
             }
-            _.each(_.pluck(data.group_results, 'key').sort(), function(label, index) {
-                if (_.pluck($scope.dataSeries, 'name').indexOf(label) === -1) {
+            _.each(_.map(data.group_results, 'key').sort(), function(label, index) {
+                if (_.map($scope.dataSeries, 'name').indexOf(label) === -1) {
                     var s = false;
                     if ($location.search().series) {
                         s = $location.search().series.split(',').indexOf(label) !== -1;
@@ -234,7 +234,7 @@ angular.module('zmon2App').controller('CheckChartsCtrl', ['$scope', '$routeParam
                     var chartData = {};
                     getDataSeries(data);
                     chartData[params.entity_id] = [];
-                    var labels = _.pluck(data.group_results, 'key').sort();
+                    var labels = _.map(data.group_results, 'key').sort();
                     var palette = getColorPalette(labels);
                     _.each(data.group_results, function(gr, i) {
                         if ($scope.selectedDataSeries.indexOf(gr.key) !== -1) {
@@ -539,7 +539,7 @@ angular.module('zmon2App').controller('CheckChartsCtrl', ['$scope', '$routeParam
         // Get all entities available for this alert
         var getAvailableEntities = function(cb) {
             CommunicationService.getCheckResults($scope.check_id, null, 1).then(function(data) {
-                $scope.availableEntities = _.pluck(data, 'entity').sort();
+                $scope.availableEntities = _.map(data, 'entity').sort();
                 _.each($scope.availableEntities, function(e) {
                     $scope.entities[e] = {
                         name: e,
