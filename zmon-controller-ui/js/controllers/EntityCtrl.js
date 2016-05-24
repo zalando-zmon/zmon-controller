@@ -8,6 +8,8 @@ angular.module('zmon2App').controller('EntityCtrl', ['$scope', '$window', '$rout
         $scope.sortType = 'id';
         $scope.sortOrder = false;
         $scope.limit = 100;
+        $scope.filterSuggestions = [];
+
         $scope.timeAgo = function(epochPastTs) {
             var timeIntervalSinceLastUpdate = MainAlertService.millisecondsApart(epochPastTs, MainAlertService.getLastUpdate());
             return timespanFilter(timeIntervalSinceLastUpdate);
@@ -18,6 +20,20 @@ angular.module('zmon2App').controller('EntityCtrl', ['$scope', '$window', '$rout
                 s += k + ': ' + v;
             });
             return s;
+        };
+
+        this.fetchEntityProperties = function() {
+            CommunicationService.getEntityProperties().then(function(data) {
+                var suggestions = {};
+                _.each(data, function(props, entityType) {
+                    _.each(props, function(values, name) {
+                        _.each(values, function(val) {
+                            suggestions[name + ':' + val] = null;
+                        });
+                    });
+                });
+                $scope.filterSuggestions = _.keys(suggestions).sort();
+            });
         };
 
 
@@ -81,6 +97,8 @@ angular.module('zmon2App').controller('EntityCtrl', ['$scope', '$window', '$rout
 
         // Non-refreshing; one-time listing
         MainAlertService.removeDataRefresh();
+
+        this.fetchEntityProperties();
 
         // Init page state depending on URL's query string components
         if (!_.isEmpty($location.search().ef)) {
