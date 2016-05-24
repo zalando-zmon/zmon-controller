@@ -974,5 +974,5 @@ a.non-href-anchor
 }
 .entity-alerts a.alert-status-inactive {
     background-color: #78B924 !important;
-    border: 1px solid #6aa320;
+    border: 1px solid #6aa320 !important;
 }

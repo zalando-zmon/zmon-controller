@@ -65,7 +65,6 @@ angular.module('zmon2App').controller('EntityCtrl', ['$scope', '$window', '$rout
 
                 // load alert state for all alert IDs (also returns alert definition)
                 CommunicationService.getAlertsById(_.keys(alertsById)).then(function(data) {
-                    console.log(data);
                     _.each(data, function(alert) {
                         alertsById[alert.alert_definition.id].definition = alert.alert_definition;
                         _.each(alert.entities, function(entity) {
