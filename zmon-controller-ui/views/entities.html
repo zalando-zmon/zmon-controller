@@ -9,7 +9,7 @@
                         <span class="input-group-btn">
                             <button class="btn btn-primary"><i class="fa fa-fw fa-search"></i></button>
                         </span>
-                        <input class="form-control" placeholder="Filter entities (key:val)" type="text" ng-model="entityFilter" ng-model-options="{debounce:500}" constant-focus />
+                        <input class="form-control" placeholder="Filter entities (key:val)" type="text" ng-model="entityFilter" ng-model-options="{debounce:500}" typeahead="sugg for sugg in filterSuggestions | filter:$viewValue | limitTo:10" constant-focus />
                     </div>
                 </div>
             </form>
