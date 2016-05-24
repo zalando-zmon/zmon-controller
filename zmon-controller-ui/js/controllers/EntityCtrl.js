@@ -1,5 +1,5 @@
-angular.module('zmon2App').controller('EntityCtrl', ['$scope', '$window', '$routeParams', '$location', 'MainAlertService', 'CommunicationService', 'FeedbackMessageService', 'localStorageService', 'UserInfoService', 'LoadingIndicatorService', 'APP_CONST',
-    function($scope, $window, $routeParams, $location, MainAlertService, CommunicationService, FeedbackMessageService, localStorageService, UserInfoService, LoadingIndicatorService, APP_CONST) {
+angular.module('zmon2App').controller('EntityCtrl', ['$scope', '$window', '$routeParams', '$location', 'timespanFilter', 'MainAlertService', 'CommunicationService', 'localStorageService', 'UserInfoService', 'LoadingIndicatorService', 'APP_CONST',
+    function($scope, $window, $routeParams, $location, timespanFilter, MainAlertService, CommunicationService, localStorageService, UserInfoService, LoadingIndicatorService, APP_CONST) {
         $scope.EntityCtrl = this;
         $scope.initialLoading = true;
 
@@ -8,6 +8,11 @@ angular.module('zmon2App').controller('EntityCtrl', ['$scope', '$window', '$rout
         $scope.sortType = 'id';
         $scope.sortOrder = false;
         $scope.limit = 100;
+        $scope.timeAgo = function(epochPastTs) {
+            var timeIntervalSinceLastUpdate = MainAlertService.millisecondsApart(epochPastTs, MainAlertService.getLastUpdate());
+            return timespanFilter(timeIntervalSinceLastUpdate);
+        };
+
 
         var userInfo = UserInfoService.get();
 
@@ -22,51 +27,50 @@ angular.module('zmon2App').controller('EntityCtrl', ['$scope', '$window', '$rout
             _.each(parts, function(part) {
                 var keyVal = part.split(":");
                 if (keyVal.length == 2) {
-                filt[keyVal[0]] = keyVal[1];
+                    filt[keyVal[0]] = keyVal[1];
                 }
             });
             if (!_.isEmpty(filt)) {
                 entityFilter.push(filt);
-               }
+            }
 
             var entities = [];
             var alertsById = {};
 
             CommunicationService.getAlertCoverage(entityFilter).then(function(data) {
-            var entitiesById = {};
-            _.each(data, function(group) {
-                _.each(group.entities, function(entity) {
-                    if (typeof entitiesById[entity.id] === 'undefined') {
-                        entitiesById[entity.id] = {'id': entity.id, 'alerts': []};
-                    }
-                    entitiesById[entity.id].alerts = entitiesById[entity.id].alerts.concat(group.alerts);
-                    _.each(group.alerts, function(alert) {
-                    if (typeof alertsById[alert.id] === 'undefined') {
-                    alert.entities = {};
-                    alertsById[alert.id] = alert;
+                var entitiesById = {};
+                _.each(data, function(group) {
+                    _.each(group.entities, function(entity) {
+                        if (typeof entitiesById[entity.id] === 'undefined') {
+                            entitiesById[entity.id] = {'id': entity.id, 'type': entity.type, 'alerts': []};
+                        }
+                        entitiesById[entity.id].alerts = entitiesById[entity.id].alerts.concat(group.alerts);
+                        _.each(group.alerts, function(alert) {
+                            if (typeof alertsById[alert.id] === 'undefined') {
+                                alert.entities = {};
+                                alert.definition = null;
+                                alertsById[alert.id] = alert;
+                            }
+                        });
+                    });
+                });
+                _.each(entitiesById, function(v, k) {
+                    entities.push(v)
+                });
 
-                    }
+                // load alert state for all alert IDs (also returns alert definition)
+                CommunicationService.getAlertsById(_.keys(alertsById)).then(function(data) {
+                    _.each(data, function(alert) {
+                        alertsById[alert.alert_definition.id].definition = alert.alert_definition;
+                        _.each(alert.entities, function(entity) {
+                            alertsById[alert.alert_definition.id].entities[entity.entity] = entity;
+                        });
                     });
                 });
 
-            });
-            _.each(entitiesById, function(v, k) {
-                entities.push(v)
-            });
-
-            CommunicationService.getAlertsById(_.keys(alertsById)).then(function(data) {
-            _.each(data, function(alert) {
-                _.each(alert.entities, function(entity) {
-
-                alertsById[alert.alert_definition.id].entities[entity.entity] = entity;
-                });
-
-            });
-            });
-
-            $scope.entities = entities;
-                    // Stop loading indicator!
-                    LoadingIndicatorService.stop();
+                $scope.entities = entities;
+                // Stop loading indicator!
+                LoadingIndicatorService.stop();
             });
         };
 
