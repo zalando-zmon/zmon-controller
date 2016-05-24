@@ -97,5 +97,10 @@ angular.module('zmon2App').controller('EntityCtrl', ['$scope', '$window', '$rout
             localStorageService.set('returnTo', '/#' + $location.url());
             $scope.EntityCtrl.fetchAlertCoverage();
         });
+
+        // we have reloadOnSearch=false, so watch for route changes
+        $scope.$on('$routeUpdate', function(event) {
+            $scope.entityFilter = $location.search().ef;
+        });
     }
 ]);
