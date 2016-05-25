@@ -236,7 +236,20 @@ public class ZMonRestService extends AbstractZMonController {
             metric.addAggregator(AggregatorFactory.createAverageAggregator(aggregate, TimeUnit.MINUTES));
         }
 
-        final KairosDBOAuthHttpClient client = new KairosDBOAuthHttpClient(kairosDBProperties.getUrl().toString(), kairosDBProperties.getHttpClient(), accessTokens.get(KairosDBController.KAIROSDB_TOKEN_ID));
+        String kairosDBBaseUrl = null;
+        for(KairosDBProperties.KairosDBServiceConfig c : kairosDBProperties.getKairosdbs()) {
+            if (c.getName().equals("kairosdb") || kairosDBProperties.getKairosdbs().size() == 1) {
+                kairosDBBaseUrl = c.getUrl();
+            }
+        }
+
+        if (null == kairosDBBaseUrl) {
+            log.error("No KairosDB configured for Check Charts");
+            return new ResponseEntity<>(new CheckHistoryResult(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        final KairosDBOAuthHttpClient client = new KairosDBOAuthHttpClient(kairosDBBaseUrl, kairosDBProperties.getHttpClient(), accessTokens.get(KairosDBController.KAIROSDB_TOKEN_ID));
+
         try {
             final Long queryStart = System.currentTimeMillis();
             final QueryResponse response = client.query(builder);

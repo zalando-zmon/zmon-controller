@@ -6,6 +6,7 @@ import org.apache.http.impl.client.HttpClients;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import java.net.URL;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -58,23 +59,13 @@ public class KairosDBProperties {
     private int maxConnectionsPerRoute = 100;
     private int maxConnectionsTotal = 200;
 
-    public String frontendUrl = "";
+    private List<KairosDBServiceConfig> kairosdbs;
 
-    public String getFrontendUrl() {
-        return frontendUrl;
-    }
-
-    public void setFrontendUrl(String frontendUrl) {
-        this.frontendUrl = frontendUrl;
-    }
-
-    private Map<String, KairosDBServiceConfig> kairosdbs;
-
-    public Map<String, KairosDBServiceConfig> getKairosdbs() {
+    public List<KairosDBServiceConfig> getKairosdbs() {
         return kairosdbs;
     }
 
-    public void setKairosdbs(Map<String, KairosDBServiceConfig> kairosdbs) {
+    public void setKairosdbs(List<KairosDBServiceConfig> kairosdbs) {
         this.kairosdbs = kairosdbs;
     }
 

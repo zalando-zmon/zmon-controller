@@ -13,6 +13,7 @@ import org.springframework.web.client.AsyncRestTemplate;
 import org.zalando.stups.tokens.AccessTokens;
 import org.zalando.zmon.config.KairosDBProperties;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
@@ -44,7 +45,7 @@ public class MultiKairosDBController extends AbstractZMonController {
 
     private final AccessTokens accessTokens;
 
-    private final Map<String, KairosDBProperties.KairosDBServiceConfig> kairosdbServices;
+    private final Map<String, KairosDBProperties.KairosDBServiceConfig> kairosdbServices = new HashMap<>();
 
     @Autowired
     public MultiKairosDBController(KairosDBProperties kairosDBProperties, MetricRegistry metricRegistry,
@@ -52,7 +53,10 @@ public class MultiKairosDBController extends AbstractZMonController {
         this.metricRegistry = metricRegistry;
         this.asyncRestTemplate = asyncRestTemplate;
         this.accessTokens = accessTokens;
-        this.kairosdbServices = kairosDBProperties.getKairosdbs();
+
+        for(KairosDBProperties.KairosDBServiceConfig c : kairosDBProperties.getKairosdbs()) {
+            kairosdbServices.put(c.getName(), c);
+        }
     }
 
     /*
@@ -83,7 +87,10 @@ public class MultiKairosDBController extends AbstractZMonController {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.add("X-ZMON-CHECK-ID", checkId);
-        headers.add(AUTHORIZATION, BEARER + accessTokens.get(KAIROSDB_TOKEN_ID));
+
+        if(kairosdbServices.get(kairosDB).isOauth2()) {
+            headers.add(AUTHORIZATION, BEARER + accessTokens.get(KAIROSDB_TOKEN_ID));
+        }
 
         HttpEntity<String> httpEntity = new HttpEntity<>(node.toString(), headers);
 
@@ -102,7 +109,9 @@ public class MultiKairosDBController extends AbstractZMonController {
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.add(AUTHORIZATION, BEARER + accessTokens.get(KAIROSDB_TOKEN_ID));
+        if(kairosdbServices.get(kairosDB).isOauth2()) {
+            headers.add(AUTHORIZATION, BEARER + accessTokens.get(KAIROSDB_TOKEN_ID));
+        }
 
         HttpEntity<String> httpEntity = new HttpEntity<>(node.toString(), headers);
 
@@ -117,7 +126,9 @@ public class MultiKairosDBController extends AbstractZMonController {
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.add(AUTHORIZATION, BEARER + accessTokens.get(KAIROSDB_TOKEN_ID));
+        if(kairosdbServices.get(kairosDB).isOauth2()) {
+            headers.add(AUTHORIZATION, BEARER + accessTokens.get(KAIROSDB_TOKEN_ID));
+        }
 
         HttpEntity<String> httpEntity = new HttpEntity<>(headers);
 

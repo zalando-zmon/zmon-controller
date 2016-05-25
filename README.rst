@@ -25,15 +25,13 @@ Running Locally
 
 Please use the `main ZMON repository`_ to start a Vagrant demo box.
 
-Make sure that port forwarding for TCP port 8443 is commented out in your ``Vagrantfile`` (it would conflict with starting ZMON Controller on the same port).
-
 Make sure the provided Vagrant-Box is up and all services are running.
 
 .. code-block:: bash
 
     $ ./run-dev.sh
 
-Now point your browser to https://localhost:8443/
+Now point your browser to https://localhost:8444/
 
 Running Unit and Database Tests
 ===============================
