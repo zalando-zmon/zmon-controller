@@ -97,7 +97,7 @@
                          <div class="ep-container">
                              <div class="ep" style="width:{{ep.width}}%;">
                                 <a class="clickable" ng-click="setEndpoint(ep.url)">{{ep.url}}</a>
-                            </div><div class="ep-metric">{{ep.rate}}/min</div>
+                            </div><div class="ep-metric">{{ep.rate}}/sec</div>
                             <div class="ep-submetrics">min: {{ep.min}}ms max: {{ep.max}}ms 99%: {{ep.p99}}ms</div>
                          </div>
                     </li>
@@ -110,7 +110,7 @@
                          <div class="ep-container">
                              <div class="ep" style="width:{{ep.width}}%;">
                                 <a class="clickable" ng-click="setEndpoint(ep.url)">{{ep.url}}</a>
-                            </div><div class="ep-metric">{{ep.rate}}/min</div>
+                            </div><div class="ep-metric">{{ep.rate}}/sec</div>
                             <div class="ep-submetrics">min: {{ep.min}} max: {{ep.max}} 99%: {{ep.p99}}</div>
                          </div>
                     </li>
@@ -119,9 +119,9 @@
         </div>
         <div class="col-md-8" id="chart" ng-hide="loading">
             <div id="overview-charts" ng-hide="selectedEndpoint">
-                <h2>rate/min (one minute avg)</h2>
+                <h2>rate/sec (one minute avg)</h2>
                 <div><svg id="chart_rate" style="width:100%;height:400px;"></svg></div>
-                <h2>errors/min (status!=200)</h2>
+                <h2>errors/sec (status!=200)</h2>
                 <div><svg id="chart_error" style="width:100%;height:150px;"></svg></div>
             </div>
             <div id="ep-detail-charts" ng-show="selectedEndpoint">
