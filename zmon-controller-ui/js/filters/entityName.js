@@ -9,7 +9,7 @@ angular.module('zmon2App').filter('entityName', function() {
             var m = value.match(r);
             var id = m[3];
             var region = m[4] || '';
-            value = m[1] + '[' + m[2].slice(0, 1) + ':' + id.slice(-3) + (region ? ':' + region.slice(1) : '') + ']';
+            value = m[1] + '[' + id.slice(-3) + (region ? ':' + region[4] : '') + ']';
         }
         return value;
     };
