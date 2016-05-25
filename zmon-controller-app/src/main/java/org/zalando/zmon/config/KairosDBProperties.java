@@ -1,12 +1,13 @@
 package org.zalando.zmon.config;
 
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import java.net.URL;
+import java.util.List;
+import java.util.Map;
 
 /**
  * FIXME: hardcoded config for Vagrant box
@@ -16,16 +17,57 @@ import java.net.URL;
 @ConfigurationProperties(prefix = "zmon.kairosdb")
 public class KairosDBProperties {
 
+    public static class KairosDBServiceConfig {
+        private String name;
+        private String url;
+        private boolean oauth2=false;
+
+        public KairosDBServiceConfig() {
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getUrl() {
+            return url;
+        }
+
+        public void setUrl(String url) {
+            this.url = url;
+        }
+
+        public boolean isOauth2() {
+            return oauth2;
+        }
+
+        public void setOauth2(boolean oauth2) {
+            this.oauth2 = oauth2;
+        }
+    }
+
     private URL url;
 
     private boolean enabled;
-
-    private String frontendUrl = "";
 
     private int connectTimeout = 3000; // 3 seconds
     private int socketTimeout = 30000; // 30 seconds
     private int maxConnectionsPerRoute = 100;
     private int maxConnectionsTotal = 200;
+
+    private List<KairosDBServiceConfig> kairosdbs;
+
+    public List<KairosDBServiceConfig> getKairosdbs() {
+        return kairosdbs;
+    }
+
+    public void setKairosdbs(List<KairosDBServiceConfig> kairosdbs) {
+        this.kairosdbs = kairosdbs;
+    }
 
     public int getMaxConnectionsPerRoute() {
         return maxConnectionsPerRoute;
@@ -33,14 +75,6 @@ public class KairosDBProperties {
 
     public void setMaxConnectionsPerRoute(int maxConnectionsPerRoute) {
         this.maxConnectionsPerRoute = maxConnectionsPerRoute;
-    }
-
-    public String getFrontendUrl() {
-        return frontendUrl;
-    }
-
-    public void setFrontendUrl(String frontendUrl) {
-        this.frontendUrl = frontendUrl;
     }
 
     public int getMaxConnectionsTotal() {
