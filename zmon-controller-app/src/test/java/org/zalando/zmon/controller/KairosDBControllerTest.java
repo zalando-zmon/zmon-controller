@@ -55,7 +55,12 @@ public class KairosDBControllerTest {
         Mockito.when(accessTokens.get(Mockito.any(String.class))).thenReturn("123456789");
         KairosDBProperties properties = new KairosDBProperties();
         properties.setEnabled(true);
-        properties.setUrl(new URL("http://localhost:9998"));
+        KairosDBProperties.KairosDBServiceConfig c = new KairosDBProperties.KairosDBServiceConfig();
+        c.setName("kairosdb");
+        c.setUrl("http://localhost:9998");
+        c.setOauth2(false);
+        properties.getKairosdbs().add(c);
+
         this.mockMvc = MockMvcBuilders
                 .standaloneSetup(new KairosDBController(properties, metricsRegistry,
                         new AsyncRestTemplate(new HttpComponentsAsyncClientHttpRequestFactory()), accessTokens))
