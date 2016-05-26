@@ -57,9 +57,9 @@ public class KairosDBController extends AbstractZMonController {
         this.asyncRestTemplate = asyncRestTemplate;
         this.accessTokens = accessTokens;
         if (kairosDBProperties.isEnabled()) {
-            metricNamesKairosDBURL = kairosDBProperties.getUrl() + "/api/v1/metricnames";
-            tagsKairosDBURL = kairosDBProperties.getUrl() + "/api/v1/datapoints/query/tags";
-            queryKairosDBURL = kairosDBProperties.getUrl() + "/api/v1/datapoints/query";
+            metricNamesKairosDBURL = kairosDBProperties.getKairosdbs().get(0).getUrl() + "/api/v1/metricnames";
+            tagsKairosDBURL = kairosDBProperties.getKairosdbs().get(0).getUrl() + "/api/v1/datapoints/query/tags";
+            queryKairosDBURL = kairosDBProperties.getKairosdbs().get(0).getUrl() + "/api/v1/datapoints/query";
         } else {
             metricNamesKairosDBURL = "";
             tagsKairosDBURL = "";
