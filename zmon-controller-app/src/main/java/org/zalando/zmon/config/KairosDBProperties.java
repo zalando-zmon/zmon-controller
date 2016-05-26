@@ -6,6 +6,7 @@ import org.apache.http.impl.client.HttpClients;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -50,8 +51,6 @@ public class KairosDBProperties {
         }
     }
 
-    private URL url;
-
     private boolean enabled;
 
     private int connectTimeout = 3000; // 3 seconds
@@ -59,7 +58,7 @@ public class KairosDBProperties {
     private int maxConnectionsPerRoute = 100;
     private int maxConnectionsTotal = 200;
 
-    private List<KairosDBServiceConfig> kairosdbs;
+    private List<KairosDBServiceConfig> kairosdbs = new ArrayList<>(1);
 
     public List<KairosDBServiceConfig> getKairosdbs() {
         return kairosdbs;
@@ -83,14 +82,6 @@ public class KairosDBProperties {
 
     public void setMaxConnectionsTotal(int maxConnectionsTotal) {
         this.maxConnectionsTotal = maxConnectionsTotal;
-    }
-
-    public URL getUrl() {
-        return url;
-    }
-
-    public void setUrl(URL url) {
-        this.url = url;
     }
 
     public boolean isEnabled() {
