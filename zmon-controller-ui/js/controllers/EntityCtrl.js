@@ -72,10 +72,13 @@ angular.module('zmon2App').controller('EntityCtrl', ['$scope', '$window', '$rout
                         entitiesById[entity.id].alerts = entitiesById[entity.id].alerts.concat(group.alerts);
                         _.each(group.alerts, function(alert) {
                             if (typeof alertsById[alert.id] === 'undefined') {
-                                alert.entities = {};
                                 alert.definition = null;
                                 alertsById[alert.id] = alert;
                             }
+                            if (typeof alert.entities === 'undefined') {
+                                alert.entities = {};
+                            }
+                            alert.entities[entity.id] = {'status': 'unknown'}
                         });
                     });
                 });
@@ -88,7 +91,20 @@ angular.module('zmon2App').controller('EntityCtrl', ['$scope', '$window', '$rout
                     _.each(data, function(alert) {
                         alertsById[alert.alert_definition.id].definition = alert.alert_definition;
                         _.each(alert.entities, function(entity) {
+                            console.log(entity);
+                            entity.status = entity.result.downtimes.length > 0 ? 'downtimed' : 'active';
                             alertsById[alert.alert_definition.id].entities[entity.entity] = entity;
+                            console.log(entity);
+                        });
+                    });
+                    // now set all remaining alerts to "inactive"
+                    _.each(entities, function(row) {
+                        _.each(row.alerts, function(alert) {
+                            _.each(alert.entities, function(entity, entityId) {
+                                if (entity.status == 'unknown') {
+                                    entity.status = 'inactive';
+                                }
+                            });
                         });
                     });
                 });
