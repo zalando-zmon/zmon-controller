@@ -974,7 +974,15 @@ body.entities-page .type-col {
     margin-bottom: 4px;
     text-align: center;
 }
+.entity-alerts a.alert-status-unknown {
+    background-color: #aaaaaa !important;
+    border: 1px solid #8f8f8f !important;
+}
 .entity-alerts a.alert-status-inactive {
     background-color: #78B924 !important;
     border: 1px solid #6aa320 !important;
+}
+.entity-alerts a.alert-status-downtimed {
+    background-color: #8f8f8f !important;
+    border: 1px solid #707070 !important;
 }
