@@ -108,7 +108,6 @@
             </tr>
         </thead>
         <tbody>
-            <!-- First show the entities with alerts -->
             <tr ng-repeat="def in alertDefinitions| filter:alertDefinitionFilter | orderBy:sortType:sortOrder" repeat-monitor last="$last">
                 <td class="text-center">
                     <a ng-show="def.editable" href="#/alert-definitions/edit/{{def.id}}" title="Edit"><i class="fa fa-fw fa-edit"></i></a>
@@ -123,6 +122,11 @@
                 <td>{{def.responsible_team}}</td>
                 <td class="text-center"><priority prio="def.priority" /></td>
                 <td class="text-center"><status status="def.status"/></td>
+            </tr>
+            <tr ng-show="alertDefinitions.length < 1">
+                <td class="text-center" colspan="8">No alerts are defined for this check definition.
+                    Data is only collected for entities covered by at least one alert.
+                    Please <a href="#/alert-definitions/add/{{ checkDefinition.id }}">add a new alert definition</a> to start collecting data.</td>
             </tr>
         </tbody>
     </table>
