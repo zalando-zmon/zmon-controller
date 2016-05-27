@@ -181,7 +181,7 @@ public class Grafana2Controller extends AbstractZMonController {
     }
 
     public static void migrateTarget(ObjectNode target) {// convert groups
-        if(target.get("groups")!=null && target.get("groups").size()>0) {
+        if (target.get("groups") != null && target.get("groups").size() > 0) {
             target.put("currentGroupByType", "tag");
             ArrayNode groupTags = (ArrayNode)target.get("groups");
             ArrayNode groupV2 = target.putArray("groupByTags");
@@ -193,11 +193,11 @@ public class Grafana2Controller extends AbstractZMonController {
             target.remove("groups");
         }
 
-        if(!target.has("downsampling")) {
+        if (!target.has("downsampling")) {
             target.put("downsampling", "(NONE)");
         }
 
-        if(target.get("tags") instanceof  ArrayNode) {
+        if (null != target.get("tags") && target.get("tags") instanceof  ArrayNode) {
             ArrayNode oldTags = (ArrayNode) target.get("tags");
             ObjectNode newTags = target.putObject("tags");
 
@@ -205,8 +205,13 @@ public class Grafana2Controller extends AbstractZMonController {
             if (oldTags != null && oldTags.size() > 0) {
                 for (int t = 0; t < oldTags.size(); ++t) {
                     ObjectNode tf = (ObjectNode) oldTags.get(t);
+                    if(null == tf || !tf.has("key") || !tf.has("value")) {
+                        continue;
+                    }
+
                     String tk = tf.get("key").textValue();
                     String tv = tf.get("value").textValue();
+
                     if (newTags.has(tk)) {
                         ArrayNode vs = (ArrayNode) newTags.get(tk);
                         vs.add(tv);
