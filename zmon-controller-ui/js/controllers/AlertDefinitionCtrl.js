@@ -45,7 +45,7 @@ angular.module('zmon2App').controller('AlertDefinitionCtrl', ['$scope', '$window
 
                     // Generate Tabs
                     $scope.tabs = [];
-                    $scope.alertStatuses = ['All'].concat(_.unique(_.pluck(data, 'status')).sort());
+                    $scope.alertStatuses = ['All'].concat(_.uniq(_.map(data, 'status')).sort());
                     _.each($scope.alertStatuses, function(status) {
                         $scope.tabs.push({
                             name: status,

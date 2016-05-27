@@ -16,7 +16,7 @@ angular.module('zmon2App').factory('DowntimesService', [
         service.hasAllEntitiesInDowntime = function(alertInstance) {
             var hasAllEntitiesInDowntime = true;
             // Each entity has an array of downtimes; we an array of arrays of downtimes
-            var arrayOfDowntimesArrays = _.pluck(_.pluck(alertInstance.entities, 'result'), 'downtimes');
+            var arrayOfDowntimesArrays = _.map(_.map(alertInstance.entities, 'result'), 'downtimes');
             alertInstance.numEntitiesNotInDowntimeNow = 0;
             alertInstance.numEntitiesInDowntimeNow = 0;
 

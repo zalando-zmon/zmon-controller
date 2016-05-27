@@ -68,7 +68,7 @@ angular.module('zmon2App').directive('entityFilterContainer', ['$compile', '$log
                 };
 
                 scope.$watch('entityFilterTypes', function(){
-                    scope.availableEntityFilterTypes = _.map(_.pluck(scope.entityFilterTypes, 'type'), function(t) {
+                    scope.availableEntityFilterTypes = _.map(_.map(scope.entityFilterTypes, 'type'), function(t) {
                         if (t === 'GLOBAL')
                             return t;
                         else
@@ -78,7 +78,7 @@ angular.module('zmon2App').directive('entityFilterContainer', ['$compile', '$log
 
                 scope.$watch('formEntityFilters', function() {
                     // Remove GLOBAL type if used.
-                    scope.globalIsUsed = _.pluck(scope.formEntityFilters, 'type').indexOf('GLOBAL') !== -1;
+                    scope.globalIsUsed = _.map(scope.formEntityFilters, 'type').indexOf('GLOBAL') !== -1;
                     if (scope.globalIsUsed && scope.availableEntityFilterTypes[0] === 'GLOBAL') {
                         scope.availableEntityFilterTypes.splice(0, 1);
                         scope.selectedType = 'appdomain';

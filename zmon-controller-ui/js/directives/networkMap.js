@@ -77,7 +77,7 @@ angular.module('zmon2App').directive('networkmap', [ '$compile', '$http', '$temp
                     var alertId = nextAlert.alert_definition.id;
                     // Add the oldest entity's start_time for current alert as property 'oldestStartTime' of the alert
                     _.extend(nextAlert, {
-                        'oldestStartTime': _.min(_.pluck(_.pluck(nextAlert.entities, 'result'), 'start_time'))
+                        'oldestStartTime': _.min(_.map(_.map(nextAlert.entities, 'result'), 'start_time'))
                     });
                 });
             };

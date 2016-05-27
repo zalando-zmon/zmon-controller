@@ -54,7 +54,7 @@ angular.module('zmon2App').factory('MainAlertService', ['$http', '$q', '$log', '
          *      Case 2: arrays of [x,y] subarrays of the points to plot
          */
         service.transformResultsToChartData = function(checkResults) {
-            var returnVal = _.foldl(checkResults, function(memo, curr) {
+            var returnVal = _.reduce(checkResults, function(memo, curr) {
 
                 if (typeof curr.results === 'undefined') {
                     console.error(new Date(), 'ERROR No results in current check object for', curr);
@@ -161,8 +161,8 @@ angular.module('zmon2App').factory('MainAlertService', ['$http', '$q', '$log', '
                         if (!Array.isArray(memo)) {
                             memo = [];
                         }
-                        // var minTs = _.min(_.pluck(curr.results, 'ts'));
-                        // var maxTs = _.max(_.pluck(curr.results, 'ts'));
+                        // var minTs = _.min(_.map(curr.results, 'ts'));
+                        // var maxTs = _.max(_.map(curr.results, 'ts'));
                         try {
                             var data = _.map(curr.results, function(nextPoint, idx) {
                                 return [Math.round(nextPoint.ts * 1000), nextPoint.value];

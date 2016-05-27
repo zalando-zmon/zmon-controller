@@ -62,7 +62,7 @@ angular.module('zmon2App').controller('DashboardCtrl', ['$scope', '$log', '$rout
                 return;
             }
             // Get widths of widgets that have width set
-            var widths = _.filter(_.pluck(widgetsConf, 'width'), function(v) {
+            var widths = _.filter(_.map(widgetsConf, 'width'), function(v) {
                 return typeof v !== 'undefined';
             });
             var totalWidth = _.reduce(widths, function(memo, num) {
@@ -140,7 +140,7 @@ angular.module('zmon2App').controller('DashboardCtrl', ['$scope', '$log', '$rout
                 var alertId = nextAlert.alert_definition.id;
                 // Add the oldest entity's start_time for current alert as property 'oldestStartTime' of the alert
                 _.extend(nextAlert, {
-                    'oldestStartTime': _.min(_.pluck(_.pluck(nextAlert.entities, 'result'), 'start_time'))
+                    'oldestStartTime': _.min(_.map(_.map(nextAlert.entities, 'result'), 'start_time'))
                 });
             });
         };
@@ -200,7 +200,7 @@ angular.module('zmon2App').controller('DashboardCtrl', ['$scope', '$log', '$rout
         var loadCheckResults = function(alert) {
 
             // only get graphs for first entities
-            var entitiesWithChart = _.pluck(alert.entities, 'entity');
+            var entitiesWithChart = _.map(alert.entities, 'entity');
             entitiesWithChart.sort();
             entitiesWithChart = _.first(entitiesWithChart, APP_CONST.MAX_ENTITIES_WITH_CHARTS);
 
@@ -323,7 +323,7 @@ angular.module('zmon2App').controller('DashboardCtrl', ['$scope', '$log', '$rout
 
         // Returns a comma separated list of entity names from an alert entities object
         $scope.getEntityNames = function(entities) {
-            return _.pluck(entities, 'entity').sort().join(',');
+            return _.map(entities, 'entity').sort().join(',');
         };
 
         // Add a tag to the tags array

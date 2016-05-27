@@ -71,8 +71,8 @@ angular.module('zmon2App').directive('dashboardWidget', ['CommunicationService',
                         // No response? Get predefined alert ids from scope.
                         if (response === undefined) {
                             activeAlertIds = $scope.activeAlertIds;
-                            activeAlertIds = _.pluck(activeAlertIds, "alert_definition");
-                            activeAlertIds = _.pluck(activeAlertIds, "id");
+                            activeAlertIds = _.map(activeAlertIds, "alert_definition");
+                            activeAlertIds = _.map(activeAlertIds, "id");
                         } else {
                             activeAlertIds = response[0].active_alert_ids;
                         }
@@ -136,7 +136,7 @@ angular.module('zmon2App').directive('dashboardWidget', ['CommunicationService',
                     try {
                         switch ($scope.config.type) {
                             case 'value':
-                                $scope.values = _.pluck(response[0].results, 'value');
+                                $scope.values = _.map(response[0].results, 'value');
 
                                 // If jsonPath is specified, use it to get specific values from results.
                                 if ($scope.config.jsonPath) {
@@ -183,7 +183,7 @@ angular.module('zmon2App').directive('dashboardWidget', ['CommunicationService',
                                 break;
                             case 'gauge':
                                 if (response.length > 0) {
-                                    $scope.values = _.pluck(response[0].results, 'value');
+                                    $scope.values = _.map(response[0].results, 'value');
                                     // If jsonPath is specified, use it to get specific values from results.
                                     if ($scope.config.jsonPath) {
                                         $scope.values = jsonPath($scope.values, "$." + $scope.config.jsonPath);
@@ -193,7 +193,7 @@ angular.module('zmon2App').directive('dashboardWidget', ['CommunicationService',
                                 }
                                 break;
                             case 'trend':
-                                var values = _.pluck(response[0].results, 'value');
+                                var values = _.map(response[0].results, 'value');
                                 // If jsonPath is specified, use it to get specific values from results.
                                 if ($scope.config.jsonPath) {
                                     values = jsonPath(values, "$." + $scope.config.jsonPath);
