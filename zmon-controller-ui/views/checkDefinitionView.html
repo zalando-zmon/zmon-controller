@@ -123,7 +123,7 @@
                 <td class="text-center"><priority prio="def.priority" /></td>
                 <td class="text-center"><status status="def.status"/></td>
             </tr>
-            <tr ng-show="alertDefinitions.length < 1">
+            <tr ng-show="!initialLoading && alertDefinitions.length < 1">
                 <td class="text-center" colspan="8">No alerts are defined for this check definition.
                     Data is only collected for entities covered by at least one alert.
                     Please <a href="#/alert-definitions/add/{{ checkDefinition.id }}">add a new alert definition</a> to start collecting data.</td>
