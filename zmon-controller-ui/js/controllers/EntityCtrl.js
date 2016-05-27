@@ -91,10 +91,8 @@ angular.module('zmon2App').controller('EntityCtrl', ['$scope', '$window', '$rout
                     _.each(data, function(alert) {
                         alertsById[alert.alert_definition.id].definition = alert.alert_definition;
                         _.each(alert.entities, function(entity) {
-                            console.log(entity);
                             entity.status = entity.result.downtimes.length > 0 ? 'downtimed' : 'active';
                             alertsById[alert.alert_definition.id].entities[entity.entity] = entity;
-                            console.log(entity);
                         });
                     });
                     // now set all remaining alerts to "inactive"
