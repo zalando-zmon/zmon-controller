@@ -71,6 +71,8 @@ angular.module('zmon2App').controller('AlertDefinitionCtrl', ['$scope', '$window
 
                     // Stop loading indicator!
                     LoadingIndicatorService.stop();
+
+                    $scope.initialLoading = false;
                 }
             );
         };
