@@ -2,7 +2,7 @@
 
 <div class="zmon-controls row">
     <div class="row">
-        <div class="col-md-12 text-left">
+        <div class="col-md-8 text-left">
             <form id="searchbar" class="form-inline">
                 <div class="form-group">
                     <div class="input-group">
@@ -13,6 +13,20 @@
                     </div>
                 </div>
             </form>
+        </div>
+        <div class="col-md-4">
+            <div class="dropdown team-filter">
+                <label>Filter team:</label>
+                <a class="dropdown-toggle">{{ teamFilter && teamFilter !== 'all' ? teamFilter : 'All Teams' }}</a>
+                <ul class="dropdown-menu team-filter-dropdown">
+                    <li ng-hide="teamFilter === null" ng-click="setTeamFilter()">
+                        All Teams
+                    </li>
+                    <li ng-repeat="team in alertTeams" ng-click="setTeamFilter(team)">
+                        {{ team }}
+                    </li>
+                </ul>
+            </div>
         </div>
     </div>
 </div>
@@ -46,7 +60,8 @@
                                ng-class="['alert-prio-' + alert.definition.priority, 'alert-status-' + (alert.entities[entity.id].status)]"
                                 >{{ alert.entities[entity.id].result ? timeAgo(alert.entities[entity.id].result.start_time) : (alert.entities[entity.id].status == 'inactive' ? 'OK' : '?')}}</a>
                         </div>
-                        <span ng-show="entity.alerts.length < 1">(no alerts)</span>
+                        <span ng-show="entity.alerts.length < 1 && teamFilter">(no alerts for team {{ teamFilter }})</span>
+                        <span ng-show="entity.alerts.length < 1 && !teamFilter">(no alerts)</span>
                     </td>
                 </tr>
                 <tr ng-show="entities.length < 1">
