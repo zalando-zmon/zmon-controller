@@ -52,7 +52,7 @@ angular.module('zmon2App').controller('EntityCtrl', ['$scope', '$window', '$rout
         };
 
         // fetch entities and their alert coverage, but filtered by given set of alert IDs
-        this.fetchAlertsCoverageFiltered = function(alertsToShow) {
+        this.fetchAlertCoverageFiltered = function(alertsToShow) {
             var entityFilter = [];
 
             var parts = ($scope.entityFilter || '').split(/\s+/);
@@ -141,17 +141,19 @@ angular.module('zmon2App').controller('EntityCtrl', ['$scope', '$window', '$rout
                 }
             );
 
-            var alertsToShow = {};
-
             if ($scope.teamFilter) {
+                // NOTE: this call is loading more than necessary (whole alert definitions),
+                // we only collect the alert IDs
                 CommunicationService.getAlertDefinitions($scope.teamFilter, null).then(function(data) {
+                    // "set" of alert IDs to show (filtered by team)
+                    var alertsToShow = {};
                     _.each(data, function(alert) {
                         alertsToShow[alert.id] = true;
                     });
-                    $scope.EntityCtrl.fetchAlertsCoverageFiltered(alertsToShow);
-                });
+                $scope.EntityCtrl.fetchAlertCoverageFiltered(alertsToShow);
+            });
             } else {
-                $scope.EntityCtrl.fetchAlertsCoverageFiltered(null);
+                $scope.EntityCtrl.fetchAlertCoverageFiltered(null);
             }
         };
 
