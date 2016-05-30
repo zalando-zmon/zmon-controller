@@ -1,14 +1,17 @@
-angular.module('zmon2App').controller('EntityCtrl', ['$scope', '$window', '$routeParams', '$location', 'timespanFilter', 'MainAlertService', 'CommunicationService', 'localStorageService', 'LoadingIndicatorService', 'APP_CONST',
-    function($scope, $window, $routeParams, $location, timespanFilter, MainAlertService, CommunicationService, localStorageService, LoadingIndicatorService, APP_CONST) {
+angular.module('zmon2App').controller('EntityCtrl', ['$scope', '$window', '$routeParams', '$location', 'timespanFilter', 'MainAlertService', 'CommunicationService', 'localStorageService', 'UserInfoService', 'LoadingIndicatorService', 'APP_CONST',
+    function($scope, $window, $routeParams, $location, timespanFilter, MainAlertService, CommunicationService, localStorageService, UserInfoService, LoadingIndicatorService, APP_CONST) {
         $scope.EntityCtrl = this;
         $scope.initialLoading = true;
 
         $scope.$parent.activePage = 'entities-page'; // NOTE "entities" would destroy CSS
         $scope.entities = []
+        $scope.teamFilter = null;
         $scope.sortType = 'id';
         $scope.sortOrder = false;
         $scope.limit = 100;
         $scope.filterSuggestions = [];
+
+        var userInfo = UserInfoService.get();
 
         $scope.timeAgo = function(epochPastTs) {
             var timeIntervalSinceLastUpdate = MainAlertService.millisecondsApart(epochPastTs, MainAlertService.getLastUpdate());
@@ -25,6 +28,14 @@ angular.module('zmon2App').controller('EntityCtrl', ['$scope', '$window', '$rout
                 return 'value: ' + JSON.stringify(result.value).slice(0, 100);
             }
         };
+        // Set team filter and re-fetch alerts
+        $scope.setTeamFilter = function(team) {
+            $scope.teamFilter = team ? team.split(',')[0] : null;
+            $scope.EntityCtrl.fetchAlertCoverage();
+            $location.search('tf', $scope.teamFilter ? $scope.teamFilter : 'all');
+            localStorageService.set('teamFilter', $scope.teamFilter);
+            localStorageService.set('returnTo', '/#' + $location.url());
+        };
 
         this.fetchEntityProperties = function() {
             CommunicationService.getEntityProperties().then(function(data) {
@@ -40,11 +51,8 @@ angular.module('zmon2App').controller('EntityCtrl', ['$scope', '$window', '$rout
             });
         };
 
-
-        this.fetchAlertCoverage = function() {
-            // Start loading animation
-            LoadingIndicatorService.start();
-
+        // fetch entities and their alert coverage, but filtered by given set of alert IDs
+        this.fetchAlertCoverageFiltered = function(alertsToShow) {
             var entityFilter = [];
 
             var parts = ($scope.entityFilter || '').split(/\s+/);
@@ -69,7 +77,9 @@ angular.module('zmon2App').controller('EntityCtrl', ['$scope', '$window', '$rout
                         if (typeof entitiesById[entity.id] === 'undefined') {
                             entitiesById[entity.id] = {'id': entity.id, 'type': entity.type, 'alerts': []};
                         }
-                        entitiesById[entity.id].alerts = entitiesById[entity.id].alerts.concat(group.alerts);
+                        entitiesById[entity.id].alerts = entitiesById[entity.id].alerts.concat(_.filter(group.alerts, function(a) {
+                            return alertsToShow === null || alertsToShow[a.id];
+                        }));
                         _.each(group.alerts, function(alert) {
                             if (typeof alertsById[alert.id] === 'undefined') {
                                 alert.definition = null;
@@ -85,6 +95,7 @@ angular.module('zmon2App').controller('EntityCtrl', ['$scope', '$window', '$rout
                 _.each(entitiesById, function(v, k) {
                     entities.push(v)
                 });
+
 
                 // load alert state for all alert IDs (also returns alert definition)
                 CommunicationService.getAlertsById(_.keys(alertsById)).then(function(data) {
@@ -113,10 +124,59 @@ angular.module('zmon2App').controller('EntityCtrl', ['$scope', '$window', '$rout
             });
         };
 
+
+        this.fetchAlertCoverage = function() {
+            // Start loading animation
+            LoadingIndicatorService.start();
+
+            // Get all teams from backend to generate filter by team menu.
+            CommunicationService.getAllTeams().then(
+                function(data) {
+                    $scope.alertTeams = data;
+
+                    // remove saved team from local storage if it doesnt exist anymore
+                    if ($scope.alertTeams.indexOf(localStorageService.get('teamFilter')) === -1) {
+                        localStorageService.remove('teamFilter');
+                    }
+                }
+            );
+
+            if ($scope.teamFilter) {
+                // NOTE: this call is loading more than necessary (whole alert definitions),
+                // we only collect the alert IDs
+                CommunicationService.getAlertDefinitions($scope.teamFilter, null).then(function(data) {
+                    // "set" of alert IDs to show (filtered by team)
+                    var alertsToShow = {};
+                    _.each(data, function(alert) {
+                        alertsToShow[alert.id] = true;
+                    });
+                $scope.EntityCtrl.fetchAlertCoverageFiltered(alertsToShow);
+            });
+            } else {
+                $scope.EntityCtrl.fetchAlertCoverageFiltered(null);
+            }
+        };
+
         // Non-refreshing; one-time listing
         MainAlertService.removeDataRefresh();
 
         this.fetchEntityProperties();
+
+        // Set team filter on load from userInfo
+        if (!_.isEmpty(userInfo.teams)) {
+            $scope.teamFilter = userInfo.teams.split(',')[0];
+        }
+
+        // Override teamFilter if it was saved in localStorage
+        if (localStorageService.get('teamFilter')) {
+            $scope.teamFilter = localStorageService.get('teamFilter');
+        }
+
+        // Override teamFilter if specified on queryString
+        if ($location.search().tf) {
+            var tf = $location.search().tf === 'all' ? null : $location.search().tf;
+            $scope.teamFilter = tf;
+        }
 
         // Init page state depending on URL's query string components
         if (!_.isEmpty($location.search().ef)) {
