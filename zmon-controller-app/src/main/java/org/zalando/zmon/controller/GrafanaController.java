@@ -114,7 +114,6 @@ public class GrafanaController extends AbstractZMonController {
         if (tags != null && tags.size() > 0) {
             jsonTags = mapper.writeValueAsString(tags);
         }
-        LOG.info("Grafana search: query=\"{}\" starred={} by={} tags={}", query, starred, starredBy, jsonTags);
 
         List<GrafanaDashboardSprocService.GrafanaDashboard> results = grafanaService.getGrafanaDashboards(query, jsonTags, starredBy, authService.getUserName());
         ArrayNode resultsNode = mapper.createArrayNode();
