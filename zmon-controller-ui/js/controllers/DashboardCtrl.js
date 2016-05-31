@@ -200,9 +200,9 @@ angular.module('zmon2App').controller('DashboardCtrl', ['$scope', '$log', '$rout
         var loadCheckResults = function(alert) {
 
             // only get graphs for first entities
-            var entitiesWithChart = _.map(alert.entities, 'entity');
+            var entitiesWithChart = _.map(alert.entities, 'entity').sort();
             entitiesWithChart.sort();
-            entitiesWithChart = _.first(entitiesWithChart, APP_CONST.MAX_ENTITIES_WITH_CHARTS);
+            entitiesWithChart = _.takeWhile(entitiesWithChart, APP_CONST.MAX_ENTITIES_WITH_CHARTS);
 
             var alertId = alert.alert_definition.id;
             var checkId = alert.alert_definition.check_definition_id;
