@@ -50,7 +50,7 @@ angular.module('zmon2App').controller('CloudCtrl', ['$scope', '$interval', '$loc
         // determines if an app contains error code responses (4XX, 5XX, etc)
         var hasErrorCodes = function(app) {
             var errd = false;
-            _.each(JSONPath(app[0].value, '$[*][*]'), function(o) {
+            _.each(jsonPath(app[0].value, '$[*][*]'), function(o) {
                 _.each(_.keys(o), function(key) {
                     if (key[0] !== '2') {
                         errd = true;
@@ -185,7 +185,7 @@ angular.module('zmon2App').controller('CloudCtrl', ['$scope', '$interval', '$loc
 
         // analyze incoming data per response and aggregate it accordingly
         var aggregateResults = function(app) {
-            var jp = JSONPath(app, "$.metrics[*][*].");
+            var jp = jsonPath(app, "$.metrics[*][*].");
 
             var r200 = getResponseCodeValues(jp, 200, 'mRate');
             var r400 = getResponseCodeValues(jp, 400, 'mRate');

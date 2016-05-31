@@ -140,7 +140,7 @@ angular.module('zmon2App').directive('dashboardWidget', ['CommunicationService',
 
                                 // If jsonPath is specified, use it to get specific values from results.
                                 if ($scope.config.jsonPath) {
-                                    $scope.values = JSONPath($scope.values, "$." + $scope.config.jsonPath);
+                                    $scope.values = jsonPath($scope.values, "$." + $scope.config.jsonPath);
                                 }
 
                                 var valuesContainNumbers = $scope.values
@@ -164,7 +164,7 @@ angular.module('zmon2App').directive('dashboardWidget', ['CommunicationService',
 
                                 // If jsonPath is specified, use it to get specific response
                                 if ($scope.config.jsonPath) {
-                                    response = JSONPath(response, "$." + $scope.config.jsonPath);
+                                    response = jsonPath(response, "$." + $scope.config.jsonPath);
                                 }
 
                                 if ($scope.config.options.metrics instanceof Array) {
@@ -186,7 +186,7 @@ angular.module('zmon2App').directive('dashboardWidget', ['CommunicationService',
                                     $scope.values = _.map(response[0].results, 'value');
                                     // If jsonPath is specified, use it to get specific values from results.
                                     if ($scope.config.jsonPath) {
-                                        $scope.values = JSONPath($scope.values, "$." + $scope.config.jsonPath);
+                                        $scope.values = jsonPath($scope.values, "$." + $scope.config.jsonPath);
                                     }
                                     $scope.lastValue = $scope.values[0];
                                     $scope.maxValue = _.max($scope.values);
@@ -196,7 +196,7 @@ angular.module('zmon2App').directive('dashboardWidget', ['CommunicationService',
                                 var values = _.map(response[0].results, 'value');
                                 // If jsonPath is specified, use it to get specific values from results.
                                 if ($scope.config.jsonPath) {
-                                    values = JSONPath(values, "$." + $scope.config.jsonPath);
+                                    values = jsonPath(values, "$." + $scope.config.jsonPath);
                                 }
                                 $scope.mean = _.reduce(values, function (memo, val) {
                                     return memo + val;
