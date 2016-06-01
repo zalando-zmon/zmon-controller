@@ -174,7 +174,7 @@ describe('AlertDefinitionCtrl', function() {
 
     it('should initially have two alert definitions in total (excludes templates)', function() {
         httpBackend.flush();
-        expect(scope.alertDefinitions['All'].length).toBe(2);
+        expect(scope.alertDefinitions.All.length).toBe(2);
     });
 
     it('should have one alert after applying filter for "ACTIVE" alerts only', function() {
