@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import org.apache.http.protocol.HTTP;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,12 +14,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.zalando.zmon.config.ControllerProperties;
+import org.zalando.zmon.domain.CheckResults;
 import org.zalando.zmon.exception.ZMonException;
 import org.zalando.zmon.persistence.GrafanaDashboardSprocService;
 import org.zalando.zmon.security.permission.DefaultZMonPermissionService;
+import org.zalando.zmon.service.ZMonService;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping(value = "/rest/grafana")
@@ -26,74 +30,37 @@ public class GrafanaController extends AbstractZMonController {
 
     private static final Logger LOG = LoggerFactory.getLogger(GrafanaController.class);
 
-    @Autowired
+    ZMonService zMonService;
+
     GrafanaDashboardSprocService grafanaService;
 
-    @Autowired
     DefaultZMonPermissionService authService;
 
-    @Autowired
     ObjectMapper mapper;
 
-    @Autowired
     ControllerProperties controllerProperties;
+
+    @Autowired
+    public GrafanaController(
+            ZMonService zMonService,
+            GrafanaDashboardSprocService grafanaService,
+            DefaultZMonPermissionService authService,
+            ObjectMapper mapper,
+            ControllerProperties controllerProperties
+    ) {
+        this.zMonService = zMonService;
+        this.grafanaService = grafanaService;
+        this.authService = authService;
+        this.mapper = mapper;
+        this.controllerProperties = controllerProperties;
+    }
 
     // home dashboard
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     @RequestMapping(value = "/api/dashboards/home", method = RequestMethod.GET)
-    public JsonNode getDashboard2() throws ZMonException {
-        ObjectNode node = mapper.createObjectNode();
-        ObjectNode dashboard = mapper.createObjectNode();
-        dashboard.put("editable", true);
-        dashboard.put("hideControls", true);
-        dashboard.put("id", 36);
-        dashboard.put("originalTitle", "DashboardTest");
-        dashboard.put("schemaVersion", 7);
-        dashboard.put("sharedCrosshair", false);
-        dashboard.put("timezone", "browser");
-        dashboard.put("title", "Grafana ZMON");
-        dashboard.put("version", 26);
-
-        ObjectNode annotations = mapper.createObjectNode();
-        ArrayNode list = mapper.createArrayNode();
-
-        annotations.put("list", list);
-        annotations.put("enable", false);
-
-        ArrayNode rows = mapper.createArrayNode();
-        dashboard.put("rows", rows);
-
-        ArrayNode tags = mapper.createArrayNode();
-        tags.add("startpage");
-        tags.add("home");
-        annotations.put("tags", tags);
-
-        ObjectNode templating = mapper.createObjectNode();
-        templating.put("enable", false);
-        templating.put("list", list);
-        annotations.put("templating", templating);
-
-        ObjectNode time = mapper.createObjectNode();
-        time.put("from", "now-2h");
-        time.put("to", "now");
-        annotations.put("time", time);
-
-        dashboard.put("annotations", annotations);
-
-        ObjectNode meta = mapper.createObjectNode();
-        meta.put("canEdit", true);
-        meta.put("canSave", false);
-        meta.put("canStar", false);
-        meta.put("created", "0001-01-01T00:00:00Z");
-        meta.put("expires", "0001-01-01T00:00:00Z");
-        meta.put("updated", "0001-01-01T00:00:00Z");
-        meta.put("isHome", true);
-        meta.put("slug", "");
-
-        node.put("dashboard", dashboard);
-        node.put("meta", meta);
-        return node;
+    public JsonNode getDashboard2() throws IOException {
+        return mapper.readTree(GrafanaController.class.getResourceAsStream("/grafana/home.json"));
     }
 
     // search for dashboards, returns list of all available dashboards
@@ -248,6 +215,27 @@ public class GrafanaController extends AbstractZMonController {
         }
     }
 
+    public ResponseEntity<JsonNode> serveDynamicDashboard(String id) throws IOException {
+        // zmon-check-123-inst
+        String[] parts = id.split("-", 4);
+        int checkId = Integer.valueOf(parts[2]);
+
+        final Optional<String> entityId = parts.length > 3 ? Optional.of(parts[3]) : Optional.empty();
+
+        List<CheckResults> checkResults = zMonService.getCheckResults(checkId, null, 1);
+        String entityIds = checkResults.stream().map(CheckResults::getEntity).sorted().collect(Collectors.joining(","));
+        List<ObjectNode> entityOptions = checkResults.stream().map(CheckResults::getEntity).sorted().map(
+                (entity) -> mapper.createObjectNode().put("text", entity).put("value", entity).put("selected", entity.equals(entityId.orElse("")))
+        ).collect(Collectors.toList());
+
+        JsonNode node = mapper.readTree(GrafanaController.class.getResourceAsStream("/grafana/dynamic-dashboard.json"));
+        ((ObjectNode) node.get("dashboard").get("rows").get(0).get("panels").get(0).get("targets").get(0)).put("metric", "zmon.check." + checkId);
+
+        ((ObjectNode) node.get("dashboard").get("templating").get("list").get(0)).put("query", entityIds);
+        ((ObjectNode) node.get("dashboard").get("templating").get("list").get(0)).set("options", mapper.createArrayNode().addAll(entityOptions));
+        return new ResponseEntity<>(node, HttpStatus.OK);
+    }
+
     // requests a dashboard
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
@@ -255,6 +243,10 @@ public class GrafanaController extends AbstractZMonController {
     public ResponseEntity<JsonNode> getDashboard(@PathVariable(value = "id") String id) throws ZMonException, IOException {
         if (null == id || "".equals(id)) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        if (id.startsWith("zmon-check-")) {
+            return serveDynamicDashboard(id);
         }
 
         id = id.toLowerCase();
