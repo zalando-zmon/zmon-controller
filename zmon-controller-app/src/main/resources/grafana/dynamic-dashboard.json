@@ -1,0 +1,224 @@
+{
+  "meta": {
+    "type": "db",
+    "canEdit": true,
+    "canSave": false,
+    "canStar": false,
+    "created": "0001-01-01T00:00:00Z",
+    "expires": "2999-01-01T00:00:00Z",
+    "updated": "0001-01-01T00:00:00Z",
+    "isHome": false,
+    "slug": "zmon-check",
+    "isStarred": false
+  },
+  "dashboard": {
+    "id": "zmon-check",
+    "rows": [
+      {
+        "title": "Row",
+        "height": "450px",
+        "panels": [
+          {
+            "id": 1,
+            "bars": false,
+            "fill": 1,
+            "grid": {
+              "threshold1": null,
+              "threshold2": null,
+              "threshold1Color": "rgba(216, 200, 27, 0.27)",
+              "threshold2Color": "rgba(234, 112, 112, 0.22)"
+            },
+            "span": 12,
+            "type": "graph",
+            "error": false,
+            "isNew": true,
+            "lines": true,
+            "links": [],
+            "stack": false,
+            "title": "$entity",
+            "xaxis": {
+              "show": true
+            },
+            "yaxes": [
+              {
+                "max": null,
+                "min": null,
+                "show": true,
+                "label": null,
+                "format": "short",
+                "logBase": 1
+              },
+              {
+                "max": null,
+                "min": null,
+                "show": true,
+                "label": null,
+                "format": "short",
+                "logBase": 1
+              }
+            ],
+            "height": "",
+            "legend": {
+              "avg": false,
+              "max": false,
+              "min": false,
+              "show": true,
+              "total": false,
+              "values": false,
+              "current": false
+            },
+            "points": false,
+            "hasUnit": false,
+            "targets": [
+              {
+                "tags": {
+                  "entity": [
+                    "$entity"
+                  ]
+                },
+                "refId": "A",
+                "errors": {},
+                "metric": "zmon.check.8",
+                "groupBy": {
+                  "tagKey": "",
+                  "timeInterval": "1s"
+                },
+                "groupByTags": [
+                  "key"
+                ],
+                "downsampling": "avg",
+                "currentTagKey": "",
+                "horAggregator": {
+                  "unit": "millisecond",
+                  "factor": "1",
+                  "percentile": "0.75",
+                  "samplingRate": "1s"
+                },
+                "currentTagValue": "",
+                "currentGroupByType": "tag",
+                "horizontalAggregators": null,
+                "currentHorizontalAggregatorName": "avg"
+              }
+            ],
+            "tooltip": {
+              "shared": true,
+              "ordering": "alphabetical",
+              "value_type": "cumulative",
+              "msResolution": false
+            },
+            "editable": true,
+            "renderer": "flot",
+            "timeFrom": null,
+            "hasFactor": false,
+            "linewidth": 2,
+            "timeShift": null,
+            "datasource": null,
+            "percentage": false,
+            "aliasColors": {},
+            "pointradius": 5,
+            "steppedLine": false,
+            "transparent": false,
+            "downsampling": "(NONE)",
+            "isTagGroupBy": false,
+            "hasPercentile": false,
+            "isTimeGroupBy": false,
+            "nullPointMode": "connected",
+            "addGroupByMode": false,
+            "isGroupByValid": true,
+            "isValueGroupBy": false,
+            "hasSamplingRate": false,
+            "seriesOverrides": [],
+            "addFilterTagMode": false,
+            "isAggregatorValid": true,
+            "addHorizontalAggregatorMode": false
+          }
+        ],
+        "collapse": false,
+        "editable": true
+      },
+      {
+        "title": "New row",
+        "height": "250px",
+        "panels": [],
+        "collapse": false,
+        "editable": true
+      }
+    ],
+    "tags": [],
+    "time": {
+      "to": "now",
+      "from": "now-1h"
+    },
+    "links": [],
+    "style": "dark",
+    "title": "ZMON Check",
+    "refresh": false,
+    "version": 0,
+    "editable": true,
+    "timezone": "browser",
+    "templating": {
+      "list": [
+        {
+          "hide": 0,
+          "name": "entity",
+          "type": "custom",
+          "multi": false,
+          "query": "zmon-controller,zmon-scheduler",
+          "regex": "",
+          "current": {
+            "tags": [],
+            "text": "zmon-scheduler",
+            "value": "zmon-scheduler"
+          },
+          "options": [
+            {
+              "text": "zmon-controller",
+              "value": "zmon-controller",
+              "selected": false
+            },
+            {
+              "text": "zmon-scheduler",
+              "value": "zmon-scheduler",
+              "selected": true
+            }
+          ],
+          "refresh": 1,
+          "datasource": null,
+          "includeAll": false
+        }
+      ]
+    },
+    "timepicker": {
+      "time_options": [
+        "5m",
+        "15m",
+        "1h",
+        "6h",
+        "12h",
+        "24h",
+        "2d",
+        "7d",
+        "30d"
+      ],
+      "refresh_intervals": [
+        "5s",
+        "10s",
+        "30s",
+        "1m",
+        "5m",
+        "15m",
+        "30m",
+        "1h",
+        "2h",
+        "1d"
+      ]
+    },
+    "annotations": {
+      "list": []
+    },
+    "hideControls": false,
+    "originalTitle": "ZMON Check",
+    "schemaVersion": 12,
+    "sharedCrosshair": false
+  }
+}

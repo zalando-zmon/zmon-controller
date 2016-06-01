@@ -1,0 +1,40 @@
+{
+  "dashboard": {
+    "editable": true,
+    "hideControls": true,
+    "id": 36,
+    "originalTitle": "Home",
+    "schemaVersion": 7,
+    "sharedCrosshair": false,
+    "timezone": "browser",
+    "title": "Grafana ZMON",
+    "version": 26,
+    "rows": [],
+    "annotations": {
+      "list": [],
+      "enable": false,
+      "tags": [
+        "startpage",
+        "home"
+      ],
+      "templating": {
+        "enable": false,
+        "list": []
+      },
+      "time": {
+        "from": "now-2h",
+        "to": "now"
+      }
+    }
+  },
+  "meta": {
+    "canEdit": true,
+    "canSave": false,
+    "canStar": false,
+    "created": "0001-01-01T00:00:00Z",
+    "expires": "0001-01-01T00:00:00Z",
+    "updated": "0001-01-01T00:00:00Z",
+    "isHome": true,
+    "slug": ""
+  }
+}
