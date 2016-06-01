@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.zalando.zmon.domain.CheckResults;
 import org.zalando.zmon.domain.ExecutionStatus;
 import org.zalando.zmon.redis.ResponseHolder;
 import org.zalando.zmon.service.AlertService;
@@ -53,10 +54,13 @@ public class AlertStatusAPI {
         return new ResponseEntity<>(service.getStatus(), HttpStatus.OK);
     }
 
-    /*
-    * {<id>: { entity: value } }
-    *
-    **/
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    @RequestMapping(value = "/alert/{id}/all-entities", method = RequestMethod.GET)
+    public ResponseEntity<List<CheckResults>> getAlertStatus(@PathVariable("id") final int id) throws IOException {
+        return new ResponseEntity<>(service.getCheckAlertResults(id, 1), HttpStatus.OK);
+    }
+
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     @RequestMapping(value = "/alert/{ids}/", method = RequestMethod.GET)
@@ -65,7 +69,7 @@ public class AlertStatusAPI {
 
         Map<String, List<ResponseHolder<String, String>>> results = new HashMap<>();
         for (String id : ids) {
-            results.put(id, new ArrayList<ResponseHolder<String, String>>());
+            results.put(id, new ArrayList<>());
         }
 
         try {
@@ -88,7 +92,7 @@ public class AlertStatusAPI {
                 p.sync();
             }
         } finally {
-            jedisPool.returnResource(jedis);
+            jedis.close();
         }
 
         ObjectNode resultNode = mapper.createObjectNode();
@@ -108,10 +112,10 @@ public class AlertStatusAPI {
     }
 
     @ResponseBody
-    @RequestMapping(value="/alert-coverage", method = RequestMethod.POST)
+    @RequestMapping(value = "/alert-coverage", method = RequestMethod.POST)
     public ResponseEntity<JsonNode> getAlertCoverage(@RequestBody JsonNode filter) {
         JsonNode node = service.getAlertCoverage(filter);
-        if(null==node) {
+        if (null == node) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return new ResponseEntity<>(node, HttpStatus.OK);
