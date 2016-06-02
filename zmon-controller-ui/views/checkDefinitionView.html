@@ -9,7 +9,6 @@
             Team: {{checkDefinition.owning_team}}
         </p>
         <p>
-            <!--a ng-show="checkDefinition.editable && checkDefinition.status != 'DELETED'" href="#/check-definitions/edit/{{checkDefinition.id}}" title="Edit check definition"><i class="fa fa-fw fa-edit"></i> Edit</a-->
             <a href="#/check-definitions/edit/{{checkDefinition.id}}" title="Edit check definition"><i class="fa fa-fw fa-edit"></i> Edit</a>
             <a href="#/trial-run?json={{checkJson}}"><i class="fa fa-play"></i> Trial Run</a>
             <a href="#/history?check_definition_id={{checkDefinition.id}}"><i class="fa fa-clock-o"></i> History</a>

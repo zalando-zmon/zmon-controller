@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.zalando.zmon.config.ControllerProperties;
+import org.zalando.zmon.domain.CheckDefinition;
 import org.zalando.zmon.domain.CheckResults;
 import org.zalando.zmon.exception.ZMonException;
 import org.zalando.zmon.persistence.GrafanaDashboardSprocService;
@@ -23,6 +24,8 @@ import org.zalando.zmon.service.ZMonService;
 import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 @Controller
 @RequestMapping(value = "/rest/grafana")
@@ -215,6 +218,15 @@ public class GrafanaController extends AbstractZMonController {
         }
     }
 
+    public static String sanitizeEntityId(String entityId) {
+        // replace chars for KairosDB
+        return entityId.replace("[", "_").replace("]", "_").replace(":", "_").replace("@", "_");
+    }
+
+    protected static Stream<JsonNode> getStream(JsonNode node) {
+        return StreamSupport.stream(Spliterators.spliteratorUnknownSize(node.iterator(), Spliterator.ORDERED), false);
+    }
+
     public ResponseEntity<JsonNode> serveDynamicDashboard(String id) throws IOException {
         // zmon-check-123-inst
         String[] parts = id.split("-", 4);
@@ -222,17 +234,33 @@ public class GrafanaController extends AbstractZMonController {
 
         final Optional<String> entityId = parts.length > 3 ? Optional.of(parts[3]) : Optional.empty();
 
+        List<CheckDefinition> checkDefinitions = zMonService.getCheckDefinitionsById(checkId);
+
+        if (checkDefinitions.isEmpty()) {
+            return new ResponseEntity<JsonNode>(mapper.createObjectNode().put("message", "Check not found"), HttpStatus.NOT_FOUND);
+        }
+
+        CheckDefinition checkDefinition = checkDefinitions.get(0);
+
         List<CheckResults> checkResults = zMonService.getCheckResults(checkId, null, 1);
-        String entityIds = checkResults.stream().map(CheckResults::getEntity).sorted().collect(Collectors.joining(","));
-        List<ObjectNode> entityOptions = checkResults.stream().map(CheckResults::getEntity).sorted().map(
-                (entity) -> mapper.createObjectNode().put("text", entity).put("value", entity).put("selected", entity.equals(entityId.orElse("")))
-        ).collect(Collectors.toList());
+        String entityIds = checkResults.stream().map(CheckResults::getEntity).sorted()
+                .map(GrafanaController::sanitizeEntityId)
+                .collect(Collectors.joining(","));
 
         JsonNode node = mapper.readTree(GrafanaController.class.getResourceAsStream("/grafana/dynamic-dashboard.json"));
-        ((ObjectNode) node.get("dashboard").get("rows").get(0).get("panels").get(0).get("targets").get(0)).put("metric", "zmon.check." + checkId);
-
+        ((ObjectNode) node.get("dashboard")).put("title", "Check " + checkId + " (" + checkDefinition.getName() + ")");
+        JsonNode rows = node.get("dashboard").get("rows");
+        getStream(rows).forEach(
+                row -> ((ObjectNode)row.get("panels").get(0).get("targets").get(0)).put("metric", "zmon.check." + checkId)
+        );
+        getStream(rows).forEach(
+                row -> ((ObjectNode)row.get("panels").get(0)).put("title", checkDefinition.getName() + " for $entity")
+        );
         ((ObjectNode) node.get("dashboard").get("templating").get("list").get(0)).put("query", entityIds);
-        ((ObjectNode) node.get("dashboard").get("templating").get("list").get(0)).set("options", mapper.createArrayNode().addAll(entityOptions));
+        if (entityId.isPresent()) {
+            final String sanitizedEntityId = sanitizeEntityId(entityId.get());
+            ((ObjectNode) node.get("dashboard").get("templating").get("list").get(0)).putObject("current").put("text", sanitizedEntityId).put("value", sanitizedEntityId);
+        }
         return new ResponseEntity<>(node, HttpStatus.OK);
     }
 

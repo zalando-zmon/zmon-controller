@@ -15,8 +15,8 @@
     "id": "zmon-check",
     "rows": [
       {
-        "title": "Row",
-        "height": "450px",
+        "title": "Last Hour",
+        "height": "250px",
         "panels": [
           {
             "id": 1,
@@ -78,7 +78,7 @@
                 },
                 "refId": "A",
                 "errors": {},
-                "metric": "zmon.check.8",
+                "metric": "zmon.check.XX",
                 "groupBy": {
                   "tagKey": "",
                   "timeInterval": "1s"
@@ -137,9 +137,124 @@
         "editable": true
       },
       {
-        "title": "New row",
+        "title": "Last 24 hours",
         "height": "250px",
-        "panels": [],
+        "panels": [
+          {
+            "id": 1,
+            "bars": false,
+            "fill": 1,
+            "grid": {
+              "threshold1": null,
+              "threshold2": null,
+              "threshold1Color": "rgba(216, 200, 27, 0.27)",
+              "threshold2Color": "rgba(234, 112, 112, 0.22)"
+            },
+            "span": 12,
+            "type": "graph",
+            "error": false,
+            "isNew": true,
+            "lines": true,
+            "links": [],
+            "stack": false,
+            "title": "$entity",
+            "xaxis": {
+              "show": true
+            },
+            "yaxes": [
+              {
+                "max": null,
+                "min": null,
+                "show": true,
+                "label": null,
+                "format": "short",
+                "logBase": 1
+              },
+              {
+                "max": null,
+                "min": null,
+                "show": true,
+                "label": null,
+                "format": "short",
+                "logBase": 1
+              }
+            ],
+            "height": "",
+            "legend": {
+              "avg": false,
+              "max": false,
+              "min": false,
+              "show": true,
+              "total": false,
+              "values": false,
+              "current": false
+            },
+            "points": false,
+            "hasUnit": false,
+            "targets": [
+              {
+                "tags": {
+                  "entity": [
+                    "$entity"
+                  ]
+                },
+                "refId": "A",
+                "errors": {},
+                "metric": "zmon.check.XX",
+                "groupBy": {
+                  "tagKey": "",
+                  "timeInterval": "1s"
+                },
+                "groupByTags": [
+                  "key"
+                ],
+                "downsampling": "avg",
+                "currentTagKey": "",
+                "horAggregator": {
+                  "unit": "millisecond",
+                  "factor": "1",
+                  "percentile": "0.75",
+                  "samplingRate": "1s"
+                },
+                "currentTagValue": "",
+                "currentGroupByType": "tag",
+                "horizontalAggregators": null,
+                "currentHorizontalAggregatorName": "avg"
+              }
+            ],
+            "tooltip": {
+              "shared": true,
+              "ordering": "alphabetical",
+              "value_type": "cumulative",
+              "msResolution": false
+            },
+            "editable": true,
+            "renderer": "flot",
+            "timeFrom": "now-24h",
+            "hasFactor": false,
+            "linewidth": 2,
+            "timeShift": null,
+            "datasource": null,
+            "percentage": false,
+            "aliasColors": {},
+            "pointradius": 5,
+            "steppedLine": false,
+            "transparent": false,
+            "downsampling": "(NONE)",
+            "isTagGroupBy": false,
+            "hasPercentile": false,
+            "isTimeGroupBy": false,
+            "nullPointMode": "connected",
+            "addGroupByMode": false,
+            "isGroupByValid": true,
+            "isValueGroupBy": false,
+            "hasSamplingRate": false,
+            "seriesOverrides": [],
+            "addFilterTagMode": false,
+            "isAggregatorValid": true,
+            "addHorizontalAggregatorMode": false
+          }
+        ],
         "collapse": false,
         "editable": true
       }
@@ -163,28 +278,15 @@
           "name": "entity",
           "type": "custom",
           "multi": false,
-          "query": "zmon-controller,zmon-scheduler",
+          "query": "entity1,entity2",
           "regex": "",
-          "current": {
-            "tags": [],
-            "text": "zmon-scheduler",
-            "value": "zmon-scheduler"
-          },
-          "options": [
-            {
-              "text": "zmon-controller",
-              "value": "zmon-controller",
-              "selected": false
-            },
-            {
-              "text": "zmon-scheduler",
-              "value": "zmon-scheduler",
-              "selected": true
-            }
-          ],
           "refresh": 1,
           "datasource": null,
-          "includeAll": false
+          "includeAll": false,
+          "current": {
+              "text": "selectedEntity",
+              "value": "selectedEntity"
+          }
         }
       ]
     },
@@ -201,9 +303,6 @@
         "30d"
       ],
       "refresh_intervals": [
-        "5s",
-        "10s",
-        "30s",
         "1m",
         "5m",
         "15m",
