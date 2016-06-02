@@ -986,3 +986,24 @@ body.entities-page .type-col {
     background-color: #8f8f8f !important;
     border: 1px solid #707070 !important;
 }
+
+/***
+ * Dropdown directive
+ */
+
+.dropdown
+{
+    margin-top: 5px;
+}
+
+.dropdown .dropdown-menu
+{
+    padding: 10px;
+}
+
+.dropdown .input-group
+{
+    padding-bottom: 10px;
+}
+
+

@@ -15,18 +15,7 @@
             </form>
         </div>
         <div class="col-md-4">
-            <div class="dropdown team-filter">
-                <label>Filter team:</label>
-                <a class="dropdown-toggle">{{ teamFilter && teamFilter !== 'all' ? teamFilter : 'All Teams' }}</a>
-                <ul class="dropdown-menu team-filter-dropdown">
-                    <li ng-hide="teamFilter === null" ng-click="setTeamFilter()">
-                        All Teams
-                    </li>
-                    <li ng-repeat="team in checkTeams" ng-click="setTeamFilter(team)">
-                        {{ team }}
-                    </li>
-                </ul>
-            </div>
+            <dropdown label="Filter team:" options="checkTeams" default-option="All Teams" selected="teamFilter" on-selection="setTeamFilter(option)"></dropdown>
         </div>
     </div>
 </div>
