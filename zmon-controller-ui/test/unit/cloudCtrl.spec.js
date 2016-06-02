@@ -77,7 +77,7 @@ describe('CloudCtrl', function() {
         httpBackend.expectGET('rest/entities?query=%7B%22type%22%3A%22instance%22%7D');
         httpBackend.expectGET('rest/entities?query=%7B%22type%22%3A%22elb%22%7D');
         httpBackend.flush();
-        expect(scope.hasMetrics(scope.applications['aaa'])).toBe(false);
-        expect(scope.notHasMetrics(scope.applications['aaa'])).toBe(true);
+        expect(scope.hasMetrics(scope.applications.aaa)).toBe(false);
+        expect(scope.notHasMetrics(scope.applications.aaa)).toBe(true);
     });
 });
