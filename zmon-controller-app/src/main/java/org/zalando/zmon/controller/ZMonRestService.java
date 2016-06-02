@@ -13,7 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.zalando.stups.tokens.AccessTokens;
-import org.zalando.zmon.config.KairosDBProperties;
 import org.zalando.zmon.config.MetricCacheProperties;
 import org.zalando.zmon.domain.CheckDefinition;
 import org.zalando.zmon.domain.CheckDefinitionImport;
@@ -39,9 +38,6 @@ public class ZMonRestService extends AbstractZMonController {
 
     @Autowired
     private ZMonService service;
-
-    @Autowired
-    private KairosDBProperties kairosDBProperties;
 
     @Autowired
     private MetricCacheProperties metricCacheProperties;
