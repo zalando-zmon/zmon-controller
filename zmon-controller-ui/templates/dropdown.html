@@ -1,0 +1,23 @@
+<div class="dropdown" is-open="open">
+    <label>{{label}}</label>
+    <a class="dropdown-toggle" ng-if="selectedOption">{{selectedOption}}</a>
+    <a class="dropdown-toggle" ng-if="selectedOption === null">{{defaultOption}}</a>
+    <ul class="dropdown-menu">
+        <li>
+            <div class="input-group">
+                <div class="input-group-btn">
+                    <button class="btn btn-primary">
+                        <i class="fa fa-fw fa-search"></i>
+                    </button>
+                </div>
+                <input type="text" class="form-control" ng-model="filter" ng-click="onInput($event)"/>
+            </div>
+        </li>
+        <li ng-click="onSelect()" ng-if="filter === ''">
+            {{defaultOption}}
+        </li>
+        <li ng-repeat="option in availableOptions | filter: filter" ng-click="onSelect(option)">
+            {{ option }}
+        </li>
+    </ul>
+</div>
