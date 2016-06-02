@@ -24,6 +24,8 @@ import org.zalando.zmon.service.ZMonService;
 import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 @Controller
 @RequestMapping(value = "/rest/grafana")
@@ -221,6 +223,10 @@ public class GrafanaController extends AbstractZMonController {
         return entityId.replace("[", "_").replace("]", "_").replace(":", "_").replace("@", "_");
     }
 
+    protected static Stream<JsonNode> getStream(JsonNode node) {
+        return StreamSupport.stream(Spliterators.spliteratorUnknownSize(node.iterator(), Spliterator.ORDERED), false);
+    }
+
     public ResponseEntity<JsonNode> serveDynamicDashboard(String id) throws IOException {
         // zmon-check-123-inst
         String[] parts = id.split("-", 4);
@@ -243,8 +249,13 @@ public class GrafanaController extends AbstractZMonController {
 
         JsonNode node = mapper.readTree(GrafanaController.class.getResourceAsStream("/grafana/dynamic-dashboard.json"));
         ((ObjectNode) node.get("dashboard")).put("title", "Check " + checkId + " (" + checkDefinition.getName() + ")");
-        ((ObjectNode) node.get("dashboard").get("rows").get(0).get("panels").get(0).get("targets").get(0)).put("metric", "zmon.check." + checkId);
-
+        JsonNode rows = node.get("dashboard").get("rows");
+        getStream(rows).forEach(
+                row -> ((ObjectNode)row.get("panels").get(0).get("targets").get(0)).put("metric", "zmon.check." + checkId)
+        );
+        getStream(rows).forEach(
+                row -> ((ObjectNode)row.get("panels").get(0)).put("title", checkDefinition.getName() + " for $entity")
+        );
         ((ObjectNode) node.get("dashboard").get("templating").get("list").get(0)).put("query", entityIds);
         if (entityId.isPresent()) {
             final String sanitizedEntityId = sanitizeEntityId(entityId.get());
