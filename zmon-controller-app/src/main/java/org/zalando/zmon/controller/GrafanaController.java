@@ -223,16 +223,15 @@ public class GrafanaController extends AbstractZMonController {
         final Optional<String> entityId = parts.length > 3 ? Optional.of(parts[3]) : Optional.empty();
 
         List<CheckResults> checkResults = zMonService.getCheckResults(checkId, null, 1);
-        String entityIds = checkResults.stream().map(CheckResults::getEntity).sorted().collect(Collectors.joining(","));
-        List<ObjectNode> entityOptions = checkResults.stream().map(CheckResults::getEntity).sorted().map(
-                (entity) -> mapper.createObjectNode().put("text", entity).put("value", entity).put("selected", entity.equals(entityId.orElse("")))
-        ).collect(Collectors.toList());
+        String entityIds = checkResults.stream().map(CheckResults::getEntity).sorted()
+                // replace chars for KairosDB
+                .map(entity -> entity.replace("[", "_").replace("]", "_").replace(":", "_").replace("@", "_"))
+                .collect(Collectors.joining(","));
 
         JsonNode node = mapper.readTree(GrafanaController.class.getResourceAsStream("/grafana/dynamic-dashboard.json"));
         ((ObjectNode) node.get("dashboard").get("rows").get(0).get("panels").get(0).get("targets").get(0)).put("metric", "zmon.check." + checkId);
 
         ((ObjectNode) node.get("dashboard").get("templating").get("list").get(0)).put("query", entityIds);
-        ((ObjectNode) node.get("dashboard").get("templating").get("list").get(0)).set("options", mapper.createArrayNode().addAll(entityOptions));
         return new ResponseEntity<>(node, HttpStatus.OK);
     }
 
