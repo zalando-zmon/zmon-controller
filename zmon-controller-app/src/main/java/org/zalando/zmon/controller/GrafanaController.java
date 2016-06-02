@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.zalando.zmon.config.ControllerProperties;
+import org.zalando.zmon.domain.CheckDefinition;
 import org.zalando.zmon.domain.CheckResults;
 import org.zalando.zmon.exception.ZMonException;
 import org.zalando.zmon.persistence.GrafanaDashboardSprocService;
@@ -215,6 +216,11 @@ public class GrafanaController extends AbstractZMonController {
         }
     }
 
+    public static String sanitizeEntityId(String entityId) {
+        // replace chars for KairosDB
+        return entityId.replace("[", "_").replace("]", "_").replace(":", "_").replace("@", "_");
+    }
+
     public ResponseEntity<JsonNode> serveDynamicDashboard(String id) throws IOException {
         // zmon-check-123-inst
         String[] parts = id.split("-", 4);
@@ -222,16 +228,28 @@ public class GrafanaController extends AbstractZMonController {
 
         final Optional<String> entityId = parts.length > 3 ? Optional.of(parts[3]) : Optional.empty();
 
+        List<CheckDefinition> checkDefinitions = zMonService.getCheckDefinitionsById(checkId);
+
+        if (checkDefinitions.isEmpty()) {
+            return new ResponseEntity<JsonNode>(mapper.createObjectNode().put("message", "Check not found"), HttpStatus.NOT_FOUND);
+        }
+
+        CheckDefinition checkDefinition = checkDefinitions.get(0);
+
         List<CheckResults> checkResults = zMonService.getCheckResults(checkId, null, 1);
         String entityIds = checkResults.stream().map(CheckResults::getEntity).sorted()
-                // replace chars for KairosDB
-                .map(entity -> entity.replace("[", "_").replace("]", "_").replace(":", "_").replace("@", "_"))
+                .map(GrafanaController::sanitizeEntityId)
                 .collect(Collectors.joining(","));
 
         JsonNode node = mapper.readTree(GrafanaController.class.getResourceAsStream("/grafana/dynamic-dashboard.json"));
+        ((ObjectNode) node.get("dashboard")).put("title", "Check " + checkId + " (" + checkDefinition.getName() + ")");
         ((ObjectNode) node.get("dashboard").get("rows").get(0).get("panels").get(0).get("targets").get(0)).put("metric", "zmon.check." + checkId);
 
         ((ObjectNode) node.get("dashboard").get("templating").get("list").get(0)).put("query", entityIds);
+        if (entityId.isPresent()) {
+            final String sanitizedEntityId = sanitizeEntityId(entityId.get());
+            ((ObjectNode) node.get("dashboard").get("templating").get("list").get(0)).putObject("current").put("text", sanitizedEntityId).put("value", sanitizedEntityId);
+        }
         return new ResponseEntity<>(node, HttpStatus.OK);
     }
 

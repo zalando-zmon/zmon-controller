@@ -200,9 +200,7 @@ angular.module('zmon2App').controller('DashboardCtrl', ['$scope', '$log', '$rout
         var loadCheckResults = function(alert) {
 
             // only get graphs for first entities
-            var entitiesWithChart = _.map(alert.entities, 'entity').sort();
-            entitiesWithChart.sort();
-            entitiesWithChart = _.takeWhile(entitiesWithChart, APP_CONST.MAX_ENTITIES_WITH_CHARTS);
+            var entitiesWithChart = _.map(alert.entities, 'entity').sort().slice(0, APP_CONST.MAX_ENTITIES_WITH_CHARTS);
 
             var alertId = alert.alert_definition.id;
             var checkId = alert.alert_definition.check_definition_id;
@@ -322,8 +320,8 @@ angular.module('zmon2App').controller('DashboardCtrl', ['$scope', '$log', '$rout
         };
 
         // Returns a comma separated list of entity names from an alert entities object
-        $scope.getEntityNames = function(entities) {
-            return _.map(entities, 'entity').sort().join(',');
+        $scope.getEntityNames = function(entities, n) {
+            return _.map(entities, 'entity').sort().slice(0, n).join(',');
         };
 
         // Add a tag to the tags array

@@ -78,7 +78,7 @@
                 },
                 "refId": "A",
                 "errors": {},
-                "metric": "zmon.check.8",
+                "metric": "zmon.check.XX",
                 "groupBy": {
                   "tagKey": "",
                   "timeInterval": "1s"
@@ -147,7 +147,7 @@
     "tags": [],
     "time": {
       "to": "now",
-      "from": "now-1h"
+      "from": "now-3h"
     },
     "links": [],
     "style": "dark",
@@ -163,28 +163,15 @@
           "name": "entity",
           "type": "custom",
           "multi": false,
-          "query": "zmon-controller,zmon-scheduler",
+          "query": "entity1,entity2",
           "regex": "",
-          "current": {
-            "tags": [],
-            "text": "zmon-scheduler",
-            "value": "zmon-scheduler"
-          },
-          "options": [
-            {
-              "text": "zmon-controller",
-              "value": "zmon-controller",
-              "selected": false
-            },
-            {
-              "text": "zmon-scheduler",
-              "value": "zmon-scheduler",
-              "selected": true
-            }
-          ],
           "refresh": 1,
           "datasource": null,
-          "includeAll": false
+          "includeAll": false,
+          "current": {
+              "text": "selectedEntity",
+              "value": "selectedEntity"
+          }
         }
       ]
     },

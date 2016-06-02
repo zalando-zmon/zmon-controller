@@ -76,7 +76,7 @@
             </span>
         </div>
         <div class="col-md-3" ng-show="!compact">
-            <a href="/#/check-charts/{{alertInstance.alert_definition.check_definition_id}}?entity_id={{ getEntityNames(alertInstance.entities) }}">
+            <a href="/grafana/dashboard/db/zmon-check-{{alertInstance.alert_definition.check_definition_id}}-{{ getEntityNames(alertInstance.entities, 1) }}">
                 <chartd3 chart-data="charts[alertInstance.alert_definition.id]" id="alertInstance.alert_definition.id"></chart>
                 <!--chart chart-data="charts[alertInstance.alert_definition.id]"></chart--!>
             </a>
