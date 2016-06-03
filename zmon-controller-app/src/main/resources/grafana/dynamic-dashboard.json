@@ -33,7 +33,18 @@
             "error": false,
             "isNew": true,
             "lines": true,
-            "links": [],
+            "links": [
+              {
+                "type": "absolute",
+                "url": "/#/check-definitions/view/{checkId}",
+                "title": "Check Definition"
+              },
+              {
+                "type": "absolute",
+                "url": "/#/entities/?ef=id:$entity",
+                "title": "Entity"
+              }
+            ],
             "stack": false,
             "title": "$entity",
             "xaxis": {
@@ -284,8 +295,8 @@
           "datasource": null,
           "includeAll": false,
           "current": {
-              "text": "selectedEntity",
-              "value": "selectedEntity"
+            "text": "selectedEntity",
+            "value": "selectedEntity"
           }
         }
       ]
