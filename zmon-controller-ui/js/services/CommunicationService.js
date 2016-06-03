@@ -155,21 +155,6 @@ angular.module('zmon2App').factory('CommunicationService', ['$http', '$q', '$log
             return doHttpCall("GET", "rest/checkAlertResults", params);
         };
 
-        service.getCheckCharts = function(params) {
-            PreconditionsService.isNotEmpty(params.check_id);
-            PreconditionsService.isNumber(params.check_id);
-            PreconditionsService.isNotEmpty(params.entity_id);
-            PreconditionsService.isNotEmpty(params.start_date);
-            PreconditionsService.isNumber(params.start_date);
-            PreconditionsService.isNotEmpty(params.end_date);
-            PreconditionsService.isNumber(params.end_date);
-            PreconditionsService.isNotEmpty(params.aggregate);
-            PreconditionsService.isNumber(params.aggregate);
-            PreconditionsService.isNotEmpty(params.aggregate_unit);
-
-            return doHttpCall("GET", "rest/retrieveCheckStatistics", params);
-        };
-
         service.getKairosResults = function(options) {
             return doHttpCall("POST", "rest/kairosDBPost", options);
         };
