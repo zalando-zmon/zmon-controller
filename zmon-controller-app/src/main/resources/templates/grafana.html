@@ -18,6 +18,12 @@
     <link rel="stylesheet" th:href="${staticUrl} + '/grafana/public/css/grafana.dark.min.css'" />
     <link rel="icon" type="image/png" href="img/fav32.png" th:href="${staticUrl} + '/grafana/public/img/fav32.png'" />
 
+    <style type="text/css">
+        .sidemenu-org-section {
+            /* hide user profile */
+            display: none;
+        }
+    </style>
   </head>
 
     <body ng-cloak>
@@ -52,14 +58,14 @@
             "lightTheme":false,
             "orgId":1,
             "orgName":"ZMON",
-            "orgRole":"Admin",
-            "isGrafanaAdmin":true,
+            "orgRole":"User",
+            "isGrafanaAdmin":false,
             "gravatarUrl":"",
             "timezone":"browser"
         };
 
         var settings = {
-            "allowOrgCreate": true,
+            "allowOrgCreate": false,
             "appSubUrl": "/grafana",
             "authProxyEnabled": false,
             "buildInfo": {
@@ -333,7 +339,45 @@
 
         kairosDbSources.forEach(populateKairosdbSource);
 
-        var mainNavLinks =  [{"text":"Dashboards","icon":"icon-gf icon-gf-dashboard","url":"/grafana/","children":[{"text":"Home","url":"/grafana/"},{"text":"Playlists","url":"/grafana/playlists"},{"text":"Snapshots","url":"/grafana/dashboard/snapshots"},{"divider":true},{"text":"New","icon":"fa fa-plus","url":"/grafana/dashboard/new"},{"text":"Import","icon":"fa fa-download","url":"/grafana/import/dashboard"}]},{"text":"Data Sources","icon":"icon-gf icon-gf-datasources","url":"/grafana/datasources"},{"text":"Plugins","icon":"icon-gf icon-gf-apps","url":"/grafana/plugins"},{"text":"Admin","icon":"fa fa-fw fa-cogs","url":"/grafana/admin","children":[{"text":"Global Users","url":"/grafana/admin/users"},{"text":"Global Orgs","url":"/grafana/admin/orgs"},{"text":"Server Settings","url":"/grafana/admin/settings"},{"text":"Server Stats","url":"/grafana/admin/stats"}]}];
+        var mainNavLinks =  [
+			{
+				"text": "ZMON",
+				"icon": "icon-gf icon-gf-globe",
+				"url": "/"
+			},
+			{
+				"text": "Dashboards",
+				"icon": "icon-gf icon-gf-dashboard",
+				"url": "/grafana/",
+				"children": [
+					{
+						"text": "Home",
+						"url": "/grafana/"
+					},
+					{
+						"text": "Playlists",
+						"url": "/grafana/playlists"
+					},
+					{
+						"text": "Snapshots",
+						"url": "/grafana/dashboard/snapshots"
+					},
+					{
+						"divider": true
+					},
+					{
+						"text": "New",
+						"icon": "fa fa-plus",
+						"url": "/grafana/dashboard/new"
+					},
+					{
+						"text": "Import",
+						"icon": "fa fa-download",
+						"url": "/grafana/import/dashboard"
+					}
+				]
+			}
+		];
 
         window.grafanaBootData = {
             user: user,
