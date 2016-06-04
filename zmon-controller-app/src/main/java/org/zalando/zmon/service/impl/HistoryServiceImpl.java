@@ -21,7 +21,6 @@ import org.zalando.zmon.domain.ActivityDiff;
 import org.zalando.zmon.domain.AlertDefinition;
 import org.zalando.zmon.domain.HistoryAction;
 import org.zalando.zmon.domain.HistoryEntry;
-import org.zalando.zmon.domain.HistoryReport;
 import org.zalando.zmon.domain.HistoryType;
 import org.zalando.zmon.event.Event;
 import org.zalando.zmon.event.ZMonEventType;
@@ -176,34 +175,6 @@ public class HistoryServiceImpl implements HistoryService {
         return history;
     }
 
-    @Override
-    public List<HistoryReport> getHistoryReport(final String team, final String responsibleTeam, final Long from,
-            final Long to) {
-        return getHistoryReport(team, responsibleTeam, DEFAULT_HISTORY_LIMIT, DEFAULT_HISTORY_LIMIT, from, to);
-    }
-
-    @Override
-    public List<HistoryReport> getHistoryReport(final String team, final String responsibleTeam, final int alertLimit,
-            final int checkLimit, final Long from, final Long to) {
-        Preconditions.checkNotNull(team);
-
-        List<HistoryReport> history = Collections.emptyList();
-
-        final List<HistoryEntry> databaseHistory = alertDefinitionSProc.getHistoryReport(team, responsibleTeam,
-                alertLimit, checkLimit, secondsToDate(from), secondsToDate(to));
-
-        if (!databaseHistory.isEmpty()) {
-            history = new ArrayList<>(databaseHistory.size());
-            for (final HistoryEntry entry : databaseHistory) {
-                history.add(createHistoryReport(entry, resolveEventType(entry.getAction(), entry.getHistoryType())));
-            }
-
-            Collections.sort(history, ACTIVITY_TIME_COMPARATOR);
-        }
-
-        return history;
-    }
-
     private Integer resolveLimit(final Integer limit, final Long from, final Long to) {
         return limit != null ? limit : from == null && to == null ? DEFAULT_HISTORY_LIMIT : null;
     }
@@ -232,15 +203,6 @@ public class HistoryServiceImpl implements HistoryService {
         activity.setLastModifiedBy(HistoryUtils.resolveModifiedBy(entry.getRowData(), entry.getChangedFields()));
 
         return activity;
-    }
-
-    private HistoryReport createHistoryReport(final HistoryEntry entry, final ZMonEventType eventType) {
-        final HistoryReport report = new HistoryReport();
-
-        fillActivityDiff(report, entry, eventType);
-        report.setHistoryType(entry.getHistoryType());
-
-        return report;
     }
 
     private ZMonEventType resolveCheckDefinitionEventType(final HistoryAction action) {

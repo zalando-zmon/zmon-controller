@@ -83,16 +83,6 @@ angular.module('zmon2App', [
                     templateUrl: 'views/dashboardConfiguration.html',
                     controller: 'DashboardConfigurationCtrl'
                 })
-                .when('/reports', {
-                    templateUrl: 'views/reports.html',
-                    controller: 'ReportsCtrl',
-                    reloadOnSearch: false
-                })
-                .when('/reports/view/:reportId', {
-                    templateUrl: 'views/reportsView.html',
-                    controller: 'ReportsCtrl',
-                    reloadOnSearch: false
-                })
                 .when('/trial-run', {
                     templateUrl: 'views/trialRun.html',
                     controller: 'TrialRunCtrl',

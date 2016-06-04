@@ -465,14 +465,6 @@ angular.module('zmon2App').factory('CommunicationService', ['$http', '$q', '$log
             return deferred.promise;
         };
 
-        /**
-         * Reports services
-         */
-
-        service.getReports = function(params) {
-            return doHttpCall("GET", "rest/historyReport", params);
-        };
-
         service.initTrialRun = function(params) {
             PreconditionsService.isNotEmpty(params.alert_condition);
             PreconditionsService.isNotEmpty(params.check_command);

@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.zalando.zmon.domain.Activity;
 import org.zalando.zmon.domain.ActivityDiff;
-import org.zalando.zmon.domain.HistoryReport;
 import org.zalando.zmon.security.permission.DefaultZMonPermissionService;
 import org.zalando.zmon.service.HistoryService;
 
@@ -58,16 +57,5 @@ public class HistoryController extends AbstractZMonController {
 
         return new ResponseEntity<>(historyService.getCheckDefinitionHistory(checkDefinitionId, limit, from, to),
                 HttpStatus.OK);
-    }
-
-    @RequestMapping(value = "/historyReport", method = RequestMethod.GET)
-    public ResponseEntity<List<HistoryReport>> getHistoryReport(@RequestParam("team") final String team,
-            @RequestParam(value = "responsible_team", required = false) final String responsibleTeam,
-            @RequestParam(value = "from", required = false) final Long from,
-            @RequestParam(value = "to", required = false) final Long to) {
-
-        authorityService.verifyHistoryReportAccess();
-
-        return new ResponseEntity<>(historyService.getHistoryReport(team, responsibleTeam, from, to), HttpStatus.OK);
     }
 }
