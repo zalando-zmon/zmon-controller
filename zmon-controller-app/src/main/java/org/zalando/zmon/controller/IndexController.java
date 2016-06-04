@@ -27,7 +27,6 @@ public class IndexController {
     private static final String HAS_ADD_COMMENT_PERMISSION = "hasAddCommentPermission";
     private static final String HAS_ADD_ALERT_DEFINITION_PERMISSION = "hasAddAlertDefinitionPermission";
     private static final String HAS_ADD_DASHBOARD_PERMISSION = "hasAddDashboardPermission";
-    private static final String HAS_HISTORY_REPORT_ACCESS = "hasHistoryReportAccess";
     private static final String HAS_INSTANTANEOUS_ALERT_EVALUATION_PERMISSION =
             "hasInstantaneousAlertEvaluationPermission";
 
@@ -61,7 +60,6 @@ public class IndexController {
                         authorityService.hasAddAlertDefinitionPermission())
                 .addAttribute(HAS_ADD_DASHBOARD_PERMISSION,
                         authorityService.hasAddDashboardPermission())
-                .addAttribute(HAS_HISTORY_REPORT_ACCESS, authorityService.hasHistoryReportAccess())
                 .addAttribute(HAS_INSTANTANEOUS_ALERT_EVALUATION_PERMISSION,
                         authorityService.hasInstantaneousAlertEvaluationPermission());
 

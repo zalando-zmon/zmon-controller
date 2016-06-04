@@ -38,8 +38,6 @@ public interface ZMonAuthority extends GrantedAuthority {
 
     boolean hasDeleteAlertDefinitionPermission(AlertDefinition alertDefinition);
 
-    boolean hasHistoryReportAccess();
-
     boolean hasInstantaneousAlertEvaluationPermission();
 
 }

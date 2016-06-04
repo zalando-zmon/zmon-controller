@@ -8,7 +8,7 @@ import com.google.common.base.Function;
 
 /**
  * Extracted to increase readability.
- * 
+ *
  * @author jbellmann
  *
  */
@@ -65,15 +65,6 @@ class AuthorityFunctions {
 		@Override
 		public Boolean apply(@Nonnull final ZMonAuthority input) {
 			return input.hasAddDashboardPermission();
-		}
-	};
-
-	 static final Function<ZMonAuthority, Boolean> HISTORY_REPORT_ACCESS_FUNCTION =
-
-	new Function<ZMonAuthority, Boolean>() {
-		@Override
-		public Boolean apply(@Nonnull final ZMonAuthority input) {
-			return input.hasHistoryReportAccess();
 		}
 	};
 

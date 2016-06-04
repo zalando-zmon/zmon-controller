@@ -91,11 +91,6 @@ public class ZMonAdminAuthority extends AbstractZMonAuthority {
     }
 
     @Override
-    public boolean hasHistoryReportAccess() {
-        return true;
-    }
-
-    @Override
     public boolean hasInstantaneousAlertEvaluationPermission() {
         return true;
     }
