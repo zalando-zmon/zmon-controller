@@ -2,16 +2,16 @@
 ZMON Controller
 ===============
 
-.. image:: https://travis-ci.org/zalando/zmon-controller.svg?branch=master
-   :target: https://travis-ci.org/zalando/zmon-controller
+.. image:: https://travis-ci.org/zalando-zmon/zmon-controller.svg?branch=master
+   :target: https://travis-ci.org/zalando-zmon/zmon-controller
    :alt: Build Status
 
-.. image:: https://coveralls.io/repos/zalando/zmon-controller/badge.svg
-   :target: https://coveralls.io/r/zalando/zmon-controller
+.. image:: https://coveralls.io/repos/zalando-zmon/zmon-controller/badge.svg
+   :target: https://coveralls.io/r/zalando-zmon/zmon-controller
    :alt: Coverage Status
 
-.. image:: https://codecov.io/github/zalando/zmon-controller/coverage.svg?branch=master
-   :target: https://codecov.io/github/zalando/zmon-controller?branch=master
+.. image:: https://codecov.io/github/zalando-zmon/zmon-controller/coverage.svg?branch=master
+   :target: https://codecov.io/github/zalando-zmon/zmon-controller?branch=master
    :alt: Codecov.io
 
 .. image:: https://readthedocs.org/projects/zmon/badge/?version=latest
