@@ -70,6 +70,6 @@ public class GrafanaUIController {
 
     @RequestMapping(value = "/grafana2/**")
     public String grafana2Redirect(HttpServletRequest request) {
-        return "redirect:" + request.getRequestURI().replace("/grafana2/", "/grafana");
+        return "redirect:" + request.getRequestURI().replace("/grafana2/", "/grafana/");
     }
 }
