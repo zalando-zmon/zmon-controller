@@ -62,8 +62,17 @@ public class GrafanaController extends AbstractZMonController {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     @RequestMapping(value = "/api/dashboards/home", method = RequestMethod.GET)
-    public JsonNode getDashboard2() throws IOException {
+    public JsonNode getHomeDashboard() throws IOException {
         return mapper.readTree(GrafanaController.class.getResourceAsStream("/grafana/home.json"));
+    }
+
+    /**
+     * NOTE: this is only called when opening the Grafana sidebar
+     */
+    @RequestMapping(value = "/api/user/orgs", method = RequestMethod.GET)
+    @ResponseBody
+    public Collection<String> getUserOrgs() {
+        return authService.getTeams();
     }
 
     // search for dashboards, returns list of all available dashboards
@@ -227,6 +236,29 @@ public class GrafanaController extends AbstractZMonController {
         return StreamSupport.stream(Spliterators.spliteratorUnknownSize(node.iterator(), Spliterator.ORDERED), false);
     }
 
+    protected static void replaceVariables(ObjectNode node, String key, CheckDefinition checkDefinition, Optional<String> entityId) {
+        JsonNode value = node.get(key);
+        if (value.isTextual()) {
+            node.put(key, value.textValue()
+                    .replaceAll("\\{checkId\\}", String.valueOf(checkDefinition.getId()))
+                    .replaceAll("\\{checkName\\}", Optional.ofNullable(checkDefinition.getName()).orElse(""))
+                    .replaceAll("\\{entityId\\}", entityId.orElse("")));
+        } else {
+            replaceVariables(value, checkDefinition, entityId);
+        }
+    }
+
+    /**
+     * poor man's templating: walk through JSON tree and replace certain variables like {checkId}
+     */
+    protected static void replaceVariables(JsonNode node, CheckDefinition checkDefinition, Optional<String> entityId) {
+        if (node.isObject()) {
+            node.fields().forEachRemaining(entry -> replaceVariables((ObjectNode) node, entry.getKey(), checkDefinition, entityId));
+        } else if (node.isArray()) {
+            node.elements().forEachRemaining(elem -> replaceVariables(elem, checkDefinition, entityId));
+        }
+    }
+
     public ResponseEntity<JsonNode> serveDynamicDashboard(String id) throws IOException {
         // zmon-check-123-inst
         String[] parts = id.split("-", 4);
@@ -248,21 +280,10 @@ public class GrafanaController extends AbstractZMonController {
                 .collect(Collectors.joining(","));
 
         JsonNode node = mapper.readTree(GrafanaController.class.getResourceAsStream("/grafana/dynamic-dashboard.json"));
-        ((ObjectNode) node.get("dashboard")).put("title", "Check " + checkId + " (" + checkDefinition.getName() + ")");
-        JsonNode rows = node.get("dashboard").get("rows");
-        getStream(rows).forEach(
-                row -> ((ObjectNode) row.get("panels").get(0).get("targets").get(0)).put("metric", "zmon.check." + checkId)
-        );
-        getStream(rows).forEach(
-                row -> ((ObjectNode) row.get("panels").get(0)).put("title", checkDefinition.getName() + " for $entity")
-        );
-        getStream(rows).forEach(
-                row -> getStream(row.get("panels").get(0).get("links")).forEach(
-                        link -> ((ObjectNode) link).put("url", link.get("url").textValue().replace("{checkId}", String.valueOf(checkId)))
-                )
-        );
+        replaceVariables(node, checkDefinition, entityId);
         ((ObjectNode) node.get("dashboard").get("templating").get("list").get(0)).put("query", entityIds);
         if (entityId.isPresent()) {
+            // select the right entity in the Grafana templating dropdown
             final String sanitizedEntityId = sanitizeEntityId(entityId.get());
             ((ObjectNode) node.get("dashboard").get("templating").get("list").get(0)).putObject("current").put("text", sanitizedEntityId).put("value", sanitizedEntityId);
         }
@@ -369,144 +390,6 @@ public class GrafanaController extends AbstractZMonController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-    // returns a list of all available datasources
-    @ResponseStatus(HttpStatus.OK)
-    @ResponseBody
-    @RequestMapping(value = "/api/datasources", method = RequestMethod.GET)
-    public JsonNode g2getDatasources() throws ZMonException {
-        ArrayNode arr = mapper.createArrayNode();
-        ObjectNode k = mapper.createObjectNode();
-        k.put("id", 1);
-        k.put("orgId", "1");
-        k.put("name", "kairos");
-        k.put("access", "direct");
-        k.put("url", "/rest/kairosDBPost");
-        k.put("password", "");
-        k.put("user", "");
-        k.put("database", "");
-        k.put("basicAuth", false);
-        k.put("basicAuthUser", "");
-        k.put("basicAuthPassword", "");
-        k.put("isDefault", true);
-        k.put("type", "grafana-kairosdb-datasource");
-        k.put("typeLogoUrl", "public/plugins/grafana-kairosdb-datasource/img/kairosdb_logo_small.png");
-        arr.add(k);
-
-        /*
-        ObjectNode e = mapper.createObjectNode();
-        e.put("id", 2);
-        e.put("orgId", "1");
-        e.put("name", "elasticsearch");
-        e.put("access", "direct");
-        e.put("url", "/rest/grafana/dashboard/_search");
-        e.put("password", "");
-        e.put("user", "");
-        e.put("database", "");
-        e.put("basicAuth", false);
-        e.put("basicAuthUser", "");
-        e.put("basicAuthPassword", "");
-        e.put("isDefault", true);
-        arr.add(e);
-        */
-        return arr;
-    }
-
-    @ResponseStatus(HttpStatus.OK)
-    @ResponseBody
-    @RequestMapping(value = "/api/datasources/{id}", method = RequestMethod.GET)
-    public JsonNode g2getDatasource(@PathVariable(value = "id") String id) throws ZMonException {
-        ObjectNode k = mapper.createObjectNode();
-        k.put("id", 1);
-        k.put("orgId", "1");
-        k.put("name", "kairos");
-        k.put("access", "direct");
-        k.put("url", "/rest/kairosDBPost");
-        k.put("password", "");
-        k.put("user", "");
-        k.put("database", "");
-        k.put("basicAuth", false);
-        k.put("basicAuthUser", "");
-        k.put("basicAuthPassword", "");
-        k.put("isDefault", true);
-        k.put("type", "grafana-kairosdb-datasource");
-        k.put("typeLogoUrl", "public/plugins/grafana-kairosdb-datasource/img/kairosdb_logo_small.png");
-        return k;
-    }
-
-    // returns a list of all available plugins
-    @ResponseStatus(HttpStatus.OK)
-    @ResponseBody
-    @RequestMapping(value = "/api/plugins", method = RequestMethod.GET)
-    public JsonNode g2getPlugins() throws ZMonException {
-        ArrayNode arr = mapper.createArrayNode();
-
-        ObjectNode k = mapper.createObjectNode();
-        k.put("defaultNavUrl", "plugins/grafana-kairosdb-datasource/edit");
-        k.put("enabled", true);
-        k.put("hasUpdate", false);
-        k.put("id", "grafana-kairosdb-datasource");
-        k.put("latestVersion", "1.0.1");
-        k.put("name", "kairos");
-        k.put("pinned", false);
-        k.put("type", "datasource");
-        arr.add(k);
-
-        ObjectNode j = mapper.createObjectNode();
-        j.put("defaultNavUrl", "/plugins/grafana-piechart-panel/edit");
-        j.put("enabled", true);
-        j.put("hasUpdate", false);
-        j.put("id", "grafana-piechart-panel");
-        j.put("latestVersion", "1.1.1");
-        j.put("name", "Pie Chart");
-        j.put("pinned", false);
-        j.put("type", "panel");
-        arr.add(j);
-
-        return arr;
-    }
-
-    @ResponseStatus(HttpStatus.OK)
-    @ResponseBody
-    @RequestMapping(value = "/api/plugins/grafana-kairosdb-datasource/settings", method = RequestMethod.GET)
-    public JsonNode g2getPluginsKairosSettings() throws ZMonException {
-        ObjectNode k = mapper.createObjectNode();
-        k.put("baseUrl", "public/plugins/grafana-kairosdb-datasource");
-        k.put("defaultNavUrl", "");
-        k.put("enabled", true);
-        k.put("hasUpdate", false);
-        k.put("id", "grafana-kairosdb-datasource");
-        k.put("module", "plugins/grafana-kairosdb-datasource/module");
-        k.put("name", "kairos");
-        k.put("pinned", false);
-        k.put("type", "datasource");
-
-        ObjectNode d = mapper.createObjectNode();
-        ArrayNode emptyArr = mapper.createArrayNode();
-        d.put("grafanaVersion", "3.x.x");
-        d.put("plugins", emptyArr);
-        k.put("dependencies", d);
-
-        return k;
-    }
-
-
-    @RequestMapping(value = "/api/user/orgs", method = RequestMethod.GET)
-    @ResponseBody
-    public Collection<String> getUserOrgs() {
-        return authService.getTeams();
-    }
-
-    @RequestMapping(value = "/api/user", method = RequestMethod.GET)
-    @ResponseBody
-    public JsonNode getCurrentUser() {
-        ObjectNode node = mapper.createObjectNode();
-        node.put("name", authService.getUserName());
-        node.put("login", authService.getUserName());
-        node.put("email", "");
-        node.put("isGrafanaAdmin", false);
-        node.put("isSignedIn", true);
-        return node;
-    }
 
     @RequestMapping(value = "/api/dashboards/tags")
     @ResponseBody

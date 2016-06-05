@@ -1,6 +1,6 @@
 {
   "dashboard": {
-    "editable": true,
+    "editable": false,
     "hideControls": true,
     "id": 36,
     "originalTitle": "Home",
@@ -9,7 +9,55 @@
     "timezone": "browser",
     "title": "Grafana ZMON",
     "version": 26,
-    "rows": [],
+    "rows": [
+      {
+        "title": "Welcome",
+        "height": "25px",
+        "panels": [
+          {
+            "id": 3,
+            "mode": "html",
+            "span": 12,
+            "type": "text",
+            "error": false,
+            "isNew": true,
+            "links": [],
+            "title": "Welcome to ZMON's Grafana UI",
+            "content": "<p style=\"text-align:center\">Please select a dashboard from the above dropdown or jump to one of your favorite dashboards below.<br/>\nYou can also <a href=\"/grafana/dashboard/new\">create a New Dashboard from scratch</a>.</p>",
+            "editable": false,
+            "transparent": true
+          }
+        ],
+        "collapse": false,
+        "editable": false,
+        "showTitle": false
+      },
+      {
+        "title": "Dashboards",
+        "height": "250px",
+        "panels": [
+          {
+            "id": 2,
+            "span": 12,
+            "tags": [],
+            "type": "dashlist",
+            "error": false,
+            "isNew": true,
+            "limit": 10,
+            "links": [],
+            "query": "",
+            "title": "Starred Dashboards",
+            "recent": false,
+            "search": false,
+            "starred": true,
+            "editable": false,
+            "headings": false
+          }
+        ],
+        "collapse": false,
+        "editable": false
+      }
+    ],
     "annotations": {
       "list": [],
       "enable": false,

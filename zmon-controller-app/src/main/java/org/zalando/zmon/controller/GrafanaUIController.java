@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.zalando.zmon.config.ControllerProperties;
 import org.zalando.zmon.config.KairosDBProperties;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -48,7 +49,7 @@ public class GrafanaUIController {
         this.kairosdbProperties = kairosdbProperties;
         this.controllerProperties = controllerProperties;
 
-        for(KairosDBProperties.KairosDBServiceConfig c : kairosdbProperties.getKairosdbs()) {
+        for (KairosDBProperties.KairosDBServiceConfig c : kairosdbProperties.getKairosdbs()) {
             kairosdbServices.add(new KairosDBEntry(c.getName(), "/rest/kairosdbs/" + c.getName()));
         }
     }
@@ -67,17 +68,8 @@ public class GrafanaUIController {
         return "grafana";
     }
 
-    @RequestMapping(value = "/grafana2")
-    public String grafana2(Model model) {
-        model.addAttribute(IndexController.STATIC_URL, controllerProperties.getStaticUrl());
-        model.addAttribute(IndexController.KAIROSDB_SERVICES, kairosdbServices);
-        return "grafana2";
-    }
-
-    @RequestMapping(value = "/grafana2/dashboard/db/**")
-    public String grafana2DeepLinks(Model model) {
-        model.addAttribute(IndexController.STATIC_URL, controllerProperties.getStaticUrl());
-        model.addAttribute(IndexController.KAIROSDB_SERVICES, kairosdbServices);
-        return "grafana2";
+    @RequestMapping(value = "/grafana2/**")
+    public String grafana2Redirect(HttpServletRequest request) {
+        return "redirect:" + request.getRequestURI().replace("/grafana2/", "/grafana/");
     }
 }
