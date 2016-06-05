@@ -27,6 +27,7 @@ public class GrafanaControllerTest {
         GrafanaController controller = new GrafanaController(zMonService, null, null, mapper, null);
         ResponseEntity<JsonNode> response = controller.serveDynamicDashboard("zmon-check-123");
         Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        Assertions.assertThat(response.getBody().get("dashboard").get("rows").get(0).get("panels").get(0).get("links").get(0).get("url").textValue()).isEqualTo("/#/check-definitions/view/123");
 
     }
 }

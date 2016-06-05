@@ -265,6 +265,11 @@ public class GrafanaController extends AbstractZMonController {
         getStream(rows).forEach(
                 row -> ((ObjectNode) row.get("panels").get(0)).put("title", checkDefinition.getName() + " for $entity")
         );
+        getStream(rows).forEach(
+                row -> getStream(row.get("panels").get(0).get("links")).forEach(
+                        link -> ((ObjectNode) link).put("url", link.get("url").textValue().replace("{checkId}", String.valueOf(checkId)))
+                )
+        );
         ((ObjectNode) node.get("dashboard").get("templating").get("list").get(0)).put("query", entityIds);
         if (entityId.isPresent()) {
             final String sanitizedEntityId = sanitizeEntityId(entityId.get());
