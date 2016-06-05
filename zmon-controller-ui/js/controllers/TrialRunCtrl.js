@@ -216,10 +216,10 @@ var TrialRunCtrl = function ($scope, $interval, $timeout, timespanFilter, localS
             $scope.blob = new Blob([trc.buildYAMLContent()], {
                 type: 'text/plain'
             });
+            $scope.yamlBlobUrl = window.URL.createObjectURL($scope.blob);
         } catch (e) {
             console.log('Failed to create blob. Probably empty content?');
         }
-        $scope.yamlBlobUrl = window.URL.createObjectURL($scope.blob);
         updateUrlParameters();
     }, true);
 
