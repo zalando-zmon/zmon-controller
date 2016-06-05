@@ -156,7 +156,7 @@ angular.module('zmon2App').factory('CommunicationService', ['$http', '$q', '$log
         };
 
         service.getKairosResults = function(options) {
-            return doHttpCall("POST", "rest/kairosDBPost", options);
+            return doHttpCall("POST", "rest/kairosdbs/kairosdb/api/v1/datapoints/query", options);
         };
 
         service.getCloudViewEndpoints = function(params) {

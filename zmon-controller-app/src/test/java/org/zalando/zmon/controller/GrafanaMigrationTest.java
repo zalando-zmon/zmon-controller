@@ -17,16 +17,16 @@ public class GrafanaMigrationTest {
     @Test
     public void testMigration() throws IOException {
         ObjectMapper mapper = new ObjectMapper();
-        ObjectNode target = (ObjectNode)mapper.readTree((new ClassPathResource("/old_grafana_target.json").getInputStream()));
+        ObjectNode target = (ObjectNode) mapper.readTree((new ClassPathResource("/old_grafana_target.json").getInputStream()));
         GrafanaController.migrateTarget(target);
-        assert(target.get("tags") instanceof  ObjectNode);
+        assert (target.get("tags") instanceof ObjectNode);
     }
 
     @Test
     public void testMigrationRow() throws IOException {
         ObjectMapper mapper = new ObjectMapper();
-        ObjectNode dashboard = (ObjectNode)mapper.readTree((new ClassPathResource("/old_grafana_row.json").getInputStream()));
+        ObjectNode dashboard = (ObjectNode) mapper.readTree((new ClassPathResource("/old_grafana_row.json").getInputStream()));
         GrafanaController.migrateV1(dashboard);
-        assert(dashboard.get("rows").get(0).get("panels").get(0).get("targets").get(0).get("groupByTags") instanceof ArrayNode);
+        assert (dashboard.get("rows").get(0).get("panels").get(0).get("targets").get(0).get("groupByTags") instanceof ArrayNode);
     }
 }
