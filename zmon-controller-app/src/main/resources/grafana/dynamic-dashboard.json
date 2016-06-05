@@ -264,7 +264,22 @@
       "to": "now",
       "from": "now-1h"
     },
-    "links": [],
+    "links": [
+        {"type": "link",
+        "icon": "doc",
+        "tags": ["test"],
+        "url": "/#/check-definitions/view/{checkId}",
+        "title": "Check Definition",
+        "tooltip": "Open Check Definition {checkId}"
+        },
+        {"type": "link",
+        "icon": "external link",
+        "tags": ["test"],
+        "url": "/#/entities?ef=id:$entity",
+        "title": "Entity",
+        "tooltip": "Open Entity View for $entity"
+        }
+    ],
     "style": "dark",
     "title": "ZMON Check",
     "refresh": false,
