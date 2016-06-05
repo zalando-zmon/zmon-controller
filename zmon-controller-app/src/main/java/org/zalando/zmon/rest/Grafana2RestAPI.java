@@ -8,7 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import org.zalando.zmon.controller.Grafana2Controller;
+import org.zalando.zmon.controller.GrafanaController;
 import org.zalando.zmon.exception.ZMonException;
 
 import java.io.IOException;
@@ -26,7 +26,7 @@ public class Grafana2RestAPI {
     ObjectMapper mapper;
 
     @Autowired
-    Grafana2Controller grafana2UI;
+    GrafanaController grafana2UI;
 
     @ResponseBody
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
