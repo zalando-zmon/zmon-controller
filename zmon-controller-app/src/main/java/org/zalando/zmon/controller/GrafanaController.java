@@ -66,6 +66,15 @@ public class GrafanaController extends AbstractZMonController {
         return mapper.readTree(GrafanaController.class.getResourceAsStream("/grafana/home.json"));
     }
 
+    /**
+     * NOTE: this is only called when opening the Grafana sidebar
+     */
+    @RequestMapping(value = "/api/user/orgs", method = RequestMethod.GET)
+    @ResponseBody
+    public Collection<String> getUserOrgs() {
+        return authService.getTeams();
+    }
+
     // search for dashboards, returns list of all available dashboards
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
@@ -251,10 +260,10 @@ public class GrafanaController extends AbstractZMonController {
         ((ObjectNode) node.get("dashboard")).put("title", "Check " + checkId + " (" + checkDefinition.getName() + ")");
         JsonNode rows = node.get("dashboard").get("rows");
         getStream(rows).forEach(
-                row -> ((ObjectNode)row.get("panels").get(0).get("targets").get(0)).put("metric", "zmon.check." + checkId)
+                row -> ((ObjectNode) row.get("panels").get(0).get("targets").get(0)).put("metric", "zmon.check." + checkId)
         );
         getStream(rows).forEach(
-                row -> ((ObjectNode)row.get("panels").get(0)).put("title", checkDefinition.getName() + " for $entity")
+                row -> ((ObjectNode) row.get("panels").get(0)).put("title", checkDefinition.getName() + " for $entity")
         );
         ((ObjectNode) node.get("dashboard").get("templating").get("list").get(0)).put("query", entityIds);
         if (entityId.isPresent()) {
