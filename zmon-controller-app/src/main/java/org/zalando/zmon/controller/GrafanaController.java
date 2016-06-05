@@ -236,6 +236,29 @@ public class GrafanaController extends AbstractZMonController {
         return StreamSupport.stream(Spliterators.spliteratorUnknownSize(node.iterator(), Spliterator.ORDERED), false);
     }
 
+    protected static void replaceVariables(ObjectNode node, String key, CheckDefinition checkDefinition, Optional<String> entityId) {
+        JsonNode value = node.get(key);
+        if (value.isTextual()) {
+            node.put(key, value.textValue()
+                    .replaceAll("\\{checkId\\}", String.valueOf(checkDefinition.getId()))
+                    .replaceAll("\\{checkName\\}", Optional.ofNullable(checkDefinition.getName()).orElse(""))
+                    .replaceAll("\\{entityId\\}", entityId.orElse("")));
+        } else {
+            replaceVariables(value, checkDefinition, entityId);
+        }
+    }
+
+    /**
+     * poor man's templating: walk through JSON tree and replace certain variables like {checkId}
+     */
+    protected static void replaceVariables(JsonNode node, CheckDefinition checkDefinition, Optional<String> entityId) {
+        if (node.isObject()) {
+            node.fields().forEachRemaining(entry -> replaceVariables((ObjectNode) node, entry.getKey(), checkDefinition, entityId));
+        } else if (node.isArray()) {
+            node.elements().forEachRemaining(elem -> replaceVariables(elem, checkDefinition, entityId));
+        }
+    }
+
     public ResponseEntity<JsonNode> serveDynamicDashboard(String id) throws IOException {
         // zmon-check-123-inst
         String[] parts = id.split("-", 4);
@@ -257,21 +280,10 @@ public class GrafanaController extends AbstractZMonController {
                 .collect(Collectors.joining(","));
 
         JsonNode node = mapper.readTree(GrafanaController.class.getResourceAsStream("/grafana/dynamic-dashboard.json"));
-        ((ObjectNode) node.get("dashboard")).put("title", "Check " + checkId + " (" + checkDefinition.getName() + ")");
-        JsonNode rows = node.get("dashboard").get("rows");
-        getStream(rows).forEach(
-                row -> ((ObjectNode) row.get("panels").get(0).get("targets").get(0)).put("metric", "zmon.check." + checkId)
-        );
-        getStream(rows).forEach(
-                row -> ((ObjectNode) row.get("panels").get(0)).put("title", checkDefinition.getName() + " for $entity")
-        );
-        getStream(rows).forEach(
-                row -> getStream(row.get("panels").get(0).get("links")).forEach(
-                        link -> ((ObjectNode) link).put("url", link.get("url").textValue().replace("{checkId}", String.valueOf(checkId)))
-                )
-        );
+        replaceVariables(node, checkDefinition, entityId);
         ((ObjectNode) node.get("dashboard").get("templating").get("list").get(0)).put("query", entityIds);
         if (entityId.isPresent()) {
+            // select the right entity in the Grafana templating dropdown
             final String sanitizedEntityId = sanitizeEntityId(entityId.get());
             ((ObjectNode) node.get("dashboard").get("templating").get("list").get(0)).putObject("current").put("text", sanitizedEntityId).put("value", sanitizedEntityId);
         }

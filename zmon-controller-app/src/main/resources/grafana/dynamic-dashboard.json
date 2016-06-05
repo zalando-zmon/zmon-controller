@@ -33,20 +33,9 @@
             "error": false,
             "isNew": true,
             "lines": true,
-            "links": [
-              {
-                "type": "absolute",
-                "url": "/#/check-definitions/view/{checkId}",
-                "title": "Check Definition"
-              },
-              {
-                "type": "absolute",
-                "url": "/#/entities/?ef=id:$entity",
-                "title": "Entity"
-              }
-            ],
+            "links": [],
             "stack": false,
-            "title": "$entity",
+            "title": "{checkName} for $entity",
             "xaxis": {
               "show": true
             },
@@ -89,7 +78,7 @@
                 },
                 "refId": "A",
                 "errors": {},
-                "metric": "zmon.check.XX",
+                "metric": "zmon.check.{checkId}",
                 "groupBy": {
                   "tagKey": "",
                   "timeInterval": "1s"
@@ -108,7 +97,8 @@
                 "currentTagValue": "",
                 "currentGroupByType": "tag",
                 "horizontalAggregators": null,
-                "currentHorizontalAggregatorName": "avg"
+                "currentHorizontalAggregatorName": "avg",
+                "alias": "-"
               }
             ],
             "tooltip": {
@@ -148,7 +138,7 @@
         "editable": true
       },
       {
-        "title": "Last 24 hours",
+        "title": "Last 24 Hours",
         "height": "250px",
         "panels": [
           {
@@ -168,7 +158,7 @@
             "lines": true,
             "links": [],
             "stack": false,
-            "title": "$entity",
+            "title": "{checkName} for $entity",
             "xaxis": {
               "show": true
             },
@@ -211,7 +201,7 @@
                 },
                 "refId": "A",
                 "errors": {},
-                "metric": "zmon.check.XX",
+                "metric": "zmon.check.{checkId}",
                 "groupBy": {
                   "tagKey": "",
                   "timeInterval": "1s"
@@ -230,7 +220,8 @@
                 "currentTagValue": "",
                 "currentGroupByType": "tag",
                 "horizontalAggregators": null,
-                "currentHorizontalAggregatorName": "avg"
+                "currentHorizontalAggregatorName": "avg",
+                "alias": "-"
               }
             ],
             "tooltip": {
@@ -276,23 +267,29 @@
       "from": "now-1h"
     },
     "links": [
-        {"type": "link",
+      {
+        "type": "link",
         "icon": "doc",
-        "tags": ["test"],
+        "tags": [
+          "test"
+        ],
         "url": "/#/check-definitions/view/{checkId}",
         "title": "Check Definition",
-        "tooltip": "Open Check Definition {checkId}"
-        },
-        {"type": "link",
+        "tooltip": "Open Check Definition {checkId} ({checkName})"
+      },
+      {
+        "type": "link",
         "icon": "external link",
-        "tags": ["test"],
-        "url": "/#/entities?ef=id:$entity",
+        "tags": [
+          "test"
+        ],
+        "url": "/#/entities?ef=id:{entityId}",
         "title": "Entity",
-        "tooltip": "Open Entity View for $entity"
-        }
+        "tooltip": "Open Entity View for {entityId}"
+      }
     ],
     "style": "dark",
-    "title": "ZMON Check",
+    "title": "Check {checkId} ({checkName})",
     "refresh": false,
     "version": 0,
     "editable": true,
