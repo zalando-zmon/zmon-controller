@@ -71,13 +71,13 @@ public class MultiKairosDBControllerTest {
     @Test
     public void testKairosDbMetrics() throws Exception {
         mockMvc.perform(
-                get("/api/kairosdbs/kairosdb/api/v1/metricnames").header(HttpHeaders.AUTHORIZATION, "Bearer 123456789"))
+                get("/rest/kairosdbs/kairosdb/api/v1/metricnames").header(HttpHeaders.AUTHORIZATION, "Bearer 123456789"))
                 .andExpect(MockMvcResultMatchers.status().isOk());
     }
 
     @Test
     public void testKairosDbTags() throws Exception {
-        MvcResult result = mockMvc.perform(post("/api/kairosdbs/kairosdb/api/v1/datapoints/query/tags")
+        MvcResult result = mockMvc.perform(post("/rest/kairosdbs/kairosdb/api/v1/datapoints/query/tags")
                 .header(HttpHeaders.AUTHORIZATION, "Bearer 123456789")
                 .content("{\"key\":\"value\"}").contentType(APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.request().asyncStarted())
@@ -92,7 +92,7 @@ public class MultiKairosDBControllerTest {
 
     @Test
     public void testKairosDbPost() throws Exception {
-        mockMvc.perform(post("/api/kairosdbs/kairosdb/api/v1/datapoints/query")
+        mockMvc.perform(post("/rest/kairosdbs/kairosdb/api/v1/datapoints/query")
                 .header(HttpHeaders.AUTHORIZATION, "Bearer 123456789")
                 .content("{\"metrics\":[{\"name\":\"value\"}]}")
                 .contentType(APPLICATION_JSON)).andExpect(status().isOk());

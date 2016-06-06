@@ -31,7 +31,7 @@ import java.util.List;
 import java.util.Set;
 
 @Controller
-@RequestMapping(value = "/api")
+@RequestMapping(value = "/rest")
 public class ZMonRestService extends AbstractZMonController {
 
     private final Logger log = LoggerFactory.getLogger(ZMonRestService.class);

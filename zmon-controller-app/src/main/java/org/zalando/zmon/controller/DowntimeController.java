@@ -27,7 +27,7 @@ import org.zalando.zmon.service.DowntimeService;
 import org.zalando.zmon.validation.DowntimeValidator;
 
 @Controller
-@RequestMapping(value="/api")
+@RequestMapping(value="/rest")
 public class DowntimeController extends AbstractZMonController {
 
     @Autowired
