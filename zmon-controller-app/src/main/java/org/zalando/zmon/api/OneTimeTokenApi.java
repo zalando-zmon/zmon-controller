@@ -1,4 +1,4 @@
-package org.zalando.zmon.rest;
+package org.zalando.zmon.api;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -10,11 +10,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.zalando.zmon.domain.OnetimeTokenInfo;
 import org.zalando.zmon.exception.ZMonException;
 import org.zalando.zmon.persistence.OnetimeTokensSProcService;
-import org.zalando.zmon.security.AuthorityService;
 import org.zalando.zmon.security.permission.DefaultZMonPermissionService;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.websocket.server.PathParam;
 import java.io.IOException;
 import java.security.SecureRandom;
 import java.util.List;

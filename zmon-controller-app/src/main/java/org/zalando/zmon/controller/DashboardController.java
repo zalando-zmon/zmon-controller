@@ -29,7 +29,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
 @Controller
-@RequestMapping(value = "/rest")
+@RequestMapping(value = "/api")
 public class DashboardController extends AbstractZMonController {
 
     @Autowired

@@ -31,7 +31,7 @@ import org.zalando.zmon.service.AlertService;
 import com.google.common.collect.Lists;
 
 @Controller
-@RequestMapping(value="/rest")
+@RequestMapping(value="/api")
 public class AlertController extends AbstractZMonController {
 
     @Autowired

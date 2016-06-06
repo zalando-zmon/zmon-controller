@@ -1,4 +1,4 @@
-package org.zalando.zmon.rest.domain;
+package org.zalando.zmon.api.domain;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;

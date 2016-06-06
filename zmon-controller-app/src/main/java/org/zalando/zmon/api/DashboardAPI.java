@@ -1,4 +1,4 @@
-package org.zalando.zmon.rest;
+package org.zalando.zmon.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableList;
@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import org.zalando.zmon.domain.Dashboard;
 import org.zalando.zmon.domain.EditOption;
 import org.zalando.zmon.exception.ZMonException;
-import org.zalando.zmon.rest.domain.DashboardRest;
+import org.zalando.zmon.api.domain.DashboardRest;
 import org.zalando.zmon.security.permission.DefaultZMonPermissionService;
 import org.zalando.zmon.service.DashboardService;
 
