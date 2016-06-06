@@ -14,8 +14,8 @@ ZMON Controller
    :target: https://codecov.io/github/zalando/zmon-controller?branch=master
    :alt: Codecov.io
 
-.. image:: https://readthedocs.io/projects/zmon/badge/?version=latest
-   :target: https://readthedocs.io/projects/zmon/?badge=latest
+.. image:: https://readthedocs.org/projects/zmon/badge/?version=latest
+   :target: https://readthedocs.org/projects/zmon/?badge=latest
    :alt: Documentation Status
 
 ZMON Controller is the frontend UI and REST API for Zalando's open-source platform monitoring tool.
@@ -56,7 +56,7 @@ Building the Docker Image
 See also the `ZMON Documentation`_.
 
 .. _main ZMON repository: https://github.com/zalando/zmon
-.. _ZMON Documentation: https://zmon.readthedocs.io/
+.. _ZMON Documentation: https://docs.zmon.io/
 
 
 Database API schema
