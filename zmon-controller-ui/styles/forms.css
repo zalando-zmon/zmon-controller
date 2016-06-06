@@ -5,6 +5,15 @@
     margin-bottom: 10px;
 }
 
+.form-group .clear-input.fa-times
+{
+    position: absolute;
+    right: 10px;
+    top: 0;
+    line-height: 1.6;
+    font-size: 20px;
+}
+
 .date-form a.apply
 {
     margin-top: 27px;
