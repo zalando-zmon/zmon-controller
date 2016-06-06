@@ -28,7 +28,7 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 @Controller
-@RequestMapping(value = "/api/grafana")
+@RequestMapping(value = "/rest/grafana")
 public class GrafanaController extends AbstractZMonController {
 
     private static final Logger LOG = LoggerFactory.getLogger(GrafanaController.class);

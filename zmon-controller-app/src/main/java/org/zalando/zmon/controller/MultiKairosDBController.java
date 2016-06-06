@@ -26,7 +26,7 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
  * @author jbellmann
  */
 @RestController
-@RequestMapping(value = "/api/kairosdbs/")
+@RequestMapping(value = "/rest/kairosdbs/")
 public class MultiKairosDBController extends AbstractZMonController {
 
     public static final String KAIROSDB_TOKEN_ID = "kairosdb";

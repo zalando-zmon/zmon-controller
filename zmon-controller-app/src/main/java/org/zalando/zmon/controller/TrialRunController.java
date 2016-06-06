@@ -23,7 +23,7 @@ import org.zalando.zmon.security.permission.DefaultZMonPermissionService;
 import org.zalando.zmon.service.TrialRunService;
 
 @Controller
-@RequestMapping(value="/api")
+@RequestMapping(value="/rest")
 public class TrialRunController extends AbstractZMonController {
 
     private static final String TRIAL_RUN_ID_KEY = "id";
