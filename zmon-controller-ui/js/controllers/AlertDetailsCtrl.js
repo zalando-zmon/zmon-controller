@@ -23,7 +23,9 @@ angular.module('zmon2App').controller('AlertDetailsCtrl', ['$scope', '$location'
         $scope.showActiveAlerts = true; // 1st tab, 1st button
         $scope.showAlertsInDowntime = false; // 1st tab, 2nd button
         $scope.showCheckResults = false; // 1st tab, 3rd button
-        $scope.alertDetailsSearch = { str: ''}; // entity filter
+        $scope.alertDetailsSearch = { // entity filter
+            str: localStorageService.get('alertDetailsSearchStr') || ''
+        };
 
         $scope.checkDefinition = null;
         $scope.addDowntimeEntities = [];
@@ -682,11 +684,6 @@ angular.module('zmon2App').controller('AlertDetailsCtrl', ['$scope', '$location'
         $scope.HSLaFromHistoryEventTypeId = function(eventTypeId) {
             return ((eventTypeId * 6151 % 1000 / 1000.0) * 360);
         };
-
-        if (localStorageService.get('alertDetailsSearchStr')) {
-            var str = localStorageService.get('alertDetailsSearchStr');
-            $scope.alertDetailsSearch.str = str;
-        }
 
         $scope.startAlertDetailsRefresh();
     }
