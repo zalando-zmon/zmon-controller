@@ -25,7 +25,7 @@ import org.zalando.zmon.exception.SerializationException;
 import org.zalando.zmon.persistence.AlertDefinitionSProcService;
 import org.zalando.zmon.redis.RedisPattern;
 import org.zalando.zmon.redis.ResponseHolder;
-import org.zalando.zmon.rest.DowntimeGroup;
+import org.zalando.zmon.api.DowntimeGroup;
 import org.zalando.zmon.service.DowntimeService;
 import org.zalando.zmon.util.Numbers;
 

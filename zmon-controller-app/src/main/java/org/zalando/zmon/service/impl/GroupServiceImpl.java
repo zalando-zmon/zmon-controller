@@ -8,8 +8,8 @@ import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.zalando.zmon.event.ZMonEventType;
-import org.zalando.zmon.rest.ZmonGroup;
-import org.zalando.zmon.rest.ZmonGroupMember;
+import org.zalando.zmon.api.ZmonGroup;
+import org.zalando.zmon.api.ZmonGroupMember;
 import org.zalando.zmon.security.permission.DefaultZMonPermissionService;
 import org.zalando.zmon.service.GroupService;
 

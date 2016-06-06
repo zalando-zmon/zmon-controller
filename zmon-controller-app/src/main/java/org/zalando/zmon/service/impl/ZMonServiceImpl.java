@@ -32,7 +32,7 @@ import org.zalando.zmon.persistence.CheckDefinitionSProcService;
 import org.zalando.zmon.persistence.ZMonSProcService;
 import org.zalando.zmon.redis.RedisPattern;
 import org.zalando.zmon.redis.ResponseHolder;
-import org.zalando.zmon.rest.domain.CheckChartResult;
+import org.zalando.zmon.api.domain.CheckChartResult;
 import org.zalando.zmon.service.ZMonService;
 import org.zalando.zmon.util.DBUtil;
 

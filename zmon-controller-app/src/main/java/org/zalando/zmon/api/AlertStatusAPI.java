@@ -1,14 +1,12 @@
-package org.zalando.zmon.rest;
+package org.zalando.zmon.api;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ContainerNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -16,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 import org.zalando.zmon.domain.CheckResults;
 import org.zalando.zmon.domain.ExecutionStatus;
 import org.zalando.zmon.redis.ResponseHolder;
-import org.zalando.zmon.service.AlertService;
 import org.zalando.zmon.service.ZMonService;
 
 import redis.clients.jedis.Jedis;

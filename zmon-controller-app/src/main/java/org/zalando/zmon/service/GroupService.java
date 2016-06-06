@@ -2,8 +2,8 @@ package org.zalando.zmon.service;
 
 import java.util.List;
 
-import org.zalando.zmon.rest.ZmonGroup;
-import org.zalando.zmon.rest.ZmonGroupMember;
+import org.zalando.zmon.api.ZmonGroup;
+import org.zalando.zmon.api.ZmonGroupMember;
 
 /**
  * Created by jmussler on 11/11/14.

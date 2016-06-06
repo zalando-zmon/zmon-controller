@@ -5,7 +5,7 @@ import java.util.Set;
 
 import org.zalando.zmon.domain.DowntimeDetails;
 import org.zalando.zmon.domain.DowntimeRequest;
-import org.zalando.zmon.rest.DowntimeGroup;
+import org.zalando.zmon.api.DowntimeGroup;
 
 public interface DowntimeService {
 

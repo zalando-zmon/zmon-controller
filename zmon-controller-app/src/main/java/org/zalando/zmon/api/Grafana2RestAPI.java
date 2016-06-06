@@ -1,4 +1,4 @@
-package org.zalando.zmon.rest;
+package org.zalando.zmon.api;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;

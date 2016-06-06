@@ -13,7 +13,7 @@ import org.zalando.zmon.domain.CheckDefinitionsDiff;
 import org.zalando.zmon.domain.CheckResults;
 import org.zalando.zmon.domain.DefinitionStatus;
 import org.zalando.zmon.domain.ExecutionStatus;
-import org.zalando.zmon.rest.domain.CheckChartResult;
+import org.zalando.zmon.api.domain.CheckChartResult;
 
 import com.fasterxml.jackson.databind.JsonNode;
 

@@ -1,4 +1,4 @@
-package org.zalando.zmon.rest;
+package org.zalando.zmon.api;
 
 import java.util.Set;
 

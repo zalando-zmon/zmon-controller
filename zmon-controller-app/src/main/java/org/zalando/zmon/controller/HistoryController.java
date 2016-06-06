@@ -18,7 +18,7 @@ import org.zalando.zmon.security.permission.DefaultZMonPermissionService;
 import org.zalando.zmon.service.HistoryService;
 
 @Controller
-@RequestMapping(value="/rest")
+@RequestMapping(value="/api")
 public class HistoryController extends AbstractZMonController {
 
     @Autowired

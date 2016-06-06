@@ -19,8 +19,8 @@ import org.zalando.zmon.domain.CheckDefinitionImport;
 import org.zalando.zmon.domain.CheckResults;
 import org.zalando.zmon.domain.ExecutionStatus;
 import org.zalando.zmon.exception.ZMonException;
-import org.zalando.zmon.rest.EntityApi;
-import org.zalando.zmon.rest.domain.CheckChartResult;
+import org.zalando.zmon.api.EntityApi;
+import org.zalando.zmon.api.domain.CheckChartResult;
 import org.zalando.zmon.security.permission.DefaultZMonPermissionService;
 import org.zalando.zmon.service.ZMonService;
 
@@ -31,7 +31,7 @@ import java.util.List;
 import java.util.Set;
 
 @Controller
-@RequestMapping(value = "/rest")
+@RequestMapping(value = "/api")
 public class ZMonRestService extends AbstractZMonController {
 
     private final Logger log = LoggerFactory.getLogger(ZMonRestService.class);
@@ -145,7 +145,7 @@ public class ZMonRestService extends AbstractZMonController {
 
         final Executor executor = Executor.newInstance();
 
-        final String dataServiceQuery = metricCacheProperties.getUrl() + "/api/v1/rest-api-metrics/kairosdb-format?application_id=" + applicationId;
+        final String dataServiceQuery = metricCacheProperties.getUrl() + "/api/v1/api-api-metrics/kairosdb-format?application_id=" + applicationId;
 
         int nodeId = Math.abs(applicationId.hashCode() % metricCacheProperties.getNodes());
         final String r = executor.execute(Request.Get(dataServiceQuery).addHeader("Cookie", "metric_cache=" + nodeId)).returnContent().asString();
