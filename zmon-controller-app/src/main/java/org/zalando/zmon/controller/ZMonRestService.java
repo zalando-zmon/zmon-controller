@@ -145,7 +145,7 @@ public class ZMonRestService extends AbstractZMonController {
 
         final Executor executor = Executor.newInstance();
 
-        final String dataServiceQuery = metricCacheProperties.getUrl() + "/api/v1/api-api-metrics/kairosdb-format?application_id=" + applicationId;
+        final String dataServiceQuery = metricCacheProperties.getUrl() + "/api/v1/rest-api-metrics/kairosdb-format?application_id=" + applicationId;
 
         int nodeId = Math.abs(applicationId.hashCode() % metricCacheProperties.getNodes());
         final String r = executor.execute(Request.Get(dataServiceQuery).addHeader("Cookie", "metric_cache=" + nodeId)).returnContent().asString();
