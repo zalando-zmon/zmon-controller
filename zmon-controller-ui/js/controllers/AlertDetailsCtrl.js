@@ -1,5 +1,5 @@
-angular.module('zmon2App').controller('AlertDetailsCtrl', ['$scope', '$location', 'timespanFilter', '$routeParams', '$modal', 'MainAlertService', 'CommunicationService', 'DowntimesService', 'FeedbackMessageService', 'UserInfoService', 'APP_CONST',
-        function($scope, $location, timespanFilter, $routeParams, $modal, MainAlertService, CommunicationService, DowntimesService, FeedbackMessageService, UserInfoService, APP_CONST) {
+angular.module('zmon2App').controller('AlertDetailsCtrl', ['$scope', '$location', 'timespanFilter', '$routeParams', '$modal', 'MainAlertService', 'CommunicationService', 'DowntimesService', 'FeedbackMessageService', 'localStorageService', 'UserInfoService', 'APP_CONST',
+        function($scope, $location, timespanFilter, $routeParams, $modal, MainAlertService, CommunicationService, DowntimesService, FeedbackMessageService, localStorageService, UserInfoService, APP_CONST) {
 
         // Set in parent scope which page is active for the menu styling
         $scope.$parent.activePage = 'alert-details'; // is not a menu option, but still set
@@ -23,6 +23,7 @@ angular.module('zmon2App').controller('AlertDetailsCtrl', ['$scope', '$location'
         $scope.showActiveAlerts = true; // 1st tab, 1st button
         $scope.showAlertsInDowntime = false; // 1st tab, 2nd button
         $scope.showCheckResults = false; // 1st tab, 3rd button
+        $scope.alertDetailsSearch = { str: ''}; // entity filter
 
         $scope.checkDefinition = null;
         $scope.addDowntimeEntities = [];
@@ -56,6 +57,10 @@ angular.module('zmon2App').controller('AlertDetailsCtrl', ['$scope', '$location'
                 return result;
             }, []);
         }, true);
+
+        $scope.$watch('alertDetailsSearch.str', function(str) {
+            localStorageService.set('alertDetailsSearchStr', str);
+        });
 
         $scope.timeAgo = function(epochPastTs) {
             var timeIntervalSinceLastUpdate = MainAlertService.millisecondsApart(epochPastTs, MainAlertService.getLastUpdate());
@@ -677,6 +682,11 @@ angular.module('zmon2App').controller('AlertDetailsCtrl', ['$scope', '$location'
         $scope.HSLaFromHistoryEventTypeId = function(eventTypeId) {
             return ((eventTypeId * 6151 % 1000 / 1000.0) * 360);
         };
+
+        if (localStorageService.get('alertDetailsSearchStr')) {
+            var str = localStorageService.get('alertDetailsSearchStr');
+            $scope.alertDetailsSearch.str = str;
+        }
 
         $scope.startAlertDetailsRefresh();
     }
