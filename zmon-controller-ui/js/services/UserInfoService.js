@@ -9,7 +9,6 @@
  *      data-add-alert-def="true/false"
  *      data-add-dashboard="true/false"
  *      data-add-comment="${hasAddCommentPermission}"
- *      data-history-report-access="${hasHistoryReportAccess}"
  *      data-instantaneous-alert-evaluation="${hasInstantaneousAlertEvaluationPermission}">
 */
 

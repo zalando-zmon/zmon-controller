@@ -208,17 +208,6 @@ public class DefaultZMonPermissionService {
         }
     }
 
-    public boolean hasHistoryReportAccess() {
-        return hasAnyAuthority(AuthorityFunctions.HISTORY_REPORT_ACCESS_FUNCTION);
-    }
-
-    public void verifyHistoryReportAccess() {
-        if (!hasHistoryReportAccess()) {
-            throw new ZMonAuthorizationException(getUserName(), getUserAuthorities(),
-                "Your are not allowed to view reports");
-        }
-    }
-
     public boolean hasInstantaneousAlertEvaluationPermission() {
         return hasAnyAuthority(AuthorityFunctions.INSTANTANEOUS_ALERT_EVALUATION_FUNCTION);
     }

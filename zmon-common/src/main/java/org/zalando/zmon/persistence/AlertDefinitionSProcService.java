@@ -66,10 +66,6 @@ public interface AlertDefinitionSProcService {
     List<Integer> getAlertIdsByStatus(@SProcParam DefinitionStatus status);
 
     @SProcCall
-    List<HistoryEntry> getHistoryReport(@SProcParam String team, @SProcParam String responsibleTeam,
-            @SProcParam int alertLimit, @SProcParam int checkLimit, @SProcParam Date from, @SProcParam Date to);
-
-    @SProcCall
     AlertDefinition getAlertDefinitionNode(@SProcParam int alertDefinitionId);
 
     @SProcCall

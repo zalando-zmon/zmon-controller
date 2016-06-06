@@ -6,7 +6,6 @@ import javax.annotation.Nullable;
 
 import org.zalando.zmon.domain.Activity;
 import org.zalando.zmon.domain.ActivityDiff;
-import org.zalando.zmon.domain.HistoryReport;
 
 public interface HistoryService {
 
@@ -17,10 +16,4 @@ public interface HistoryService {
 
     List<ActivityDiff> getAlertDefinitionHistory(int alertDefinitionId, @Nullable Integer limit, @Nullable Long from,
             @Nullable Long to);
-
-    List<HistoryReport> getHistoryReport(String team, @Nullable String responsibleTeam, @Nullable Long from,
-            @Nullable Long to);
-
-    List<HistoryReport> getHistoryReport(String team, @Nullable String responsibleTeam, int alertLimit, int checkLimit,
-            @Nullable Long from, @Nullable Long to);
 }

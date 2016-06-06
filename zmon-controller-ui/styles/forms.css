@@ -133,49 +133,6 @@
     top: 5px;
 }
 
-/* REPORTS FORM */
-/* -------------------------------------------------------------------------- */
-
-.reports-form .checkbox
-{
-    float: left;
-}
-
-.reports-form label
-{
-    margin-left: 10px;
-}
-
-.reports-form label.date
-{
-    float: left;
-    margin-top: 45px;
-    margin-right: 10px;
-}
-
-.reports-form input.date
-{
-    margin-top: 38px;
-    width: 200px;
-    float: left;
-}
-
-.reports-form span.input-group-btn
-{
-    padding-top: 38px;
-}
-
-.reports-form button.apply
-{
-    margin-top: 38px;
-}
-
-.reports-form input.radio
-{
-    margin-right: 20px;
-    float: left;
-}
-
 /* ALERTS AND CHECK DEFINITIONS */
 /* -------------------------------------------------------------------------- */
 
