@@ -56,7 +56,7 @@ Building the Docker Image
 See also the `ZMON Documentation`_.
 
 .. _main ZMON repository: https://github.com/zalando/zmon
-.. _ZMON Documentation: https://zmon.readthedocs.org/
+.. _ZMON Documentation: https://docs.zmon.io/
 
 
 Database API schema
