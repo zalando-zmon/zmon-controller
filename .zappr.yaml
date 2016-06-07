@@ -1,15 +1,13 @@
+# for github.com
 approvals:
-  # PR needs at least 2 approvals
-  minimum: 1
-  # approval = comment that matches this regex
-  pattern: "^(:\\+1:|👍)"
-  # note that `from` is by default empty,
-  # accepting any matching comment as approval
-  from:
-    # commenter must be either one of:
-    orgs:
-      # a public zalando org member
-      # (any org in here counts)
-      - zalando
-    # OR a collaborator of the repo
-    collaborators: true
+  groups:
+    zalando:
+      minimum: 2
+      from:
+        orgs:
+          - "zalando"
+
+  # Allow last committer / PR creator to approve as well.
+  # This will probably become the default in zappr.
+  ignore: none
+X-Zalando-Team: "zmon"
