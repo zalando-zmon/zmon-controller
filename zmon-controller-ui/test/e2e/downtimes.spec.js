@@ -4,7 +4,7 @@ var auth = require('./behaviours/auth.behaviour');
 describe('Testing downtimes', function() {
 
     beforeEach(function() {
-        browser.get('/#/alert-details/1');
+        browser.get('/#/alert-details/3');
     });
 
     it('User should be logged in', function() {

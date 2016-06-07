@@ -14,7 +14,7 @@ describe('Testing alert details page', function() {
     });
 
     it('should show only one alert', function() {
-        alertDetails.searchAlert('GLOBAL', function(alerts) {
+        alertDetails.searchAlert('zmon-scheduler', function(alerts) {
             expect(alerts.length).toBe(1);
         });
     });
@@ -39,10 +39,10 @@ describe('Testing alert details page', function() {
 
     it('should show all alert details', function() {
         alertDetails.checkDetails(function(details) {
-            expect(details.getText()).toMatch(/Random, ID: 1/);
-            expect(details.getText()).toMatch(/Example Team/);
-            expect(details.getText()).toMatch(/10s/);
-            expect(details.getText()).toMatch(/type = GLOBAL/);
+            expect(details.getText()).toMatch(/JVM Metrics, ID: 8/);
+            expect(details.getText()).toMatch(/ZMON/);
+            expect(details.getText()).toMatch(/15s/);
+            expect(details.getText()).toMatch(/type = demowebapp/);
         });
     });
 

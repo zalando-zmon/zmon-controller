@@ -9,8 +9,8 @@ exports.searchCheck = function(input, cb) {
 };
 
 exports.filterTeam = function(cb) {
-    var teamMenu = element(by.css('.team-filter a.dropdown-toggle'));
+    var teamMenu = element(by.css('.dropdown a#simple-dropdown'));
     teamMenu.click().then(function() {
-        browser.findElements(by.css('.team-filter a.dropdown-toggle')).then(cb);
+        browser.findElements(by.css('.dropdown a#simple-dropdown')).then(cb);
     });
 };

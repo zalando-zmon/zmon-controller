@@ -116,7 +116,7 @@ describe('AlertDetailsCtrl', function() {
         httpBackend.expectGET('rest/alertDefinition?id=1');
         httpBackend.expectGET('rest/checkDefinition?check_id=2');
         httpBackend.flush();
-        scope.alertDetailsSearch = 'notExistingAlertId';
+        scope.alertDetailsSearch = { "str": 'notExistingAlertId' };
         expect(scope.allAlertsAndChecks.length).toBe(0);
     });
 });

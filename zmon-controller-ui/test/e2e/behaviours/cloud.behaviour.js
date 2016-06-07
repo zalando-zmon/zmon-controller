@@ -1,2 +1,2 @@
-noTeams = element(by.css('.no-teams'));
+teamCards = element(by.css('.card'));
 
