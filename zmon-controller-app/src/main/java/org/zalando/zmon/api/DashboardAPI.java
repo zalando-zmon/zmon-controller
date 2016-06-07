@@ -93,7 +93,7 @@ public class DashboardAPI {
 
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/{id}")
     public DashboardRest getDashboard(@PathVariable(value="id") int dashboardId) {
         final List<Dashboard> dashboards = service.getDashboards(Lists.newArrayList(dashboardId));
 

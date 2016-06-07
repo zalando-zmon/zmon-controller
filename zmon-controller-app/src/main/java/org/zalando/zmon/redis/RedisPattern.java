@@ -10,8 +10,6 @@ public final class RedisPattern {
 
     private static final String REDIS_TRIAL_RUN_QUEUE = REDIS_TRIAL_RUN_PREFIX + KEY_SEPARATOR + "requests";
 
-    private static final String REDIS_TRIAL_RUN_PUB_SUB = REDIS_TRIAL_RUN_PREFIX + KEY_SEPARATOR + "pubsub";
-
     private static final String REDIS_DOWNTIME_SCHEDULE_PUB_SUB = "zmon:downtime_schedule:pubsub";
 
     private static final String REDIS_DOWNTIME_SCHEDULE_QUEUE = "zmon:downtime_schedule:requests";
@@ -19,10 +17,6 @@ public final class RedisPattern {
     private static final String REDIS_DOWNTIME_REMOVE_PUB_SUB = "zmon:downtime_remove:pubsub";
 
     private static final String REDIS_DOWNTIME_REMOVE_QUEUE = "zmon:downtime_remove:requests";
-
-    private static final String REDIS_INSTANTANEOUS_ALERT_EVALUATION_PUB_SUB = "zmon:alert_evaluation:pubsub";
-
-    private static final String REDIS_INSTANTANEOUS_ALERT_EVALUATION_QUEUE = "zmon:alert_evaluation:requests";
 
     private static final String REDIS_ALERT_PREFIX = "zmon:alerts";
 
@@ -57,10 +51,6 @@ public final class RedisPattern {
         Preconditions.checkNotNull(trialRunId, "trialRunId");
         return new StringBuilder(REDIS_TRIAL_RUN_PREFIX).append(KEY_SEPARATOR).append(trialRunId).append(KEY_SEPARATOR)
                                                         .append(TRIAL_RUN_RESULTS_SUFFIX).toString();
-    }
-
-    public static String trialRunChannel() {
-        return REDIS_TRIAL_RUN_PUB_SUB;
     }
 
     public static String alertIds() {
@@ -157,14 +147,6 @@ public final class RedisPattern {
 
     public static String downtimeRemoveQueue() {
         return REDIS_DOWNTIME_REMOVE_QUEUE;
-    }
-
-    public static String alertEvaluationChannel() {
-        return REDIS_INSTANTANEOUS_ALERT_EVALUATION_PUB_SUB;
-    }
-
-    public static String alertEvaluationQueue() {
-        return REDIS_INSTANTANEOUS_ALERT_EVALUATION_QUEUE;
     }
 
 }

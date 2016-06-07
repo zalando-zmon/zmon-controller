@@ -22,8 +22,6 @@ public class GrafanaUIController {
 
     private ControllerProperties controllerProperties;
 
-    private KairosDBProperties kairosdbProperties;
-
     public static class KairosDBEntry {
         public String name;
         public String url;
@@ -46,7 +44,6 @@ public class GrafanaUIController {
 
     @Autowired
     public GrafanaUIController(KairosDBProperties kairosdbProperties, ControllerProperties controllerProperties) {
-        this.kairosdbProperties = kairosdbProperties;
         this.controllerProperties = controllerProperties;
 
         for (KairosDBProperties.KairosDBServiceConfig c : kairosdbProperties.getKairosdbs()) {

@@ -269,7 +269,7 @@ public class GrafanaController extends AbstractZMonController {
         List<CheckDefinition> checkDefinitions = zMonService.getCheckDefinitionsById(checkId);
 
         if (checkDefinitions.isEmpty()) {
-            return new ResponseEntity<JsonNode>(mapper.createObjectNode().put("message", "Check not found"), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(mapper.createObjectNode().put("message", "Check not found"), HttpStatus.NOT_FOUND);
         }
 
         CheckDefinition checkDefinition = checkDefinitions.get(0);

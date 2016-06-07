@@ -65,10 +65,10 @@ public class GrafanaDashboardAPI {
         node.put("found", true);
         node.put("_type", "dashboard");
         node.put("_id", id);
-        node.put("_source", sourceNode);
+        node.set("_source", sourceNode);
         sourceNode.put("title", dashboards.get(0).title);
-        sourceNode.put("tags", mapper.createArrayNode());
-        sourceNode.put("dashboard", mapper.readTree(dashboards.get(0).dashboard));
+        sourceNode.set("tags", mapper.createArrayNode());
+        sourceNode.set("dashboard", mapper.readTree(dashboards.get(0).dashboard));
 
         return node;
     }

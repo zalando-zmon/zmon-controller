@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,11 +28,9 @@ import org.zalando.zmon.redis.RedisPattern;
 import org.zalando.zmon.redis.ResponseHolder;
 import org.zalando.zmon.api.DowntimeGroup;
 import org.zalando.zmon.service.DowntimeService;
-import org.zalando.zmon.util.Numbers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -120,7 +119,7 @@ public class DowntimeServiceImpl implements DowntimeService {
 
             pipeline.sync();
         } finally {
-            writeRedisPool.returnResource(jedis);
+            jedis.close();
         }
 
         return results;
@@ -193,7 +192,7 @@ public class DowntimeServiceImpl implements DowntimeService {
 
             p.sync();
         } finally {
-            writeRedisPool.returnResource(jedis);
+            jedis.close();
         }
 
         // only log events at the end of the transaction
@@ -231,7 +230,7 @@ public class DowntimeServiceImpl implements DowntimeService {
                 p.sync();
             }
         } finally {
-            redisPool.returnResource(jedis);
+            jedis.close();
         }
 
         // process results
@@ -274,7 +273,7 @@ public class DowntimeServiceImpl implements DowntimeService {
 
             p.sync();
         } finally {
-            writeRedisPool.returnResource(jedis);
+            jedis.close();
         }
 
         final Map<String, DowntimeDetailsFormat> toRemoveJsonDetails = Maps.newHashMapWithExpectedSize(
@@ -295,8 +294,8 @@ public class DowntimeServiceImpl implements DowntimeService {
         final List<DowntimeDetails> deletedDowntimes = processDeleteDowntimes(toRemoveJsonDetails);
         final DowntimeGroup response = new DowntimeGroup();
         response.setId(groupId);
-        response.setAlertDefinitions(new HashSet<Integer>());
-        response.setEntities(new HashSet<String>());
+        response.setAlertDefinitions(new HashSet<>());
+        response.setEntities(new HashSet<>());
 
         final Iterator<DowntimeDetails> iterator = deletedDowntimes.iterator();
         if (iterator.hasNext()) {
@@ -343,7 +342,7 @@ public class DowntimeServiceImpl implements DowntimeService {
 
                 p.sync();
             } finally {
-                writeRedisPool.returnResource(jedis);
+                jedis.close();
             }
 
             final Map<String, DowntimeDetailsFormat> toRemoveJsonDetails = Maps.newHashMapWithExpectedSize(
@@ -380,9 +379,8 @@ public class DowntimeServiceImpl implements DowntimeService {
         return asyncAlertEntities;
     }
 
-    private ImmutableSet<Integer> alertsInDowntime(final Jedis jedis) {
-        return FluentIterable.from(jedis.smembers(RedisPattern.downtimeAlertIds()))
-                             .transform(Numbers.PARSE_INTEGER_FUNCTION).toSet();
+    private Set<Integer> alertsInDowntime(final Jedis jedis) {
+        return jedis.smembers(RedisPattern.downtimeAlertIds()).stream().map(Integer::parseInt).collect(Collectors.toSet());
     }
 
     private List<DowntimeDetails> processDeleteDowntimes(final Map<String, DowntimeDetailsFormat> toRemove) {
@@ -418,7 +416,7 @@ public class DowntimeServiceImpl implements DowntimeService {
 
                 p.sync();
             } finally {
-                writeRedisPool.returnResource(jedis);
+                jedis.close();
             }
 
             // and finnally publish an event after returning the connection

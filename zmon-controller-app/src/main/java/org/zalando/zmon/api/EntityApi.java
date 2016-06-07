@@ -82,7 +82,7 @@ public class EntityApi {
 
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    @RequestMapping(value = "/{id}/", method = RequestMethod.GET)
+    @RequestMapping(value = "/{id}/")
     public void getEntity(@PathVariable(value = "id") String id, final Writer writer,
                           final HttpServletResponse response) {
         List<String> entities = entitySprocs.getEntityById(id);

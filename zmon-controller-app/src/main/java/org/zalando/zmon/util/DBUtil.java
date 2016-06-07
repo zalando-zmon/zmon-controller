@@ -12,7 +12,7 @@ public final class DBUtil {
 
         private final String character;
 
-        private SqlLike(final String delimiter) {
+        SqlLike(final String delimiter) {
             this.character = delimiter;
         }
 

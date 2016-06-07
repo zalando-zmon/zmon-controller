@@ -31,17 +31,17 @@ public class MultiKairosDBController extends AbstractZMonController {
 
     public static final String KAIROSDB_TOKEN_ID = "kairosdb";
 
+    private static final String TAGS_QUERY_SUFFIX = "/api/v1/datapoints/query/tags";
+
+    private static final String QUERY_SUFFIX = "/api/v1/datapoints/query";
+
+    private static final String METRIC_NAMES_SUFFIX = "/api/v1/metricnames";
+
     private static final String BEARER = "Bearer ";
 
     private final MetricRegistry metricRegistry;
 
     private final AsyncRestTemplate asyncRestTemplate;
-
-    private final static String METRIC_NAMES_SUFFIX = "/api/v1/metricnames";
-
-    private final String TAGS_QUERY_SUFFIX = "/api/v1/datapoints/query/tags";
-
-    private final String QUERY_SUFFIX = "/api/v1/datapoints/query";
 
     private final AccessTokens accessTokens;
 
@@ -54,7 +54,7 @@ public class MultiKairosDBController extends AbstractZMonController {
         this.asyncRestTemplate = asyncRestTemplate;
         this.accessTokens = accessTokens;
 
-        for(KairosDBProperties.KairosDBServiceConfig c : kairosDBProperties.getKairosdbs()) {
+        for (KairosDBProperties.KairosDBServiceConfig c : kairosDBProperties.getKairosdbs()) {
             kairosdbServices.put(c.getName(), c);
         }
     }
@@ -64,9 +64,9 @@ public class MultiKairosDBController extends AbstractZMonController {
      * URLs too
      */
     @RequestMapping(value = "{kairosdbId}/api/v1/datapoints/query", method = RequestMethod.POST, produces = "application/json")
-    public ListenableFuture<ResponseEntity<JsonNode>> kairosDBPost(@RequestBody(required = true) final JsonNode node, @PathVariable(value="kairosdbId") String kairosDB) {
+    public ListenableFuture<ResponseEntity<JsonNode>> kairosDBPost(@RequestBody(required = true) final JsonNode node, @PathVariable(value = "kairosdbId") String kairosDB) {
 
-        if(!kairosdbServices.containsKey(kairosDB)) {
+        if (!kairosdbServices.containsKey(kairosDB)) {
             return null;
         }
 
@@ -88,7 +88,7 @@ public class MultiKairosDBController extends AbstractZMonController {
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.add("X-ZMON-CHECK-ID", checkId);
 
-        if(kairosdbServices.get(kairosDB).isOauth2()) {
+        if (kairosdbServices.get(kairosDB).isOauth2()) {
             headers.add(AUTHORIZATION, BEARER + accessTokens.get(KAIROSDB_TOKEN_ID));
         }
 
@@ -102,14 +102,14 @@ public class MultiKairosDBController extends AbstractZMonController {
     }
 
     @RequestMapping(value = "{kairosdbId}/api/v1/datapoints/query/tags", method = RequestMethod.POST, produces = "application/json")
-    public ListenableFuture<ResponseEntity<JsonNode>> kairosDBtags(@RequestBody(required = true) final JsonNode node, @PathVariable(value="kairosdbId") String kairosDB) {
-        if(!kairosdbServices.containsKey(kairosDB)) {
+    public ListenableFuture<ResponseEntity<JsonNode>> kairosDBtags(@RequestBody(required = true) final JsonNode node, @PathVariable(value = "kairosdbId") String kairosDB) {
+        if (!kairosdbServices.containsKey(kairosDB)) {
             return null;
         }
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        if(kairosdbServices.get(kairosDB).isOauth2()) {
+        if (kairosdbServices.get(kairosDB).isOauth2()) {
             headers.add(AUTHORIZATION, BEARER + accessTokens.get(KAIROSDB_TOKEN_ID));
         }
 
@@ -119,14 +119,14 @@ public class MultiKairosDBController extends AbstractZMonController {
     }
 
     @RequestMapping(value = "{kairosdbId}/api/v1/metricnames", method = RequestMethod.GET, produces = "application/json")
-    public ListenableFuture<ResponseEntity<JsonNode>> kairosDBmetrics(@PathVariable(value="kairosdbId") String kairosDB) {
-        if(!kairosdbServices.containsKey(kairosDB)) {
+    public ListenableFuture<ResponseEntity<JsonNode>> kairosDBmetrics(@PathVariable(value = "kairosdbId") String kairosDB) {
+        if (!kairosdbServices.containsKey(kairosDB)) {
             return null;
         }
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        if(kairosdbServices.get(kairosDB).isOauth2()) {
+        if (kairosdbServices.get(kairosDB).isOauth2()) {
             headers.add(AUTHORIZATION, BEARER + accessTokens.get(KAIROSDB_TOKEN_ID));
         }
 

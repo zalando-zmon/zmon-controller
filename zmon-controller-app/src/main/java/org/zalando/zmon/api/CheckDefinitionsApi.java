@@ -64,7 +64,7 @@ public class CheckDefinitionsApi extends AbstractZMonController {
         return zMonService.createOrUpdateCheckDefinition(checkDefinition);
     }
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/{id}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public CheckDefinitionImport getCheckDef(@PathVariable(value = "id") int id) throws ZMonException {

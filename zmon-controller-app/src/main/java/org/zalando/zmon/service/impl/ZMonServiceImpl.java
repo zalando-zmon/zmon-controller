@@ -1,9 +1,14 @@
 package org.zalando.zmon.service.impl;
 
-import java.io.IOException;
-import java.util.*;
-
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.NumericNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.common.base.Preconditions;
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
+import com.google.common.collect.SetMultimap;
 import org.apache.http.client.fluent.Executor;
 import org.apache.http.client.fluent.Request;
 import org.apache.http.entity.ContentType;
@@ -13,17 +18,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.xerial.snappy.Snappy;
+import org.zalando.zmon.api.domain.CheckChartResult;
 import org.zalando.zmon.config.SchedulerProperties;
 import org.zalando.zmon.diff.CheckDefinitionsDiffFactory;
-import org.zalando.zmon.domain.AlertDefinition;
-import org.zalando.zmon.domain.CheckDefinition;
-import org.zalando.zmon.domain.CheckDefinitionImport;
-import org.zalando.zmon.domain.CheckDefinitions;
-import org.zalando.zmon.domain.CheckDefinitionsDiff;
-import org.zalando.zmon.domain.CheckResults;
-import org.zalando.zmon.domain.DefinitionStatus;
-import org.zalando.zmon.domain.ExecutionStatus;
-import org.zalando.zmon.domain.WorkerQueue;
+import org.zalando.zmon.domain.*;
 import org.zalando.zmon.event.ZMonEventType;
 import org.zalando.zmon.exception.SerializationException;
 import org.zalando.zmon.persistence.AlertDefinitionSProcService;
@@ -32,23 +30,17 @@ import org.zalando.zmon.persistence.CheckDefinitionSProcService;
 import org.zalando.zmon.persistence.ZMonSProcService;
 import org.zalando.zmon.redis.RedisPattern;
 import org.zalando.zmon.redis.ResponseHolder;
-import org.zalando.zmon.api.domain.CheckChartResult;
 import org.zalando.zmon.service.ZMonService;
 import org.zalando.zmon.util.DBUtil;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.NumericNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.SetMultimap;
-
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.Pipeline;
 import redis.clients.jedis.Response;
+
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.util.*;
+import java.util.stream.Collectors;
 
 // TODO remove CheckDefinitionImport and use CheckDefinition with optional id
 // TODO convert mandatory types into native types (Integer -> int...)
@@ -96,13 +88,12 @@ public class ZMonServiceImpl implements ZMonService {
     @Override
     public ExecutionStatus getStatus() {
 
-        int alertsActive = 0;
+        int alertsActive;
         final Map<String, Response<Long>> queueSize = new HashMap<>();
         final Map<String, Response<String>> lastUpdate = new HashMap<>();
         final Map<String, Response<String>> invocations = new HashMap<>();
 
-        final Jedis jedis = redisPool.getResource();
-        try {
+        try (Jedis jedis = redisPool.getResource()) {
             final Set<String> workerNames = jedis.smembers(RedisPattern.workerNames());
             alertsActive = Optional.of(jedis.scard(RedisPattern.alertIds())).orElse(Long.valueOf(0)).intValue();
 
@@ -118,8 +109,6 @@ public class ZMonServiceImpl implements ZMonService {
             }
 
             p.sync();
-        } finally {
-            jedis.close();
         }
 
         return buildStatus(alertsActive, queueSize, lastUpdate, invocations);
@@ -194,7 +183,7 @@ public class ZMonServiceImpl implements ZMonService {
 
     @Override
     public List<CheckDefinition> getCheckDefinitionsById(final int id) {
-        return checkDefinitionSProc.getCheckDefinitions(null, Arrays.asList(id));
+        return checkDefinitionSProc.getCheckDefinitions(null, Lists.newArrayList(id));
     }
 
     @Override
@@ -259,8 +248,7 @@ public class ZMonServiceImpl implements ZMonService {
         final List<ResponseHolder<Integer, Set<String>>> alertEntities = new LinkedList<>();
 
         final List<Integer> alertDefinitionIds = alertDefinitionSProc.getAlertIdsByCheckId(checkId);
-        final Jedis jedis = redisPool.getResource();
-        try {
+        try (Jedis jedis = redisPool.getResource()) {
             final Set<String> entities = (entity == null ? jedis.smembers(RedisPattern.checkEntities(checkId))
                     : Collections.singleton(entity));
             if (!entities.isEmpty()) {
@@ -279,8 +267,6 @@ public class ZMonServiceImpl implements ZMonService {
 
                 p.sync();
             }
-        } finally {
-            jedis.close();
         }
 
         final List<CheckResults> checkResults = buildCheckResults(results);
@@ -316,9 +302,8 @@ public class ZMonServiceImpl implements ZMonService {
 
             final List<ResponseHolder<String, List<String>>> results = new LinkedList<>();
 
-            final Jedis jedis = redisPool.getResource();
             final Map<String, String> entities;
-            try {
+            try (Jedis jedis = redisPool.getResource()) {
                 entities = jedis.hgetAll(RedisPattern.alertFilterEntities(alertId));
                 if (!entities.isEmpty()) {
 
@@ -331,8 +316,6 @@ public class ZMonServiceImpl implements ZMonService {
 
                     p.sync();
                 }
-            } finally {
-                jedis.close();
             }
 
             checkResults = buildCheckResults(results);
@@ -343,7 +326,7 @@ public class ZMonServiceImpl implements ZMonService {
                 try {
                     final JsonNode captures = mapper.readTree(entities.get(cr.getEntity()));
                     for (final JsonNode node : cr.getResults()) {
-                        ((ObjectNode) node).put("captures", captures);
+                        ((ObjectNode) node).set("captures", captures);
                     }
                 } catch (final IOException e) {
                     throw new SerializationException("Could not read capture's JSON: " + entities.get(cr.getEntity()),
@@ -371,8 +354,7 @@ public class ZMonServiceImpl implements ZMonService {
     }
 
     private String getEntityPropertiesFromRedis() {
-        final Jedis jedis = redisPool.getResource();
-        try {
+        try (Jedis jedis = redisPool.getResource()) {
             try {
                 byte[] bs = jedis.get(RedisPattern.entityProperties().getBytes());
                 if (null == bs)
@@ -381,8 +363,6 @@ public class ZMonServiceImpl implements ZMonService {
             } catch (IOException ex) {
                 log.error("Failed retrieving auto complete properties");
             }
-        } finally {
-            jedis.close();
         }
         return null;
     }
@@ -419,98 +399,93 @@ public class ZMonServiceImpl implements ZMonService {
     @Override
     public CheckChartResult getChartResults(int checkId, String entity, int limit) {
         CheckChartResult result = new CheckChartResult();
-        final Jedis jedis = redisPool.getResource();
-        List<String> values = null;
-        try {
+        List<String> values;
+        try (Jedis jedis = redisPool.getResource()) {
             values = jedis.lrange(RedisPattern.checkResult(checkId, entity), 0, limit);
-        } finally {
-            jedis.close();
         }
 
         if (null == values) {
             return result;
         }
 
-        for (String value : values) {
-            try {
-                JsonNode node = mapper.readTree(value);
-                JsonNode v = node.get("value");
+        values.stream()
+                .map(this::parseJson)
+                .forEach(node -> {
+                    JsonNode v = node.get("value");
 
-                // we only handle one level of result nesting here for now
-                if (v instanceof ObjectNode) {
-                    Iterator<String> i = v.fieldNames();
-                    while (i.hasNext()) {
-                        String k = i.next();
-                        JsonNode mv = v.get(k);
+                    // we only handle one level of result nesting here for now
+                    if (v instanceof ObjectNode) {
+                        Iterator<String> i = v.fieldNames();
+                        while (i.hasNext()) {
+                            String k = i.next();
+                            JsonNode mv = v.get(k);
 
-                        if (mv instanceof NumericNode) {
-                            ArrayNode o = mapper.createArrayNode();
-                            o.add(node.get("ts"));
-                            o.add(mv);
+                            if (mv instanceof NumericNode) {
+                                ArrayNode o = mapper.createArrayNode();
+                                o.add(node.get("ts"));
+                                o.add(mv);
 
-                            List<JsonNode> list = result.values.get(k);
-                            if (null == list) {
-                                list = new ArrayList<>(limit);
-                                result.values.put(k, list);
+                                List<JsonNode> list = result.values.get(k);
+                                if (null == list) {
+                                    list = new ArrayList<>(limit);
+                                    result.values.put(k, list);
+                                }
+                                list.add(o);
                             }
-                            list.add(o);
                         }
+                    } else if (v instanceof NumericNode) {
+                        ArrayNode o = mapper.createArrayNode();
+                        o.add(node.get("ts"));
+                        o.add(v);
+
+                        List<JsonNode> list = result.values.get("");
+                        if (null == list) {
+                            list = new ArrayList<>(limit);
+                            result.values.put("", list);
+                        }
+                        list.add(o);
                     }
-                } else if (v instanceof NumericNode) {
-                    ArrayNode o = mapper.createArrayNode();
-                    o.add(node.get("ts"));
-                    o.add(v);
-
-                    List<JsonNode> list = result.values.get("");
-                    if (null == list) {
-                        list = new ArrayList<>(limit);
-                        result.values.put("", list);
-                    }
-                    list.add(o);
-                }
-
-            } catch (IOException e) {
-
-            }
-        }
+                });
 
         return result;
     }
 
-    @Override
-    public CheckChartResult getFilteredLastResults(String checkId, String filter, int limit) {
-        Jedis jedis = null;
-        List<ResponseHolder<String, List<String>>> redisResults = new ArrayList<>();
-
+    private JsonNode parseJson(String json) {
         try {
-            jedis = redisPool.getResource();
+            return mapper.readTree(json);
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+    }
+
+    @Override
+    public CheckChartResult getFilteredLastResults(String checkId, String entityFilter, int limit) {
+        List<ResponseHolder<String, List<String>>> redisResults;
+
+        try (Jedis jedis = redisPool.getResource()) {
             Set<String> members = jedis.smembers("zmon:checks:" + checkId);
-            Set<String> filteredMembers = new HashSet<>();
-            for (String m : members) {
-                if (m.indexOf(filter) > -1) {
-                    filteredMembers.add(m);
-                }
-            }
+            Set<String> filteredMembers = members.stream()
+                    .filter(m -> m.contains(entityFilter))
+                    .collect(Collectors.toSet());
 
             Pipeline p = jedis.pipelined();
-            for (String m : filteredMembers) {
-                redisResults.add(ResponseHolder.create(m, p.lrange("zmon:checks:" + checkId + ":" + m, 0, limit)));
-            }
+
+            redisResults = filteredMembers.stream()
+                    .map(m -> ResponseHolder.create(m, p.lrange("zmon:checks:" + checkId + ":" + m, 0, limit)))
+                    .collect(Collectors.toList());
             p.sync();
-        } finally {
-            jedis.close();
         }
 
         CheckChartResult cr = new CheckChartResult();
 
         for (ResponseHolder<String, List<String>> rh : redisResults) {
             try {
-                if (null != rh.getResponse().get() && rh.getResponse().get().size() > 0) {
-                    List<JsonNode> vs = new ArrayList<>(1);
-                    vs.add(mapper.readTree(rh.getResponse().get().get(0)));
-                    cr.values.put(rh.getKey(), vs);
+                if (null != rh.getResponse().get()) {
+                    cr.values.put(rh.getKey(), rh.getResponse().get().stream()
+                            .map(this::parseJson)
+                            .collect(Collectors.toList()));
                 }
-            } catch (IOException e) {
+            } catch (UncheckedIOException e) {
                 log.error("Could not read data from redis for {}", rh.getKey());
             }
         }

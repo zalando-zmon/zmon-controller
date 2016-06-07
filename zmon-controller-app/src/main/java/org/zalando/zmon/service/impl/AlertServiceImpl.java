@@ -1,19 +1,11 @@
 package org.zalando.zmon.service.impl;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.TreeSet;
-
-import javax.annotation.Nullable;
-
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.base.Function;
+import com.google.common.base.Preconditions;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import org.apache.http.client.fluent.Executor;
 import org.apache.http.client.fluent.Request;
 import org.slf4j.Logger;
@@ -24,14 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.zalando.zmon.config.SchedulerProperties;
 import org.zalando.zmon.config.annotation.RedisWrite;
 import org.zalando.zmon.diff.AlertDefinitionsDiffFactory;
-import org.zalando.zmon.domain.Alert;
-import org.zalando.zmon.domain.AlertComment;
-import org.zalando.zmon.domain.AlertDefinition;
-import org.zalando.zmon.domain.AlertDefinitionAuth;
-import org.zalando.zmon.domain.AlertDefinitions;
-import org.zalando.zmon.domain.AlertDefinitionsDiff;
-import org.zalando.zmon.domain.DefinitionStatus;
-import org.zalando.zmon.domain.LastCheckResult;
+import org.zalando.zmon.domain.*;
 import org.zalando.zmon.event.ZMonEventType;
 import org.zalando.zmon.exception.SerializationException;
 import org.zalando.zmon.exception.ZMonException;
@@ -43,19 +28,14 @@ import org.zalando.zmon.security.permission.DefaultZMonPermissionService;
 import org.zalando.zmon.service.AlertService;
 import org.zalando.zmon.util.DBUtil;
 import org.zalando.zmon.util.NamedMessageFormatter;
-import org.zalando.zmon.util.Numbers;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.base.Function;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.FluentIterable;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
-
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.Pipeline;
+
+import javax.annotation.Nullable;
+import java.io.IOException;
+import java.util.*;
+import java.util.stream.Collectors;
 
 // TODO diffs should never return null collections. They should be empty instead
 @Service
@@ -70,21 +50,10 @@ public class AlertServiceImpl implements AlertService {
     private static final String CAPTURES_KEY = "captures";
     private static final String DOWNTIMES_KEY = "downtimes";
 
-    // expiration time in seconds
-    private static final int INSTANTANEOUS_ALERT_EVALUATION_TIME = 300;
-
     private final NamedMessageFormatter messageFormatter = new NamedMessageFormatter();
 
-    private final Function<AlertDefinition, Integer> uniqueAlertDefinitionFunction =
-        new Function<AlertDefinition, Integer>() {
+    private final Function<AlertDefinition, Integer> uniqueAlertDefinitionFunction = input -> input.getId();
 
-            @Override
-            public Integer apply(final AlertDefinition input) {
-                return input.getId();
-            }
-        };
-
-        
     @Autowired
     private NoOpEventLog eventLog;
 
@@ -117,8 +86,8 @@ public class AlertServiceImpl implements AlertService {
 
         // TODO save inherited data to eventlog, or the diff?
         eventLog.log(alertDefinition.getId() == null ? ZMonEventType.ALERT_DEFINITION_CREATED
-                                                      : ZMonEventType.ALERT_DEFINITION_UPDATED, result.getId(),
-            result.getEntities(), result.getCondition(), result.getLastModifiedBy());
+                        : ZMonEventType.ALERT_DEFINITION_UPDATED, result.getId(),
+                result.getEntities(), result.getCondition(), result.getLastModifiedBy());
 
         return result;
     }
@@ -128,12 +97,12 @@ public class AlertServiceImpl implements AlertService {
         log.info("Deleting alert definition with id '{}'", id);
 
         final AlertDefinitionOperationResult operationResult = alertDefinintionSProc.deleteAlertDefinition(id)
-                                                                                    .throwExceptionOnFailure();
+                .throwExceptionOnFailure();
         final AlertDefinition alertDefinition = operationResult.getEntity();
 
         if (alertDefinition != null) {
             eventLog.log(ZMonEventType.ALERT_DEFINITION_DELETED, alertDefinition.getId(),
-                alertDefinition.getEntities(), alertDefinition.getCondition(), authorityService.getUserName());
+                    alertDefinition.getEntities(), alertDefinition.getCondition(), authorityService.getUserName());
         }
 
         return alertDefinition;
@@ -156,7 +125,7 @@ public class AlertServiceImpl implements AlertService {
 
     @Override
     public List<AlertDefinition> getAlertDefinitions(final DefinitionStatus status,
-            final List<Integer> alertDefinitionIds) {
+                                                     final List<Integer> alertDefinitionIds) {
         Preconditions.checkNotNull(alertDefinitionIds, "alertDefinitionIds");
 
         return alertDefinintionSProc.getAlertDefinitions(status, alertDefinitionIds);
@@ -177,8 +146,7 @@ public class AlertServiceImpl implements AlertService {
 
     @Override
     public List<Alert> getAllAlerts() {
-        return fetchAlertsById(FluentIterable.from(getActiveAlertIds()).transform(Numbers.PARSE_INTEGER_FUNCTION)
-                    .toSet());
+        return fetchAlertsById(getActiveAlertIds().stream().map(Integer::parseInt).collect(Collectors.toSet()));
     }
 
     @Override
@@ -208,18 +176,14 @@ public class AlertServiceImpl implements AlertService {
     }
 
     protected Set<String> getActiveAlertIds() {
-        final Jedis jedis = redisPool.getResource();
-        try {
+        try (Jedis jedis = redisPool.getResource()) {
             return jedis.smembers(RedisPattern.alertIds());
-        } finally {
-            jedis.close();
         }
     }
 
-    protected void getAlertDataFromStorage(Set<Integer> ids, List<Integer> alertIds, List<ResponseHolder<Integer,Set<String>>> results) {
+    protected void getAlertDataFromStorage(Set<Integer> ids, List<Integer> alertIds, List<ResponseHolder<Integer, Set<String>>> results) {
         // first extract everything and return the connection to the connection pool
-        final Jedis jedis = redisPool.getResource();
-        try {
+        try (Jedis jedis = redisPool.getResource()) {
 
             // execute async call
             final Pipeline p = jedis.pipelined();
@@ -229,8 +193,6 @@ public class AlertServiceImpl implements AlertService {
             }
 
             p.sync();
-        } finally {
-            jedis.close();
         }
     }
 
@@ -272,8 +234,7 @@ public class AlertServiceImpl implements AlertService {
     }
 
     protected void getActiveAlertsForDefinitions(List<AlertDefinition> definitions, List<ResponseHolder<Integer, Set<String>>> results) {
-        final Jedis jedis = redisPool.getResource();
-        try {
+        try (Jedis jedis = redisPool.getResource()) {
 
             // execute async call
             final Pipeline p = jedis.pipelined();
@@ -283,8 +244,6 @@ public class AlertServiceImpl implements AlertService {
             }
 
             p.sync();
-        } finally {
-            jedis.close();
         }
     }
 
@@ -336,11 +295,8 @@ public class AlertServiceImpl implements AlertService {
         if (!definitions.isEmpty()) {
 
             Set<String> alertEntities;
-            final Jedis jedis = redisPool.getResource();
-            try {
+            try (Jedis jedis = redisPool.getResource()) {
                 alertEntities = jedis.smembers(RedisPattern.alertEntities(alertId));
-            } finally {
-                redisPool.returnResource(jedis);
             }
 
             alertResult = buildAlert(alertId, alertEntities, definitions.get(0));
@@ -358,7 +314,7 @@ public class AlertServiceImpl implements AlertService {
         final AlertComment result = this.alertDefinintionSProc.addAlertComment(comment).getEntity();
 
         eventLog.log(ZMonEventType.ALERT_COMMENT_CREATED, result.getId(), result.getComment(),
-            result.getAlertDefinitionId(), result.getEntityId(), result.getCreatedBy());
+                result.getAlertDefinitionId(), result.getEntityId(), result.getCreatedBy());
 
         return result;
     }
@@ -376,7 +332,7 @@ public class AlertServiceImpl implements AlertService {
 
         if (comment != null) {
             eventLog.log(ZMonEventType.ALERT_COMMENT_REMOVED, comment.getId(), comment.getComment(),
-                comment.getAlertDefinitionId(), comment.getEntityId(), comment.getCreatedBy());
+                    comment.getAlertDefinitionId(), comment.getEntityId(), comment.getCreatedBy());
         }
     }
 
@@ -399,20 +355,17 @@ public class AlertServiceImpl implements AlertService {
 
         final String url = schedulerProperties.getUrl().toString() + "/api/v1/alerts/" + alertDefinitionId + "/instant-eval";
 
-        final String r = executor.execute(Request.Post(url)).returnContent().asString();
+        executor.execute(Request.Post(url)).returnContent().asString();
 
         eventLog.log(ZMonEventType.INSTANTANEOUS_ALERT_EVALUATION_SCHEDULED, alertDefinitionId,
-            authorityService.getUserName());
+                authorityService.getUserName());
     }
 
     @Override
     public void cleanAlertState(int alertDefinitionId) {
-        final Jedis jedis = writeRedisPool.getResource();
-        try {
+        try (Jedis jedis = writeRedisPool.getResource()) {
             jedis.del(RedisPattern.alertEntities(alertDefinitionId));
             jedis.del(RedisPattern.alertFilterEntities(alertDefinitionId));
-        } finally {
-            jedis.close();
         }
     }
 
@@ -422,7 +375,7 @@ public class AlertServiceImpl implements AlertService {
     }
 
     private List<AlertDefinition> getActiveAlertDefinitionByTeamAndTag(final Set<String> teams,
-            final Set<String> tags) {
+                                                                       final Set<String> tags) {
 
         List<String> teamList = null;
         if (teams != null) {
@@ -446,8 +399,7 @@ public class AlertServiceImpl implements AlertService {
     }
 
     protected void getAlertEntityData(Integer alertId, Set<String> entities, List<ResponseHolder<String, String>> results) {
-        final Jedis jedis = redisPool.getResource();
-        try {
+        try (Jedis jedis = redisPool.getResource()) {
 
             // execute async call
             final Pipeline p = jedis.pipelined();
@@ -456,8 +408,6 @@ public class AlertServiceImpl implements AlertService {
             }
 
             p.sync();
-        } finally {
-            jedis.close();
         }
     }
 
