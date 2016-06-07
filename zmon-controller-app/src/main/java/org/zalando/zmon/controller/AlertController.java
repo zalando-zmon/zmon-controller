@@ -1,37 +1,26 @@
 package org.zalando.zmon.controller;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
-
-import javax.validation.Valid;
-
+import com.google.common.collect.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.zalando.zmon.domain.Alert;
-import org.zalando.zmon.domain.AlertComment;
-import org.zalando.zmon.domain.AlertCommentAuth;
-import org.zalando.zmon.domain.AlertDefinition;
-import org.zalando.zmon.domain.AlertDefinitionAuth;
-import org.zalando.zmon.domain.InstantaneousAlertEvaluationRequest;
+import org.springframework.web.bind.annotation.*;
+import org.zalando.zmon.domain.*;
 import org.zalando.zmon.exception.ZMonException;
 import org.zalando.zmon.security.permission.DefaultZMonPermissionService;
 import org.zalando.zmon.service.AlertService;
 
-import com.google.common.collect.Lists;
+import javax.validation.Valid;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Controller
-@RequestMapping(value="/rest")
+@RequestMapping(value = "/rest")
 public class AlertController extends AbstractZMonController {
 
     @Autowired
@@ -45,7 +34,7 @@ public class AlertController extends AbstractZMonController {
             @RequestParam(value = "team", required = false) final Set<String> teams,
             @RequestParam(value = "tags", required = false) final Set<String> tags) {
         final List<Alert> alerts = teams == null && tags == null ? service.getAllAlerts()
-                                                                 : service.getAllAlertsByTeamAndTag(teams, tags);
+                : service.getAllAlertsByTeamAndTag(teams, tags);
 
         return new ResponseEntity<>(alerts, HttpStatus.OK);
     }
@@ -62,7 +51,7 @@ public class AlertController extends AbstractZMonController {
         final Alert alert = service.getAlert(alertId);
 
         return alert == null ? new ResponseEntity<>(HttpStatus.NOT_FOUND)
-                             : new ResponseEntity<>(alert, HttpStatus.OK);
+                : new ResponseEntity<>(alert, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/alertDefinitions")
@@ -72,7 +61,7 @@ public class AlertController extends AbstractZMonController {
         List<AlertDefinitionAuth> response = Collections.emptyList();
 
         final List<AlertDefinition> defs = teams == null ? service.getAllAlertDefinitions()
-                                                         : service.getAlertDefinitions(null, teams);
+                : service.getAlertDefinitions(null, teams);
 
         if (defs != null && !defs.isEmpty()) {
             response = new ArrayList<>(defs.size());
@@ -158,8 +147,8 @@ public class AlertController extends AbstractZMonController {
 
     @RequestMapping(value = "/comment", method = RequestMethod.POST)
     public ResponseEntity<AlertCommentAuth> addComment(@Valid
-            @RequestBody(required = true)
-            final AlertComment comment) throws ZMonException {
+                                                       @RequestBody(required = true)
+                                                       final AlertComment comment) throws ZMonException {
 
         authorityService.verifyAddCommentPermission();
 
@@ -168,7 +157,7 @@ public class AlertController extends AbstractZMonController {
         comment.setLastModifiedBy(currentUser);
 
         return new ResponseEntity<>(AlertCommentAuth.from(service.addComment(comment),
-                    authorityService.hasDeleteCommentPermission(comment)), HttpStatus.OK);
+                authorityService.hasDeleteCommentPermission(comment)), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/comments")
@@ -179,10 +168,8 @@ public class AlertController extends AbstractZMonController {
 
         final List<AlertComment> currentComments = service.getComments(alertDefinitionId, limit, offset);
 
-        final List<AlertCommentAuth> comments = new LinkedList<>();
-        for (final AlertComment comment : currentComments) {
-            comments.add(AlertCommentAuth.from(comment, authorityService.hasDeleteCommentPermission(comment)));
-        }
+        final List<AlertCommentAuth> comments = currentComments.stream().map(
+                comment -> AlertCommentAuth.from(comment, authorityService.hasDeleteCommentPermission(comment))).collect(Collectors.toList());
 
         return new ResponseEntity<>(comments, HttpStatus.OK);
     }

@@ -2,7 +2,6 @@ package org.zalando.zmon.service.impl;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -44,15 +43,11 @@ public class AlertServiceImpl implements AlertService {
 
     private final Logger log = LoggerFactory.getLogger(AlertServiceImpl.class);
 
-//    private static final EventLogger EVENT_LOG = EventLogger.getLogger(AlertServiceImpl.class);
-
     private static final String ENTITIES_PLACEHOLDER = "entities";
     private static final String CAPTURES_KEY = "captures";
     private static final String DOWNTIMES_KEY = "downtimes";
 
     private final NamedMessageFormatter messageFormatter = new NamedMessageFormatter();
-
-    private final Function<AlertDefinition, Integer> uniqueAlertDefinitionFunction = input -> input.getId();
 
     @Autowired
     private NoOpEventLog eventLog;
@@ -136,10 +131,7 @@ public class AlertServiceImpl implements AlertService {
         Preconditions.checkNotNull(teams, "teams");
 
         // SP doesn't support sets
-        final List<String> teamList = new ArrayList<>(teams.size());
-        for (final String team : teams) {
-            teamList.add(DBUtil.prefix(team));
-        }
+        final List<String> teamList = teams.stream().map(DBUtil::prefix).collect(Collectors.toList());
 
         return alertDefinintionSProc.getAlertDefinitionsByTeam(status, teamList);
     }
@@ -217,7 +209,7 @@ public class AlertServiceImpl implements AlertService {
 
                     // index all definitions
                     final Map<Integer, AlertDefinition> mappedAlerts = Maps.uniqueIndex(definitions,
-                            uniqueAlertDefinitionFunction);
+                            AlertDefinition::getId);
 
                     // process alerts
                     for (final ResponseHolder<Integer, Set<String>> entry : results) {
@@ -267,7 +259,7 @@ public class AlertServiceImpl implements AlertService {
                 //
                 // index all definitions
                 final Map<Integer, AlertDefinition> mappedAlerts = Maps.uniqueIndex(definitions,
-                        uniqueAlertDefinitionFunction);
+                        AlertDefinition::getId);
 
                 // process alerts
                 for (final ResponseHolder<Integer, Set<String>> entry : results) {

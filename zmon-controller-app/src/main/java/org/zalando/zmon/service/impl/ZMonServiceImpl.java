@@ -95,7 +95,7 @@ public class ZMonServiceImpl implements ZMonService {
 
         try (Jedis jedis = redisPool.getResource()) {
             final Set<String> workerNames = jedis.smembers(RedisPattern.workerNames());
-            alertsActive = Optional.of(jedis.scard(RedisPattern.alertIds())).orElse(Long.valueOf(0)).intValue();
+            alertsActive = Optional.of(jedis.scard(RedisPattern.alertIds())).orElse(0L).intValue();
 
             final Pipeline p = jedis.pipelined();
 
@@ -168,10 +168,7 @@ public class ZMonServiceImpl implements ZMonService {
         Preconditions.checkNotNull(teams, "teams");
 
         // SP doesn't support sets
-        final List<String> teamList = new ArrayList<>(teams.size());
-        for (final String team : teams) {
-            teamList.add(DBUtil.prefix(team));
-        }
+        final List<String> teamList = teams.stream().map(DBUtil::prefix).collect(Collectors.toList());
 
         return checkDefinitionSProc.getCheckDefinitionsByOwningTeam(status, teamList);
     }
