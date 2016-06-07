@@ -19,9 +19,9 @@
     margin-top: 27px;
 }
 
-.date-form .timepicker
+.date-form .uib-timepicker
 {
-    margin-top: -11px;
+    margin-top: -5px;
 }
 
 .date-form input.date
@@ -262,3 +262,7 @@ input.checkbox
     width: auto;
 }
 
+.modal-body .input-group
+{
+    padding-top: 36px;
+}

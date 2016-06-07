@@ -1,8 +1,8 @@
-<div class="dropdown" is-open="open">
+<div class="dropdown" uib-dropdown on-toggle="toggle(open)">
     <label>{{label}}</label>
-    <a class="dropdown-toggle" ng-if="selectedOption">{{selectedOption}}</a>
-    <a class="dropdown-toggle" ng-if="selectedOption === null">{{defaultOption}}</a>
-    <ul class="dropdown-menu">
+    <a id="simple-dropdown" uib-dropdown-toggle ng-if="selectedOption">{{selectedOption}}</a>
+    <a id="simple-dropdown" uib-dropdown-toggle ng-if="selectedOption === null">{{defaultOption}}</a>
+    <ul class="dropdown-menu" uib-dropdown-menu aria-labelledby="simple-dropdown">
         <li>
             <div class="input-group">
                 <div class="input-group-btn">
@@ -10,7 +10,7 @@
                         <i class="fa fa-fw fa-search"></i>
                     </button>
                 </div>
-                <input type="text" class="form-control" ng-model="filter" ng-click="onInput($event)"/>
+                <input type="text" class="form-control" ng-model="filter" ng-click="onInput($event)" ng-focus="open"/>
             </div>
         </li>
         <li ng-click="onSelect()" ng-if="filter === ''">

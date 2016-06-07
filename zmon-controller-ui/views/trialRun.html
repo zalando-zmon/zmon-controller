@@ -80,7 +80,7 @@
                                         <input ng-if="param.type === undefined || param.type === 'str' || param.type === 'int' || param.type === 'float'" type="text" class="form-control parameter" name="value" placeholder="Value" ng-model="param.value" ng-class="{'has-error':pForm.value.$error.required}" required/>
                                         <select ng-if="param.type === 'bool'" class="form-control parameter" name="value" ng-model="param.value" ng-options="item.value as item.label for item in TrialRunCtrl.parameterTypeBooleanOptions"></select>
                                         <div ng-if="param.type === 'date'">
-                                            <input type="text" class="form-control" datepicker-popup="{{TrialRunCtrl.format}}" ng-model="param.value" name="value" datepicker-options="TrialRunCtrl.dateOptions" close-text="Close" ng-class="{'has-error':pForm.value.$error.required}" required />
+                                            <input type="text" class="form-control" uib-datepicker-popup="{{TrialRunCtrl.format}}" ng-model="param.value" name="value" datepicker-options="TrialRunCtrl.dateOptions" close-text="Close" ng-class="{'has-error':pForm.value.$error.required}" required />
                                         </div>
                                     </div>
                                     <div class="col-sm-4">
@@ -104,8 +104,8 @@
                         <label for="inp-entities" class="col-sm-2 control-label">
                             <a href="/docs/alert-definitions.html#entities" rel="help" target="docs">Included Entities</a>
                             <div id="entity-filter-buttons">
-                                <button type="button" class="btn btn-primary fa fa-keyboard-o" ng-model="TrialRunCtrl.entityFilterInputMethod" btn-radio="'text'" title="Plain text input"></button>
-                                <button type="button" class="btn btn-primary fa fa-check-square-o" ng-model="TrialRunCtrl.entityFilterInputMethod" btn-radio="'form'" title="Form input"></button>
+                                <button type="button" class="btn btn-primary fa fa-keyboard-o" ng-model="TrialRunCtrl.entityFilterInputMethod" uib-btn-radio="'text'" title="Plain text input"></button>
+                                <button type="button" class="btn btn-primary fa fa-check-square-o" ng-model="TrialRunCtrl.entityFilterInputMethod" uib-btn-radio="'form'" title="Form input"></button>
                             </div>
                         </label>
                         <div class="col-sm-10" ng-class="{'has-error': trForm.submitted && trForm.entities.$error['non-empty-json']}">
@@ -120,8 +120,8 @@
                         <label for="inp-entities-exclude" class="col-sm-2 control-label">
                             <a href="/docs/alert-definitions.html#entities" rel="help" target="docs">Excluded Entities</a>
                             <div id="entity-exclude-filter-buttons">
-                                <button type="button" class="btn btn-primary fa fa-keyboard-o" ng-model="TrialRunCtrl.entityExcludeFilterInputMethod" btn-radio="'text'" title="Plain text input"></button>
-                                <button type="button" class="btn btn-primary fa fa-check-square-o" ng-model="TrialRunCtrl.entityExcludeFilterInputMethod" btn-radio="'form'" title="Form input"></button>
+                                <button type="button" class="btn btn-primary fa fa-keyboard-o" ng-model="TrialRunCtrl.entityExcludeFilterInputMethod" uib-btn-radio="'text'" title="Plain text input"></button>
+                                <button type="button" class="btn btn-primary fa fa-check-square-o" ng-model="TrialRunCtrl.entityExcludeFilterInputMethod" uib-btn-radio="'form'" title="Form input"></button>
                             </div>
                         </label>
                         <div class="col-sm-10" ng-class="{'has-error': trForm.submitted && trForm.entitiesExclude.$error['non-empty-json']}">

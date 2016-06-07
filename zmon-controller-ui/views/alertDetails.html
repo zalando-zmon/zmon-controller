@@ -84,8 +84,8 @@
     </div>
 </div>
     <div ng-if="alertDefinition.status == 'ACTIVE'">
-        <tabset>
-            <tab id="alerts-tab" heading="Alerts/Checks">
+        <uib-tabset>
+            <uib-tab id="alerts-tab" heading="Alerts/Checks">
                 <div class="zmon-controls row">
                     <div class="col-md-8">
                         <button class="btn" ng-class="{'active-page': showActiveAlerts && activeAlerts.length > 0}" ng-disabled="activeAlerts.length === 0" ng-click="toggleShowEntities('activeAlerts')">Alerts ({{activeAlerts.length}})</button>
@@ -169,8 +169,8 @@
                         </tbody>
                     </table>
                 </div>
-            </tab>
-            <tab id="downtimes-tab" heading="Downtimes ({{allDowntimes.length}})" disabled="allDowntimes.length == 0">
+            </uib-tab>
+            <uib-tab id="downtimes-tab" heading="Downtimes ({{allDowntimes.length}})" disabled="allDowntimes.length == 0">
                 <table class="zmon-data-table table table-striped table-bordered table-hover table-condensed">
                     <thead>
                         <tr>
@@ -212,8 +212,8 @@
                         </tr>
                     </tbody>
                 </table>
-            </tab>
-            <tab heading="History" select="fetchHistoryLastNDays(1)">
+            </uib-tab>
+            <uib-tab heading="History" select="fetchHistoryLastNDays(1)">
                 <div class="zmon-controls">
                     Events from <em>{{historyFromInEpochSeconds * 1000 | date:'medium'}}</em> till now
                     <button class="btn" ng-class="{'active-page': activeHistoryButton['1']}" ng-click="fetchHistoryLastNDays(1)">Last day</button>
@@ -243,8 +243,8 @@
                         </tr>
                     </tbody>
                 </table>
-            </tab>
-            <tab id="children-tab" heading="Children ({{alertDefinitionChildren.length}})" disabled="alertDefinitionChildren.length == 0">
+            </uib-tab>
+            <uib-tab id="children-tab" heading="Children ({{alertDefinitionChildren.length}})" disabled="alertDefinitionChildren.length == 0">
                 <table class="zmon-data-table table table-striped table-bordered table-hover table-condensed">
                     <thead>
                         <tr>
@@ -285,7 +285,7 @@
                     </thead>
                     <tbody>
                         <tr ng-repeat="def in alertDefinitionChildren | orderBy:sortTypeChildren:sortOrderChildren" repeat-monitor last="$last">
-                            <td><a tooltip-html-unsafe="{{def.description | markdown}}" tooltip-placement="right" href="#/alert-details/{{def.id}}">{{def.name || '(no name)'}}</a></td>
+                            <td><a uib-tooltip-html-unsafe="{{def.description | markdown}}" tooltip-placement="right" href="#/alert-details/{{def.id}}">{{def.name || '(no name)'}}</a></td>
                             <td class="ellipsis" expand>{{def.condition}}</td>
                             <td><dd ng-repeat="(name, parameter) in def.parameters">{{name}} = {{parameter.value}}</dd></td>
                             <td><span class="text-muted" ng-show="def.entities.length === 0">(no entity filter)</span><div ng-bind-html="def.entities | entities"></div></td>
@@ -297,8 +297,8 @@
                         </tr>
                     </tbody>
                 </table>
-            </tab>
-        </tabset>
+            </uib-tab>
+        </uib-tabset>
     </div>
 
     <div ng-if="alertDefinition.status === 'INACTIVE'" class="alert alert-info">
