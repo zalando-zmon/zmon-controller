@@ -23,7 +23,9 @@ angular.module('zmon2App').controller('AlertDetailsCtrl', ['$scope', '$location'
         $scope.showActiveAlerts = true; // 1st tab, 1st button
         $scope.showAlertsInDowntime = false; // 1st tab, 2nd button
         $scope.showCheckResults = false; // 1st tab, 3rd button
-        $scope.alertDetailsSearch = { // entity filter
+
+        // Entity Filter. Defined as object to $watch by reference on 'str' since input field is inside ui-bootstrap's tabset.
+        $scope.alertDetailsSearch = {
             str: localStorageService.get('alertDetailsSearchStr') || ''
         };
 
