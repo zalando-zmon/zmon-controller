@@ -55,7 +55,7 @@ public class TrialRunController extends AbstractZMonController {
 
         final TrialRunResults results = trialRunService.getTrialRunResults(id);
 
-        return results == null ? new ResponseEntity<TrialRunResults>(HttpStatus.NOT_FOUND)
+        return results == null ? new ResponseEntity<>(HttpStatus.NOT_FOUND)
                                : new ResponseEntity<>(results, HttpStatus.OK);
     }
 }

@@ -3,7 +3,6 @@ package org.zalando.zmon.api;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +14,6 @@ import org.zalando.zmon.domain.CheckResults;
 import org.zalando.zmon.domain.ExecutionStatus;
 import org.zalando.zmon.redis.ResponseHolder;
 import org.zalando.zmon.service.ZMonService;
-
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.Pipeline;
@@ -53,23 +51,22 @@ public class AlertStatusAPI {
 
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    @RequestMapping(value = "/alert/{id}/all-entities", method = RequestMethod.GET)
+    @RequestMapping(value = "/alert/{id}/all-entities")
     public ResponseEntity<List<CheckResults>> getAlertStatus(@PathVariable("id") final int id) throws IOException {
         return new ResponseEntity<>(service.getCheckAlertResults(id, 1), HttpStatus.OK);
     }
 
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    @RequestMapping(value = "/alert/{ids}/", method = RequestMethod.GET)
+    @RequestMapping(value = "/alert/{ids}/")
     public JsonNode getAlertStatus(@PathVariable("ids") final List<String> ids) throws IOException {
-        Jedis jedis = jedisPool.getResource();
 
         Map<String, List<ResponseHolder<String, String>>> results = new HashMap<>();
         for (String id : ids) {
             results.put(id, new ArrayList<>());
         }
 
-        try {
+        try (Jedis jedis = jedisPool.getResource()) {
             List<ResponseHolder<String, Set<String>>> responses = new ArrayList<>();
             {
                 Pipeline p = jedis.pipelined();
@@ -88,8 +85,6 @@ public class AlertStatusAPI {
                 }
                 p.sync();
             }
-        } finally {
-            jedis.close();
         }
 
         ObjectNode resultNode = mapper.createObjectNode();
@@ -98,10 +93,10 @@ public class AlertStatusAPI {
             List<ResponseHolder<String, String>> lr = results.get(id);
             ObjectNode entities = mapper.createObjectNode();
             for (ResponseHolder<String, String> rh : lr) {
-                entities.put(rh.getKey(), mapper.readTree(rh.getResponse().get()));
+                entities.set(rh.getKey(), mapper.readTree(rh.getResponse().get()));
             }
             if (lr.size() > 0) {
-                resultNode.put(id, entities);
+                resultNode.set(id, entities);
             }
         }
 

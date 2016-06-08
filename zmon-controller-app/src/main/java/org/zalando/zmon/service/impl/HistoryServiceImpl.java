@@ -1,13 +1,8 @@
 package org.zalando.zmon.service.impl;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
-
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.primitives.Longs;
 import org.apache.http.client.fluent.Executor;
 import org.apache.http.client.fluent.Request;
 import org.slf4j.Logger;
@@ -16,12 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.zalando.zmon.config.EventLogProperties;
-import org.zalando.zmon.domain.Activity;
-import org.zalando.zmon.domain.ActivityDiff;
-import org.zalando.zmon.domain.AlertDefinition;
-import org.zalando.zmon.domain.HistoryAction;
-import org.zalando.zmon.domain.HistoryEntry;
-import org.zalando.zmon.domain.HistoryType;
+import org.zalando.zmon.domain.*;
 import org.zalando.zmon.event.Event;
 import org.zalando.zmon.event.ZMonEventType;
 import org.zalando.zmon.persistence.AlertDefinitionSProcService;
@@ -29,10 +19,8 @@ import org.zalando.zmon.persistence.CheckDefinitionSProcService;
 import org.zalando.zmon.service.HistoryService;
 import org.zalando.zmon.util.HistoryUtils;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.base.Preconditions;
-import com.google.common.primitives.Longs;
+import java.io.IOException;
+import java.util.*;
 
 @Service
 @Transactional
@@ -46,13 +34,7 @@ public class HistoryServiceImpl implements HistoryService {
 
     private final static List<Event> EMPTY_LIST = new ArrayList<>(0);
 
-    private static final Comparator<Activity> ACTIVITY_TIME_COMPARATOR = new Comparator<Activity>() {
-
-        @Override
-        public int compare(final Activity o1, final Activity o2) {
-            return Longs.compare(o2.getTime(), o1.getTime());
-        }
-    };
+    private static final Comparator<Activity> ACTIVITY_TIME_COMPARATOR = (o1, o2) -> Longs.compare(o2.getTime(), o1.getTime());
 
     private final static Logger LOG = LoggerFactory.getLogger(HistoryServiceImpl.class);
 
@@ -88,17 +70,19 @@ public class HistoryServiceImpl implements HistoryService {
             List<Event> eventsByCheckId = EMPTY_LIST;
 
             try {
-                String query = "?types=212995,212996,212997,212998,213252,213253&key=alertId&value="+alertDefinitionId;
-                final String r = executor.execute(Request.Get(eventLogService+query)).returnContent().asString();
-                eventsByAlertId = mapper.readValue(r, new TypeReference<List<Event>>(){});
+                String query = "?types=212995,212996,212997,212998,213252,213253&key=alertId&value=" + alertDefinitionId;
+                final String r = executor.execute(Request.Get(eventLogService + query)).returnContent().asString();
+                eventsByAlertId = mapper.readValue(r, new TypeReference<List<Event>>() {
+                });
             } catch (IOException e) {
                 LOG.error("Failed to load events by alertId from {}", eventLogService, e);
             }
 
             try {
-                String query = "?types=213254,213255,213256,213257&key=checkId&value="+definitions.get(0).getCheckDefinitionId();
-                final String r = executor.execute(Request.Get(eventLogService+query)).returnContent().asString();
-                eventsByCheckId = mapper.readValue(r, new TypeReference<List<Event>>(){});
+                String query = "?types=213254,213255,213256,213257&key=checkId&value=" + definitions.get(0).getCheckDefinitionId();
+                final String r = executor.execute(Request.Get(eventLogService + query)).returnContent().asString();
+                eventsByCheckId = mapper.readValue(r, new TypeReference<List<Event>>() {
+                });
             } catch (IOException e) {
                 LOG.error("Failed to load events by checkId {}", eventLogService, e);
             }
@@ -119,7 +103,7 @@ public class HistoryServiceImpl implements HistoryService {
     }
 
     private List<Activity> mergeEvents(final Integer limit, final List<Event> eventsByCheckId,
-            final List<Event> eventsByAlertId) {
+                                       final List<Event> eventsByAlertId) {
 
         List<Activity> history = Collections.emptyList();
 
@@ -149,7 +133,7 @@ public class HistoryServiceImpl implements HistoryService {
 
     @Override
     public List<ActivityDiff> getCheckDefinitionHistory(final int checkDefinitionId, final Integer limit,
-            final Long from, final Long to) {
+                                                        final Long from, final Long to) {
         final List<HistoryEntry> databaseHistory = checkDefinitionSProc.getCheckDefinitionHistory(checkDefinitionId,
                 resolveLimit(limit, from, to), secondsToDate(from), secondsToDate(to));
 
@@ -163,7 +147,7 @@ public class HistoryServiceImpl implements HistoryService {
 
     @Override
     public List<ActivityDiff> getAlertDefinitionHistory(final int alertDefinitionId, final Integer limit,
-            final Long from, final Long to) {
+                                                        final Long from, final Long to) {
         final List<HistoryEntry> databaseHistory = alertDefinitionSProc.getAlertDefinitionHistory(alertDefinitionId,
                 resolveLimit(limit, from, to), secondsToDate(from), secondsToDate(to));
 
@@ -192,7 +176,7 @@ public class HistoryServiceImpl implements HistoryService {
     }
 
     private ActivityDiff fillActivityDiff(final ActivityDiff activity, final HistoryEntry entry,
-            final ZMonEventType eventType) {
+                                          final ZMonEventType eventType) {
         activity.setTime(dateToSeconds(entry.getTimestamp()));
         activity.setTypeId(eventType.getId());
         activity.setTypeName(eventType.getName());
@@ -209,13 +193,13 @@ public class HistoryServiceImpl implements HistoryService {
 
         switch (action) {
 
-            case INSERT :
+            case INSERT:
                 return ZMonEventType.CHECK_DEFINITION_CREATED;
 
-            case UPDATE :
+            case UPDATE:
                 return ZMonEventType.CHECK_DEFINITION_UPDATED;
 
-            default :
+            default:
                 throw new IllegalArgumentException("Action not supported: " + action);
         }
     }
@@ -224,13 +208,13 @@ public class HistoryServiceImpl implements HistoryService {
 
         switch (action) {
 
-            case INSERT :
+            case INSERT:
                 return ZMonEventType.ALERT_DEFINITION_CREATED;
 
-            case UPDATE :
+            case UPDATE:
                 return ZMonEventType.ALERT_DEFINITION_UPDATED;
 
-            default :
+            default:
                 throw new IllegalArgumentException("Action not supported: " + action);
         }
     }
@@ -238,13 +222,13 @@ public class HistoryServiceImpl implements HistoryService {
     private ZMonEventType resolveEventType(final HistoryAction action, final HistoryType historyType) {
         switch (historyType) {
 
-            case CHECK_DEFINITION :
+            case CHECK_DEFINITION:
                 return resolveCheckDefinitionEventType(action);
 
-            case ALERT_DEFINITION :
+            case ALERT_DEFINITION:
                 return resolveAlertDefinitionEventType(action);
 
-            default :
+            default:
                 throw new IllegalArgumentException("History type not supported: " + action);
         }
 

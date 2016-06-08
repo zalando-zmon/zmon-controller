@@ -78,7 +78,7 @@ public class AlertDefinitionsApi extends AbstractZMonController {
         }
     }
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/{id}")
     public ResponseEntity<AlertDefinition> get(@PathVariable("id") final Integer id) {
         final List<AlertDefinition> alertDefinitions = service.getAlertDefinitions(null, Lists.newArrayList(id));
         if (alertDefinitions.isEmpty()) {

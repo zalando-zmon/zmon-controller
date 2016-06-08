@@ -25,13 +25,7 @@ public class DashboardServiceImpl implements DashboardService {
 
     private final Logger log = LoggerFactory.getLogger(DashboardServiceImpl.class);
 
-    private static final Comparator<Dashboard> DASHBOARD_ID_COMPARATOR = new Comparator<Dashboard>() {
-
-        @Override
-        public int compare(final Dashboard o1, final Dashboard o2) {
-            return Ints.compare(o1.getId(), o2.getId());
-        }
-    };
+    private static final Comparator<Dashboard> DASHBOARD_ID_COMPARATOR = (o1, o2) -> Ints.compare(o1.getId(), o2.getId());
 
     private final NoOpEventLog eventLog;
 

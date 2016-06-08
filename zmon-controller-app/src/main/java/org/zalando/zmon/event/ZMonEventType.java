@@ -36,7 +36,7 @@ public enum ZMonEventType /*implements EventType*/ {
     private final int id;
     private final List<String> fieldNames;
 
-    private ZMonEventType(final int id, final String... fieldNames) {
+    ZMonEventType(final int id, final String... fieldNames) {
         this.id = id;
         this.fieldNames = Lists.newArrayList(fieldNames);
     }

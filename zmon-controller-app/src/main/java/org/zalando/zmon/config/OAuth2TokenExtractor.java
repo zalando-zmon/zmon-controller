@@ -15,7 +15,7 @@ public class OAuth2TokenExtractor implements Function<Optional<String>, Optional
 
     @Override
     public Optional<String> apply(Optional<String> t) {
-        return t.filter(startsWithBearer).flatMap(header -> extractTokenFromHeader(header));
+        return t.filter(startsWithBearer).flatMap(this::extractTokenFromHeader);
     }
 
     protected Optional<String> extractTokenFromHeader(String header) {

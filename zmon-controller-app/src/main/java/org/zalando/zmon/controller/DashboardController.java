@@ -93,7 +93,7 @@ public class DashboardController extends AbstractZMonController {
 
         // if dashboard is shared with the team, set user teams
         final List<String> sharedTeams = dashboard.getEditOption() == EditOption.TEAM
-            ? ImmutableList.copyOf(authorityService.getTeams()) : ImmutableList.<String>of();
+            ? ImmutableList.copyOf(authorityService.getTeams()) : ImmutableList.of();
         dashboard.setSharedTeams(sharedTeams);
 
         return new ResponseEntity<>(service.createOrUpdateDashboard(dashboard).getId(), HttpStatus.OK);

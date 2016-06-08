@@ -9,20 +9,12 @@ import org.zalando.zmon.config.KairosDBProperties;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
-/**
- * Created by jmussler on 25.02.16.
- */
 
 @Controller
 public class GrafanaUIController {
 
     private ControllerProperties controllerProperties;
-
-    private KairosDBProperties kairosdbProperties;
 
     public static class KairosDBEntry {
         public String name;
@@ -46,7 +38,6 @@ public class GrafanaUIController {
 
     @Autowired
     public GrafanaUIController(KairosDBProperties kairosdbProperties, ControllerProperties controllerProperties) {
-        this.kairosdbProperties = kairosdbProperties;
         this.controllerProperties = controllerProperties;
 
         for (KairosDBProperties.KairosDBServiceConfig c : kairosdbProperties.getKairosdbs()) {

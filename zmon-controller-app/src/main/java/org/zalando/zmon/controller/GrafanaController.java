@@ -4,8 +4,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-
-import org.apache.http.protocol.HTTP;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -269,7 +267,7 @@ public class GrafanaController extends AbstractZMonController {
         List<CheckDefinition> checkDefinitions = zMonService.getCheckDefinitionsById(checkId);
 
         if (checkDefinitions.isEmpty()) {
-            return new ResponseEntity<JsonNode>(mapper.createObjectNode().put("message", "Check not found"), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(mapper.createObjectNode().put("message", "Check not found"), HttpStatus.NOT_FOUND);
         }
 
         CheckDefinition checkDefinition = checkDefinitions.get(0);

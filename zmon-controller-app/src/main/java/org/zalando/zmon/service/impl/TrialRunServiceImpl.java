@@ -58,7 +58,7 @@ public class TrialRunServiceImpl implements TrialRunService {
 
         final String url = schedulerProperties.getUrl().toString() + SCHEDULER_TRIAL_RUN_PATH;
 
-        final String r = executor.execute(Request.Post(url).useExpectContinue().bodyString(mapper.writeValueAsString(request),
+        executor.execute(Request.Post(url).useExpectContinue().bodyString(mapper.writeValueAsString(request),
                 ContentType.APPLICATION_JSON)).returnContent().asString();
 
         eventLog.log(ZMonEventType.TRIAL_RUN_SCHEDULED, request.getCheckCommand(), request.getAlertCondition(),
@@ -77,8 +77,7 @@ public class TrialRunServiceImpl implements TrialRunService {
         Response<Set<String>> entitiesResponse;
         Response<Map<String, String>> resultsResponse;
 
-        final Jedis jedis = redisPool.getResource();
-        try {
+        try (Jedis jedis = redisPool.getResource()){
             final Pipeline p = jedis.pipelined();
 
             keyExists = p.hexists(RedisPattern.trialRunQueue(), id);
@@ -86,8 +85,6 @@ public class TrialRunServiceImpl implements TrialRunService {
             resultsResponse = p.hgetAll(RedisPattern.trialRunResults(id));
 
             p.sync();
-        } finally {
-            redisPool.returnResource(jedis);
         }
 
         return processTrialRunResponses(keyExists, entitiesResponse, resultsResponse);
