@@ -1,4 +1,4 @@
-angular.module('zmon2App').controller('AlertDetailsCtrl', ['$scope', '$location', 'timespanFilter', '$routeParams', '$modal', 'MainAlertService', 'CommunicationService', 'DowntimesService', 'FeedbackMessageService', 'localStorageService', 'UserInfoService', 'APP_CONST',
+angular.module('zmon2App').controller('AlertDetailsCtrl', ['$scope', '$location', 'timespanFilter', '$routeParams', '$uibModal', 'MainAlertService', 'CommunicationService', 'DowntimesService', 'FeedbackMessageService', 'localStorageService', 'UserInfoService', 'APP_CONST',
         function($scope, $location, timespanFilter, $routeParams, $modal, MainAlertService, CommunicationService, DowntimesService, FeedbackMessageService, localStorageService, UserInfoService, APP_CONST) {
 
         // Set in parent scope which page is active for the menu styling
@@ -223,13 +223,13 @@ angular.module('zmon2App').controller('AlertDetailsCtrl', ['$scope', '$location'
             );
         };
 
-        var deleteAlertDefinitionModalCtrl = function($scope, $modalInstance, alertDefinition) {
+        var deleteAlertDefinitionModalCtrl = function($scope, $uibModalInstance, alertDefinition) {
             $scope.alertDefinition = alertDefinition;
             $scope.delete = function() {
-                $modalInstance.close();
+                $uibModalInstance.close();
             };
             $scope.cancel = function() {
-                $modalInstance.dismiss();
+                $uibModalInstance.dismiss();
             };
         };
 
@@ -256,7 +256,7 @@ angular.module('zmon2App').controller('AlertDetailsCtrl', ['$scope', '$location'
         };
 
         // Downtime modal window's controller
-        var downtimeModalCtrl = function($scope, $modalInstance, downtimeAlertId, downtimeEntities) {
+        var downtimeModalCtrl = function($scope, $uibModalInstance, downtimeAlertId, downtimeEntities) {
             $scope.downtimeAlertId = downtimeAlertId;
             $scope.downtimeEntities = downtimeEntities;
             $scope.isDurationTabActive = true;
@@ -288,7 +288,7 @@ angular.module('zmon2App').controller('AlertDetailsCtrl', ['$scope', '$location'
                 // Depending on which tab was active, we return corresponding data
                 if ($scope.isDurationTabActive) {
 
-                    $modalInstance.close({
+                    $uibModalInstance.close({
                         "downStartTime": new Date(),
                         "downEndTime": $scope.calcDowntimeEndtime(),
                         "comment": $scope.models.downtimeComment
@@ -300,7 +300,7 @@ angular.module('zmon2App').controller('AlertDetailsCtrl', ['$scope', '$location'
                     if (downStartTime.getTime() > downEndTime.getTime()) {
                         FeedbackMessageService.showErrorMessage('Start date must precede end date!');
                     } else {
-                        $modalInstance.close({
+                        $uibModalInstance.close({
                             "downStartTime": downStartTime,
                             "downEndTime": downEndTime,
                             "comment": $scope.models.downtimeComment
@@ -329,7 +329,7 @@ angular.module('zmon2App').controller('AlertDetailsCtrl', ['$scope', '$location'
             };
 
             $scope.cancel = function() {
-                $modalInstance.dismiss();
+                $uibModalInstance.dismiss();
             };
 
             /**

@@ -4,7 +4,8 @@
 
  * Version: 1.3.3 - 2016-05-22
  * License: MIT
- */angular.module("ui.bootstrap", ["ui.bootstrap.collapse","ui.bootstrap.accordion","ui.bootstrap.alert","ui.bootstrap.buttons","ui.bootstrap.carousel","ui.bootstrap.dateparser","ui.bootstrap.isClass","ui.bootstrap.datepicker","ui.bootstrap.position","ui.bootstrap.datepickerPopup","ui.bootstrap.debounce","ui.bootstrap.dropdown","ui.bootstrap.stackedMap","ui.bootstrap.modal","ui.bootstrap.paging","ui.bootstrap.pager","ui.bootstrap.pagination","ui.bootstrap.tooltip","ui.bootstrap.popover","ui.bootstrap.progressbar","ui.bootstrap.rating","ui.bootstrap.tabs","ui.bootstrap.timepicker","ui.bootstrap.typeahead"]);
+ */angular.module("ui.bootstrap", ["ui.bootstrap.tpls", "ui.bootstrap.collapse","ui.bootstrap.accordion","ui.bootstrap.alert","ui.bootstrap.buttons","ui.bootstrap.carousel","ui.bootstrap.dateparser","ui.bootstrap.isClass","ui.bootstrap.datepicker","ui.bootstrap.position","ui.bootstrap.datepickerPopup","ui.bootstrap.debounce","ui.bootstrap.dropdown","ui.bootstrap.stackedMap","ui.bootstrap.modal","ui.bootstrap.paging","ui.bootstrap.pager","ui.bootstrap.pagination","ui.bootstrap.tooltip","ui.bootstrap.popover","ui.bootstrap.progressbar","ui.bootstrap.rating","ui.bootstrap.tabs","ui.bootstrap.timepicker","ui.bootstrap.typeahead"]);
+angular.module("ui.bootstrap.tpls", ["uib/template/accordion/accordion-group.html","uib/template/accordion/accordion.html","uib/template/alert/alert.html","uib/template/carousel/carousel.html","uib/template/carousel/slide.html","uib/template/datepicker/datepicker.html","uib/template/datepicker/day.html","uib/template/datepicker/month.html","uib/template/datepicker/year.html","uib/template/datepickerPopup/popup.html","uib/template/modal/backdrop.html","uib/template/modal/window.html","uib/template/pager/pager.html","uib/template/pagination/pagination.html","uib/template/tooltip/tooltip-html-popup.html","uib/template/tooltip/tooltip-popup.html","uib/template/tooltip/tooltip-template-popup.html","uib/template/popover/popover-html.html","uib/template/popover/popover-template.html","uib/template/popover/popover.html","uib/template/progressbar/bar.html","uib/template/progressbar/progress.html","uib/template/progressbar/progressbar.html","uib/template/rating/rating.html","uib/template/tabs/tab.html","uib/template/tabs/tabset.html","uib/template/timepicker/timepicker.html","uib/template/typeahead/typeahead-match.html","uib/template/typeahead/typeahead-popup.html"]);
 angular.module('ui.bootstrap.collapse', [])
 
   .directive('uibCollapse', ['$animate', '$q', '$parse', '$injector', function($animate, $q, $parse, $injector) {
@@ -6915,6 +6916,428 @@ angular.module('ui.bootstrap.typeahead', ['ui.bootstrap.debounce', 'ui.bootstrap
       return matchItem;
     };
   }]);
+
+angular.module("uib/template/accordion/accordion-group.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("uib/template/accordion/accordion-group.html",
+    "<div class=\"panel\" ng-class=\"panelClass || 'panel-default'\">\n" +
+    "  <div role=\"tab\" id=\"{{::headingId}}\" aria-selected=\"{{isOpen}}\" class=\"panel-heading\" ng-keypress=\"toggleOpen($event)\">\n" +
+    "    <h4 class=\"panel-title\">\n" +
+    "      <a role=\"button\" data-toggle=\"collapse\" href aria-expanded=\"{{isOpen}}\" aria-controls=\"{{::panelId}}\" tabindex=\"0\" class=\"accordion-toggle\" ng-click=\"toggleOpen()\" uib-accordion-transclude=\"heading\"><span uib-accordion-header ng-class=\"{'text-muted': isDisabled}\">{{heading}}</span></a>\n" +
+    "    </h4>\n" +
+    "  </div>\n" +
+    "  <div id=\"{{::panelId}}\" aria-labelledby=\"{{::headingId}}\" aria-hidden=\"{{!isOpen}}\" role=\"tabpanel\" class=\"panel-collapse collapse\" uib-collapse=\"!isOpen\">\n" +
+    "    <div class=\"panel-body\" ng-transclude></div>\n" +
+    "  </div>\n" +
+    "</div>\n" +
+    "");
+}]);
+
+angular.module("uib/template/accordion/accordion.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("uib/template/accordion/accordion.html",
+    "<div role=\"tablist\" class=\"panel-group\" ng-transclude></div>");
+}]);
+
+angular.module("uib/template/alert/alert.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("uib/template/alert/alert.html",
+    "<div class=\"alert\" ng-class=\"['alert-' + (type || 'warning'), closeable ? 'alert-dismissible' : null]\" role=\"alert\">\n" +
+    "    <button ng-show=\"closeable\" type=\"button\" class=\"close\" ng-click=\"close({$event: $event})\">\n" +
+    "        <span aria-hidden=\"true\">&times;</span>\n" +
+    "        <span class=\"sr-only\">Close</span>\n" +
+    "    </button>\n" +
+    "    <div ng-transclude></div>\n" +
+    "</div>\n" +
+    "");
+}]);
+
+angular.module("uib/template/carousel/carousel.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("uib/template/carousel/carousel.html",
+    "<div ng-mouseenter=\"pause()\" ng-mouseleave=\"play()\" class=\"carousel\" ng-swipe-right=\"prev()\" ng-swipe-left=\"next()\">\n" +
+    "  <div class=\"carousel-inner\" ng-transclude></div>\n" +
+    "  <a role=\"button\" href class=\"left carousel-control\" ng-click=\"prev()\" ng-class=\"{ disabled: isPrevDisabled() }\" ng-show=\"slides.length > 1\">\n" +
+    "    <span aria-hidden=\"true\" class=\"glyphicon glyphicon-chevron-left\"></span>\n" +
+    "    <span class=\"sr-only\">previous</span>\n" +
+    "  </a>\n" +
+    "  <a role=\"button\" href class=\"right carousel-control\" ng-click=\"next()\" ng-class=\"{ disabled: isNextDisabled() }\" ng-show=\"slides.length > 1\">\n" +
+    "    <span aria-hidden=\"true\" class=\"glyphicon glyphicon-chevron-right\"></span>\n" +
+    "    <span class=\"sr-only\">next</span>\n" +
+    "  </a>\n" +
+    "  <ol class=\"carousel-indicators\" ng-show=\"slides.length > 1\">\n" +
+    "    <li ng-repeat=\"slide in slides | orderBy:indexOfSlide track by $index\" ng-class=\"{ active: isActive(slide) }\" ng-click=\"select(slide)\">\n" +
+    "      <span class=\"sr-only\">slide {{ $index + 1 }} of {{ slides.length }}<span ng-if=\"isActive(slide)\">, currently active</span></span>\n" +
+    "    </li>\n" +
+    "  </ol>\n" +
+    "</div>\n" +
+    "");
+}]);
+
+angular.module("uib/template/carousel/slide.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("uib/template/carousel/slide.html",
+    "<div ng-class=\"{\n" +
+    "    'active': active\n" +
+    "  }\" class=\"item text-center\" ng-transclude></div>\n" +
+    "");
+}]);
+
+angular.module("uib/template/datepicker/datepicker.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("uib/template/datepicker/datepicker.html",
+    "<div class=\"uib-datepicker\" ng-switch=\"datepickerMode\" role=\"application\" ng-keydown=\"keydown($event)\">\n" +
+    "  <uib-daypicker ng-switch-when=\"day\" tabindex=\"0\"></uib-daypicker>\n" +
+    "  <uib-monthpicker ng-switch-when=\"month\" tabindex=\"0\"></uib-monthpicker>\n" +
+    "  <uib-yearpicker ng-switch-when=\"year\" tabindex=\"0\"></uib-yearpicker>\n" +
+    "</div>\n" +
+    "");
+}]);
+
+angular.module("uib/template/datepicker/day.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("uib/template/datepicker/day.html",
+    "<table class=\"uib-daypicker\" role=\"grid\" aria-labelledby=\"{{::uniqueId}}-title\" aria-activedescendant=\"{{activeDateId}}\">\n" +
+    "  <thead>\n" +
+    "    <tr>\n" +
+    "      <th><button type=\"button\" class=\"btn btn-default btn-sm pull-left uib-left\" ng-click=\"move(-1)\" tabindex=\"-1\"><i class=\"glyphicon glyphicon-chevron-left\"></i></button></th>\n" +
+    "      <th colspan=\"{{::5 + showWeeks}}\"><button id=\"{{::uniqueId}}-title\" role=\"heading\" aria-live=\"assertive\" aria-atomic=\"true\" type=\"button\" class=\"btn btn-default btn-sm uib-title\" ng-click=\"toggleMode()\" ng-disabled=\"datepickerMode === maxMode\" tabindex=\"-1\"><strong>{{title}}</strong></button></th>\n" +
+    "      <th><button type=\"button\" class=\"btn btn-default btn-sm pull-right uib-right\" ng-click=\"move(1)\" tabindex=\"-1\"><i class=\"glyphicon glyphicon-chevron-right\"></i></button></th>\n" +
+    "    </tr>\n" +
+    "    <tr>\n" +
+    "      <th ng-if=\"showWeeks\" class=\"text-center\"></th>\n" +
+    "      <th ng-repeat=\"label in ::labels track by $index\" class=\"text-center\"><small aria-label=\"{{::label.full}}\">{{::label.abbr}}</small></th>\n" +
+    "    </tr>\n" +
+    "  </thead>\n" +
+    "  <tbody>\n" +
+    "    <tr class=\"uib-weeks\" ng-repeat=\"row in rows track by $index\">\n" +
+    "      <td ng-if=\"showWeeks\" class=\"text-center h6\"><em>{{ weekNumbers[$index] }}</em></td>\n" +
+    "      <td ng-repeat=\"dt in row\" class=\"uib-day text-center\" role=\"gridcell\"\n" +
+    "        id=\"{{::dt.uid}}\"\n" +
+    "        ng-class=\"::dt.customClass\">\n" +
+    "        <button type=\"button\" class=\"btn btn-default btn-sm\"\n" +
+    "          uib-is-class=\"\n" +
+    "            'btn-info' for selectedDt,\n" +
+    "            'active' for activeDt\n" +
+    "            on dt\"\n" +
+    "          ng-click=\"select(dt.date)\"\n" +
+    "          ng-disabled=\"::dt.disabled\"\n" +
+    "          tabindex=\"-1\"><span ng-class=\"::{'text-muted': dt.secondary, 'text-info': dt.current}\">{{::dt.label}}</span></button>\n" +
+    "      </td>\n" +
+    "    </tr>\n" +
+    "  </tbody>\n" +
+    "</table>\n" +
+    "");
+}]);
+
+angular.module("uib/template/datepicker/month.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("uib/template/datepicker/month.html",
+    "<table class=\"uib-monthpicker\" role=\"grid\" aria-labelledby=\"{{::uniqueId}}-title\" aria-activedescendant=\"{{activeDateId}}\">\n" +
+    "  <thead>\n" +
+    "    <tr>\n" +
+    "      <th><button type=\"button\" class=\"btn btn-default btn-sm pull-left uib-left\" ng-click=\"move(-1)\" tabindex=\"-1\"><i class=\"glyphicon glyphicon-chevron-left\"></i></button></th>\n" +
+    "      <th><button id=\"{{::uniqueId}}-title\" role=\"heading\" aria-live=\"assertive\" aria-atomic=\"true\" type=\"button\" class=\"btn btn-default btn-sm uib-title\" ng-click=\"toggleMode()\" ng-disabled=\"datepickerMode === maxMode\" tabindex=\"-1\"><strong>{{title}}</strong></button></th>\n" +
+    "      <th><button type=\"button\" class=\"btn btn-default btn-sm pull-right uib-right\" ng-click=\"move(1)\" tabindex=\"-1\"><i class=\"glyphicon glyphicon-chevron-right\"></i></button></th>\n" +
+    "    </tr>\n" +
+    "  </thead>\n" +
+    "  <tbody>\n" +
+    "    <tr class=\"uib-months\" ng-repeat=\"row in rows track by $index\">\n" +
+    "      <td ng-repeat=\"dt in row\" class=\"uib-month text-center\" role=\"gridcell\"\n" +
+    "        id=\"{{::dt.uid}}\"\n" +
+    "        ng-class=\"::dt.customClass\">\n" +
+    "        <button type=\"button\" class=\"btn btn-default\"\n" +
+    "          uib-is-class=\"\n" +
+    "            'btn-info' for selectedDt,\n" +
+    "            'active' for activeDt\n" +
+    "            on dt\"\n" +
+    "          ng-click=\"select(dt.date)\"\n" +
+    "          ng-disabled=\"::dt.disabled\"\n" +
+    "          tabindex=\"-1\"><span ng-class=\"::{'text-info': dt.current}\">{{::dt.label}}</span></button>\n" +
+    "      </td>\n" +
+    "    </tr>\n" +
+    "  </tbody>\n" +
+    "</table>\n" +
+    "");
+}]);
+
+angular.module("uib/template/datepicker/year.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("uib/template/datepicker/year.html",
+    "<table class=\"uib-yearpicker\" role=\"grid\" aria-labelledby=\"{{::uniqueId}}-title\" aria-activedescendant=\"{{activeDateId}}\">\n" +
+    "  <thead>\n" +
+    "    <tr>\n" +
+    "      <th><button type=\"button\" class=\"btn btn-default btn-sm pull-left uib-left\" ng-click=\"move(-1)\" tabindex=\"-1\"><i class=\"glyphicon glyphicon-chevron-left\"></i></button></th>\n" +
+    "      <th colspan=\"{{::columns - 2}}\"><button id=\"{{::uniqueId}}-title\" role=\"heading\" aria-live=\"assertive\" aria-atomic=\"true\" type=\"button\" class=\"btn btn-default btn-sm uib-title\" ng-click=\"toggleMode()\" ng-disabled=\"datepickerMode === maxMode\" tabindex=\"-1\"><strong>{{title}}</strong></button></th>\n" +
+    "      <th><button type=\"button\" class=\"btn btn-default btn-sm pull-right uib-right\" ng-click=\"move(1)\" tabindex=\"-1\"><i class=\"glyphicon glyphicon-chevron-right\"></i></button></th>\n" +
+    "    </tr>\n" +
+    "  </thead>\n" +
+    "  <tbody>\n" +
+    "    <tr class=\"uib-years\" ng-repeat=\"row in rows track by $index\">\n" +
+    "      <td ng-repeat=\"dt in row\" class=\"uib-year text-center\" role=\"gridcell\"\n" +
+    "        id=\"{{::dt.uid}}\"\n" +
+    "        ng-class=\"::dt.customClass\">\n" +
+    "        <button type=\"button\" class=\"btn btn-default\"\n" +
+    "          uib-is-class=\"\n" +
+    "            'btn-info' for selectedDt,\n" +
+    "            'active' for activeDt\n" +
+    "            on dt\"\n" +
+    "          ng-click=\"select(dt.date)\"\n" +
+    "          ng-disabled=\"::dt.disabled\"\n" +
+    "          tabindex=\"-1\"><span ng-class=\"::{'text-info': dt.current}\">{{::dt.label}}</span></button>\n" +
+    "      </td>\n" +
+    "    </tr>\n" +
+    "  </tbody>\n" +
+    "</table>\n" +
+    "");
+}]);
+
+angular.module("uib/template/datepickerPopup/popup.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("uib/template/datepickerPopup/popup.html",
+    "<div>\n" +
+    "  <ul class=\"uib-datepicker-popup dropdown-menu uib-position-measure\" dropdown-nested ng-if=\"isOpen\" ng-keydown=\"keydown($event)\" ng-click=\"$event.stopPropagation()\">\n" +
+    "    <li ng-transclude></li>\n" +
+    "    <li ng-if=\"showButtonBar\" class=\"uib-button-bar\">\n" +
+    "      <span class=\"btn-group pull-left\">\n" +
+    "        <button type=\"button\" class=\"btn btn-sm btn-info uib-datepicker-current\" ng-click=\"select('today', $event)\" ng-disabled=\"isDisabled('today')\">{{ getText('current') }}</button>\n" +
+    "        <button type=\"button\" class=\"btn btn-sm btn-danger uib-clear\" ng-click=\"select(null, $event)\">{{ getText('clear') }}</button>\n" +
+    "      </span>\n" +
+    "      <button type=\"button\" class=\"btn btn-sm btn-success pull-right uib-close\" ng-click=\"close($event)\">{{ getText('close') }}</button>\n" +
+    "    </li>\n" +
+    "  </ul>\n" +
+    "</div>\n" +
+    "");
+}]);
+
+angular.module("uib/template/modal/backdrop.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("uib/template/modal/backdrop.html",
+    "<div class=\"modal-backdrop\"\n" +
+    "     uib-modal-animation-class=\"fade\"\n" +
+    "     modal-in-class=\"in\"\n" +
+    "     ng-style=\"{'z-index': 1040 + (index && 1 || 0) + index*10}\"\n" +
+    "></div>\n" +
+    "");
+}]);
+
+angular.module("uib/template/modal/window.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("uib/template/modal/window.html",
+    "<div modal-render=\"{{$isRendered}}\" tabindex=\"-1\" role=\"dialog\" class=\"modal\"\n" +
+    "    uib-modal-animation-class=\"fade\"\n" +
+    "    modal-in-class=\"in\"\n" +
+    "    ng-style=\"{'z-index': 1050 + index*10, display: 'block'}\">\n" +
+    "    <div class=\"modal-dialog {{size ? 'modal-' + size : ''}}\"><div class=\"modal-content\" uib-modal-transclude></div></div>\n" +
+    "</div>\n" +
+    "");
+}]);
+
+angular.module("uib/template/pager/pager.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("uib/template/pager/pager.html",
+    "<ul class=\"pager\">\n" +
+    "  <li ng-class=\"{disabled: noPrevious()||ngDisabled, previous: align}\"><a href ng-click=\"selectPage(page - 1, $event)\">{{::getText('previous')}}</a></li>\n" +
+    "  <li ng-class=\"{disabled: noNext()||ngDisabled, next: align}\"><a href ng-click=\"selectPage(page + 1, $event)\">{{::getText('next')}}</a></li>\n" +
+    "</ul>\n" +
+    "");
+}]);
+
+angular.module("uib/template/pagination/pagination.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("uib/template/pagination/pagination.html",
+    "<ul class=\"pagination\">\n" +
+    "  <li ng-if=\"::boundaryLinks\" ng-class=\"{disabled: noPrevious()||ngDisabled}\" class=\"pagination-first\"><a href ng-click=\"selectPage(1, $event)\">{{::getText('first')}}</a></li>\n" +
+    "  <li ng-if=\"::directionLinks\" ng-class=\"{disabled: noPrevious()||ngDisabled}\" class=\"pagination-prev\"><a href ng-click=\"selectPage(page - 1, $event)\">{{::getText('previous')}}</a></li>\n" +
+    "  <li ng-repeat=\"page in pages track by $index\" ng-class=\"{active: page.active,disabled: ngDisabled&&!page.active}\" class=\"pagination-page\"><a href ng-click=\"selectPage(page.number, $event)\">{{page.text}}</a></li>\n" +
+    "  <li ng-if=\"::directionLinks\" ng-class=\"{disabled: noNext()||ngDisabled}\" class=\"pagination-next\"><a href ng-click=\"selectPage(page + 1, $event)\">{{::getText('next')}}</a></li>\n" +
+    "  <li ng-if=\"::boundaryLinks\" ng-class=\"{disabled: noNext()||ngDisabled}\" class=\"pagination-last\"><a href ng-click=\"selectPage(totalPages, $event)\">{{::getText('last')}}</a></li>\n" +
+    "</ul>\n" +
+    "");
+}]);
+
+angular.module("uib/template/tooltip/tooltip-html-popup.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("uib/template/tooltip/tooltip-html-popup.html",
+    "<div class=\"tooltip\"\n" +
+    "  tooltip-animation-class=\"fade\"\n" +
+    "  uib-tooltip-classes\n" +
+    "  ng-class=\"{ in: isOpen() }\">\n" +
+    "  <div class=\"tooltip-arrow\"></div>\n" +
+    "  <div class=\"tooltip-inner\" ng-bind-html=\"contentExp()\"></div>\n" +
+    "</div>\n" +
+    "");
+}]);
+
+angular.module("uib/template/tooltip/tooltip-popup.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("uib/template/tooltip/tooltip-popup.html",
+    "<div class=\"tooltip\"\n" +
+    "  tooltip-animation-class=\"fade\"\n" +
+    "  uib-tooltip-classes\n" +
+    "  ng-class=\"{ in: isOpen() }\">\n" +
+    "  <div class=\"tooltip-arrow\"></div>\n" +
+    "  <div class=\"tooltip-inner\" ng-bind=\"content\"></div>\n" +
+    "</div>\n" +
+    "");
+}]);
+
+angular.module("uib/template/tooltip/tooltip-template-popup.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("uib/template/tooltip/tooltip-template-popup.html",
+    "<div class=\"tooltip\"\n" +
+    "  tooltip-animation-class=\"fade\"\n" +
+    "  uib-tooltip-classes\n" +
+    "  ng-class=\"{ in: isOpen() }\">\n" +
+    "  <div class=\"tooltip-arrow\"></div>\n" +
+    "  <div class=\"tooltip-inner\"\n" +
+    "    uib-tooltip-template-transclude=\"contentExp()\"\n" +
+    "    tooltip-template-transclude-scope=\"originScope()\"></div>\n" +
+    "</div>\n" +
+    "");
+}]);
+
+angular.module("uib/template/popover/popover-html.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("uib/template/popover/popover-html.html",
+    "<div class=\"popover\"\n" +
+    "  tooltip-animation-class=\"fade\"\n" +
+    "  uib-tooltip-classes\n" +
+    "  ng-class=\"{ in: isOpen() }\">\n" +
+    "  <div class=\"arrow\"></div>\n" +
+    "\n" +
+    "  <div class=\"popover-inner\">\n" +
+    "      <h3 class=\"popover-title\" ng-bind=\"uibTitle\" ng-if=\"uibTitle\"></h3>\n" +
+    "      <div class=\"popover-content\" ng-bind-html=\"contentExp()\"></div>\n" +
+    "  </div>\n" +
+    "</div>\n" +
+    "");
+}]);
+
+angular.module("uib/template/popover/popover-template.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("uib/template/popover/popover-template.html",
+    "<div class=\"popover\"\n" +
+    "  tooltip-animation-class=\"fade\"\n" +
+    "  uib-tooltip-classes\n" +
+    "  ng-class=\"{ in: isOpen() }\">\n" +
+    "  <div class=\"arrow\"></div>\n" +
+    "\n" +
+    "  <div class=\"popover-inner\">\n" +
+    "      <h3 class=\"popover-title\" ng-bind=\"uibTitle\" ng-if=\"uibTitle\"></h3>\n" +
+    "      <div class=\"popover-content\"\n" +
+    "        uib-tooltip-template-transclude=\"contentExp()\"\n" +
+    "        tooltip-template-transclude-scope=\"originScope()\"></div>\n" +
+    "  </div>\n" +
+    "</div>\n" +
+    "");
+}]);
+
+angular.module("uib/template/popover/popover.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("uib/template/popover/popover.html",
+    "<div class=\"popover\"\n" +
+    "  tooltip-animation-class=\"fade\"\n" +
+    "  uib-tooltip-classes\n" +
+    "  ng-class=\"{ in: isOpen() }\">\n" +
+    "  <div class=\"arrow\"></div>\n" +
+    "\n" +
+    "  <div class=\"popover-inner\">\n" +
+    "      <h3 class=\"popover-title\" ng-bind=\"uibTitle\" ng-if=\"uibTitle\"></h3>\n" +
+    "      <div class=\"popover-content\" ng-bind=\"content\"></div>\n" +
+    "  </div>\n" +
+    "</div>\n" +
+    "");
+}]);
+
+angular.module("uib/template/progressbar/bar.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("uib/template/progressbar/bar.html",
+    "<div class=\"progress-bar\" ng-class=\"type && 'progress-bar-' + type\" role=\"progressbar\" aria-valuenow=\"{{value}}\" aria-valuemin=\"0\" aria-valuemax=\"{{max}}\" ng-style=\"{width: (percent < 100 ? percent : 100) + '%'}\" aria-valuetext=\"{{percent | number:0}}%\" aria-labelledby=\"{{::title}}\" ng-transclude></div>\n" +
+    "");
+}]);
+
+angular.module("uib/template/progressbar/progress.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("uib/template/progressbar/progress.html",
+    "<div class=\"progress\" ng-transclude aria-labelledby=\"{{::title}}\"></div>");
+}]);
+
+angular.module("uib/template/progressbar/progressbar.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("uib/template/progressbar/progressbar.html",
+    "<div class=\"progress\">\n" +
+    "  <div class=\"progress-bar\" ng-class=\"type && 'progress-bar-' + type\" role=\"progressbar\" aria-valuenow=\"{{value}}\" aria-valuemin=\"0\" aria-valuemax=\"{{max}}\" ng-style=\"{width: (percent < 100 ? percent : 100) + '%'}\" aria-valuetext=\"{{percent | number:0}}%\" aria-labelledby=\"{{::title}}\" ng-transclude></div>\n" +
+    "</div>\n" +
+    "");
+}]);
+
+angular.module("uib/template/rating/rating.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("uib/template/rating/rating.html",
+    "<span ng-mouseleave=\"reset()\" ng-keydown=\"onKeydown($event)\" tabindex=\"0\" role=\"slider\" aria-valuemin=\"0\" aria-valuemax=\"{{range.length}}\" aria-valuenow=\"{{value}}\" aria-valuetext=\"{{title}}\">\n" +
+    "    <span ng-repeat-start=\"r in range track by $index\" class=\"sr-only\">({{ $index < value ? '*' : ' ' }})</span>\n" +
+    "    <i ng-repeat-end ng-mouseenter=\"enter($index + 1)\" ng-click=\"rate($index + 1)\" class=\"glyphicon\" ng-class=\"$index < value && (r.stateOn || 'glyphicon-star') || (r.stateOff || 'glyphicon-star-empty')\" ng-attr-title=\"{{r.title}}\"></i>\n" +
+    "</span>\n" +
+    "");
+}]);
+
+angular.module("uib/template/tabs/tab.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("uib/template/tabs/tab.html",
+    "<li ng-class=\"[{active: active, disabled: disabled}, classes]\" class=\"uib-tab nav-item\">\n" +
+    "  <a href ng-click=\"select($event)\" class=\"nav-link\" uib-tab-heading-transclude>{{heading}}</a>\n" +
+    "</li>\n" +
+    "");
+}]);
+
+angular.module("uib/template/tabs/tabset.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("uib/template/tabs/tabset.html",
+    "<div>\n" +
+    "  <ul class=\"nav nav-{{tabset.type || 'tabs'}}\" ng-class=\"{'nav-stacked': vertical, 'nav-justified': justified}\" ng-transclude></ul>\n" +
+    "  <div class=\"tab-content\">\n" +
+    "    <div class=\"tab-pane\"\n" +
+    "         ng-repeat=\"tab in tabset.tabs\"\n" +
+    "         ng-class=\"{active: tabset.active === tab.index}\"\n" +
+    "         uib-tab-content-transclude=\"tab\">\n" +
+    "    </div>\n" +
+    "  </div>\n" +
+    "</div>\n" +
+    "");
+}]);
+
+angular.module("uib/template/timepicker/timepicker.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("uib/template/timepicker/timepicker.html",
+    "<table class=\"uib-timepicker\">\n" +
+    "  <tbody>\n" +
+    "    <tr class=\"text-center\" ng-show=\"::showSpinners\">\n" +
+    "      <td class=\"uib-increment hours\"><a ng-click=\"incrementHours()\" ng-class=\"{disabled: noIncrementHours()}\" class=\"btn btn-link\" ng-disabled=\"noIncrementHours()\" tabindex=\"{{::tabindex}}\"><span class=\"glyphicon glyphicon-chevron-up\"></span></a></td>\n" +
+    "      <td>&nbsp;</td>\n" +
+    "      <td class=\"uib-increment minutes\"><a ng-click=\"incrementMinutes()\" ng-class=\"{disabled: noIncrementMinutes()}\" class=\"btn btn-link\" ng-disabled=\"noIncrementMinutes()\" tabindex=\"{{::tabindex}}\"><span class=\"glyphicon glyphicon-chevron-up\"></span></a></td>\n" +
+    "      <td ng-show=\"showSeconds\">&nbsp;</td>\n" +
+    "      <td ng-show=\"showSeconds\" class=\"uib-increment seconds\"><a ng-click=\"incrementSeconds()\" ng-class=\"{disabled: noIncrementSeconds()}\" class=\"btn btn-link\" ng-disabled=\"noIncrementSeconds()\" tabindex=\"{{::tabindex}}\"><span class=\"glyphicon glyphicon-chevron-up\"></span></a></td>\n" +
+    "      <td ng-show=\"showMeridian\"></td>\n" +
+    "    </tr>\n" +
+    "    <tr>\n" +
+    "      <td class=\"form-group uib-time hours\" ng-class=\"{'has-error': invalidHours}\">\n" +
+    "        <input type=\"text\" placeholder=\"HH\" ng-model=\"hours\" ng-change=\"updateHours()\" class=\"form-control text-center\" ng-readonly=\"::readonlyInput\" maxlength=\"2\" tabindex=\"{{::tabindex}}\" ng-disabled=\"noIncrementHours()\" ng-blur=\"blur()\">\n" +
+    "      </td>\n" +
+    "      <td class=\"uib-separator\">:</td>\n" +
+    "      <td class=\"form-group uib-time minutes\" ng-class=\"{'has-error': invalidMinutes}\">\n" +
+    "        <input type=\"text\" placeholder=\"MM\" ng-model=\"minutes\" ng-change=\"updateMinutes()\" class=\"form-control text-center\" ng-readonly=\"::readonlyInput\" maxlength=\"2\" tabindex=\"{{::tabindex}}\" ng-disabled=\"noIncrementMinutes()\" ng-blur=\"blur()\">\n" +
+    "      </td>\n" +
+    "      <td ng-show=\"showSeconds\" class=\"uib-separator\">:</td>\n" +
+    "      <td class=\"form-group uib-time seconds\" ng-class=\"{'has-error': invalidSeconds}\" ng-show=\"showSeconds\">\n" +
+    "        <input type=\"text\" placeholder=\"SS\" ng-model=\"seconds\" ng-change=\"updateSeconds()\" class=\"form-control text-center\" ng-readonly=\"readonlyInput\" maxlength=\"2\" tabindex=\"{{::tabindex}}\" ng-disabled=\"noIncrementSeconds()\" ng-blur=\"blur()\">\n" +
+    "      </td>\n" +
+    "      <td ng-show=\"showMeridian\" class=\"uib-time am-pm\"><button type=\"button\" ng-class=\"{disabled: noToggleMeridian()}\" class=\"btn btn-default text-center\" ng-click=\"toggleMeridian()\" ng-disabled=\"noToggleMeridian()\" tabindex=\"{{::tabindex}}\">{{meridian}}</button></td>\n" +
+    "    </tr>\n" +
+    "    <tr class=\"text-center\" ng-show=\"::showSpinners\">\n" +
+    "      <td class=\"uib-decrement hours\"><a ng-click=\"decrementHours()\" ng-class=\"{disabled: noDecrementHours()}\" class=\"btn btn-link\" ng-disabled=\"noDecrementHours()\" tabindex=\"{{::tabindex}}\"><span class=\"glyphicon glyphicon-chevron-down\"></span></a></td>\n" +
+    "      <td>&nbsp;</td>\n" +
+    "      <td class=\"uib-decrement minutes\"><a ng-click=\"decrementMinutes()\" ng-class=\"{disabled: noDecrementMinutes()}\" class=\"btn btn-link\" ng-disabled=\"noDecrementMinutes()\" tabindex=\"{{::tabindex}}\"><span class=\"glyphicon glyphicon-chevron-down\"></span></a></td>\n" +
+    "      <td ng-show=\"showSeconds\">&nbsp;</td>\n" +
+    "      <td ng-show=\"showSeconds\" class=\"uib-decrement seconds\"><a ng-click=\"decrementSeconds()\" ng-class=\"{disabled: noDecrementSeconds()}\" class=\"btn btn-link\" ng-disabled=\"noDecrementSeconds()\" tabindex=\"{{::tabindex}}\"><span class=\"glyphicon glyphicon-chevron-down\"></span></a></td>\n" +
+    "      <td ng-show=\"showMeridian\"></td>\n" +
+    "    </tr>\n" +
+    "  </tbody>\n" +
+    "</table>\n" +
+    "");
+}]);
+
+angular.module("uib/template/typeahead/typeahead-match.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("uib/template/typeahead/typeahead-match.html",
+    "<a href\n" +
+    "   tabindex=\"-1\"\n" +
+    "   ng-bind-html=\"match.label | uibTypeaheadHighlight:query\"\n" +
+    "   ng-attr-title=\"{{match.label}}\"></a>\n" +
+    "");
+}]);
+
+angular.module("uib/template/typeahead/typeahead-popup.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("uib/template/typeahead/typeahead-popup.html",
+    "<ul class=\"dropdown-menu\" ng-show=\"isOpen() && !moveInProgress\" ng-style=\"{top: position().top+'px', left: position().left+'px'}\" role=\"listbox\" aria-hidden=\"{{!isOpen()}}\">\n" +
+    "    <li ng-repeat=\"match in matches track by $index\" ng-class=\"{active: isActive($index) }\" ng-mouseenter=\"selectActive($index)\" ng-click=\"selectMatch($index, $event)\" role=\"option\" id=\"{{::match.id}}\">\n" +
+    "        <div uib-typeahead-match index=\"$index\" match=\"match\" query=\"query\" template-url=\"templateUrl\"></div>\n" +
+    "    </li>\n" +
+    "</ul>\n" +
+    "");
+}]);
 angular.module('ui.bootstrap.carousel').run(function() {!angular.$$csp().noInlineStyle && !angular.$$uibCarouselCss && angular.element(document).find('head').prepend('<style type="text/css">.ng-animate.item:not(.left):not(.right){-webkit-transition:0s ease-in-out left;transition:0s ease-in-out left}</style>'); angular.$$uibCarouselCss = true; });
 angular.module('ui.bootstrap.datepicker').run(function() {!angular.$$csp().noInlineStyle && !angular.$$uibDatepickerCss && angular.element(document).find('head').prepend('<style type="text/css">.uib-datepicker .uib-title{width:100%;}.uib-day button,.uib-month button,.uib-year button{min-width:100%;}.uib-left,.uib-right{width:100%}</style>'); angular.$$uibDatepickerCss = true; });
 angular.module('ui.bootstrap.position').run(function() {!angular.$$csp().noInlineStyle && !angular.$$uibPositionCss && angular.element(document).find('head').prepend('<style type="text/css">.uib-position-measure{display:block !important;visibility:hidden !important;position:absolute !important;top:-9999px !important;left:-9999px !important;}.uib-position-scrollbar-measure{position:absolute !important;top:-9999px !important;width:50px !important;height:50px !important;overflow:scroll !important;}.uib-position-body-scrollbar-measure{overflow:scroll !important;}</style>'); angular.$$uibPositionCss = true; });

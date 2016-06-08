@@ -31,7 +31,7 @@
     <script th:src="${staticUrl} + '/lib/angular-cookies/angular-cookies.min.js?t=@buildTime@'"></script>
     <script th:src="${staticUrl} + '/lib/angular-sanitize/angular-sanitize.min.js?t=@buildTime@'"></script>
     <script th:src="${staticUrl} + '/lib/angular-route/angular-route.min.js?t=@buildTime@'"></script>
-    <script th:src="${staticUrl} + '/lib/ui-bootstrap/ui-bootstrap.min.js?t=@buildTime@'"></script>
+    <script th:src="${staticUrl} + '/lib/ui-bootstrap/ui-bootstrap-tpls.min.js?t=@buildTime@'"></script>
 
     <script th:src="${staticUrl} + '/lib/flot/jquery.flot.min.js?t=@buildTime@'"></script>
     <script th:src="${staticUrl} + '/lib/flot/jquery.flot.time.min.js?t=@buildTime@'"></script>
@@ -86,7 +86,7 @@
                     <span ng-class="{invisible: !serviceStatus.hasDataRefresh}">
                         <start-stop refreshing="serviceStatus.isDataRefreshing" start-refresh-callback="resumeDataRefresh()" stop-refresh-callback="pauseDataRefresh()" ></start-stop>
                     </span>
-                    <span class="app-status" ng-show="serviceStatus.isStatusRefreshing" tooltip-html-unsafe="{{statusTooltip}}" tooltip-placement="bottom" tooltip-trigger="mouseenter">
+                    <span class="app-status" ng-show="serviceStatus.isStatusRefreshing" uib-tooltip-html="statusTooltip" tooltip-placement="bottom" tooltip-trigger="mouseenter">
                         <strong ng-class="serviceStatus.queueSize > 1000 ? 'warning' : 'ok'">{{serviceStatus.queueSize}}</strong> in queue,
                         <strong ng-class="serviceStatus.workersActive < serviceStatus.workersTotal ? 'warning' : 'ok'">{{ serviceStatus.workersActive}}/{{ serviceStatus.workersTotal}}</strong> active workers,
                         <strong>{{ checksPerSecond | number:2 }}</strong>/s
@@ -119,7 +119,7 @@
                         data:instantaneous-alert-evaluation="${hasInstantaneousAlertEvaluationPermission}"
                         data:cloud-check="${cloudCheckId}">
 
-                        <button type="button" class="auth-user btn btn-default dropdown-toggle" data-toggle="dropdown" popover="Teams: {{userTeamsOnPopover}}" popover-placement="left" popover-trigger="mouseenter" sec:authentication="name">
+                        <button type="button" class="auth-user btn btn-default dropdown-toggle" data-toggle="dropdown" uib-popover="Teams: {{userTeamsOnPopover}}" popover-placement="left" popover-trigger="mouseenter" sec:authentication="name">
                             klaus
                             <span class="caret"></span>
                         </button>

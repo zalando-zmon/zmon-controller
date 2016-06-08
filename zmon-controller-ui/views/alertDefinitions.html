@@ -26,11 +26,10 @@
 
 <div class="row">
     <div class="table-responsive col-md-12">
-        <tabset>
-            <tab id="alert-status-{{tab.name.toLowerCase()}}-tab" ng-repeat="tab in tabs" select="setAlertsFilter(tab.name)" active="tab.active">
-                <tab-heading>{{tab.name}} ({{ alertDefinitions[tab.name].length + templates[tab.name].length }}) <i id='star' class='fa fa-star' ng-show="tabHasStar(tab.name)" title="new alerts"></i></tab-heading>
-            </tab>
-        </tabset>
+        <uib-tabset active="active">
+            <uib-tab id="alert-status-{{tab.name.toLowerCase()}}-tab" ng-repeat="tab in tabs" select="setAlertsFilter(tab.name)" active="tab.active" heading="{{tab.name}} ({{ alertDefinitions[tab.name].length + templates[tab.name].length }})"><i id='star' class='fa fa-star' ng-show='tabHasStar(tab.name)' title='new alerts'></i>
+            </uib-tab>
+        </uib-tabset>
 
         <div class="zmon-controls row">
             <div class="col-md-8">

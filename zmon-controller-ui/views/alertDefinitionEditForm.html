@@ -143,8 +143,8 @@
             <div>
                 <a href="/docs/alert-definitions.html#entities" rel="help" target="docs">Included Entities</a>
                 <div id="entity-filter-buttons">
-                    <button type="button" class="btn btn-primary fa fa-keyboard-o" ng-model="entityFilterInputMethod" btn-radio="'text'" title="Plain text input"></button>
-                    <button type="button" class="btn btn-primary fa fa-check-square-o" ng-model="entityFilterInputMethod" btn-radio="'form'" title="Form input"></button>
+                    <button type="button" class="btn btn-primary fa fa-keyboard-o" ng-model="entityFilterInputMethod" uib-btn-radio="'text'" title="Plain text input"></button>
+                    <button type="button" class="btn btn-primary fa fa-check-square-o" ng-model="entityFilterInputMethod" uib-btn-radio="'form'" title="Form input"></button>
                 </div>
             </div>
         </label>
@@ -164,8 +164,8 @@
             <div>
                 <a href="/docs/alert-definitions.html#entities" rel="help" target="docs">Excluded Entities</a>
                 <div id="entity-filter-buttons">
-                    <button type="button" class="btn btn-primary fa fa-keyboard-o" ng-model="entityExcludeFilterInputMethod" btn-radio="'text'" title="Plain text input"></button>
-                    <button type="button" class="btn btn-primary fa fa-check-square-o" ng-model="entityExcludeFilterInputMethod" btn-radio="'form'" title="Form input"></button>
+                    <button type="button" class="btn btn-primary fa fa-keyboard-o" ng-model="entityExcludeFilterInputMethod" uib-btn-radio="'text'" title="Plain text input"></button>
+                    <button type="button" class="btn btn-primary fa fa-check-square-o" ng-model="entityExcludeFilterInputMethod" uib-btn-radio="'form'" title="Form input"></button>
                 </div>
             </div>
         </label>
@@ -203,7 +203,7 @@
     <div class="form-group" ng-class="{'has-error': adForm.submitted && adForm.team.$error.required}">
         <label for="inp-team" class="col-sm-2 control-label">Team</label>
         <div class="col-sm-10">
-            <input type="text" class="form-control" id="inp-team" name="team" placeholder="Team name (e.g. 'STUPS')" ng-model="alertDefinition.team" ng-class="{'has-error': pForm.team.$error.required}" ng-change="markAsOverwritten('team')" typeahead="t for t in teams" required>
+            <input type="text" class="form-control" id="inp-team" name="team" placeholder="Team name (e.g. 'STUPS')" ng-model="alertDefinition.team" ng-class="{'has-error': pForm.team.$error.required}" ng-change="markAsOverwritten('team')" uib-typeahead="t for t in teams" required>
             <span class="help-block">Team dashboard to show alert on.</span>
         </div>
     </div>
@@ -211,7 +211,7 @@
     <div class="form-group" ng-class="{'has-error': adForm.submitted && adForm.responsible.$error.required}">
         <label for="inp-responsible" class="col-sm-2 control-label">Responsible Team</label>
         <div class="col-sm-10">
-            <input class="form-control" id="inp-responsible" name="responsible" placeholder="Responsible Team name (e.g. 'Platform/Software')" ng-model="alertDefinition.responsible_team" ng-change="markAsOverwritten('responsible_team')" typeahead="t for t in teams" required>
+            <input class="form-control" id="inp-responsible" name="responsible" placeholder="Responsible Team name (e.g. 'Platform/Software')" ng-model="alertDefinition.responsible_team" ng-change="markAsOverwritten('responsible_team')" uib-typeahead="t for t in teams" required>
         </div>
     </div>
 

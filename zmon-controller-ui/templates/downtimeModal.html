@@ -3,13 +3,13 @@
     <form name="setDowntimeForm" novalidate>
         <div class="row">
             <div class="col-md-8">
-                <tabset>
-                    <tab heading="Duration" ng-click="setDurationTabActive(true)">
+                <uib-tabset>
+                    <uib-tab heading="Duration" ng-click="setDurationTabActive(true)">
                         <div>
                             <p style="margin-top: 20px">Downtime ends at <em>{{calcDowntimeEndtime() | date:'HH:mm'}}</em></p>
                             <i class="fa fa-clock-o"> </i>
                             <div class="downtime-section">
-                                <timepicker ng-model="models.downtimeDuration" hour-step="1" minute-step="15" show-meridian="false"></timepicker>
+                                <uib-timepicker ng-model="models.downtimeDuration" hour-step="1" minute-step="15" show-meridian="false"></uib-timepicker>
                             </div>
                         </div>
                         <div>
@@ -17,59 +17,49 @@
                                 <textarea class="form-control downtime-reason" ng-model="models.downtimeComment" placeholder="Downtime reason" rows="5" cols="60" required></textarea>
                             </div>
                         </div>
-                    </tab>
-                    <tab heading="Schedule" ng-click="setDurationTabActive(false)">
+                    </uib-tab>
+                    <uib-tab heading="Schedule" ng-click="setDurationTabActive(false)">
                         <div class="row">
                             <div class="col-md-8">
-                                <table>
-                                    <tr>
-                                        <td class="invisible"> <!-- placed in table to giv it same dimensions as the timepicker so the align vertically -->
-                                            <a class="btn btn-link"><span class="glyphicon glyphicon-chevron-up"></span></a>
-                                        </td>
-                                    </tr>
+                                <uib-table>
                                     <tr>
                                         <td>
-                                            <p class="input-group">
+                                            <div class="input-group">
                                                 Start:&nbsp;
                                                 <span class="input-group-btn" style="vertical-align: middle">
                                                     <button class="btn btn-default" ng-click="openDatepicker($event, 'start')"><i class="glyphicon glyphicon-calendar"></i></button>
                                                 </span>
-                                                <input type="text" class="form-control" datepicker-popup="{{dateFormat}}" is-open="models.startDatepickerOpened" ng-model="models.downStartDate" min="minDate" max="maxDate" datepicker-options="dateOptions" ng-required="true" close-text="Close"/>
-                                            </p>
+                                                <input type="text" class="form-control" uib-datepicker-popup="{{dateFormat}}" is-open="models.startDatepickerOpened" ng-model="models.downStartDate" min="minDate" max="maxDate" datepicker-options="dateOptions" ng-required="true" close-text="Close"/>
+                                            </div>
                                         </td>
                                     </tr>
-                                </table>
+                                </uib-table>
                             </div>
                             <div class="col-md-4">
                                 <div style="display:inline-block; width: 190px">
-                                    <timepicker ng-model="models.downStartTime" hour-step="1" minute-step="1" show-meridian="false"></timepicker>
+                                    <uib-timepicker ng-model="models.downStartTime" hour-step="1" minute-step="1" show-meridian="false"></uib-timepicker>
                                 </div>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-md-8">
-                                <table>
-                                    <tr>
-                                        <td class="invisible"> <!-- placed in table to giv it same dimensions as the timepicker so the align vertically -->
-                                            <a class="btn btn-link"><span class="glyphicon glyphicon-chevron-up"></span></a>
-                                        </td>
-                                    </tr>
+                                <uib-table>
                                     <tr>
                                         <td>
-                                            <p class="input-group">
+                                            <div class="input-group">
                                                 End:&nbsp;
                                                 <span class="input-group-btn" style="vertical-align: middle">
                                                 <button class="btn btn-default" ng-click="openDatepicker($event, 'end')"><i class="glyphicon glyphicon-calendar"></i></button>
                                                 </span>
-                                                <input type="text" class="form-control" datepicker-popup="{{dateFormat}}" is-open="models.endDatepickerOpened" ng-model="models.downEndDate" min="minDate" max="maxDate" datepicker-options="dateOptions" ng-required="true" close-text="Close"/>
-                                            </p>
+                                                <input type="text" class="form-control" uib-datepicker-popup="{{dateFormat}}" is-open="models.endDatepickerOpened" ng-model="models.downEndDate" min="minDate" max="maxDate" datepicker-options="dateOptions" ng-required="true" close-text="Close"/>
+                                            </div>
                                         </td>
                                     </tr>
-                                </table>
+                                </uib-table>
                             </div>
                             <div class="col-md-4">
                                 <div style="display:inline-block; width: 190px">
-                                    <timepicker ng-model="models.downEndTime" hour-step="1" minute-step="1" show-meridian="false"></timepicker>
+                                    <uib-timepicker ng-model="models.downEndTime" hour-step="1" minute-step="1" show-meridian="false"></uib-timepicker>
                                 </div>
                             </div>
                         </div>
@@ -78,8 +68,8 @@
                                 <textarea class="form-control downtime-reason" ng-model="models.downtimeComment" placeholder="Downtime reason" rows="5" cols="60" required></textarea>
                             </div>
                         </div>
-                    </tab>
-                </tabset>
+                    </uib-tab>
+                </uib-tabset>
             </div> <!-- end of left side with forms -->
             <div class="col-md-4 downtime-modal-entity-list">
                 <button class="btn btn-primary downtime-modal-entity" ng-repeat="entity in downtimeEntities">{{entity}} <i ng-click="removeEntity(entity)" class="fa fa-minus-square"></i></button>

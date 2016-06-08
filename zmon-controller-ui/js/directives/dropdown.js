@@ -12,6 +12,7 @@ angular.module('zmon2App').directive('dropdown', [ '$timeout', function($timeout
         link: function(scope, elem, attrs) {
             scope.filter = '';
             scope.open = false;
+            scope.focusedElement = null;
 
             scope.onSelect = function(option) {
                 option = option || '';
@@ -28,6 +29,15 @@ angular.module('zmon2App').directive('dropdown', [ '$timeout', function($timeout
                 $event.preventDefault();
                 $event.stopPropagation();
                 scope.open = true;
+            };
+
+            scope.toggle = function(open) {
+                scope.open = open;
+
+                // reset behaviour of ng-focus directive
+                if (!open) {
+                    scope.focusedElement = null;
+                }
             };
         }
     };
