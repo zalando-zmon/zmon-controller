@@ -10,6 +10,7 @@ before_script:
 
 script:
   - mvn clean verify -Pintegration-test
+  - npm test
 
 after_success:
   - codecov
