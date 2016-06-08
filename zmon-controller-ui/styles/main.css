@@ -134,6 +134,13 @@ div.popover
     max-width: 420px;
 }
 
+.entityPopover
+{
+    color: black;
+    white-space: wrap;
+    word-wrap: break-word;
+}
+
 .entities b
 {
     color: #008CF1;
