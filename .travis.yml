@@ -1,6 +1,7 @@
 language: java
 jdk:
     - oraclejdk8
+node_js: "0.10"
 addons:
     postgresql: "9.4"
 
@@ -9,6 +10,7 @@ before_script:
 
 script:
   - mvn clean verify -Pintegration-test
+  - ./ui-test.sh
 
 after_success:
   - codecov

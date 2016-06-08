@@ -1,2 +1,3 @@
-noTeams = element(by.css('.no-teams'));
-
+exports.getTeamCards = function(cb) {
+    browser.findElements(by.css('.card')).then(cb);
+};

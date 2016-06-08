@@ -13,9 +13,9 @@ describe('Testing alert definitions page', function() {
         });
     });
 
-    it('should show only one alert', function() {
+    it('should show only two alerts', function() {
         alertDefinitions.searchAlert('Example Alert', function(alerts) {
-            expect(alerts.length).toBe(1);
+            expect(alerts.length).toBe(2);
         });
     });
 

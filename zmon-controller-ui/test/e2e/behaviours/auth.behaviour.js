@@ -7,6 +7,6 @@ exports.login = function(cb) {
     // login through github must be done manually for now
     // once only, at the beginning of the test run
     // browser.driver.get('https://localhost:8443/signin');
-    browser.driver.sleep(10000);
+    browser.driver.sleep(20000);
     cb(true);
 };

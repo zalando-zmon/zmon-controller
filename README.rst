@@ -42,6 +42,14 @@ This will require Docker and automatically starts a local PostgreSQL database:
 
     $ ./test.sh
 
+Running E2E Tests
+====================
+
+This will require npm
+
+.. code-block:: bash
+
+    $ ./e2e-test.sh
 
 Building the Docker Image
 =========================

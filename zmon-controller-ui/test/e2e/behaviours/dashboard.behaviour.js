@@ -23,5 +23,5 @@ exports.openTags = function(cb) {
 };
 
 exports.nameIsLink = function(cb) {
-    browser.findElements(by.css('a[href="#/alert-details/1"]')).then(cb);
+    browser.findElements(by.css('a[href="#/alert-details/3"]')).then(cb);
 };

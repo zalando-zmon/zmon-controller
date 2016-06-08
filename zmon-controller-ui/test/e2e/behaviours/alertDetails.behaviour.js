@@ -1,15 +1,22 @@
-var search = element(by.model('alertDetailsSearch'));
+var search = element(by.model('alertDetailsSearch.str'));
 
 var details = element(by.css('[ng-click="showDetails = !showDetails"]'));
 var history = element(by.css('[heading="History"] a'));
+var okBtn = element(by.buttonText('OK (2)'));
 var detailsContainer = element(by.css('.details .panel-body'));
 
 exports.searchAlert = function(input, cb) {
-    search.clear();
-    search.sendKeys(input).then(function() {
-        browser.driver.sleep(1000);
-        browser.findElements(by.repeater("entityInstance in allAlertsAndChecks | filter:alertDetailsSearch | inDisplayedGroup:showActiveAlerts:showAlertsInDowntime:showCheckResults | orderBy:sortType:sortOrder track by entityInstance.entity")).then(cb);
+    okBtn.click().then(function() {
+        search.clear();
+        search.sendKeys(input).then(function() {
+            browser.driver.sleep(1000);
+            browser.findElements(by.repeater("entityInstance in allAlertsAndChecks | filter:alertDetailsSearch.str | inDisplayedGroup:showActiveAlerts:showAlertsInDowntime:showCheckResults | orderBy:sortType:sortOrder track by entityInstance.entity")).then(cb);
+        });
     });
+};
+
+exports.clearSearch = function() {
+    search.clear();
 };
 
 exports.openDetails = function(cb) {

@@ -13,7 +13,9 @@ describe('Testing Cloud page', function() {
         });
     });
 
-    it('should show no teams text', function() {
-        expect(noTeams.isDisplayed()).toBeTruthy();
+    it('should show one team card', function() {
+        cloud.getTeamCards(function(teamCards) {
+            expect(teamCards.length).toBe(1);
+        });
     });
 });

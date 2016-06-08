@@ -13,9 +13,9 @@ describe('Testing check definitions page', function() {
         });
     });
 
-    it('should show only one check', function() {
+    it('should show only two checks', function() {
         checkDefinitions.searchCheck('Random', function(alerts) {
-            expect(alerts.length).toBe(1);
+            expect(alerts.length).toBe(2);
         });
     });
 

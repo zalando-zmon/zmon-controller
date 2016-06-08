@@ -10,7 +10,7 @@ exports.config = {
 
     chromeOnly: true,
 
-    baseUrl: 'https://localhost:8444',
+    baseUrl: 'https://localhost:8443',
 
     jasmineNodeOpts: {
         showColors: true,
