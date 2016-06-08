@@ -14,6 +14,8 @@ describe('Testing Cloud page', function() {
     });
 
     it('should show one team card', function() {
-        expect(teamCards.length).toBe(1);
+        cloud.getTeamCards(function(teamCards) {
+            expect(teamCards.length).toBe(1);
+        });
     });
 });

@@ -22,6 +22,7 @@ describe('Testing alert details page', function() {
     it('should filter out all alerts', function() {
         alertDetails.searchAlert('NonexsistentAlert', function(alerts) {
             expect(alerts.length).toBe(0);
+            alertDetails.clearSearch();
         });
     });
 

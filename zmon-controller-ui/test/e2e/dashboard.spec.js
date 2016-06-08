@@ -14,7 +14,7 @@ describe('Testing dashboard features', function() {
     });
 
     it('should show only one alert', function() {
-        dashboard.searchAlert('Example Alert', function(alerts) {
+        dashboard.searchAlert('JVM Threads', function(alerts) {
             expect(alerts.length).toBe(1);
         });
     });

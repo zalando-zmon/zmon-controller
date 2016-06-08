@@ -15,6 +15,10 @@ exports.searchAlert = function(input, cb) {
     });
 };
 
+exports.clearSearch = function() {
+    search.clear();
+};
+
 exports.openDetails = function(cb) {
     details.click().then(function() {
         browser.findElements(by.css('.panel-collapsed')).then(cb);
