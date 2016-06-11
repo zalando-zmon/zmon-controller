@@ -70,7 +70,7 @@ public class HistoryServiceImpl implements HistoryService {
             List<Event> eventsByCheckId = EMPTY_LIST;
 
             try {
-                String query = "?types=212995,212996,212997,212998,213252,213253&key=alertId&value=" + alertDefinitionId;
+                String query = "?types=212993,212994,212995,212996,212997,212998,213252,213253&key=alertId&value=" + alertDefinitionId;
                 final String r = executor.execute(Request.Get(eventLogService + query)).returnContent().asString();
                 eventsByAlertId = mapper.readValue(r, new TypeReference<List<Event>>() {
                 });
