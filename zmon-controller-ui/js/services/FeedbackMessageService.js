@@ -26,7 +26,10 @@ angular.module('zmon2App').factory('FeedbackMessageService', ['$q', '$window', '
             $message.html(message);
             $wrapper.fadeIn(200);
             $timeout(function() {
-                $wrapper.fadeOut(200, callback || angular.noop);
+                $wrapper.fadeOut(200, angular.noop);
+                if (callback) {
+                    callback();
+                }
             }, delay || APP_CONST.FEEBACK_MSG_SHOW_TIME);
         };
 

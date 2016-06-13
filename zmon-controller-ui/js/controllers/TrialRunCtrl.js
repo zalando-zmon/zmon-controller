@@ -362,7 +362,7 @@ var TrialRunCtrl = function ($scope, $interval, $timeout, timespanFilter, localS
             obj.status = "ACTIVE";
 
             CommunicationService.updateCheckDefinition(obj).then(function(data) {
-                FeedbackMessageService.showSuccessMessage('Saved successfully; redirecting...', 500, function() {
+                FeedbackMessageService.showSuccessMessage('Saved successfully; redirecting...', 1500, function() {
                     $location.path('/check-definitions/view/' + data.id);
                 });
             });
