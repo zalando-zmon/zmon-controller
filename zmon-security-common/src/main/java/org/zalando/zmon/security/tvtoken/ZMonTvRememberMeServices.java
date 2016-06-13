@@ -6,8 +6,6 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.codahale.metrics.Meter;
-import com.codahale.metrics.Timer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.RememberMeAuthenticationToken;
@@ -20,6 +18,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.util.WebUtils;
 import org.zalando.zmon.security.authority.ZMonViewerAuthority;
 
+import com.codahale.metrics.Meter;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 
