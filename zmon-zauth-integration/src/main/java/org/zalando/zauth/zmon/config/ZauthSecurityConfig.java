@@ -28,6 +28,9 @@ import org.zalando.zmon.security.TeamService;
 import org.zalando.zmon.security.WebSecurityConstants;
 import org.zalando.zmon.security.ZmonAuthenticationEntrypoint;
 import org.zalando.zmon.security.ZmonResourceServerConfigurer;
+import org.zalando.zmon.security.jwt.JWTRememberMeServices;
+import org.zalando.zmon.security.jwt.JWTService;
+import org.zalando.zmon.security.rememberme.MultiRememberMeServices;
 import org.zalando.zmon.security.service.SimpleSocialUserDetailsService;
 import org.zalando.zmon.security.tvtoken.TvTokenService;
 import org.zalando.zmon.security.tvtoken.ZMonTvRememberMeServices;
@@ -50,6 +53,9 @@ public class ZauthSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private TvTokenService TvTokenService;
+
+    @Autowired
+    private JWTService jwtService;
 
     @Autowired
     private TeamService teamService;
@@ -75,7 +81,7 @@ public class ZauthSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
-        http = http.authenticationProvider(new RememberMeAuthenticationProvider("ZMON_TV"));
+        http = http.authenticationProvider(new RememberMeAuthenticationProvider("ZMON_TV")).authenticationProvider(new RememberMeAuthenticationProvider("ZMON_JWT"));
 
         http
         .apply(new SpringSocialConfigurer())
@@ -99,7 +105,7 @@ public class ZauthSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authenticated()
         .and()
             .rememberMe()
-            .rememberMeServices(new ZMonTvRememberMeServices(TvTokenService))
+            .rememberMeServices(new MultiRememberMeServices(new JWTRememberMeServices(jwtService),new ZMonTvRememberMeServices(TvTokenService)))
         .and()
             .csrf()
                 .disable()
