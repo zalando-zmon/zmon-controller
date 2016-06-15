@@ -127,11 +127,11 @@ public class JWTService {
         try {
             String tokenValue = getJwtTokenValue(successfulAuthentication);
             Cookie cookie = new Cookie(COOKIE_NAME, tokenValue);
-            cookie.setComment("Cookie created by ZMON");
+            cookie.setComment("Cookie with jwt created by ZMON");
             cookie.setMaxAge(-1);// expire when browser closed
             cookie.setPath("/");
             // cookie.setDomain(pattern);
-            cookie.setSecure(false); // both, http and https
+            cookie.setSecure(true);
 
             response.addCookie(cookie);
         } catch (JOSEException e) {
