@@ -2,6 +2,8 @@
 # included when using profile 'vagrantbox'
 #
 zmon:
+  jwt:
+    secret: 28PI9q068f2qCbT38hnGX279Wei5YU5n
   oauth2:
     sso:
       client-id: 344c9a90fc697fe6662a #vagrantbox
