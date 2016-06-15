@@ -54,6 +54,8 @@
     <script th:src="${staticUrl} + '/lib/d3/d3.min.js?t=@buildTime@'" chartset="utf-8"></script>
     <script th:src="${staticUrl} + '/lib/nvd3/build/nv.d3.min.js?t=@buildTime@'" chartset="utf-8"></script>
     <script th:src="${staticUrl} + '/lib/ng-infinite-scroll/ng-infinite-scroll.min.js?t=@buildTime@'" chartset="utf-8"></script>
+    <script th:src="${staticUrl} + '/lib/clipboard/clipboard.min.js?t=@buildTime@'" chartset="utf-8"></script>
+    <script th:src="${staticUrl} + '/lib/ngclipboard/ngclipboard.min.js?t=@buildTime@'" chartset="utf-8"></script>
 
 </head>
 <body ng-class="activePage">
@@ -175,6 +177,7 @@
 <script src="js/directives/select2.js?t=${buildTime}"></script>
 <script src="js/directives/clickOutside.js?t=${buildTime}"></script>
 <script src="js/directives/dropdown.js?t=${buildTime}"></script>
+<script src="js/directives/alertValueModal.js?t=${buildTime}"></script>
 <script src="js/services/MainAlertService.js?t=${buildTime}"></script>
 <script src="js/services/CommunicationService.js?t=${buildTime}"></script>
 <script src="js/services/FeedbackMessageService.js?t=${buildTime}"></script>

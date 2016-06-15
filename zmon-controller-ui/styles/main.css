@@ -630,6 +630,40 @@ a.non-href-anchor
     resize: none;
 }
 
+.alert-details .modal-dialog
+{
+    width: 80% !important;
+}
+
+.alert-value-modal .modal-body
+{
+    height: 400px;
+}
+
+.alert-value-modal .input-group
+{
+    padding: 0 !important;
+}
+
+.alert-value-modal .input-group-btn.valid-warn
+{
+    padding-left: 10px;
+}
+
+.alert-value-modal .editor-container
+{
+    position: relative;
+}
+
+.alert-value-modal .code-editor
+{
+    position: absolute;
+    top: 20px;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+
 .history-tag
 {
     color: white;

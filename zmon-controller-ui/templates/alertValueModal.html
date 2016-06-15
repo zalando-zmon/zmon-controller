@@ -1,0 +1,43 @@
+<div class="alert-value-modal">
+    <div class="modal-header">
+        <div class="row">
+            <div class="col-md-11">
+                <h3>Entity: {{alert.name}}</h3>
+            </div>
+            <div class="col-md-1">
+                <i class="fa fa-clock-o"></i> {{alert.ts.getHours()}}:{{alert.ts.getMinutes()}}
+            </div>
+        </div>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="input-group">
+                    <div class="input-group-btn">
+                        <button class="btn btn-primary" title="jsonPath filter">
+                            <i class="fa fa-fw fa-search"></i>
+                        </button>
+                    </div>
+                    <input type="text" class="form-control" ng-model="filter" ng-click="onInput($event)" ng-focus="open" />
+                    <div class="input-group-btn valid-warn">
+                        <i class="fa fa-check validValue" ng-show="filteredValue !== 'false' && filter !== ''" title="Your jsonPath is valid"></i>
+                        <i class="fa fa-times invalidValue" ng-show="filteredValue === 'false' || filter === ''" title="Check your jsonPath!"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="editor-container">
+                    <div id="editor" name="json-editor" class="code-editor" ng-model="alert.value" json code-editor></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" ngclipboard data-clipboard-text={{alert.value}}>
+            <i class="fa fa-clipboard"></i> Copy to Clipboard
+        </button>
+        <button type="button" class="btn btn-primary" ng-click="close()">Close</button>
+    </div>
+</div>

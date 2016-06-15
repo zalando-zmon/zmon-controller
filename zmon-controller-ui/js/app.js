@@ -6,7 +6,8 @@ angular.module('zmon2App', [
     'LocalStorageModule',
     'ui.bootstrap',
     'angulartics',
-    'infinite-scroll'
+    'infinite-scroll',
+    'ngclipboard'
 ])
     .config(['$routeProvider', '$compileProvider',
         function($routeProvider, $compileProvider) {
@@ -119,5 +120,6 @@ angular.module('zmon2App', [
     'MAX_ENTITIES_DISPLAYED': 3,
     'MAX_ENTITIES_WITH_CHARTS': 3,
     'FEEBACK_MSG_SHOW_TIME': 5000,
-    'ALERT_HISTORY_BATCH_SIZE': 20
+    'ALERT_HISTORY_BATCH_SIZE': 20,
+    'INDENT': '    '
 });
