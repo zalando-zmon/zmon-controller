@@ -105,7 +105,7 @@ public class ZauthSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authenticated()
         .and()
             .rememberMe()
-            .rememberMeServices(new MultiRememberMeServices(new JWTRememberMeServices(jwtService),new ZMonTvRememberMeServices(TvTokenService)))
+            .rememberMeServices(new MultiRememberMeServices(new JWTRememberMeServices(jwtService), new ZMonTvRememberMeServices(TvTokenService)))
         .and()
             .csrf()
                 .disable()

@@ -23,10 +23,9 @@ public class MultiRememberMeServices implements RememberMeServices, LogoutHandle
 
     private List<ZMonRememberMeServices> delegates = new LinkedList<>();
 
-    //@formatter:off
     public MultiRememberMeServices(ZMonRememberMeServices... delegates) {
-        for(ZMonRememberMeServices s : delegates){
-            if(s != null){
+        for (ZMonRememberMeServices s : delegates) {
+            if (s != null) {
                 this.delegates.add(s);
             }
         }
@@ -34,7 +33,6 @@ public class MultiRememberMeServices implements RememberMeServices, LogoutHandle
         Collections.sort(this.delegates, new OrderComparator());
         Assert.notEmpty(this.delegates, "'delegates'-list should never be empty");
     }
-    //@formatter:on
 
     @Override
     public void logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
