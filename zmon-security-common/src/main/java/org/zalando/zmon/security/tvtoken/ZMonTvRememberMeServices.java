@@ -35,6 +35,7 @@ public class ZMonTvRememberMeServices implements ZMonRememberMeServices {
 
     @Override
     public Authentication autoLogin(HttpServletRequest request, HttpServletResponse response) {
+        log.debug("autologin with tvtoken ...");
         Cookie zmonTvToken = WebUtils.getCookie(request, TvTokenService.ZMON_TV);
         Cookie zmonIdToken = WebUtils.getCookie(request, TvTokenService.ZMON_TV_ID);
         if (zmonTvToken != null && zmonIdToken != null) {
@@ -64,7 +65,9 @@ public class ZMonTvRememberMeServices implements ZMonRememberMeServices {
 
     @Override
     public void logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
+        log.debug("remove cookies for tvtoken ...");
         tvTokenService.deleteCookiesIfExistent(request, response);
+        log.debug("... cookies removed");
     }
 
 }

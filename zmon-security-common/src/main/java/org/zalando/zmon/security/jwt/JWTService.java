@@ -87,6 +87,10 @@ public class JWTService {
                 JWTClaimsSet claims = Try.of(() -> JWTParser.parse(jwtString).getJWTClaimsSet())
                         .getOrElse((JWTClaimsSet) null);
                 if (claims != null) {
+                    if(claims.getExpirationTime().getTime() < System.currentTimeMillis()){
+                        log.info("JWT expired, unable to authenticate");
+                        return null;
+                    }
                     try {
                         String username = claims.getSubject();
                         Set<String> teams = StringUtils.commaDelimitedListToSet((String) claims.getClaim(TEAMS_CLAIM));
@@ -151,15 +155,18 @@ public class JWTService {
 
     //@formatter:off
     protected JWTClaimsSet buildClaimSet(Authentication authentication){
-        String username = ((SocialAuthenticationToken)authentication).getName();
+        final String username = ((SocialAuthenticationToken)authentication).getName();
+        final String teams = extractTeamsFromAuthentication(authentication);
+        final String authority = extractRoleFromAuthentication(authentication);
+        log.debug("build claim for {}, with authority : {} and teams : {}", username, authority, teams);
         Assert.hasText(username, "'username' should never be null or empty");
         JWTClaimsSet.Builder claimsBuilder = new JWTClaimsSet.Builder()
                 .issuer(ZMON)
                 .expirationTime(new Date(System.currentTimeMillis() + TimeUnit.HOURS.toMillis(24)))
                 .issueTime(new Date())
                 //
-                .claim(TEAMS_CLAIM, extractTeamsFromAuthentication(authentication))
-                .claim(AUTHORITY_CLAIM, extractRoleFromAuthentication(authentication))
+                .claim(TEAMS_CLAIM, teams)
+                .claim(AUTHORITY_CLAIM, authority)
                 .subject(username);
 
         return claimsBuilder.build();
