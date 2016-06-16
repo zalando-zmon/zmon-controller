@@ -2,6 +2,7 @@ package org.zalando.zmon.security.jwt;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.UUID;
 
 import org.assertj.core.api.Assertions;
 import org.junit.Before;
@@ -24,6 +25,8 @@ import com.nimbusds.jose.JWSObject;
 import com.nimbusds.jose.JWSSigner;
 import com.nimbusds.jose.crypto.MACSigner;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 public class JWTServiceTest {
 
     private Connection<?> oauthConnection;
@@ -43,11 +46,12 @@ public class JWTServiceTest {
         service = new JWTService(props);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testJwtServicePropertiesNullSecret() {
         JWTServiceProperties props = new JWTServiceProperties();
         // normally invoked by spring
         props.postConstruct();
+        assertThat(props.getSecret()).hasSameSizeAs(UUID.randomUUID().toString());
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -71,7 +75,7 @@ public class JWTServiceTest {
         MockHttpServletRequest request = new MockHttpServletRequest();
         MockHttpServletResponse response = new MockHttpServletResponse();
         service.writeCookie(request, response, getAuthentication());
-        Assertions.assertThat(response.getCookie("ZMON_JWT")).isNotNull();
+        assertThat(response.getCookie("ZMON_JWT")).isNotNull();
         request.setCookies(response.getCookie("ZMON_JWT"));
 
     }
@@ -88,7 +92,7 @@ public class JWTServiceTest {
     public void testSignedJwt() throws JOSEException {
         String signedJwtString = service.getJwtTokenValue(getAuthentication());
         boolean isSignedByApp = service.signedByApp(signedJwtString);
-        Assertions.assertThat(isSignedByApp).isTrue();
+        assertThat(isSignedByApp).isTrue();
     }
 
     @Test
@@ -98,6 +102,6 @@ public class JWTServiceTest {
         jwt.sign(signer);
         String jwtString = jwt.serialize();
         boolean isSignedByApp = service.signedByApp(jwtString);
-        Assertions.assertThat(isSignedByApp).isFalse();
+        assertThat(isSignedByApp).isFalse();
     }
 }

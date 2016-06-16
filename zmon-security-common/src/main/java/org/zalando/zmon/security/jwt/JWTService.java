@@ -87,7 +87,7 @@ public class JWTService {
                 JWTClaimsSet claims = Try.of(() -> JWTParser.parse(jwtString).getJWTClaimsSet())
                         .getOrElse((JWTClaimsSet) null);
                 if (claims != null) {
-                    if(claims.getExpirationTime().getTime() < System.currentTimeMillis()){
+                    if (claims.getExpirationTime().getTime() < System.currentTimeMillis()) {
                         log.info("JWT expired, unable to authenticate");
                         return null;
                     }
@@ -120,14 +120,13 @@ public class JWTService {
     }
 
     public void writeCookie(HttpServletRequest request, HttpServletResponse response,
-            Authentication successfulAuthentication) {
+                            Authentication successfulAuthentication) {
         Assert.notNull(successfulAuthentication, "'successfullAuthentication' should not be null");
         Assert.isInstanceOf(SocialAuthenticationToken.class, successfulAuthentication,
                 "'successfullAuthentication' should be an instance of " + SocialAuthenticationToken.class.getName());
         try {
             String tokenValue = getJwtTokenValue(successfulAuthentication);
             Cookie cookie = new Cookie(COOKIE_NAME, tokenValue);
-            cookie.setComment("Cookie with jwt created by ZMON");
             cookie.setMaxAge(-1);// expire when browser closed
             cookie.setPath("/");
             // cookie.setDomain(pattern);
@@ -142,8 +141,8 @@ public class JWTService {
     //@formatter:off
     protected String getJwtTokenValue(Authentication authentication) throws JOSEException {
         final JWSObject signedJwt = sign(
-                                        buildJWSObject(
-                                                buildClaimSet(authentication)));
+                buildJWSObject(
+                        buildClaimSet(authentication)));
         return signedJwt.serialize();
     }
     //@formatter:on
@@ -154,8 +153,8 @@ public class JWTService {
     }
 
     //@formatter:off
-    protected JWTClaimsSet buildClaimSet(Authentication authentication){
-        final String username = ((SocialAuthenticationToken)authentication).getName();
+    protected JWTClaimsSet buildClaimSet(Authentication authentication) {
+        final String username = ((SocialAuthenticationToken) authentication).getName();
         final String teams = extractTeamsFromAuthentication(authentication);
         final String authority = extractRoleFromAuthentication(authentication);
         log.debug("build claim for {}, with authority : {} and teams : {}", username, authority, teams);
@@ -164,7 +163,6 @@ public class JWTService {
                 .issuer(ZMON)
                 .expirationTime(new Date(System.currentTimeMillis() + TimeUnit.HOURS.toMillis(24)))
                 .issueTime(new Date())
-                //
                 .claim(TEAMS_CLAIM, teams)
                 .claim(AUTHORITY_CLAIM, authority)
                 .subject(username);

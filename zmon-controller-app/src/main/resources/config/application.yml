@@ -25,8 +25,6 @@ server:
         key-alias: localhost
 
 zmon:
-    jwt:
-      secret: ${ZMON_JWT_SECRET}
     datasource:
       jdbcUrl: ${POSTGRES_URL:jdbc:postgresql://localhost:5432/local_zmon_db}
       username: ${POSTGRES_USERNAME:postgres}
