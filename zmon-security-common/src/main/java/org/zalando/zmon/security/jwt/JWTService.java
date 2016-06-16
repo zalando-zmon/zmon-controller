@@ -129,7 +129,7 @@ public class JWTService {
             Cookie cookie = new Cookie(COOKIE_NAME, tokenValue);
             cookie.setMaxAge(-1);// expire when browser closed
             cookie.setPath("/");
-            // cookie.setDomain(pattern);
+            cookie.setHttpOnly(true);
             cookie.setSecure(true);
 
             response.addCookie(cookie);
