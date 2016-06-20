@@ -12,7 +12,7 @@ angular.module("zmon2App").directive("codeEditor", ["$timeout",
                 editor.setTheme("ace/theme/chrome");
                 editor.setShowPrintMargin(false);
                 editor.setOptions({
-                    maxLines: 20
+                    maxLines: attrs.maxLines || 20
                 });
 
                 // Get language (edit mode) from the element data. If not set, use JSON.

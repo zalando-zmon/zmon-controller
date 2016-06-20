@@ -1,4 +1,4 @@
-angular.module('zmon2App').directive('alertValueModal', [ '$uibModal', 'APP_CONST', function($uibModal, APP_CONST) {
+angular.module('zmon2App').directive('alertValueModal', [ '$uibModal', '$timeout', 'APP_CONST', function($uibModal, $timeout, APP_CONST) {
     return {
         restrict: 'A',
         scope: {
@@ -15,7 +15,6 @@ angular.module('zmon2App').directive('alertValueModal', [ '$uibModal', 'APP_CONS
                     ts: new Date()
                 };
 
-                $scope.value = value;
                 $scope.filter = '$';
                 $scope.filteredValue = null;
 
@@ -24,12 +23,11 @@ angular.module('zmon2App').directive('alertValueModal', [ '$uibModal', 'APP_CONS
                 };
 
                 $scope.$watch('filter', function(filter) {
-                    $scope.filteredValue = JSON.stringify(jsonPath($scope.value, filter), null, APP_CONST.INDENT);
+                    $scope.filteredValue = JSON.stringify(jsonPath(value, filter), null, APP_CONST.INDENT);
                     if ($scope.filteredValue !== 'false' && $scope.filter !== '') {
                         $scope.alert.value = $scope.filteredValue;
                     }
                 });
-
             };
 
             var open = function() {
