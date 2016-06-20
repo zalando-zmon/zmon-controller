@@ -1,4 +1,4 @@
-angular.module('zmon2App').directive('alertValueModal', [ '$uibModal', '$timeout', 'APP_CONST', function($uibModal, $timeout, APP_CONST) {
+angular.module('zmon2App').directive('alertValueModal', [ '$uibModal', 'APP_CONST', function($uibModal, APP_CONST) {
     return {
         restrict: 'A',
         scope: {
