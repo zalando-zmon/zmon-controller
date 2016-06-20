@@ -17,8 +17,10 @@ import org.zalando.zauth.zmon.config.ZauthProperties;
 import org.zalando.zauth.zmon.domain.Team;
 import org.zalando.zmon.security.TeamService;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * Created by hjacobs on 2/4/16.
@@ -65,6 +67,15 @@ public class ZauthTeamService implements TeamService {
             log.info("Adding teams from overlay to {}: {}", username, teams);
             result.addAll(teams);
         }
+
+        Set<String> addByExtension = new TreeSet<>();
+        for(String k : result) {
+            if (zauthProperties.getTeamExtension().containsKey(k)) {
+                List<String> toAdd = zauthProperties.getTeamExtension().get(k);
+                addByExtension.addAll(toAdd);
+            }
+        }
+        result.addAll(addByExtension);
 
         return result;
     }
