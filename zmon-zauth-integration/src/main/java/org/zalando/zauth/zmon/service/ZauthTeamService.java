@@ -17,10 +17,7 @@ import org.zalando.zauth.zmon.config.ZauthProperties;
 import org.zalando.zauth.zmon.domain.Team;
 import org.zalando.zmon.security.TeamService;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
 /**
  * Created by hjacobs on 2/4/16.
@@ -68,11 +65,9 @@ public class ZauthTeamService implements TeamService {
             result.addAll(teams);
         }
 
-        final List<String> emptyList = new ArrayList<>(0);
         final Set<String> addByExtension = new TreeSet<>();
-
         for (String teamId : result) {
-            addByExtension.addAll(zauthProperties.getTeamExtension().getOrDefault(teamId, emptyList));
+            addByExtension.addAll(zauthProperties.getTeamExtension().getOrDefault(teamId, Collections.emptyList()));
         }
 
         result.addAll(addByExtension);
