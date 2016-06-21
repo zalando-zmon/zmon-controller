@@ -10,11 +10,11 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.authentication.RememberMeAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
-import org.springframework.social.security.SocialAuthenticationToken;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import org.springframework.web.util.WebUtils;
@@ -122,8 +122,8 @@ public class JWTService {
     public void writeCookie(HttpServletRequest request, HttpServletResponse response,
                             Authentication successfulAuthentication) {
         Assert.notNull(successfulAuthentication, "'successfullAuthentication' should not be null");
-        Assert.isInstanceOf(SocialAuthenticationToken.class, successfulAuthentication,
-                "'successfullAuthentication' should be an instance of " + SocialAuthenticationToken.class.getName());
+        Assert.isInstanceOf(AbstractAuthenticationToken.class, successfulAuthentication,
+                "'successfullAuthentication' should be an instance of " + AbstractAuthenticationToken.class.getName());
         try {
             String tokenValue = getJwtTokenValue(successfulAuthentication);
             Cookie cookie = new Cookie(COOKIE_NAME, tokenValue);
@@ -154,7 +154,7 @@ public class JWTService {
 
     //@formatter:off
     protected JWTClaimsSet buildClaimSet(Authentication authentication) {
-        final String username = ((SocialAuthenticationToken) authentication).getName();
+        final String username = ((AbstractAuthenticationToken) authentication).getName();
         final String teams = extractTeamsFromAuthentication(authentication);
         final String authority = extractRoleFromAuthentication(authentication);
         log.debug("build claim for {}, with authority : {} and teams : {}", username, authority, teams);
