@@ -39,4 +39,8 @@ public class JWTRememberMeServices implements ZMonRememberMeServices {
         return ZMonRememberMeServices.super.getOrder() - 20;
     }
 
+    @Override
+    public void autoLoginSuccess(HttpServletRequest request, HttpServletResponse response, Authentication successfulAuthentication) {
+        loginSuccess(request, response, successfulAuthentication);
+    }
 }
