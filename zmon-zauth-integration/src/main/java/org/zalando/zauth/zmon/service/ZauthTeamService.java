@@ -68,13 +68,13 @@ public class ZauthTeamService implements TeamService {
             result.addAll(teams);
         }
 
-        Set<String> addByExtension = new TreeSet<>();
-        for(String k : result) {
-            if (zauthProperties.getTeamExtension().containsKey(k)) {
-                List<String> toAdd = zauthProperties.getTeamExtension().get(k);
-                addByExtension.addAll(toAdd);
-            }
+        final List<String> emptyList = new ArrayList<>(0);
+        final Set<String> addByExtension = new TreeSet<>();
+
+        for (String teamId : result) {
+            addByExtension.addAll(zauthProperties.getTeamExtension().getOrDefault(teamId, emptyList));
         }
+
         result.addAll(addByExtension);
 
         return result;
