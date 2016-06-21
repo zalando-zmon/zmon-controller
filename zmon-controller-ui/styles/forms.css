@@ -266,13 +266,3 @@ input.checkbox
 {
     padding-top: 36px;
 }
-
-.validValue
-{
-    color: green;
-}
-
-.invalidValue
-{
-    color: red;
-}
