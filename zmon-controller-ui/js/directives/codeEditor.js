@@ -61,7 +61,6 @@ angular.module("zmon2App").directive("codeEditor", ["$timeout",
                 ngModel.$parsers.unshift(validator);
                 ngModel.$formatters.unshift(validator);
 
-                // FIX: watch for scope updates and automatically resize the editor editable area.
                 scope.$watch(function() {
                     return [elem[0].offsetWidth, elem[0].offsetHeight];
                 }, function() {
