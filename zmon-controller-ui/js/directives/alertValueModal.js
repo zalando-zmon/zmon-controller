@@ -23,7 +23,9 @@ angular.module('zmon2App').directive('alertValueModal', [ '$uibModal', 'APP_CONS
                 };
 
                 $scope.$watch('filter', function(filter) {
-                    $scope.filteredValue = JSON.stringify(jsonPath(value, filter), null, APP_CONST.INDENT);
+                    var jp = jsonPath(value, filter);
+                    jp = jp ? jp[0] : jp;
+                    $scope.filteredValue = JSON.stringify(jp, null, APP_CONST.INDENT);
                     if ($scope.filteredValue !== 'false' && $scope.filter !== '') {
                         $scope.alert.value = $scope.filteredValue;
                     }
@@ -35,6 +37,7 @@ angular.module('zmon2App').directive('alertValueModal', [ '$uibModal', 'APP_CONS
                     templateUrl: '/templates/alertValueModal.html',
                     controller: modalCtrl,
                     backdrop: false,
+                    windowClass: 'alert-value-modal-window',
                     resolve: {
                         name: function() {
                             return scope.name;
