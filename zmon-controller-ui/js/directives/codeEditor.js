@@ -11,9 +11,6 @@ angular.module("zmon2App").directive("codeEditor", ["$timeout",
                 // Set editor max lines to 20 so it expands automatically for longer contents.
                 editor.setTheme("ace/theme/chrome");
                 editor.setShowPrintMargin(false);
-                editor.setOptions({
-                    maxLines: 20
-                });
 
                 // Get language (edit mode) from the element data. If not set, use JSON.
                 var editMode = $(elem).attr("code-language");
@@ -64,7 +61,6 @@ angular.module("zmon2App").directive("codeEditor", ["$timeout",
                 ngModel.$parsers.unshift(validator);
                 ngModel.$formatters.unshift(validator);
 
-                // FIX: watch for scope updates and automatically resize the editor editable area.
                 scope.$watch(function() {
                     return [elem[0].offsetWidth, elem[0].offsetHeight];
                 }, function() {

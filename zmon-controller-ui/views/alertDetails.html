@@ -10,7 +10,7 @@
         </p>
         <p>
             <a ng-show="alertDefinition.editable && alertDefinition.status != 'DELETED'" href="#/alert-definitions/edit/{{alertDefinition.id}}" title="Edit alert definition"><i class="fa fa-fw fa-edit"></i> Edit</a>
-            <span ng-hide="alertDefinition.editable ||  alertDefinition.status == 'DELETED'"><i class="fa fa-fw fa-edit semi-transparent"></i> Edit</span>
+            <span ng-hide="alertDefinition.editable || alertDefinition.status == 'DELETED'"><i class="fa fa-fw fa-edit semi-transparent"></i> Edit</span>
             <a ng-show="alertDefinition.cloneable && alertDefinition.status != 'DELETED'" href="#/alert-definitions/clone/{{alertDefinition.id}}" title="Clone alert definition"><i class="fa fa-fw fa-copy"></i> Clone</a>
             <span ng-hide="alertDefinition.cloneable || alertDefinition.status == 'DELETED'"><i class="fa fa-fw fa-copy semi-transparent"></i> Clone</span>
             <a ng-show="alertDefinition.cloneable && alertDefinition.status != 'DELETED'" href="#/alert-definitions/inherit/{{alertDefinition.id}}" title="Inherit alert definition"><i class="fa fa-fw fa-sitemap"></i> Inherit</a>
@@ -156,7 +156,7 @@
                                     </div>
                                 </td>
                                 <td>
-                                    <div class="ellipsis" expand>{{entityInstance.result.value}}
+                                    <div class="ellipsis" alert-value-modal name="entityInstance.entity" value="entityInstance.result.value">{{entityInstance.result.value}}
                                         <div ng-if="entityInstance.isAlertInDowntime == true">
                                             {{entityInstance.result.downtimes | downtimeReasons}}
                                         </div>
