@@ -16,6 +16,7 @@ public class ZauthProperties {
     private URL teamServiceUrl;
     private URL oauth2AccessTokenUrl;
     private Map<String, List<String>> teamOverlay = Maps.newHashMap();
+    private Map<String, List<String>> teamExtension = Maps.newHashMap();
 
     public Map<String, List<String>> getTeamOverlay() {
         return teamOverlay;
@@ -39,5 +40,13 @@ public class ZauthProperties {
 
     public void setOauth2AccessTokenUrl(URL oauth2AccessTokenUrl) {
         this.oauth2AccessTokenUrl = oauth2AccessTokenUrl;
+    }
+
+    public Map<String, List<String>> getTeamExtension() {
+        return teamExtension;
+    }
+
+    public void setTeamExtension(Map<String, List<String>> teamExtension) {
+        this.teamExtension = teamExtension;
     }
 }

@@ -6,6 +6,7 @@ fi
 
 echo 'Make sure the provided Vagrant-Box is up and all services are running.'
 
+export ZMON_JWT_SECRET=28PI9q068f2qCbT38hnGX279Wei5YU5n
 export SPRING_PROFILES_ACTIVE=github     # use GitHub auth
 export SERVER_PORT=8444
 export ZMON_OAUTH2_SSO_CLIENT_ID=3a115b9b22f5e5d59c60

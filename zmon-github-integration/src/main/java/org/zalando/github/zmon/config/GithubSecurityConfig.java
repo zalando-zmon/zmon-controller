@@ -31,6 +31,9 @@ import org.zalando.zmon.security.AuthorityService;
 import org.zalando.zmon.security.WebSecurityConstants;
 import org.zalando.zmon.security.ZmonAuthenticationEntrypoint;
 import org.zalando.zmon.security.ZmonResourceServerConfigurer;
+import org.zalando.zmon.security.jwt.JWTRememberMeServices;
+import org.zalando.zmon.security.jwt.JWTService;
+import org.zalando.zmon.security.rememberme.MultiRememberMeServices;
 import org.zalando.zmon.security.service.ChainedResourceServerTokenServices;
 import org.zalando.zmon.security.service.PresharedTokensResourceServerTokenServices;
 import org.zalando.zmon.security.service.SimpleSocialUserDetailsService;
@@ -63,6 +66,9 @@ public class GithubSecurityConfig extends WebSecurityConfigurerAdapter {
     private TvTokenService TvTokenService;
 
     @Autowired
+    private JWTService jwtService;
+
+    @Autowired
     public void configureGlobal(final AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(userDetailsManager());
     }
@@ -83,7 +89,7 @@ public class GithubSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure( HttpSecurity http) throws Exception {
 
-        http = http.authenticationProvider(new RememberMeAuthenticationProvider("ZMON_TV"));
+        http = http.authenticationProvider(new RememberMeAuthenticationProvider("ZMON_TV")).authenticationProvider(new RememberMeAuthenticationProvider("ZMON_JWT"));
 
         http
             .apply(new SpringSocialConfigurer())
@@ -107,7 +113,7 @@ public class GithubSecurityConfig extends WebSecurityConfigurerAdapter {
                     .authenticated()
             .and()
                 .rememberMe()
-                .rememberMeServices(new ZMonTvRememberMeServices(TvTokenService))
+                .rememberMeServices(new MultiRememberMeServices(new JWTRememberMeServices(jwtService),new ZMonTvRememberMeServices(TvTokenService)))
             .and()
                 .csrf()
                     .disable()

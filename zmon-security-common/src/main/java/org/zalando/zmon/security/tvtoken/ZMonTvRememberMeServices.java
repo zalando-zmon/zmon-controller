@@ -6,24 +6,22 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.codahale.metrics.Meter;
-import com.codahale.metrics.Timer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.RememberMeAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.web.authentication.RememberMeServices;
-import org.springframework.security.web.authentication.logout.LogoutHandler;
 import org.springframework.util.Base64Utils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.util.WebUtils;
 import org.zalando.zmon.security.authority.ZMonViewerAuthority;
+import org.zalando.zmon.security.rememberme.ZMonRememberMeServices;
 
+import com.codahale.metrics.Meter;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 
-public class ZMonTvRememberMeServices implements RememberMeServices, LogoutHandler {
+public class ZMonTvRememberMeServices implements ZMonRememberMeServices {
 
     private final Logger log = LoggerFactory.getLogger(ZMonTvRememberMeServices.class);
 
@@ -48,7 +46,7 @@ public class ZMonTvRememberMeServices implements RememberMeServices, LogoutHandl
             }
 
             rateLimit.mark();
-            if(rateLimit.getOneMinuteRate()>5) {
+            if (rateLimit.getOneMinuteRate() > 5) {
                 // try not to hit database more than 5/sec for any given token
                 return null;
             }
@@ -62,15 +60,6 @@ public class ZMonTvRememberMeServices implements RememberMeServices, LogoutHandl
         }
         // no success
         return null;
-    }
-
-    @Override
-    public void loginFail(HttpServletRequest request, HttpServletResponse response) {
-    }
-
-    @Override
-    public void loginSuccess(HttpServletRequest request, HttpServletResponse response,
-            Authentication successfulAuthentication) {
     }
 
     @Override
