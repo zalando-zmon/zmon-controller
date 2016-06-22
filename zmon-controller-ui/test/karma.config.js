@@ -28,6 +28,8 @@ module.exports = function(config) {
         '../lib/angulartics/angulartics.min.js',
         '../lib/js-yaml/js-yaml.min.js',
         '../lib/ng-infinite-scroll/ng-infinite-scroll.min.js',
+        '../lib/clipboard/clipboard.min.js',
+        '../lib/ngclipboard/ngclipboard.min.js',
         '../js/app.js',
         '../js/filters/*.js',
         '../js/services/*.js',
