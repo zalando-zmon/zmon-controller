@@ -82,13 +82,14 @@ public class JWTService {
         } else {
             String jwtString = cookie.getValue();
             if (!signedByApp(jwtString)) {
+                // JWT was not signed with our current secret
                 return null;
             } else {
                 JWTClaimsSet claims = Try.of(() -> JWTParser.parse(jwtString).getJWTClaimsSet())
                         .getOrElse((JWTClaimsSet) null);
                 if (claims != null) {
                     if (claims.getExpirationTime().getTime() < System.currentTimeMillis()) {
-                        log.info("JWT expired, unable to authenticate");
+                        // JWT expired, treat same as unauthenticated
                         return null;
                     }
                     try {
