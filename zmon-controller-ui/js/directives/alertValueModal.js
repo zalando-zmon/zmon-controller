@@ -26,9 +26,9 @@ angular.module('zmon2App').directive('alertValueModal', [ '$uibModal', 'APP_CONS
                         return;
                     }
 
-                    var jp = [];
                     $scope.valid = false;
 
+                    var jp = [];
                     try {
                         jp = jsonpath.nodes(value, filter);
                     } catch (e) {
