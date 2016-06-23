@@ -18,10 +18,10 @@
                             <i class="fa fa-fw fa-search"></i>
                         </button>
                     </div>
-                    <input type="text" class="form-control" ng-model="filter" ng-click="onInput($event)" ng-focus="open" />
+                    <input type="text" class="form-control" ng-model="filter" ng-click="onInput($event)" ng-focus="open" placeholder="insert a jsonPath expression to filter data, i.e. $.key"/>
                     <div class="input-group-btn valid-warn">
-                        <i class="fa fa-check status-valid" ng-show="filteredValue !== 'false' && filter !== ''" title="Your jsonPath is valid"></i>
-                        <i class="fa fa-times status-invalid" ng-show="filteredValue === 'false' || filter === ''" title="Check your jsonPath!"></i>
+                        <i class="fa fa-check status-valid" ng-show="valid && filter" title="Your jsonPath is valid"></i>
+                        <i class="fa fa-times status-invalid" ng-show="!valid && filter" title="Check your jsonPath!"></i>
                     </div>
                 </div>
             </div>
