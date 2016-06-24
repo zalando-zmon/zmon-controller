@@ -11,8 +11,8 @@ BEGIN
            e_last_modified = now(),
            e_last_modified_by = user_name
      WHERE (e_data->'id')::text = ((entity_data::jsonb)->'id')::text
-       AND ((e_data->'team')::text = ((entity_data::jsonb)->'team')::text OR user_name = e_created_by)
-       AND e_data IS DISTINCT FROM entity_data::jsonb
+       -- AND ((e_data->'team')::text = ((entity_data::jsonb)->'team')::text OR user_name = e_created_by)
+       AND (e_data IS DISTINCT FROM entity_data::jsonb OR (e_data->'type')::text='"local"')
      RETURNING (e_data->'id')::text INTO _id;
   END;
   RETURN _id;
