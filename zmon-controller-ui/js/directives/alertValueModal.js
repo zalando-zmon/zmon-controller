@@ -9,25 +9,46 @@ angular.module('zmon2App').directive('alertValueModal', [ '$uibModal', 'APP_CONS
         link: function(scope, elem, attrs) {
 
             var modalCtrl = function($scope, $uibModalInstance, name, value) {
+                $scope.filter = '';
                 $scope.alert = {
                     name: name,
-                    value: '{}',
+                    value: JSON.stringify(value, null, APP_CONST.INDENT),
                     ts: new Date()
                 };
-
-                $scope.filter = '$';
-                $scope.filteredValue = null;
 
                 $scope.close = function() {
                     $uibModalInstance.dismiss();
                 };
 
                 $scope.$watch('filter', function(filter) {
-                    var jp = jsonPath(value, filter);
-                    jp = jp ? jp[0] : jp;
-                    $scope.filteredValue = JSON.stringify(jp, null, APP_CONST.INDENT);
-                    if ($scope.filteredValue !== 'false' && $scope.filter !== '') {
-                        $scope.alert.value = $scope.filteredValue;
+                    if (!filter) {
+                        $scope.alert.value = JSON.stringify(value, null, APP_CONST.INDENT);
+                        return;
+                    }
+
+                    $scope.valid = false;
+
+                    var jp = [];
+                    try {
+                        jp = jsonpath.nodes(value, filter);
+                    } catch (e) {
+                        return;
+                    }
+
+                    // here's were the magic happens, adds parent keys to jsonpath nodes
+                    var filteredValue = _.map(jp, function(n) {
+                        var node = n.value;         // avoid jsonpath's root level: {'$': ... }
+                        if (n.path.length > 1) {
+                            node =  {};
+                            node[n.path[n.path.length-1]] = n.value;
+                        }
+                        return node;
+                    }, []);
+
+                    if (filteredValue.length) {
+                        filteredValue = filteredValue.length === 1 ? filteredValue[0] : filteredValue;
+                        $scope.alert.value = JSON.stringify(filteredValue, null, APP_CONST.INDENT);
+                        $scope.valid = true;
                     }
                 });
             };
