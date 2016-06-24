@@ -13,6 +13,7 @@ import org.zalando.zmon.domain.CheckResults;
 import org.zalando.zmon.service.ZMonService;
 
 import java.io.IOException;
+import java.util.Optional;
 
 public class GrafanaControllerTest {
 
@@ -23,7 +24,7 @@ public class GrafanaControllerTest {
         CheckResults checkResults = new CheckResults("myentity");
         CheckDefinition checkDef = new CheckDefinition();
         checkDef.setId(123);
-        Mockito.when(zMonService.getCheckDefinitionsById(123)).thenReturn(Lists.newArrayList(checkDef));
+        Mockito.when(zMonService.getCheckDefinitionById(123)).thenReturn(Optional.of(checkDef));
         Mockito.when(zMonService.getCheckResults(123, null, 1)).thenReturn(Lists.newArrayList(checkResults));
         GrafanaController controller = new GrafanaController(zMonService, null, null, mapper, null);
         ResponseEntity<JsonNode> response = controller.serveDynamicDashboard("zmon-check-123");
