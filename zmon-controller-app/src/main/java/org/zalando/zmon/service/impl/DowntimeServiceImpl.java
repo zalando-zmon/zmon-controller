@@ -26,6 +26,7 @@ import org.zalando.zmon.persistence.AlertDefinitionSProcService;
 import org.zalando.zmon.redis.RedisPattern;
 import org.zalando.zmon.redis.ResponseHolder;
 import org.zalando.zmon.service.DowntimeService;
+import org.zalando.zmon.service.impl.downtimes.DowntimeAPIRequest;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.Pipeline;
@@ -147,7 +148,7 @@ public class DowntimeServiceImpl implements DowntimeService {
         final String url = schedulerProperties.getUrl().toString() + SCHEDULER_DOWNTIMES_PATH;
 
         try {
-            executor.execute(Request.Post(url).bodyString(mapper.writeValueAsString(request),
+            executor.execute(Request.Post(url).bodyString(mapper.writeValueAsString(DowntimeAPIRequest.convert(groupId, request)),
                     ContentType.APPLICATION_JSON)).returnContent().asString();
         }
         catch(Throwable t) {
