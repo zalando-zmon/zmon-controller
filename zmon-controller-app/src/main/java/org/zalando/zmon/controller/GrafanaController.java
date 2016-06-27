@@ -264,13 +264,13 @@ public class GrafanaController extends AbstractZMonController {
 
         final Optional<String> entityId = parts.length > 3 ? Optional.of(parts[3]) : Optional.empty();
 
-        List<CheckDefinition> checkDefinitions = zMonService.getCheckDefinitionsById(checkId);
+        Optional<CheckDefinition> checkDefinitionOptional = zMonService.getCheckDefinitionById(checkId);
 
-        if (checkDefinitions.isEmpty()) {
+        if (!checkDefinitionOptional.isPresent()) {
             return new ResponseEntity<>(mapper.createObjectNode().put("message", "Check not found"), HttpStatus.NOT_FOUND);
         }
 
-        CheckDefinition checkDefinition = checkDefinitions.get(0);
+        CheckDefinition checkDefinition = checkDefinitionOptional.get();
 
         List<CheckResults> checkResults = zMonService.getCheckResults(checkId, null, 1);
         String entityIds = checkResults.stream().map(CheckResults::getEntity).sorted()

@@ -19,6 +19,7 @@ import org.zalando.zmon.security.permission.DefaultZMonPermissionService;
 import org.zalando.zmon.service.ZMonService;
 
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/api/v1/check-definitions")
@@ -68,9 +69,11 @@ public class CheckDefinitionsApi extends AbstractZMonController {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public CheckDefinitionImport getCheckDef(@PathVariable(value = "id") int id) throws ZMonException {
-        List<CheckDefinition> list = zMonService.getCheckDefinitionsById(id);
-        CheckDefinition check = list.get(0);
-        if(check==null) return null;
+        Optional<CheckDefinition> list = zMonService.getCheckDefinitionById(id);
+        if (!list.isPresent()) {
+            return null;
+        }
+        CheckDefinition check = list.get();
 
         CheckDefinitionImport cImport = new CheckDefinitionImport();
 

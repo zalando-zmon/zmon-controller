@@ -224,7 +224,7 @@
                                 <td>{{alert.entity.id}}</td>
                                 <td>{{alert.value.ts|datetime}} ({{TrialRunCtrl.timeAgo(alert.value.ts)}} ago)</td>
                                 <td class="text-right">{{alert.value.td * 1000|timespan}}</td>
-                                <td class="ellipsis" expand>{{alert.value.value}}</td>
+                                <td class="ellipsis" alert-value-modal name="alert.entity.id" value="alert.value.value">{{alert.value.value}}</td>
                                 <td>{{alert.captures}}</td>
                             </tr>
 
@@ -232,7 +232,7 @@
                                 <td>{{alert.entity.id}}</td>
                                 <td>{{alert.value.ts|datetime}}</td>
                                 <td class="text-right">{{alert.value.td * 1000|timespan}}</td>
-                                <td class="ellipsis" expand>{{alert.value.value}}</td>
+                                <td class="ellipsis" alert-value-modal name="alert.entity.id" value="alert.value.value">{{alert.value.value}}</td>
                                 <td>{{alert.captures}}</td>
                             </tr>
                         </tbody>

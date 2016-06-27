@@ -179,8 +179,8 @@ public class ZMonServiceImpl implements ZMonService {
     }
 
     @Override
-    public List<CheckDefinition> getCheckDefinitionsById(final int id) {
-        return checkDefinitionSProc.getCheckDefinitions(null, Lists.newArrayList(id));
+    public Optional<CheckDefinition> getCheckDefinitionById(final int id) {
+        return checkDefinitionSProc.getCheckDefinitions(null, Lists.newArrayList(id)).stream().findFirst();
     }
 
     @Override
