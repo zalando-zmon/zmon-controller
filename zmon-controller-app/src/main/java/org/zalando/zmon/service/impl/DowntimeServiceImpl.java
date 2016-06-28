@@ -213,7 +213,7 @@ public class DowntimeServiceImpl implements DowntimeService {
         final String url = schedulerProperties.getUrl().toString() + SCHEDULER_DOWNTIMES_PATH + "/downtime-groups/" + groupId;
 
         try {
-            executor.execute(Request.Delete(url).bodyString("", ContentType.APPLICATION_JSON)).returnContent().asString();
+            executor.execute(Request.Delete(url)).returnContent().asString();
         } catch (Throwable t) {
             LOG.error("Deleting downtime group failed: group={}", groupId, t.getMessage());
             throw new RuntimeException(t);
@@ -232,7 +232,7 @@ public class DowntimeServiceImpl implements DowntimeService {
             String url = schedulerProperties.getUrl().toString() + SCHEDULER_DOWNTIMES_PATH + "/downtimes/" + downtimeId;
 
             try {
-                executor.execute(Request.Delete(url).bodyString("", ContentType.APPLICATION_JSON)).returnContent().asString();
+                executor.execute(Request.Delete(url)).returnContent().asString();
             } catch (Throwable t) {
                 LOG.error("Deleting downtime failed: id={}", downtimeId, t.getMessage());
                 throw new RuntimeException(t);
