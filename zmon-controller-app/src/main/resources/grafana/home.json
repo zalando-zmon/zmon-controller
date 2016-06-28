@@ -9,6 +9,7 @@
     "timezone": "browser",
     "title": "Grafana ZMON",
     "version": 26,
+    "refresh": "1m",
     "rows": [
       {
         "title": "Welcome",
