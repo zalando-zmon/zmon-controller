@@ -7,15 +7,15 @@ import java.util.Map;
  * Created by jmussler on 27.06.16.
  */
 public class DowntimeAPIRequestEntity {
-    private Integer alertDefinitionId;
+    private Integer alertId;
     private Map<String, String> entityIds = new HashMap<>();
 
     public DowntimeAPIRequestEntity(Integer alertDefinitionId) {
-        this.alertDefinitionId = alertDefinitionId;
+        this.alertId = alertDefinitionId;
     }
 
-    public Integer getAlertDefinitionId() {
-        return alertDefinitionId;
+    public Integer getAlertId() {
+        return alertId;
     }
 
     public Map<String, String> getEntityIds() {
