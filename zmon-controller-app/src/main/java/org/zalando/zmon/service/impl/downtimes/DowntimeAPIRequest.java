@@ -20,7 +20,7 @@ public class DowntimeAPIRequest {
     private String groupId;
     private List<DowntimeAPIRequestEntity> downtimeEntities = new ArrayList<>();
 
-    private DowntimeAPIRequest(String groupId, String createdBy, Long endTime, Long startTime, String comment) {
+    private DowntimeAPIRequest(String groupId, String createdBy, Long startTime, Long endTime, String comment) {
         this.groupId = groupId;
         this.createdBy = createdBy;
         this.endTime = endTime;
@@ -46,6 +46,6 @@ public class DowntimeAPIRequest {
 
     @JsonIgnore
     public List<String> getDowntimeIds() {
-        return downtimeEntities.stream().map(x->x.getEntityIds().keySet()).flatMap(x->x.stream()).collect(Collectors.toList());
+        return downtimeEntities.stream().map(x->x.getEntityIds().values()).flatMap(x->x.stream()).collect(Collectors.toList());
     }
 }
