@@ -48,4 +48,24 @@ public class DowntimeAPIRequest {
     public List<String> getDowntimeIds() {
         return downtimeEntities.stream().map(x->x.getEntityIds().values()).flatMap(x->x.stream()).collect(Collectors.toList());
     }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public Long getStartTime() {
+        return startTime;
+    }
+
+    public Long getEndTime() {
+        return endTime;
+    }
+
+    public String getCreatedBy() {
+        return createdBy;
+    }
+
+    public String getGroupId() {
+        return groupId;
+    }
 }
