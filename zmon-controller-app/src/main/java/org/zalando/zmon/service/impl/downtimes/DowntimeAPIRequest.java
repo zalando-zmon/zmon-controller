@@ -1,11 +1,13 @@
 package org.zalando.zmon.service.impl.downtimes;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.zalando.zmon.domain.DowntimeEntities;
 import org.zalando.zmon.domain.DowntimeRequest;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * Created by jmussler on 27.06.16.
@@ -40,5 +42,10 @@ public class DowntimeAPIRequest {
 
     public List<DowntimeAPIRequestEntity> getDowntimeEntities() {
         return downtimeEntities;
+    }
+
+    @JsonIgnore
+    public List<String> getDowntimeIds() {
+        return downtimeEntities.stream().map(x->x.getEntityIds().keySet()).flatMap(x->x.stream()).collect(Collectors.toList());
     }
 }

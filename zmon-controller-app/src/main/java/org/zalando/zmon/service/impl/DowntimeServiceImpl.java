@@ -147,8 +147,8 @@ public class DowntimeServiceImpl implements DowntimeService {
         final Executor executor = Executor.newInstance(schedulerProperties.getHttpClient());
         final String url = schedulerProperties.getUrl().toString() + SCHEDULER_DOWNTIMES_PATH;
 
+        final DowntimeAPIRequest apiRequest = DowntimeAPIRequest.convert(groupId, request);
         try {
-            final DowntimeAPIRequest apiRequest = DowntimeAPIRequest.convert(groupId, request);
             final Request httpRequest = Request.Post(url).bodyString(mapper.writeValueAsString(apiRequest),
                     ContentType.APPLICATION_JSON);
             executor.execute(httpRequest).returnContent().asString();
@@ -157,7 +157,7 @@ public class DowntimeServiceImpl implements DowntimeService {
             throw new RuntimeException(t);
         }
 
-        return Collections.emptyList();
+        return apiRequest.getDowntimeIds();
     }
 
     @Override
