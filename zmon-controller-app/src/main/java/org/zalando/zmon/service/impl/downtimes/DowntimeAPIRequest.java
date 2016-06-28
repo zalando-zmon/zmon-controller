@@ -28,7 +28,7 @@ public class DowntimeAPIRequest {
 
     public static DowntimeAPIRequest convert(String groupId, DowntimeRequest original) {
         DowntimeAPIRequest request = new DowntimeAPIRequest(groupId, original.getComment(), original.getStartTime(), original.getEndTime(), original.getCreatedBy());
-        for(DowntimeEntities es : original.getDowntimeEntities()) {
+        for (DowntimeEntities es : original.getDowntimeEntities()) {
             final DowntimeAPIRequestEntity entitiesForAlert = new DowntimeAPIRequestEntity(es.getAlertDefinitionId());
             for (String entityId : es.getEntityIds()) {
                 entitiesForAlert.getEntityIds().put(entityId, UUID.randomUUID().toString());

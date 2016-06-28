@@ -148,10 +148,11 @@ public class DowntimeServiceImpl implements DowntimeService {
         final String url = schedulerProperties.getUrl().toString() + SCHEDULER_DOWNTIMES_PATH;
 
         try {
-            executor.execute(Request.Post(url).bodyString(mapper.writeValueAsString(DowntimeAPIRequest.convert(groupId, request)),
-                    ContentType.APPLICATION_JSON)).returnContent().asString();
-        }
-        catch(Throwable t) {
+            final DowntimeAPIRequest apiRequest = DowntimeAPIRequest.convert(groupId, request);
+            final Request httpRequest = Request.Post(url).bodyString(mapper.writeValueAsString(apiRequest),
+                    ContentType.APPLICATION_JSON);
+            executor.execute(httpRequest).returnContent().asString();
+        } catch (Throwable t) {
             LOG.error("Creating downtime failed", t.getMessage());
             throw new RuntimeException(t);
         }
@@ -213,8 +214,7 @@ public class DowntimeServiceImpl implements DowntimeService {
 
         try {
             executor.execute(Request.Delete(url).bodyString("", ContentType.APPLICATION_JSON)).returnContent().asString();
-        }
-        catch(Throwable t) {
+        } catch (Throwable t) {
             LOG.error("Deleting downtime group failed: group={}", groupId, t.getMessage());
             throw new RuntimeException(t);
         }
@@ -228,13 +228,12 @@ public class DowntimeServiceImpl implements DowntimeService {
 
         final Executor executor = Executor.newInstance(schedulerProperties.getHttpClient());
 
-        for(String downtimeId : downtimeIds) {
+        for (String downtimeId : downtimeIds) {
             String url = schedulerProperties.getUrl().toString() + SCHEDULER_DOWNTIMES_PATH + "/downtimes/" + downtimeId;
 
             try {
                 executor.execute(Request.Delete(url).bodyString("", ContentType.APPLICATION_JSON)).returnContent().asString();
-            }
-            catch(Throwable t) {
+            } catch (Throwable t) {
                 LOG.error("Deleting downtime failed: id={}", downtimeId, t.getMessage());
                 throw new RuntimeException(t);
             }
@@ -258,67 +257,5 @@ public class DowntimeServiceImpl implements DowntimeService {
 
     private Set<Integer> alertsInDowntime(final Jedis jedis) {
         return jedis.smembers(RedisPattern.downtimeAlertIds()).stream().map(Integer::parseInt).collect(Collectors.toSet());
-    }
-
-    private List<DowntimeDetails> processDeleteDowntimes(final Map<String, DowntimeDetailsFormat> toRemove) {
-
-        // extract downtimes to delete
-        final List<DowntimeDetails> deleted = new LinkedList<>();
-        final List<ResponseHolder<String, Long>> asyncResponses = new LinkedList<>();
-
-        // execute delete
-        if (!toRemove.isEmpty()) {
-            try (Jedis jedis = writeRedisPool.getResource()) {
-                Pipeline p = jedis.pipelined();
-                for (final DowntimeDetailsFormat details : toRemove.values()) {
-                    asyncResponses.add(ResponseHolder.create(details.getDowntimeDetails().getId(),
-                            p.hdel(
-                                    RedisPattern.downtimeDetails(details.getDowntimeDetails().getAlertDefinitionId(),
-                                            details.getDowntimeDetails().getEntity()), details.getDowntimeDetails().getId())));
-                }
-
-                p.sync();
-
-                // check which entries were deleted and publish an event
-                p = jedis.pipelined();
-                for (final ResponseHolder<String, Long> response : asyncResponses) {
-                    if (response.getResponse().get() > 0) {
-                        final DowntimeDetailsFormat value = toRemove.get(response.getKey());
-                        p.hset(RedisPattern.downtimeRemoveQueue(), response.getKey(), value.getJson());
-                        p.publish(RedisPattern.downtimeRemoveChannel(), response.getKey());
-                        deleted.add(value.getDowntimeDetails());
-                    }
-                }
-
-                p.sync();
-            }
-
-            // and finnally publish an event after returning the connection
-            for (final DowntimeDetails details : deleted) {
-                eventLog.log(ZMonEventType.DOWNTIME_REMOVED, details.getAlertDefinitionId(), details.getEntity(),
-                        details.getStartTime(), details.getEndTime(), details.getCreatedBy(), details.getComment());
-            }
-
-        }
-
-        return deleted;
-    }
-
-    private static final class DowntimeDetailsFormat {
-        private final DowntimeDetails downtimeDetails;
-        private final String json;
-
-        private DowntimeDetailsFormat(final DowntimeDetails downtimeDetails, final String json) {
-            this.downtimeDetails = downtimeDetails;
-            this.json = json;
-        }
-
-        public DowntimeDetails getDowntimeDetails() {
-            return downtimeDetails;
-        }
-
-        public String getJson() {
-            return json;
-        }
     }
 }
