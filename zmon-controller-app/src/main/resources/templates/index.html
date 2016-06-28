@@ -47,6 +47,7 @@
     <script th:src="${staticUrl} + '/lib/showdown/showdown.js?t=@buildTime@'"></script>
     <script th:src="${staticUrl} + '/lib/ace/ace.js?t=@buildTime@'" charset="utf-8"></script>
     <script th:src="${staticUrl} + '/lib/jsonpath/jsonpath.js?t=@buildTime@'" charset="utf-8"></script>
+    <script th:src="${staticUrl} + '/lib/jsonpath-dchester/jsonpath.min.js?t=@buildTime@'" charset="utf-8"></script>
     <script th:src="${staticUrl} + '/lib/js-yaml/js-yaml.min.js?t=@buildTime@'"></script>
     <script th:src="${staticUrl} + '/lib/angulartics/angulartics.min.js?t=@buildTime@'" charset="utf-8"></script>
     <script th:src="${staticUrl} + '/lib/select2/select2.min.js?t=@buildTime@'" charset="utf-8"></script>
@@ -54,6 +55,8 @@
     <script th:src="${staticUrl} + '/lib/d3/d3.min.js?t=@buildTime@'" chartset="utf-8"></script>
     <script th:src="${staticUrl} + '/lib/nvd3/build/nv.d3.min.js?t=@buildTime@'" chartset="utf-8"></script>
     <script th:src="${staticUrl} + '/lib/ng-infinite-scroll/ng-infinite-scroll.min.js?t=@buildTime@'" chartset="utf-8"></script>
+    <script th:src="${staticUrl} + '/lib/clipboard/clipboard.min.js?t=@buildTime@'" chartset="utf-8"></script>
+    <script th:src="${staticUrl} + '/lib/ngclipboard/ngclipboard.min.js?t=@buildTime@'" chartset="utf-8"></script>
 
 </head>
 <body ng-class="activePage">
@@ -175,6 +178,7 @@
 <script src="js/directives/select2.js?t=${buildTime}"></script>
 <script src="js/directives/clickOutside.js?t=${buildTime}"></script>
 <script src="js/directives/dropdown.js?t=${buildTime}"></script>
+<script src="js/directives/alertValueModal.js?t=${buildTime}"></script>
 <script src="js/services/MainAlertService.js?t=${buildTime}"></script>
 <script src="js/services/CommunicationService.js?t=${buildTime}"></script>
 <script src="js/services/FeedbackMessageService.js?t=${buildTime}"></script>

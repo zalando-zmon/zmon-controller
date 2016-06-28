@@ -199,6 +199,16 @@ div.popover
     padding-left: 5px;
 }
 
+.status-invalid
+{
+    color: #dd3010;
+}
+
+.status-valid
+{
+    color: #78B924;
+}
+
 .panel .left
 {
     float: left;
@@ -628,6 +638,71 @@ a.non-href-anchor
 .comments.modal textarea
 {
     resize: none;
+}
+
+.alert-value-modal-window .modal-dialog
+{
+    width: 60% !important;
+    height: 90% !important;
+}
+
+.alert-value-modal-window .modal-content
+{
+    height: 100%;
+}
+
+.alert-value-modal
+{
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+
+.alert-value-modal .modal-body
+{
+    position: absolute;
+    padding: 20px;
+    top: 70px;
+    bottom: 110px;
+    left: 0;
+    right: 0;
+}
+
+.alert-value-modal .modal-footer
+{
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+
+.alert-value-modal .input-group
+{
+    padding: 0 !important;
+}
+
+.alert-value-modal .input-group-btn.valid-warn
+{
+    padding-left: 10px;
+}
+
+.alert-value-modal .editor-container
+{
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.alert-value-modal #editor
+{
+    position: absolute;
+    top: 20px;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    border: 1px solid #ccc;
 }
 
 .history-tag

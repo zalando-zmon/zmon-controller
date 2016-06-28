@@ -58,10 +58,22 @@ public class ZmonAuthenticationExtractorTest {
         Mockito.when(teamService.getTeams(Mockito.eq("klaus"))).thenReturn(Sets.newHashSet("one", "two"));
         Map<String, Object> tokenInfoResponse = new HashMap<>();
         tokenInfoResponse.put("uid", "klaus");
+        tokenInfoResponse.put("realm", "/employees");
         List<GrantedAuthority> authorities = zmonAuthenticationExtractor.createAuthorityList(tokenInfoResponse);
         assertAuthorityList(authorities);
         ZMonUserAuthority cast = (ZMonUserAuthority) authorities.get(0);
         Assertions.assertThat(cast.getTeams()).contains("one", "two");
+    }
+
+    @Test
+    public void testExtractorUidAndNoTeams() {
+        Mockito.when(teamService.getTeams(Mockito.eq("klaus"))).thenReturn(Sets.newHashSet("one", "two"));
+        Map<String, Object> tokenInfoResponse = new HashMap<>();
+        tokenInfoResponse.put("uid", "klaus");
+        List<GrantedAuthority> authorities = zmonAuthenticationExtractor.createAuthorityList(tokenInfoResponse);
+        assertAuthorityList(authorities);
+        ZMonUserAuthority cast = (ZMonUserAuthority) authorities.get(0);
+        Assertions.assertThat(cast.getTeams()).isEmpty();
     }
 
     protected void assertAuthorityList(List<GrantedAuthority> authorities) {

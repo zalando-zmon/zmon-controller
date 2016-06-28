@@ -1,14 +1,5 @@
 package org.zalando.zmon.controller;
 
-import static java.util.concurrent.TimeUnit.DAYS;
-import static org.zalando.zmon.security.tvtoken.TvTokenService.X_FORWARDED_FOR;
-
-import java.util.UUID;
-
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import com.codahale.metrics.Meter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,10 +13,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.util.WebUtils;
 import org.zalando.zmon.security.tvtoken.TvTokenService;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.UUID;
+
+import static java.util.concurrent.TimeUnit.DAYS;
+import static org.zalando.zmon.security.tvtoken.TvTokenService.X_FORWARDED_FOR;
+
 /**
- * 
  * @author jbellmann
- *
  */
 @Controller
 public class TvTokenController {
@@ -43,9 +40,9 @@ public class TvTokenController {
 
     @RequestMapping("/tv/{token}")
     public String handleToken(@PathVariable String token,
-            @RequestHeader(name = X_FORWARDED_FOR, required = false) String bindIp,
-            HttpServletRequest request,
-            HttpServletResponse response) {
+                              @RequestHeader(name = X_FORWARDED_FOR, required = false) String bindIp,
+                              HttpServletRequest request,
+                              HttpServletResponse response) {
         if (StringUtils.hasText(token) && token.length() > 5) {
             // check-token
             if (bindIp == null) {
@@ -87,6 +84,8 @@ public class TvTokenController {
         cookie.setComment("ZMON_TV enables access for Team monitors.");
         cookie.setMaxAge((int) DAYS.toSeconds(365));
         cookie.setPath("/");
+        cookie.setHttpOnly(true);
+        cookie.setSecure(true);
         response.addCookie(cookie);
     }
 
@@ -101,6 +100,8 @@ public class TvTokenController {
         cookie.setComment("ZMON_TV_ID enables access for Team monitors.");
         cookie.setMaxAge((int) DAYS.toSeconds(365));
         cookie.setPath("/");
+        cookie.setHttpOnly(true);
+        cookie.setSecure(true);
         response.addCookie(cookie);
     }
 }

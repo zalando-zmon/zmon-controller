@@ -39,4 +39,12 @@ public interface ZMonRememberMeServices extends RememberMeServices, Ordered, Log
     @Override
     default void loginFail(HttpServletRequest request, HttpServletResponse response) {
     }
+
+    /**
+     * new callback method to react on successful "autoLogin" call by other RememberMeServices
+     */
+    default void autoLoginSuccess(HttpServletRequest request, HttpServletResponse response,
+            Authentication successfulAuthentication) {
+
+    }
 }

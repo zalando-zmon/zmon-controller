@@ -29,25 +29,26 @@ public class MultiRememberMeServices implements RememberMeServices, LogoutHandle
                 this.delegates.add(s);
             }
         }
-        //
         Collections.sort(this.delegates, new OrderComparator());
         Assert.notEmpty(this.delegates, "'delegates'-list should never be empty");
     }
 
     @Override
     public void logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
-        log.debug("delegate for 'logout' ...");
         delegates.forEach(delegate -> delegate.logout(request, response, authentication));
-        log.debug("'logout' done");
     }
 
     @Override
     public Authentication autoLogin(HttpServletRequest request, HttpServletResponse response) {
-        for (ZMonRememberMeServices s : delegates) {
-            Authentication a = Try.of(() -> s.autoLogin(request, response)).getOrElse((Authentication) null);
-            if (a != null) {
-                log.debug("return autentication : {}", a.toString());
-                return a;
+        for (ZMonRememberMeServices candidate : delegates) {
+            Authentication auth = Try.of(() -> candidate.autoLogin(request, response)).getOrElse((Authentication) null);
+            if (auth != null) {
+                // inform everybody else of the successful auto-login
+                // (but not ourself)
+                delegates.stream()
+                        .filter(delegate -> delegate != candidate)
+                        .forEach(delegate -> delegate.autoLoginSuccess(request, response, auth));
+                return auth;
             }
         }
         return null;
@@ -55,17 +56,13 @@ public class MultiRememberMeServices implements RememberMeServices, LogoutHandle
 
     @Override
     public void loginFail(HttpServletRequest request, HttpServletResponse response) {
-        log.debug("delegate for 'login-Fail' ...");
         delegates.forEach(delegate -> delegate.loginFail(request, response));
-        log.debug("'login-Fail' done");
     }
 
     @Override
     public void loginSuccess(HttpServletRequest request, HttpServletResponse response,
             Authentication successfulAuthentication) {
-        log.debug("delegate for 'login-success' ...");
         delegates.forEach(delegate -> delegate.loginSuccess(request, response, successfulAuthentication));
-        log.debug("'login-success' done");
     }
 
 }
