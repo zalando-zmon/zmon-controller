@@ -20,7 +20,6 @@ import org.zalando.zmon.domain.DefinitionStatus;
 import org.zalando.zmon.domain.DowntimeDetails;
 import org.zalando.zmon.domain.DowntimeEntities;
 import org.zalando.zmon.domain.DowntimeRequest;
-import org.zalando.zmon.event.ZMonEventType;
 import org.zalando.zmon.exception.SerializationException;
 import org.zalando.zmon.persistence.AlertDefinitionSProcService;
 import org.zalando.zmon.redis.RedisPattern;
@@ -52,6 +51,7 @@ public class DowntimeServiceImpl implements DowntimeService {
     private SchedulerProperties schedulerProperties;
 
     private static final String SCHEDULER_DOWNTIMES_PATH = "/api/v1/downtimes";
+    private static final String SCHEDULER_DOWNTIME_GROUPS_PATH = "/api/v1/downtime-groups";
 
     @Autowired
     public DowntimeServiceImpl(final JedisPool redisPool, @RedisWrite JedisPool writeRedisPool,
@@ -210,7 +210,7 @@ public class DowntimeServiceImpl implements DowntimeService {
         Preconditions.checkNotNull(groupId, "groupId");
 
         final Executor executor = Executor.newInstance(schedulerProperties.getHttpClient());
-        final String url = schedulerProperties.getUrl().toString() + SCHEDULER_DOWNTIMES_PATH + "/downtime-groups/" + groupId;
+        final String url = schedulerProperties.getUrl().toString() + SCHEDULER_DOWNTIME_GROUPS_PATH + "/" + groupId;
 
         try {
             executor.execute(Request.Delete(url)).returnContent().asString();
@@ -229,7 +229,7 @@ public class DowntimeServiceImpl implements DowntimeService {
         final Executor executor = Executor.newInstance(schedulerProperties.getHttpClient());
 
         for (String downtimeId : downtimeIds) {
-            String url = schedulerProperties.getUrl().toString() + SCHEDULER_DOWNTIMES_PATH + "/downtimes/" + downtimeId;
+            String url = schedulerProperties.getUrl().toString() + SCHEDULER_DOWNTIMES_PATH + "/" + downtimeId;
 
             try {
                 executor.execute(Request.Delete(url)).returnContent().asString();
