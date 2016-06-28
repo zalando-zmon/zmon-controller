@@ -58,7 +58,7 @@ public class TrialRunServiceImpl implements TrialRunService {
 
         final String url = schedulerProperties.getUrl().toString() + SCHEDULER_TRIAL_RUN_PATH;
 
-        executor.execute(Request.Post(url).useExpectContinue().bodyString(mapper.writeValueAsString(request),
+        executor.execute(Request.Post(url).bodyString(mapper.writeValueAsString(request),
                 ContentType.APPLICATION_JSON)).returnContent().asString();
 
         eventLog.log(ZMonEventType.TRIAL_RUN_SCHEDULED, request.getCheckCommand(), request.getAlertCondition(),

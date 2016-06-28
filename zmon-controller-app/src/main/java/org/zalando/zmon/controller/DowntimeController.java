@@ -45,11 +45,7 @@ public class DowntimeController extends AbstractZMonController {
     }
 
     @RequestMapping(value = "/scheduleDowntime", method = RequestMethod.POST)
-    public ResponseEntity<List<String>> scheduleDowntime(
-            @Valid
-            @RequestBody(required = true)
-            final DowntimeRequest request) throws ZMonException {
-
+    public ResponseEntity<List<String>> scheduleDowntime(@Valid @RequestBody(required = true) final DowntimeRequest request) throws ZMonException {
         authorityService.verifyScheduleDowntimePermission();
         request.setCreatedBy(authorityService.getUserName());
 

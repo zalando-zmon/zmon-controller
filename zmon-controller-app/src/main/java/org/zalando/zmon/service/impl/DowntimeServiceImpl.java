@@ -5,12 +5,16 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import org.apache.http.client.fluent.Executor;
+import org.apache.http.client.fluent.Request;
+import org.apache.http.entity.ContentType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.zalando.zmon.api.DowntimeGroup;
+import org.zalando.zmon.config.SchedulerProperties;
 import org.zalando.zmon.config.annotation.RedisWrite;
 import org.zalando.zmon.domain.DefinitionStatus;
 import org.zalando.zmon.domain.DowntimeDetails;
@@ -22,6 +26,7 @@ import org.zalando.zmon.persistence.AlertDefinitionSProcService;
 import org.zalando.zmon.redis.RedisPattern;
 import org.zalando.zmon.redis.ResponseHolder;
 import org.zalando.zmon.service.DowntimeService;
+import org.zalando.zmon.service.impl.downtimes.DowntimeAPIRequest;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.Pipeline;
@@ -37,13 +42,16 @@ public class DowntimeServiceImpl implements DowntimeService {
 
     private static final Logger LOG = LoggerFactory.getLogger(DowntimeServiceImpl.class);
 
-//    private static final EventLogger EVENT_LOG = EventLogger.getLogger(DowntimeServiceImpl.class);
-
     private final JedisPool redisPool;
     private final JedisPool writeRedisPool;
-    private final ObjectMapper mapper;
     private final AlertDefinitionSProcService alertDefinintionSProc;
     private final NoOpEventLog eventLog;
+    private final ObjectMapper mapper;
+
+    @Autowired
+    private SchedulerProperties schedulerProperties;
+
+    private static final String SCHEDULER_DOWNTIMES_PATH = "/api/v1/downtimes";
 
     @Autowired
     public DowntimeServiceImpl(final JedisPool redisPool, @RedisWrite JedisPool writeRedisPool,
@@ -136,57 +144,20 @@ public class DowntimeServiceImpl implements DowntimeService {
         Preconditions.checkNotNull(request, "request");
         Preconditions.checkNotNull(groupId, "groupId");
 
-        final List<String> downtimeIds = new LinkedList<>();
-        final Collection<DowntimeDetails> newDowntimes = new LinkedList<>();
+        final Executor executor = Executor.newInstance(schedulerProperties.getHttpClient());
+        final String url = schedulerProperties.getUrl().toString() + SCHEDULER_DOWNTIMES_PATH;
 
-        try (Jedis jedis = writeRedisPool.getResource()) {
-
-            // create pipeline
-            final Pipeline p = jedis.pipelined();
-            for (final DowntimeEntities downtimeEntities : request.getDowntimeEntities()) {
-                p.sadd(RedisPattern.downtimeAlertIds(), String.valueOf(downtimeEntities.getAlertDefinitionId()));
-
-                final String entitiesPattern = RedisPattern.downtimeEntities(downtimeEntities.getAlertDefinitionId());
-                for (final String entity : downtimeEntities.getEntityIds()) {
-                    p.sadd(entitiesPattern, entity);
-
-                    // generate id
-                    final String id = UUID.randomUUID().toString();
-
-                    final DowntimeDetails details = new DowntimeDetails();
-                    details.setId(id);
-                    details.setGroupId(groupId);
-                    details.setComment(request.getComment());
-                    details.setStartTime(request.getStartTime());
-                    details.setEndTime(request.getEndTime());
-                    details.setAlertDefinitionId(downtimeEntities.getAlertDefinitionId());
-                    details.setEntity(entity);
-                    details.setCreatedBy(request.getCreatedBy());
-
-                    try {
-                        final String json = mapper.writeValueAsString(details);
-                        p.hset(RedisPattern.downtimeDetails(downtimeEntities.getAlertDefinitionId(), entity), id, json);
-                        p.hset(RedisPattern.downtimeScheduleQueue(), id, json);
-                        p.publish(RedisPattern.downtimeScheduleChannel(), id);
-                        newDowntimes.add(details);
-                    } catch (final IOException e) {
-                        throw new SerializationException("Could not write JSON: " + details, e);
-                    }
-
-                    downtimeIds.add(id);
-                }
-            }
-
-            p.sync();
+        final DowntimeAPIRequest apiRequest = DowntimeAPIRequest.convert(groupId, request);
+        try {
+            final Request httpRequest = Request.Post(url).bodyString(mapper.writeValueAsString(apiRequest),
+                    ContentType.APPLICATION_JSON);
+            executor.execute(httpRequest).returnContent().asString();
+        } catch (Throwable t) {
+            LOG.error("Creating downtime failed", t.getMessage());
+            throw new RuntimeException(t);
         }
 
-        // only log events at the end of the transaction
-        for (final DowntimeDetails details : newDowntimes) {
-            eventLog.log(ZMonEventType.DOWNTIME_SCHEDULED, details.getAlertDefinitionId(), details.getEntity(),
-                    details.getStartTime(), details.getEndTime(), details.getCreatedBy(), details.getComment());
-        }
-
-        return downtimeIds;
+        return apiRequest.getDowntimeIds();
     }
 
     @Override
@@ -238,104 +209,34 @@ public class DowntimeServiceImpl implements DowntimeService {
     public DowntimeGroup deleteDowntimeGroup(final String groupId) {
         Preconditions.checkNotNull(groupId, "groupId");
 
-        final Collection<Response<List<String>>> deleteResults = new LinkedList<>();
-        try (Jedis jedis = writeRedisPool.getResource()) {
-            final List<ResponseHolder<Integer, Set<String>>> asyncAlertEntities = fetchEntities(jedis,
-                    alertsInDowntime(jedis));
+        final Executor executor = Executor.newInstance(schedulerProperties.getHttpClient());
+        final String url = schedulerProperties.getUrl().toString() + SCHEDULER_DOWNTIMES_PATH + "/downtime-groups/" + groupId;
 
-            // this is slow but we are not expecting so many deletes
-            final Pipeline p = jedis.pipelined();
-            for (final ResponseHolder<Integer, Set<String>> response : asyncAlertEntities) {
-                for (final String entity : response.getResponse().get()) {
-                    deleteResults.add(p.hvals(RedisPattern.downtimeDetails(response.getKey(), entity)));
-                }
-            }
-
-            p.sync();
+        try {
+            executor.execute(Request.Delete(url).bodyString("", ContentType.APPLICATION_JSON)).returnContent().asString();
+        } catch (Throwable t) {
+            LOG.error("Deleting downtime group failed: group={}", groupId, t.getMessage());
+            throw new RuntimeException(t);
         }
 
-        final Map<String, DowntimeDetailsFormat> toRemoveJsonDetails = Maps.newHashMapWithExpectedSize(
-                deleteResults.size());
-        for (final Response<List<String>> response : deleteResults) {
-            for (final String jsonDetails : response.get()) {
-                try {
-                    final DowntimeDetails details = mapper.readValue(jsonDetails, DowntimeDetails.class);
-                    if (groupId.equals(details.getGroupId())) {
-                        toRemoveJsonDetails.put(details.getId(), new DowntimeDetailsFormat(details, jsonDetails));
-                    }
-                } catch (final IOException e) {
-                    throw new SerializationException("Could not read JSON: " + jsonDetails, e);
-                }
-            }
-        }
-
-        final List<DowntimeDetails> deletedDowntimes = processDeleteDowntimes(toRemoveJsonDetails);
-        final DowntimeGroup response = new DowntimeGroup();
-        response.setId(groupId);
-        response.setAlertDefinitions(new HashSet<>());
-        response.setEntities(new HashSet<>());
-
-        final Iterator<DowntimeDetails> iterator = deletedDowntimes.iterator();
-        if (iterator.hasNext()) {
-            final DowntimeDetails details = iterator.next();
-            response.setComment(details.getComment());
-            response.setStartTime(details.getStartTime());
-            response.setEndTime(details.getEndTime());
-            response.setCreatedBy(details.getCreatedBy());
-            response.getEntities().add(details.getEntity());
-            response.getAlertDefinitions().add(details.getAlertDefinitionId());
-        }
-
-        while (iterator.hasNext()) {
-            final DowntimeDetails details = iterator.next();
-            response.getEntities().add(details.getEntity());
-            response.getAlertDefinitions().add(details.getAlertDefinitionId());
-        }
-
-        return response;
+        return new DowntimeGroup();
     }
 
     @Override
     public void deleteDowntimes(final Set<String> downtimeIds) {
         Preconditions.checkNotNull(downtimeIds);
 
-        if (!downtimeIds.isEmpty()) {
-            final Collection<Response<String>> deleteResults = new LinkedList<>();
+        final Executor executor = Executor.newInstance(schedulerProperties.getHttpClient());
 
-            try (Jedis jedis = writeRedisPool.getResource()) {
-                final List<ResponseHolder<Integer, Set<String>>> asyncAlertEntities = fetchEntities(jedis,
-                        alertsInDowntime(jedis));
+        for (String downtimeId : downtimeIds) {
+            String url = schedulerProperties.getUrl().toString() + SCHEDULER_DOWNTIMES_PATH + "/downtimes/" + downtimeId;
 
-                // this is slow but we are not expecting so many deletes
-                final Pipeline p = jedis.pipelined();
-                for (final ResponseHolder<Integer, Set<String>> response : asyncAlertEntities) {
-                    for (final String entity : response.getResponse().get()) {
-                        for (final String downtimeId : downtimeIds) {
-                            deleteResults.add(p.hget(RedisPattern.downtimeDetails(response.getKey(), entity),
-                                    downtimeId));
-                        }
-                    }
-                }
-
-                p.sync();
+            try {
+                executor.execute(Request.Delete(url).bodyString("", ContentType.APPLICATION_JSON)).returnContent().asString();
+            } catch (Throwable t) {
+                LOG.error("Deleting downtime failed: id={}", downtimeId, t.getMessage());
+                throw new RuntimeException(t);
             }
-
-            final Map<String, DowntimeDetailsFormat> toRemoveJsonDetails = Maps.newHashMapWithExpectedSize(
-                    deleteResults.size());
-            for (final Response<String> response : deleteResults) {
-                final String jsonDetails = response.get();
-                if (jsonDetails != null) {
-                    try {
-                        final DowntimeDetails details = mapper.readValue(jsonDetails, DowntimeDetails.class);
-                        toRemoveJsonDetails.put(details.getId(), new DowntimeDetailsFormat(details, jsonDetails));
-                    } catch (final IOException e) {
-                        throw new SerializationException("Could not read JSON: " + jsonDetails, e);
-                    }
-                }
-            }
-
-            // check if the downtime was deleted
-            processDeleteDowntimes(toRemoveJsonDetails);
         }
     }
 
@@ -356,67 +257,5 @@ public class DowntimeServiceImpl implements DowntimeService {
 
     private Set<Integer> alertsInDowntime(final Jedis jedis) {
         return jedis.smembers(RedisPattern.downtimeAlertIds()).stream().map(Integer::parseInt).collect(Collectors.toSet());
-    }
-
-    private List<DowntimeDetails> processDeleteDowntimes(final Map<String, DowntimeDetailsFormat> toRemove) {
-
-        // extract downtimes to delete
-        final List<DowntimeDetails> deleted = new LinkedList<>();
-        final List<ResponseHolder<String, Long>> asyncResponses = new LinkedList<>();
-
-        // execute delete
-        if (!toRemove.isEmpty()) {
-            try (Jedis jedis = writeRedisPool.getResource()) {
-                Pipeline p = jedis.pipelined();
-                for (final DowntimeDetailsFormat details : toRemove.values()) {
-                    asyncResponses.add(ResponseHolder.create(details.getDowntimeDetails().getId(),
-                            p.hdel(
-                                    RedisPattern.downtimeDetails(details.getDowntimeDetails().getAlertDefinitionId(),
-                                            details.getDowntimeDetails().getEntity()), details.getDowntimeDetails().getId())));
-                }
-
-                p.sync();
-
-                // check which entries were deleted and publish an event
-                p = jedis.pipelined();
-                for (final ResponseHolder<String, Long> response : asyncResponses) {
-                    if (response.getResponse().get() > 0) {
-                        final DowntimeDetailsFormat value = toRemove.get(response.getKey());
-                        p.hset(RedisPattern.downtimeRemoveQueue(), response.getKey(), value.getJson());
-                        p.publish(RedisPattern.downtimeRemoveChannel(), response.getKey());
-                        deleted.add(value.getDowntimeDetails());
-                    }
-                }
-
-                p.sync();
-            }
-
-            // and finnally publish an event after returning the connection
-            for (final DowntimeDetails details : deleted) {
-                eventLog.log(ZMonEventType.DOWNTIME_REMOVED, details.getAlertDefinitionId(), details.getEntity(),
-                        details.getStartTime(), details.getEndTime(), details.getCreatedBy(), details.getComment());
-            }
-
-        }
-
-        return deleted;
-    }
-
-    private static final class DowntimeDetailsFormat {
-        private final DowntimeDetails downtimeDetails;
-        private final String json;
-
-        private DowntimeDetailsFormat(final DowntimeDetails downtimeDetails, final String json) {
-            this.downtimeDetails = downtimeDetails;
-            this.json = json;
-        }
-
-        public DowntimeDetails getDowntimeDetails() {
-            return downtimeDetails;
-        }
-
-        public String getJson() {
-            return json;
-        }
     }
 }
