@@ -290,7 +290,7 @@
     ],
     "style": "dark",
     "title": "Check {checkId} ({checkName})",
-    "refresh": false,
+    "refresh": "1m",
     "version": 0,
     "editable": true,
     "timezone": "browser",
