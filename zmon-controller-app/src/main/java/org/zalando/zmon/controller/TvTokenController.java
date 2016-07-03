@@ -4,6 +4,8 @@ import com.codahale.metrics.Meter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.Base64Utils;
 import org.springframework.util.StringUtils;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.util.WebUtils;
 import org.zalando.zmon.security.tvtoken.TvTokenService;
+import org.zalando.zmon.service.OneTimeTokenService;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -30,12 +33,39 @@ public class TvTokenController {
     private final Logger log = LoggerFactory.getLogger(TvTokenController.class);
 
     private final TvTokenService tvTokenService;
+    private final OneTimeTokenService oneTimeTokenService;
 
     private final Meter rateLimit = new Meter();
 
     @Autowired
-    public TvTokenController(TvTokenService tvTokenService) {
+    public TvTokenController(TvTokenService tvTokenService, OneTimeTokenService oneTimeTokenService) {
         this.tvTokenService = tvTokenService;
+        this.oneTimeTokenService = oneTimeTokenService;
+    }
+
+    @RequestMapping("/tv/by-email/{mail:[a-z][a-z\\.]+}")
+    public ResponseEntity<String> getByEMail(@PathVariable String mail,
+                                             @RequestHeader(name = X_FORWARDED_FOR, required = false) String bindIp,
+                                             HttpServletRequest request) {
+        if(mail == null || "".equals(mail) || mail.contains("@") || mail.contains("%40")) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        if (bindIp == null) {
+            bindIp = remoteIp(request);
+        }
+
+        try {
+            boolean sent = oneTimeTokenService.sendByEmail(mail, bindIp);
+            if (sent) {
+                return new ResponseEntity<>("SENT_SUCCESSFULL", HttpStatus.OK);
+            }
+        }
+        catch(Throwable t) {
+            log.error("Error during mail send: email={} ip={}", mail, bindIp);
+        }
+
+        return new ResponseEntity<>("SENT_FAILED", HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @RequestMapping("/tv/{token}")

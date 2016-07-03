@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.web.util.WebUtils;
+import org.zalando.zmon.domain.OnetimeTokenInfo;
 import org.zalando.zmon.persistence.OnetimeTokensSProcService;
 
 public class TvTokenService {
@@ -32,7 +33,7 @@ public class TvTokenService {
 
     // TODO use sproc
     public boolean isValidToken(String token, String bindIp, String sessionId) {
-        List<Integer> result = oneTimeTokenSProcService.bindOnetimeToken(token, bindIp, sessionId);
+        List<OnetimeTokenInfo> result = oneTimeTokenSProcService.bindOnetimeToken(token, bindIp, sessionId);
         return result.size() > 0 ? true : false;
     }
 
