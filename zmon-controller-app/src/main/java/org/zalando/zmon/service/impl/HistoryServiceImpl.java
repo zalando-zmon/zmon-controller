@@ -69,8 +69,19 @@ public class HistoryServiceImpl implements HistoryService {
             List<Event> eventsByAlertId = EMPTY_LIST;
             List<Event> eventsByCheckId = EMPTY_LIST;
 
+            String baseQuery = "?";
+            if (limit != null) {
+                baseQuery += "&limit=" + realLimit;
+            }
+            if (fromMillis != null) {
+                baseQuery += "&from=" + fromMillis;
+            }
+            if (toMillis != null) {
+                baseQuery += "&to=" + toMillis;
+            }
+
             try {
-                String query = "?types=212993,212994,212995,212996,212997,212998,213252,213253&key=alertId&value=" + alertDefinitionId;
+                String query = baseQuery + "&types=212993,212994,212995,212996,212997,212998,213252,213253&key=alertId&value=" + alertDefinitionId;
                 final String r = executor.execute(Request.Get(eventLogService + query)).returnContent().asString();
                 eventsByAlertId = mapper.readValue(r, new TypeReference<List<Event>>() {
                 });
@@ -79,7 +90,7 @@ public class HistoryServiceImpl implements HistoryService {
             }
 
             try {
-                String query = "?types=213254,213255,213256,213257&key=checkId&value=" + definitions.get(0).getCheckDefinitionId();
+                String query = baseQuery + "&types=213254,213255,213256,213257&key=checkId&value=" + definitions.get(0).getCheckDefinitionId();
                 final String r = executor.execute(Request.Get(eventLogService + query)).returnContent().asString();
                 eventsByCheckId = mapper.readValue(r, new TypeReference<List<Event>>() {
                 });
