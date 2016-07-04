@@ -161,10 +161,11 @@ angular.module('zmon2App').directive('zmonSelect', [ 'CommunicationService', '$t
             // --------------------------------------------------------------------------
             // ->
             element.on('select2-close', function () {
-                scope.close({
-                    selected: null
-                });
-
+                if (scope.close) {
+                    scope.close({
+                        selected: null
+                    });
+                }
             });
         }
     };
