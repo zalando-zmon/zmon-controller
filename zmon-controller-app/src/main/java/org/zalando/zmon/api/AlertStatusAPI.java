@@ -58,7 +58,7 @@ public class AlertStatusAPI {
 
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    @RequestMapping(value = "/alert/{ids}/")
+    @RequestMapping(value = {"/alert/{ids}/", "/alert/{ids}"})
     public JsonNode getAlertStatus(@PathVariable("ids") final List<String> ids) throws IOException {
 
         Map<String, List<ResponseHolder<String, String>>> results = new HashMap<>();

@@ -38,7 +38,7 @@ public class EntityApi {
 
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    @RequestMapping(value = "/", method = RequestMethod.PUT)
+    @RequestMapping(value = {"/", ""}, method = RequestMethod.PUT)
     public void addEntity(@RequestBody JsonNode entity) {
         /*
         if(entity.has("team") && !authService.getTeams().contains(entity.get("team").textValue())) {
@@ -57,7 +57,7 @@ public class EntityApi {
 
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    @RequestMapping(value = "/", method = RequestMethod.GET)
+    @RequestMapping(value = {"/", ""}, method = RequestMethod.GET)
     public void getEntities(@RequestParam(value = "query", defaultValue = "[{}]") String data, final Writer writer,
                             final HttpServletResponse response) {
         if (data.startsWith("{")) {
