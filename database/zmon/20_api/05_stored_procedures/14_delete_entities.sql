@@ -2,6 +2,6 @@ CREATE OR REPLACE FUNCTION delete_entity(id text, teams text[]) RETURNS SETOF te
 $$
  DELETE FROM zzm_data.entity
   WHERE (((e_data -> 'id'::text)::text)) = '"'||id||'"'
-    AND replace((((e_data -> 'team'::text)::text)),'"','') = any(teams)
+    AND (((e_data->'team'::text)::text is null) or replace((((e_data -> 'team'::text)::text)),'"','') = any(teams))
   RETURNING (((e_data -> 'id'::text)::text));
 $$ LANGUAGE 'sql' VOLATILE SECURITY DEFINER;
