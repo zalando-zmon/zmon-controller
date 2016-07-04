@@ -58,8 +58,11 @@ public class EntityApi {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     @RequestMapping(value = "/", method = RequestMethod.GET)
-    public void getEntities(@RequestParam(value = "query", defaultValue = "{}") String data, final Writer writer,
+    public void getEntities(@RequestParam(value = "query", defaultValue = "[{}]") String data, final Writer writer,
                             final HttpServletResponse response) {
+        if (data.startsWith("{")) {
+            data = "[" + data + "]";
+        }
         List<String> entities = entitySprocs.getEntities(data);
 
         response.setContentType("application/json");
