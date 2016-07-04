@@ -227,6 +227,7 @@ public class DowntimeServiceImpl implements DowntimeService {
         Preconditions.checkNotNull(downtimeIds);
 
         final Executor executor = Executor.newInstance(schedulerProperties.getHttpClient());
+        List<String> errorIds = new ArrayList<>();
 
         for (String downtimeId : downtimeIds) {
             String url = schedulerProperties.getUrl().toString() + SCHEDULER_DOWNTIMES_PATH + "/" + downtimeId;
@@ -235,8 +236,12 @@ public class DowntimeServiceImpl implements DowntimeService {
                 executor.execute(Request.Delete(url)).returnContent().asString();
             } catch (Throwable t) {
                 LOG.error("Deleting downtime failed: id={}", downtimeId, t.getMessage());
-                throw new RuntimeException(t);
+                errorIds.add(downtimeId);
             }
+        }
+
+        if (!errorIds.isEmpty()) {
+            throw new RuntimeException("Delete failed for " + errorIds.size() + " downtimes");
         }
     }
 
