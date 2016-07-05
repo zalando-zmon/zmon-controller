@@ -3,7 +3,6 @@ package org.zalando.zmon.api;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -23,6 +22,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
+import static java.util.function.Function.identity;
 
 /**
  * Created by jmussler on 11/17/14.
@@ -61,17 +64,17 @@ public class AlertStatusAPI {
     @ResponseBody
     @RequestMapping(value = {"/alert/{ids}/", "/alert/{ids}"})
     public JsonNode getAlertStatus(@PathVariable("ids") final List<String> ids) throws IOException {
-        Map<String, List<ResponseHolder<String, String>>> results = Maps.newHashMapWithExpectedSize(ids.size());
-        for (String id : ids) {
-            results.put(id, new ArrayList<>());
-        }
+        Map<String, List<ResponseHolder<String, String>>> results = ids.stream()
+                .collect(Collectors.toMap(identity(), id -> new ArrayList<>()));
 
         try (Jedis jedis = jedisPool.getResource()) {
-            List<ResponseHolder<String, Set<String>>> responses = Lists.newArrayListWithExpectedSize(ids.size());
+            List<ResponseHolder<String, Set<String>>> responses;
+
+            //= Lists.newArrayListWithExpectedSize(ids.size());
             try (Pipeline p = jedis.pipelined()) {
-                for (String id : ids) {
-                    responses.add(ResponseHolder.create(id, p.smembers("zmon:alerts:" + id)));
-                }
+                responses = ids.stream()
+                        .map(id -> ResponseHolder.create(id, p.smembers("zmon:alerts:" + id)))
+                        .collect(Collectors.toList());
             }
 
             try (Pipeline p = jedis.pipelined()) {
