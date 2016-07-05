@@ -5,8 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,8 +34,6 @@ public class AlertStatusAPI {
     private ZMonService service;
     private final JedisPool jedisPool;
     protected ObjectMapper mapper;
-
-    private static final Logger LOG = LoggerFactory.getLogger(AlertStatusAPI.class);
 
     @Autowired
     public AlertStatusAPI(final ZMonService service, final JedisPool p, final ObjectMapper m) {
