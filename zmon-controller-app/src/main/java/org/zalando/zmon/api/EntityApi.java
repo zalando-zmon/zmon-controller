@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.zalando.zmon.persistence.EntitySProcService;
@@ -51,11 +52,14 @@ public class EntityApi {
         throw exception;
     }
 
-
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     @RequestMapping(value = {"/", ""}, method = {RequestMethod.PUT, RequestMethod.POST})
     public void addEntity(@RequestBody JsonNode entity) {
+        if(entity.has("team") && !authService.getTeams().contains(entity.get("team").textValue())) {
+            throw new AccessDeniedException("Your team does not match entity team");
+        }
+
         try {
             String data = mapper.writeValueAsString(entity);
             entitySprocs.createOrUpdateEntity(data, "", authService.getUserName());
@@ -96,8 +100,7 @@ public class EntityApi {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     @RequestMapping(value = "/{id}/")
-    public void getEntity(@PathVariable(value = "id") String id, final Writer writer,
-                          final HttpServletResponse response) {
+    public void getEntity(@PathVariable(value = "id") String id, final Writer writer) {
         List<String> entities = entitySprocs.getEntityById(id);
         try {
             for (String s : entities) {
