@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.zalando.zmon.persistence.EntitySProcService;
@@ -39,20 +40,25 @@ public class EntityApi {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     @RequestMapping(value = {"/", ""}, method = RequestMethod.PUT)
-    public void addEntity(@RequestBody JsonNode entity) {
-        /*
-        if(entity.has("team") && !authService.getTeams().contains(entity.get("team").textValue())) {
-            throw new ZMonRuntimeException("Entity Team does not match any of your Teams! " + authService.getTeams());
+    public ResponseEntity<String> addEntity(@RequestBody JsonNode entity) {
+        if (!entity.has("id")) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        */
+
+        final String id = entity.get("id").textValue();
+        if(!id.equals(id.toLowerCase())) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
 
         try {
             String data = mapper.writeValueAsString(entity);
             entitySprocs.createOrUpdateEntity(data, "", authService.getUserName());
+            return new ResponseEntity<>(id, HttpStatus.OK);
         }
         catch(IOException ex) {
             log.error("Entity not serializable", ex);
         }
+        return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ResponseStatus(HttpStatus.OK)
