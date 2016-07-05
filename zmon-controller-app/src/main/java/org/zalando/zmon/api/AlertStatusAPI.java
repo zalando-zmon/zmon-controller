@@ -70,7 +70,6 @@ public class AlertStatusAPI {
         try (Jedis jedis = jedisPool.getResource()) {
             List<ResponseHolder<String, Set<String>>> responses;
 
-            //= Lists.newArrayListWithExpectedSize(ids.size());
             try (Pipeline p = jedis.pipelined()) {
                 responses = ids.stream()
                         .map(id -> ResponseHolder.create(id, p.smembers("zmon:alerts:" + id)))
