@@ -77,61 +77,35 @@
                 "version": "3.1.0"
             },
             "datasources": {
-                "-- Grafana --": {
+                "alertstate": {
+                    "jsonData": {},
                     "meta": {
                         "type": "datasource",
-                        "name": "Grafana",
-                        "id": "grafana",
+                        "name": "AlertState",
+                        "id": "grafana-alertstate-datasource",
                         "info": {
-                            "author": {"name": "", "url": ""},
-                            "description": "",
-                            "links": null,
+                            "author": {"name": "Zalando SE", "url": "https://tech.zalando.com"},
+                            "description": "datasource plugin for ZMON Alert State",
+                            "links": [
+                            ],
                             "logos": {
-                                "small": "public/img/icn-datasource.svg",
-                                "large": "public/img/icn-datasource.svg"
                             },
                             "screenshots": null,
-                            "version": "",
-                            "updated": ""
+                            "version": "1.0",
+                            "updated": "2016-02-05"
                         },
-                        "dependencies": {"grafanaVersion": "*", "plugins": []},
+                        "dependencies": {"grafanaVersion": "3.x.x", "plugins": []},
                         "includes": null,
-                        "module": "app/plugins/datasource/grafana/module",
-                        "baseUrl": "public/app/plugins/datasource/grafana",
+                        "module": "plugins/grafana-alertstate-datasource/module",
+                        "baseUrl": "public/plugins/grafana-alertstate-datasource",
                         "annotations": false,
                         "metrics": true,
-                        "builtIn": true,
+                        "builtIn": false,
                         "mixed": false,
                         "app": ""
-                    }, "type": "grafana"
-                },
-                "-- Mixed --": {
-                    "meta": {
-                        "type": "datasource",
-                        "name": "Mixed datasource",
-                        "id": "mixed",
-                        "info": {
-                            "author": {"name": "", "url": ""},
-                            "description": "",
-                            "links": null,
-                            "logos": {
-                                "small": "public/img/icn-datasource.svg",
-                                "large": "public/img/icn-datasource.svg"
-                            },
-                            "screenshots": null,
-                            "version": "",
-                            "updated": ""
-                        },
-                        "dependencies": {"grafanaVersion": "*", "plugins": []},
-                        "includes": null,
-                        "module": "app/plugins/datasource/mixed/module",
-                        "baseUrl": "public/app/plugins/datasource/mixed",
-                        "annotations": false,
-                        "metrics": true,
-                        "builtIn": true,
-                        "mixed": true,
-                        "app": ""
-                    }, "type": "mixed"
+                    },
+                    "name": "AlertState",
+                    "type": "grafana-alertstate-datasource"
                 }
             },
             "defaultDatasource": "kairosdb",
