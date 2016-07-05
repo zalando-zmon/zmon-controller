@@ -3,9 +3,11 @@ package org.zalando.zmon.api;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import org.postgresql.util.PSQLException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -28,37 +30,39 @@ public class EntityApi {
 
     private final Logger log = LoggerFactory.getLogger(EntityApi.class);
 
-    @Autowired
     EntitySProcService entitySprocs;
 
-    @Autowired
     ObjectMapper mapper;
 
-    @Autowired
     DefaultZMonPermissionService authService;
+
+    @Autowired
+    public EntityApi(EntitySProcService entitySprocs, ObjectMapper mapper, DefaultZMonPermissionService authService) {
+        this.entitySprocs = entitySprocs;
+        this.mapper = mapper;
+        this.authService = authService;
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<String> handleCheckConstraintViolation(DataIntegrityViolationException exception) {
+        if (exception.getCause() instanceof PSQLException && exception.getMessage().contains("violates check constraint")) {
+            return new ResponseEntity<>("Check constraint violated", HttpStatus.BAD_REQUEST);
+        }
+        throw exception;
+    }
+
 
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    @RequestMapping(value = {"/", ""}, method = RequestMethod.PUT)
-    public ResponseEntity<String> addEntity(@RequestBody JsonNode entity) {
-        if (!entity.has("id")) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-
-        final String id = entity.get("id").textValue();
-        if(!id.equals(id.toLowerCase())) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-
+    @RequestMapping(value = {"/", ""}, method = {RequestMethod.PUT, RequestMethod.POST})
+    public void addEntity(@RequestBody JsonNode entity) {
         try {
             String data = mapper.writeValueAsString(entity);
             entitySprocs.createOrUpdateEntity(data, "", authService.getUserName());
-            return new ResponseEntity<>(id, HttpStatus.OK);
         }
         catch(IOException ex) {
             log.error("Entity not serializable", ex);
         }
-        return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ResponseStatus(HttpStatus.OK)
