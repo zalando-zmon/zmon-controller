@@ -3,6 +3,8 @@ package org.zalando.zmon.api;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +21,10 @@ import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.Pipeline;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by jmussler on 11/17/14.
@@ -60,30 +65,25 @@ public class AlertStatusAPI {
     @ResponseBody
     @RequestMapping(value = {"/alert/{ids}/", "/alert/{ids}"})
     public JsonNode getAlertStatus(@PathVariable("ids") final List<String> ids) throws IOException {
-
-        Map<String, List<ResponseHolder<String, String>>> results = new HashMap<>();
+        Map<String, List<ResponseHolder<String, String>>> results = Maps.newHashMapWithExpectedSize(ids.size());
         for (String id : ids) {
             results.put(id, new ArrayList<>());
         }
 
         try (Jedis jedis = jedisPool.getResource()) {
-            List<ResponseHolder<String, Set<String>>> responses = new ArrayList<>();
-            {
-                Pipeline p = jedis.pipelined();
+            List<ResponseHolder<String, Set<String>>> responses = Lists.newArrayListWithExpectedSize(ids.size());
+            try (Pipeline p = jedis.pipelined()) {
                 for (String id : ids) {
                     responses.add(ResponseHolder.create(id, p.smembers("zmon:alerts:" + id)));
                 }
-                p.sync();
             }
 
-            {
-                Pipeline p = jedis.pipelined();
+            try (Pipeline p = jedis.pipelined()) {
                 for (ResponseHolder<String, Set<String>> r : responses) {
-                    for (String m : r.getResponse().get()) {
-                        results.get(r.getKey()).add(ResponseHolder.create(m, p.get("zmon:alerts:" + r.getKey() + ":" + m)));
+                    for (String entityId : r.getResponse().get()) {
+                        results.get(r.getKey()).add(ResponseHolder.create(entityId, p.get("zmon:alerts:" + r.getKey() + ":" + entityId)));
                     }
                 }
-                p.sync();
             }
         }
 
@@ -91,11 +91,15 @@ public class AlertStatusAPI {
 
         for (String id : ids) {
             List<ResponseHolder<String, String>> lr = results.get(id);
-            ObjectNode entities = mapper.createObjectNode();
-            for (ResponseHolder<String, String> rh : lr) {
-                entities.set(rh.getKey(), mapper.readTree(rh.getResponse().get()));
-            }
             if (lr.size() > 0) {
+                ObjectNode entities = mapper.createObjectNode();
+                for (ResponseHolder<String, String> rh : lr) {
+                    String alertDetails = rh.getResponse().get();
+                    // alert details might not be set due to race condition
+                    if (alertDetails != null) {
+                        entities.set(rh.getKey(), mapper.readTree(alertDetails));
+                    }
+                }
                 resultNode.set(id, entities);
             }
         }
