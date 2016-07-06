@@ -45,7 +45,6 @@ function (angular, _, sdk, dateMath, kbn) {
     }));
     plotParams = plotParams[0];
 
-    var handleAlertStateQueryResponseAlias = _.partial(handleAlertStateQueryResponse, plotParams, start, end);
 
     // No valid targets, return the empty result to save a round trip.
     if (_.isEmpty(queries)) {
@@ -54,18 +53,47 @@ function (angular, _, sdk, dateMath, kbn) {
       return d.promise;
     }
 
-    return this.performTimeSeriesQuery(queries, start, end)
-      .then(handleAlertStateQueryResponseAlias, handleQueryError);
+    var initial = {
+      method: 'GET',
+      // NOTE: this might return a potential big check result to the UI :-(
+      url: '/rest/checkAlertResults?alert_id=' + queries[0].alertId + '&limit=1'
+    };
+    var currentAlertState = {};
+    var that = this;
+    return this.backendSrv.datasourceRequest(initial).then(function(results) {
+        // initial query finds all matching entities
+        _.each(results.data, function(cr) {
+            if (_.contains(cr.active_alert_ids, queries[0].alertId)) {
+                currentAlertState[cr.entity] = false;
+            }
+        });
+        var second = {
+            method: 'GET',
+            url: '/rest/alertDetails?alert_id=' + queries[0].alertId
+        };
+        return that.backendSrv.datasourceRequest(second);
+    }).then(function(results) {
+        // second query finds all entities in alert state
+        _.each(results.data.entities, function(entity) {
+            currentAlertState[entity.entity] = true;
+        });
+
+        var handleAlertStateQueryResponseAlias = _.partial(handleAlertStateQueryResponse, plotParams, start, end, currentAlertState);
+
+        return that.performTimeSeriesQuery(queries, start, end)
+            .then(handleAlertStateQueryResponseAlias, handleQueryError);
+    });
   };
 
   AlertStateDatasource.prototype.performTimeSeriesQuery = function(queries, start, end) {
     var options = {
-      method: 'GET',
-      url: '/rest/alertHistory?alert_definition_id=' + queries[0].alertId + '&from=' + start.unix() + '&to=' + end.unix(),
+        method: 'GET',
+        url: '/rest/alertHistory?alert_definition_id=' + queries[0].alertId + '&from=' + start.unix() + '&to=' + end.unix(),
     };
 
     return this.backendSrv.datasourceRequest(options);
   };
+
 
   /////////////////////////////////////////////////////////////////////////
   /// Formatting methods
@@ -83,7 +111,7 @@ function (angular, _, sdk, dateMath, kbn) {
     }
   }
 
-  function handleAlertStateQueryResponse(plotParams, start, end, results) {
+  function handleAlertStateQueryResponse(plotParams, start, end, currentAlertState, results) {
     var output = [];
     var series = {};
     var upValue = plotParams.upValue || 1;
@@ -110,12 +138,20 @@ function (angular, _, sdk, dateMath, kbn) {
       }
     });
 
+    // add datapoints for all entities where no events were returned
+    _.each(currentAlertState, function(val, entityId) {
+      if (!series[entityId] && (!plotParams.entities || _.contains(plotParams.entities, entityId))) {
+          series[entityId] = [[val ? upValue : downValue, end.unix() * 1000]];
+      }
+    });
+
     _.each(series, function(datapoints, entityId) {
       datapoints.unshift([datapoints[0][0], start.unix() * 1000]);
       datapoints.push([_.last(datapoints)[0], end.unix() * 1000]);
       var label = plotParams.alias + ' ( entity=' + entityId + ' )';
       output.push({ target: label, datapoints: datapoints});
     });
+
 
     return { data: _.flatten(output) };
   }
@@ -126,8 +162,11 @@ function (angular, _, sdk, dateMath, kbn) {
     }
 
     var query = {
-      alertId: target.alert
+      alertId: parseInt(target.alert)
     };
+    if (!query.alertId) {
+        return null;
+    }
 
     return query;
   }
