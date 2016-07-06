@@ -44,7 +44,7 @@ public class TvTokenController {
     }
 
     @RequestMapping("/tv/by-email/{mail:[a-z][a-z\\.]+}")
-    public ResponseEntity<String> getByEMail(@PathVariable String mail,
+    public ResponseEntity<String> getByEMail(@PathVariable(value="mail") String mail,
                                              @RequestHeader(name = X_FORWARDED_FOR, required = false) String bindIp,
                                              HttpServletRequest request) {
         if(mail == null || "".equals(mail) || mail.contains("@") || mail.contains("%40")) {
@@ -58,14 +58,14 @@ public class TvTokenController {
         try {
             boolean sent = oneTimeTokenService.sendByEmail(mail, bindIp);
             if (sent) {
-                return new ResponseEntity<>("SENT_SUCCESSFULL", HttpStatus.OK);
+                return new ResponseEntity<>("SENT_SUCCESSFULLY", HttpStatus.OK);
             }
         }
         catch(Throwable t) {
             log.error("Error during mail send: email={} ip={}", mail, bindIp);
         }
 
-        return new ResponseEntity<>("SENT_FAILED", HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>("SEND_FAILED", HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @RequestMapping("/tv/{token}")
