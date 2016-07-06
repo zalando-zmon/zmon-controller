@@ -106,6 +106,35 @@
                     },
                     "name": "AlertState",
                     "type": "grafana-alertstate-datasource"
+                },
+                "-- Mixed --": {
+                    "meta": {
+                        "type": "datasource",
+                        "name": "Mixed datasource",
+                        "id": "mixed",
+                        "info": {
+                            "author": {"name": "", "url": ""},
+                            "description": "",
+                            "links": null,
+                            "logos": {
+                                    "small": "public/img/icn-datasource.svg",
+                                    "large": "public/img/icn-datasource.svg"
+                                    },
+                            "screenshots": null,
+                            "version": "",
+                            "updated": ""
+                        },
+                        "dependencies": {"grafanaVersion": "*", "plugins": []},
+                        "includes": null,
+                        "module": "app/plugins/datasource/mixed/module",
+                        "baseUrl": "public/app/plugins/datasource/mixed",
+                        "annotations": false,
+                        "metrics": true,
+                        "builtIn": true,
+                        "mixed": true,
+                        "app": ""
+                    },
+                    "type": "mixed"
                 }
             },
             "defaultDatasource": "kairosdb",

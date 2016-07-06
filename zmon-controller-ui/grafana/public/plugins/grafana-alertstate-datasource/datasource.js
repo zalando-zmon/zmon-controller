@@ -36,12 +36,13 @@ function (angular, _, sdk, dateMath, kbn) {
       }
 
       if (!target.hide) {
-        return { alias: alias };
+        return { alias: alias, upValue: target.upValue, downValue: target.downValue };
       }
       else {
         return null;
       }
     }));
+    plotParams = plotParams[0];
 
     var handleAlertStateQueryResponseAlias = _.partial(handleAlertStateQueryResponse, plotParams, start, end);
 
@@ -84,6 +85,8 @@ function (angular, _, sdk, dateMath, kbn) {
   function handleAlertStateQueryResponse(plotParams, start, end, results) {
     var output = [];
     var series = {};
+    var upValue = plotParams.upValue || 1;
+    var downValue = plotParams.downValue || 0;
     var data = _.sortBy(results.data, function(event) { return event.time; });
     _.each(data, function(event, i) {
       if (event.type_name == 'ALERT_ENTITY_STARTED' || event.type_name == 'ALERT_ENTITY_ENDED') {
@@ -94,18 +97,20 @@ function (angular, _, sdk, dateMath, kbn) {
         }
 
         if (event.type_name == 'ALERT_ENTITY_STARTED') {
-            series[entityId].push([0, event.time * 1000]);
-            series[entityId].push([1, (event.time * 1000) + 1]);
+            series[entityId].push([downValue, event.time * 1000]);
+            series[entityId].push([upValue, (event.time * 1000) + 1]);
         } else {
-            series[entityId].push([1, event.time * 1000]);
-            series[entityId].push([0, (event.time * 1000) + 1]);
+            series[entityId].push([upValue, event.time * 1000]);
+            series[entityId].push([downValue, (event.time * 1000) + 1]);
         }
       }
     });
+
     _.each(series, function(datapoints, entityId) {
       datapoints.unshift([datapoints[0][0], start.unix() * 1000]);
       datapoints.push([_.last(datapoints)[0], end.unix() * 1000]);
-      output.push({ target: entityId, datapoints: datapoints});
+      var label = plotParams.alias + ' ( entity=' + entityId + ' )';
+      output.push({ target: label, datapoints: datapoints});
     });
 
     return { data: _.flatten(output) };
