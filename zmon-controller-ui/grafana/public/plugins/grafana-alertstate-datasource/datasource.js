@@ -36,7 +36,8 @@ function (angular, _, sdk, dateMath, kbn) {
       }
 
       if (!target.hide) {
-        return { alias: alias, upValue: target.upValue, downValue: target.downValue };
+        return { alias: alias, upValue: target.upValue, downValue: target.downValue,
+        entities: target.entities};
       }
       else {
         return null;
@@ -92,6 +93,8 @@ function (angular, _, sdk, dateMath, kbn) {
       if (event.type_name == 'ALERT_ENTITY_STARTED' || event.type_name == 'ALERT_ENTITY_ENDED') {
         var entityId = event.attributes.entity;
 
+        if (!plotParams.entities || _.contains(plotParams.entities, entityId)) {
+
         if (typeof series[entityId] === 'undefined') {
             series[entityId] = [];
         }
@@ -102,6 +105,7 @@ function (angular, _, sdk, dateMath, kbn) {
         } else {
             series[entityId].push([upValue, event.time * 1000]);
             series[entityId].push([downValue, (event.time * 1000) + 1]);
+        }
         }
       }
     });

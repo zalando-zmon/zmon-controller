@@ -30,6 +30,43 @@ function (angular, _, sdk) {
       }
     };
 
+    // Filter metric by entity
+    AlertStateQueryCtrl.prototype.addEntity = function() {
+      if (!this.panel.addEntityMode) {
+        this.panel.addEntityMode = true;
+        this.validateEntity();
+        return;
+      }
+
+      if (!this.target.entities) {
+        this.target.entities = [];
+      }
+
+      this.validateEntity();
+      if (!this.target.errors.entities) {
+        this.target.entities.push(this.target.currentEntity);
+        this.target.currentEntity = '';
+        this.targetBlur();
+      }
+
+      this.panel.addEntityMode = false;
+    };
+
+    AlertStateQueryCtrl.prototype.removeEntity = function(key) {
+      this.target.entities = _.without(this.target.entities, key);
+      if (_.size(this.target.entities) === 0) {
+        this.target.entities = null;
+      }
+      this.targetBlur();
+    };
+
+    AlertStateQueryCtrl.prototype.validateEntity = function() {
+      this.target.errors.entities = null;
+      if (!this.target.currentEntity) {
+        this.target.errors.entities = "You must specify a entity ID.";
+      }
+    };
+
     // Validation
     function validateTarget(target) {
       var errs = {};

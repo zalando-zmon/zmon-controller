@@ -1,7 +1,7 @@
 <query-editor-row query-ctrl="ctrl" can-collapse="false">
   <div class="tight-form">
     <ul class="tight-form-list">
-      <li class="tight-form-item">Alert ID</li>
+      <li class="tight-form-item">Alert</li>
       <li>
         <input type="text" class="input-small tight-form-input"
         ng-model="ctrl.target.alert"
@@ -24,13 +24,56 @@
 	<div class="clearfix"></div>
   </div>
 
+  <!-- entities -->
+  <div class="tight-form">
+    <ul class="tight-form-list" role="menu">
+      <li class="tight-form-item">
+        Entities
+      </li>
+      <li ng-repeat="entity in ctrl.target.entities track by $index" class="tight-form-item">
+        {{entity}}
+        <a ng-click="ctrl.removeEntity(entity)">
+          <i class="fa fa-remove"></i>
+        </a>
+      </li>
+
+      <li class="tight-form-item" ng-hide="ctrl.panel.addEntityMode">
+        <a ng-click="ctrl.addEntity()">
+          <i class="fa fa-plus"></i>
+        </a>
+      </li>
+
+      <li ng-show="ctrl.panel.addEntityMode">
+        <input type="text"
+        class="input-medium tight-form-input"
+        spellcheck='false'
+        data-min-length=0 data-items=100
+        ng-model="ctrl.target.currentEntity"
+        ng-change="ctrl.validateEntity()"
+        placeholder="entity ID">
+        <a bs-tooltip="target.errors.entities"
+          style="color: rgb(229, 189, 28)"
+          ng-show="ctrl.target.errors.entities">
+          <i class="fa fa-warning"></i>
+        </a>
+        <li class="tight-form-item" ng-show="ctrl.panel.addEntityMode">
+          <a ng-click="ctrl.addEntity()">
+            <i class="fa fa-plus-circle"></i>
+          </a>
+        </li>
+      </li>
+    </ul>
+	<div class="clearfix"></div>
+  </div>
+
+
   <div class="tight-form">
     <ul class="tight-form-list">
       <li class="tight-form-item">Up Value</li>
       <li>
         <input type="number" class="input-small tight-form-input"
         ng-model="ctrl.target.upValue"
-        placeholder="up value"
+        placeholder="1"
         ng-blur="ctrl.targetBlur()">
         <a bs-tooltip="ctrl.target.errors.upValue"
           style="color: rgb(229, 189, 28)"
@@ -42,7 +85,7 @@
       <li>
         <input type="number" class="input-small tight-form-input"
         ng-model="ctrl.target.downValue"
-        placeholder="down value"
+        placeholder="0"
         ng-blur="ctrl.targetBlur()">
         <a bs-tooltip="ctrl.target.errors.downValue"
           style="color: rgb(229, 189, 28)"
