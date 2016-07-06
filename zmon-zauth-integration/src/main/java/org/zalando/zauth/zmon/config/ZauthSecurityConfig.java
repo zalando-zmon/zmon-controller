@@ -123,7 +123,7 @@ public class ZauthSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Bean
     public SocialUserDetailsService socialUserDetailsService() {
-        return new SimpleSocialUserDetailsService(userDetailsService());
+        return new SimpleSocialUserDetailsService(userDetailsService(), teamService);
     }
 
     @Override

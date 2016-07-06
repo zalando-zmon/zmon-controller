@@ -3,8 +3,7 @@ package org.zalando.zmon.api;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.google.common.collect.Maps;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +18,14 @@ import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.Pipeline;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
+import static java.util.function.Function.identity;
 
 /**
  * Created by jmussler on 11/17/14.
@@ -31,8 +37,6 @@ public class AlertStatusAPI {
     private ZMonService service;
     private final JedisPool jedisPool;
     protected ObjectMapper mapper;
-
-    private static final Logger LOG = LoggerFactory.getLogger(AlertStatusAPI.class);
 
     @Autowired
     public AlertStatusAPI(final ZMonService service, final JedisPool p, final ObjectMapper m) {
@@ -58,32 +62,26 @@ public class AlertStatusAPI {
 
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    @RequestMapping(value = "/alert/{ids}/")
+    @RequestMapping(value = {"/alert/{ids}/", "/alert/{ids}"})
     public JsonNode getAlertStatus(@PathVariable("ids") final List<String> ids) throws IOException {
-
-        Map<String, List<ResponseHolder<String, String>>> results = new HashMap<>();
-        for (String id : ids) {
-            results.put(id, new ArrayList<>());
-        }
+        Map<String, List<ResponseHolder<String, String>>> results = ids.stream()
+                .collect(Collectors.toMap(identity(), id -> new ArrayList<>()));
 
         try (Jedis jedis = jedisPool.getResource()) {
-            List<ResponseHolder<String, Set<String>>> responses = new ArrayList<>();
-            {
-                Pipeline p = jedis.pipelined();
-                for (String id : ids) {
-                    responses.add(ResponseHolder.create(id, p.smembers("zmon:alerts:" + id)));
-                }
-                p.sync();
+            List<ResponseHolder<String, Set<String>>> responses;
+
+            try (Pipeline p = jedis.pipelined()) {
+                responses = ids.stream()
+                        .map(id -> ResponseHolder.create(id, p.smembers("zmon:alerts:" + id)))
+                        .collect(Collectors.toList());
             }
 
-            {
-                Pipeline p = jedis.pipelined();
+            try (Pipeline p = jedis.pipelined()) {
                 for (ResponseHolder<String, Set<String>> r : responses) {
-                    for (String m : r.getResponse().get()) {
-                        results.get(r.getKey()).add(ResponseHolder.create(m, p.get("zmon:alerts:" + r.getKey() + ":" + m)));
+                    for (String entityId : r.getResponse().get()) {
+                        results.get(r.getKey()).add(ResponseHolder.create(entityId, p.get("zmon:alerts:" + r.getKey() + ":" + entityId)));
                     }
                 }
-                p.sync();
             }
         }
 
@@ -91,11 +89,15 @@ public class AlertStatusAPI {
 
         for (String id : ids) {
             List<ResponseHolder<String, String>> lr = results.get(id);
-            ObjectNode entities = mapper.createObjectNode();
-            for (ResponseHolder<String, String> rh : lr) {
-                entities.set(rh.getKey(), mapper.readTree(rh.getResponse().get()));
-            }
             if (lr.size() > 0) {
+                ObjectNode entities = mapper.createObjectNode();
+                for (ResponseHolder<String, String> rh : lr) {
+                    String alertDetails = rh.getResponse().get();
+                    // alert details might not be set due to race condition
+                    if (alertDetails != null) {
+                        entities.set(rh.getKey(), mapper.readTree(alertDetails));
+                    }
+                }
                 resultNode.set(id, entities);
             }
         }

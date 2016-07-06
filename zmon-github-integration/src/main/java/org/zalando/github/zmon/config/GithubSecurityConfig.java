@@ -28,6 +28,7 @@ import org.springframework.social.security.SocialUserDetailsService;
 import org.springframework.social.security.SpringSocialConfigurer;
 import org.zalando.github.zmon.service.GithubResourceServerTokenServices;
 import org.zalando.zmon.security.AuthorityService;
+import org.zalando.zmon.security.TeamService;
 import org.zalando.zmon.security.WebSecurityConstants;
 import org.zalando.zmon.security.ZmonAuthenticationEntrypoint;
 import org.zalando.zmon.security.ZmonResourceServerConfigurer;
@@ -67,6 +68,9 @@ public class GithubSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private JWTService jwtService;
+
+    @Autowired
+    private TeamService teamService;
 
     @Autowired
     public void configureGlobal(final AuthenticationManagerBuilder auth) throws Exception {
@@ -131,7 +135,7 @@ public class GithubSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Bean
     public SocialUserDetailsService socialUserDetailsService() {
-        return new SimpleSocialUserDetailsService(userDetailsService());
+        return new SimpleSocialUserDetailsService(userDetailsService(), teamService);
     }
 
     @Override

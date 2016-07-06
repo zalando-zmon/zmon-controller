@@ -29,7 +29,7 @@ import com.google.common.collect.Lists;
 
 /**
  * Alert definitons REST API.
- *
+ * <p>
  * <p/>Created by pribeiro on 26/08/14.
  */
 @Controller
@@ -50,8 +50,8 @@ public class AlertDefinitionsApi extends AbstractZMonController {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public AlertDefinition create(@Valid
-            @RequestBody(required = true)
-            final AlertDefinition alertDefinition) throws ZMonException {
+                                  @RequestBody(required = true)
+                                  final AlertDefinition alertDefinition) throws ZMonException {
         alertDefinition.setId(null);
         alertDefinition.setLastModifiedBy(authorityService.getUserName());
 
@@ -62,9 +62,9 @@ public class AlertDefinitionsApi extends AbstractZMonController {
 
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
     public ResponseEntity<AlertDefinition> update(@PathVariable("id") final Integer id,
-            @Valid
-            @RequestBody(required = true)
-            final AlertDefinition alertDefinition) throws ZMonException {
+                                                  @Valid
+                                                  @RequestBody(required = true)
+                                                  final AlertDefinition alertDefinition) throws ZMonException {
         alertDefinition.setId(id);
         alertDefinition.setLastModifiedBy(authorityService.getUserName());
 
