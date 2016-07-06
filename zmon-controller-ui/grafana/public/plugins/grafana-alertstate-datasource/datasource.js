@@ -36,15 +36,17 @@ function (angular, _, sdk, dateMath, kbn) {
       }
 
       if (!target.hide) {
-        return { alias: alias, upValue: target.upValue, downValue: target.downValue,
-        entities: target.entities};
+        return {
+            alias: alias,
+            upValue: target.upValue,
+            downValue: target.downValue,
+            entities: target.entities
+        };
       }
       else {
         return null;
       }
     }));
-    plotParams = plotParams[0];
-
 
     // No valid targets, return the empty result to save a round trip.
     if (_.isEmpty(queries)) {
@@ -53,42 +55,49 @@ function (angular, _, sdk, dateMath, kbn) {
       return d.promise;
     }
 
-    var initial = {
+    // NOTE: this datasource plugin only supports ONE query!
+    // use the "Mixed" datasource to combine multiple queries
+
+    plotParams = plotParams[0];
+    var alertId = queries[0].alertId;
+
+    var entitiesReq = {
       method: 'GET',
       // NOTE: this might return a potential big check result to the UI :-(
-      url: '/rest/checkAlertResults?alert_id=' + queries[0].alertId + '&limit=1'
+      url: '/rest/checkAlertResults?alert_id=' + alertId + '&limit=1'
     };
     var currentAlertState = {};
     var that = this;
-    return this.backendSrv.datasourceRequest(initial).then(function(results) {
+    return this.backendSrv.datasourceRequest(entitiesReq).then(function(entitiesResult) {
         // initial query finds all matching entities
-        _.each(results.data, function(cr) {
-            if (_.contains(cr.active_alert_ids, queries[0].alertId)) {
+        _.each(entitiesResult.data, function(cr) {
+            if (_.contains(cr.active_alert_ids, alertId)) {
+                // this makes sure that we draw a line for this entity
                 currentAlertState[cr.entity] = false;
             }
         });
-        var second = {
+        var alertDetailsReq = {
             method: 'GET',
-            url: '/rest/alertDetails?alert_id=' + queries[0].alertId
+            url: '/rest/alertDetails?alert_id=' + alertId
         };
-        return that.backendSrv.datasourceRequest(second);
-    }).then(function(results) {
+        return that.backendSrv.datasourceRequest(alertDetailsReq);
+    }).then(function(alertDetailsResult) {
         // second query finds all entities in alert state
-        _.each(results.data.entities, function(entity) {
+        _.each(alertDetailsResult.data.entities, function(entity) {
             currentAlertState[entity.entity] = true;
         });
 
         var handleAlertStateQueryResponseAlias = _.partial(handleAlertStateQueryResponse, plotParams, start, end, currentAlertState);
 
-        return that.performTimeSeriesQuery(queries, start, end)
+        return that.performTimeSeriesQuery(queries[0], start, end)
             .then(handleAlertStateQueryResponseAlias, handleQueryError);
     });
   };
 
-  AlertStateDatasource.prototype.performTimeSeriesQuery = function(queries, start, end) {
+  AlertStateDatasource.prototype.performTimeSeriesQuery = function(query, start, end) {
     var options = {
         method: 'GET',
-        url: '/rest/alertHistory?alert_definition_id=' + queries[0].alertId + '&from=' + start.unix() + '&to=' + end.unix(),
+        url: '/rest/alertHistory?alert_definition_id=' + query.alertId + '&from=' + start.unix() + '&to=' + end.unix(),
     };
 
     return this.backendSrv.datasourceRequest(options);

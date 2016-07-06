@@ -63,7 +63,7 @@ function (angular, _, sdk) {
     AlertStateQueryCtrl.prototype.validateEntity = function() {
       this.target.errors.entities = null;
       if (!this.target.currentEntity) {
-        this.target.errors.entities = "You must specify a entity ID.";
+        this.target.errors.entities = "You must specify an entity ID.";
       }
     };
 
