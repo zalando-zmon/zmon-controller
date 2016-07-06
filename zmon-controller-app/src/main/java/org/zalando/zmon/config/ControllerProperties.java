@@ -19,7 +19,7 @@ public class ControllerProperties {
     public String emailHost = "";
     public String emailLoginLink = "https://demo.zmon.io/tv";
     public int emailTokenLength = 15;
-    public int emailPort = 0;
+    public int emailPort = 465;
 
     public String getStaticUrl() {
         return staticUrl;

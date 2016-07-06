@@ -7,12 +7,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.util.Base64Utils;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.WebUtils;
+import org.zalando.zmon.config.ControllerProperties;
 import org.zalando.zmon.security.tvtoken.TvTokenService;
 import org.zalando.zmon.service.OneTimeTokenService;
 
@@ -37,14 +37,23 @@ public class TvTokenController {
 
     private final Meter rateLimit = new Meter();
 
+    private final ControllerProperties config;
+
     @Autowired
-    public TvTokenController(TvTokenService tvTokenService, OneTimeTokenService oneTimeTokenService) {
+    public TvTokenController(TvTokenService tvTokenService, OneTimeTokenService oneTimeTokenService, ControllerProperties config) {
         this.tvTokenService = tvTokenService;
         this.oneTimeTokenService = oneTimeTokenService;
+        this.config = config;
     }
 
-    @RequestMapping("/tv/by-email/{mail:[a-z][a-z\\.]+}")
-    public ResponseEntity<String> getByEMail(@PathVariable(value="mail") String mail,
+    @RequestMapping("/tv/by-email")
+    public String getEmailForm(Model model) {
+        model.addAttribute("domain", config.getEmailTokenDomain());
+        return "by-email";
+    }
+
+    @RequestMapping(path="/tv/by-email", method= RequestMethod.POST)
+    public ResponseEntity<String> getByEMail(@RequestParam(value="mail") String mail,
                                              @RequestHeader(name = X_FORWARDED_FOR, required = false) String bindIp,
                                              HttpServletRequest request) {
         if(mail == null || "".equals(mail) || mail.contains("@") || mail.contains("%40")) {
@@ -62,7 +71,7 @@ public class TvTokenController {
             }
         }
         catch(Throwable t) {
-            log.error("Error during mail send: email={} ip={}", mail, bindIp);
+            log.error("Error during mail send: email={} ip={} msg={}", mail, bindIp, t.getMessage());
         }
 
         return new ResponseEntity<>("SEND_FAILED", HttpStatus.INTERNAL_SERVER_ERROR);

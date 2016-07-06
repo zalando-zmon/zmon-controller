@@ -43,6 +43,7 @@ public class OneTimeTokenService {
 
     public boolean storeNewToken(String userName, String fromIp, String token, int lifeTime) {
         List<Integer> ids = dbService.createOnetimeToken(userName, fromIp, token, lifeTime);
+        LOG.info("ids: {}", ids);
         return ids.size() > 0;
     }
 
@@ -53,14 +54,14 @@ public class OneTimeTokenService {
 
         final String emailAddress = emailPrefix + controllerProperties.emailTokenDomain;
         final String token = randomString(controllerProperties.getEmailTokenLength());
-        LOG.info("Sending token: email={} token={}...", emailAddress, token.substring(3));
+        LOG.info("Sending token: email={} token={}...", emailAddress, token.substring(0, 3));
 
         if (!storeNewToken("EMAIL_REQUEST", ip, token, 1)) {
+            LOG.error("Could not store token in PostgreSQL");
             return false;
         }
 
         try {
-
             Email email = new SimpleEmail();
             email.setHostName(controllerProperties.getEmailHost());
             email.setSmtpPort(controllerProperties.getEmailPort());

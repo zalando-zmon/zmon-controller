@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION create_onetime_token(IN "user_name" TEXT, IN "ip" TEXT, IN "token" TEXT, IN "expires_in" INT DEFAULT 365) RETURNS SETOF INT AS
+CREATE OR REPLACE FUNCTION create_onetime_token(IN "user_name" TEXT, IN "ip" TEXT, IN "token" TEXT, IN "expires_in" INT DEFAULT 365) RETURNS SETOF INTEGER AS
 $$
   INSERT INTO zzm_data.onetime_access_token(oat_created_by, oat_created_ip, oat_token, oat_bound_expires) VALUES(user_name, ip, token, NOW() + expires_in * '1 day'::interval) RETURNING oat_id;
 $$
