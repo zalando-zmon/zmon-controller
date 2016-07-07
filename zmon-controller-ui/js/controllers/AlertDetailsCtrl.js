@@ -75,8 +75,6 @@ angular.module('zmon2App').controller('AlertDetailsCtrl', ['$scope', '$location'
                 }
                 return result;
             }, []);
-
-            console.log($scope.allAlertsAndChecks);
         }, true);
 
         $scope.$watch('alertDetailsSearch.str', function(str) {
