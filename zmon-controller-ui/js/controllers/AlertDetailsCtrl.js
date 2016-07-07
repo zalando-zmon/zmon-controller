@@ -53,6 +53,30 @@ angular.module('zmon2App').controller('AlertDetailsCtrl', ['$scope', '$location'
             $scope.showAlertsInDowntime = true;
         }
 
+
+        //FIXME
+        CommunicationService.getCloudData('application').then(function(applications) {
+            var applications = [{"id": "a-zmon-controller[dc:1]", "type": "application", "application_id": "GLOBAL", "infrastructure_account": "dc:1"},{"id": "a-zmon-metric-cache[dc:1]", "type": "application", "application_id": "zmon-metric-cache", "infrastructure_account": "dc:1"},{"id": "a-zmon-eventlog-service[dc:1]", "type": "application", "application_id": "zmon-eventlog-service", "infrastructure_account": "dc:1"},{"id": "a-zmon-scheduler[dc:1]", "type": "application", "application_id": "zmon-scheduler", "infrastructure_account": "dc:1"}];
+            $scope.applications = applications;
+        });
+
+
+        //FIXME
+        // get data for a list of entities
+        var fetchEntityData = function(entities, cb) {
+            var entities = _.map(entities, function(e) {
+                return { 'application_id': e.entity + e.infrastrcuture_account };}, []);           //i.e. { application_id: zmon-controller[dc:1] }
+            if (entities.length) {
+                // fetch data, request type:  query=[{application_id: zmon-controller[dc:1]}, ...]
+                CommunicationService.getCloudViewEndpoints({ query: JSON.stringify(entities) }).then(function(response) {
+                    return cb(response);
+                });
+            } else {
+                return cb([]);
+            }
+        };
+
+
         $scope.$watch('[activeAlerts, alertsInDowntime, checkResults]', function() {
             $scope.allAlertsAndChecks = _.reduce([$scope.activeAlerts, $scope.alertsInDowntime, $scope.checkResults], function(result, nextDataArray) {
                 if (nextDataArray && nextDataArray.length !== 0) {
@@ -60,6 +84,17 @@ angular.module('zmon2App').controller('AlertDetailsCtrl', ['$scope', '$location'
                 }
                 return result;
             }, []);
+
+            // FIXME
+            // adds aws id to each entity listed in the table
+            _.each($scope.allAlertsAndChecks, function(a) {
+                _.each($scope.applications, function(app) {
+                    if (a.entity === app.application_id) {
+                        a.infrastructure_account = app.infrastructure_account;
+                    }
+                });
+            });
+            console.log($scope.allAlertsAndChecks);
         }, true);
 
         $scope.$watch('alertDetailsSearch.str', function(str) {
@@ -183,6 +218,22 @@ angular.module('zmon2App').controller('AlertDetailsCtrl', ['$scope', '$location'
                                             nextAlert.isActiveAlert = true;
                                             $scope.activeAlerts.push(nextAlert);
                                         }
+
+                                        //FIXME
+                                        /*
+                                        fetchEntityData($scope.activeAlerts, function(data) {
+                                            _.each(data.queries[0].results, function(results) {
+                                                _.each(results, function(result) {
+                                                    _.each($scope.activeAlerts, function(e) {
+                                                        if (e.entity === result.tag.application_id[0]) {
+                                                            entity.values = result.values;
+                                                        }
+                                                    });
+                                                });
+                                            });
+                                        });
+                                        */
+                                        //fetchEntityData($scope.alertsInDowntime, function(data) {});
                                     });
 
                                     $scope.namesOfEntitiesWithAlert = _.reduce($scope.alertDetails.entities, function(prev, curr) {
@@ -201,6 +252,8 @@ angular.module('zmon2App').controller('AlertDetailsCtrl', ['$scope', '$location'
                                                     'isCheckResult': true
                                                 };
                                             });
+                                            //FIXME
+                                            //fetchEntityData($scope.checkResults, function(data) {});
                                         }
 
                                     );
