@@ -164,12 +164,9 @@ angular.module('zmon2App').factory('CommunicationService', ['$http', '$q', '$log
         };
 
         service.getEntityMetaData = function(query) {
-            var params = {
-                query: JSON.stringify(query)
-            };
-
-            return doHttpCall("GET", "rest/entities", params);
-        }
+            var params = JSON.stringify(query)
+            return doHttpCall("POST", "rest/entities", params);
+        };
 
         service.getCloudData = function(type) {
             var t = {

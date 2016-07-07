@@ -137,6 +137,13 @@ public class ZMonRestService extends AbstractZMonController {
         entityApi.getEntities(data, writer, response);
     }
 
+    @ResponseBody
+    @RequestMapping(value = "/entities", method = RequestMethod.POST)
+    public void getEntitiesPost(@RequestBody String data, final Writer writer,
+                            final HttpServletResponse response) {
+        entityApi.getEntities(data, writer, response);
+    }
+
 
     @ResponseBody
     @RequestMapping(value = "cloud-view-endpoints", produces = "application/json")
