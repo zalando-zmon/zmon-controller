@@ -203,18 +203,9 @@ angular.module('zmon2App').controller('AlertDetailsCtrl', ['$scope', '$location'
                                             $scope.activeAlerts.push(nextAlert);
                                         }
 
-                                        //FIXME
-                                        /*
-                                        fetchEntityData([nextAlert.entity], function(data) {
-                                            nextAlert.entityMeta = data[0]
-                                        });*/
-
                                         entityIds.push(nextAlert.entity);
-
-                                        //fetchEntityData($scope.alertsInDowntime, function(data) {});
                                     });
 
-                                    var entityMeta = {};
                                     fetchEntityData(entityIds, function(data) {
                                         _.each($scope.alertDetails.entities, function(nextAlert) {
                                             _.each(data, function(meta) {
@@ -232,19 +223,29 @@ angular.module('zmon2App').controller('AlertDetailsCtrl', ['$scope', '$location'
 
                                     CommunicationService.getCheckResultsForAlert($scope.alertDefinitionId, 1).then(
                                         function(response) {
+                                            var checkEntityIds = []
                                             $scope.checkResults = _.map(_.filter(response, function(entityRes) {
                                                 return !(entityRes.entity in $scope.namesOfEntitiesWithAlert);
                                             }), function(entityRes) {
+                                                checkEntityIds.push(entityRes.entity);
+
                                                 return {
                                                     'entity': entityRes.entity,
                                                     'result': entityRes.results[0],
                                                     'isCheckResult': true
                                                 };
                                             });
-                                            //FIXME
-                                            //fetchEntityData($scope.checkResults, function(data) {});
-                                        }
 
+                                            fetchEntityData(checkEntityIds, function(data) {
+                                                _.each($scope.checkResults, function(checkResult) {
+                                                    _.each(data, function(meta) {
+                                                        if (meta.id === checkResult.entity) {
+                                                            checkResult.entityMeta = meta
+                                                        }
+                                                    })
+                                                });
+                                            });
+                                        }
                                     );
 
                                     CommunicationService.getDowntimes($scope.alertDefinitionId).then(
