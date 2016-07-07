@@ -163,15 +163,20 @@ angular.module('zmon2App').factory('CommunicationService', ['$http', '$q', '$log
             return doHttpCall("GET", "rest/cloud-view-endpoints", params);
         };
 
+        service.getEntityMetaData = function(query) {
+            var params = {
+                query: JSON.stringify(query)
+            };
+
+            return doHttpCall("GET", "rest/entities", params);
+        }
+
         service.getCloudData = function(type) {
             var t = {
                 type: type
             };
-            var params = {
-                query: JSON.stringify(t)
-            };
 
-            return doHttpCall("GET", "rest/entities", params);
+            return getEntityMetaData(t)
         };
 
         service.getCheckResultsFiltered = function(id, filter) {
