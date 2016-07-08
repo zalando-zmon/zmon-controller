@@ -173,7 +173,7 @@ angular.module('zmon2App').factory('CommunicationService', ['$http', '$q', '$log
                 type: type
             };
 
-            return getEntityMetaData(t)
+            return service.getEntityMetaData(t)
         };
 
         service.getCheckResultsFiltered = function(id, filter) {
