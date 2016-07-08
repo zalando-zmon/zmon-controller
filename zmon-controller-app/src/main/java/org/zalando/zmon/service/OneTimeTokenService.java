@@ -12,7 +12,6 @@ import org.zalando.zmon.config.ControllerProperties;
 import org.zalando.zmon.persistence.OnetimeTokensSProcService;
 
 import java.security.SecureRandom;
-import java.util.List;
 
 /**
  * Created by jmussler on 03.07.16.
@@ -41,24 +40,27 @@ public class OneTimeTokenService {
         this.controllerProperties = controllerProperties;
     }
 
-    public boolean storeNewToken(String userName, String fromIp, String token, int lifeTime) {
-        List<Integer> ids = dbService.createOnetimeToken(userName, fromIp, token, lifeTime);
-        LOG.info("ids: {}", ids);
-        return ids.size() > 0;
+    public int storeNewToken(String userName, String fromIp, String token, int lifeTime) {
+        return dbService.createOnetimeToken(userName, fromIp, token, lifeTime);
     }
 
-    public boolean sendByEmail(String emailPrefix, String ip) {
+    public TokenRequestResult sendByEmail(String emailPrefix, String ip) {
         if (!controllerProperties.emailTokenEnabled) {
-            return false;
+            return TokenRequestResult.FAILED;
         }
 
         final String emailAddress = emailPrefix + controllerProperties.emailTokenDomain;
         final String token = randomString(controllerProperties.getEmailTokenLength());
-        LOG.info("Sending token: email={} token={}...", emailAddress, token.substring(0, 3));
 
-        if (!storeNewToken("EMAIL_REQUEST", ip, token, 1)) {
-            LOG.error("Could not store token in PostgreSQL");
-            return false;
+        final int result = storeNewToken("EMAIL_REQUEST", ip, token, 1);
+
+        if (result == -1) {
+            return TokenRequestResult.RATE_LIMIT_HIT;
+        }
+
+        if (result <= 0) {
+            LOG.error("Writing token to database failed");
+            return TokenRequestResult.FAILED;
         }
 
         try {
@@ -73,12 +75,12 @@ public class OneTimeTokenService {
             email.addTo(emailAddress);
             email.send();
 
-            return true;
+            return TokenRequestResult.OK;
         }
         catch(EmailException ex) {
             LOG.error("Sending email failed: host={} addr={} msg={}", controllerProperties.getEmailHost(), emailAddress, ex.getMessage());
         }
 
-        return false;
+        return TokenRequestResult.FAILED;
     }
 }

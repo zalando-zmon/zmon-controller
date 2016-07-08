@@ -48,9 +48,16 @@ public class OneTimeTokenApi {
         if (ipAddress == null) {
             ipAddress = request.getRemoteAddr();
         }
-        dbService.createOnetimeToken(authService.getUserName(), ipAddress, token, 365);
+        int result = dbService.createOnetimeToken(authService.getUserName(), ipAddress, token, 365);
 
-        return new ResponseEntity<>(token, HttpStatus.OK);
+        if (result == -1) {
+            return new ResponseEntity<>("Rate limit hit: wait 15 seconds", HttpStatus.TOO_MANY_REQUESTS);
+        }
+        else if (result > 0) {
+            return new ResponseEntity<>(token, HttpStatus.OK);
+        }
+
+        return new ResponseEntity<>("Token create failed", HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ResponseBody

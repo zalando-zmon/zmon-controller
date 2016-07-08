@@ -15,11 +15,13 @@ import org.springframework.web.util.WebUtils;
 import org.zalando.zmon.config.ControllerProperties;
 import org.zalando.zmon.security.tvtoken.TvTokenService;
 import org.zalando.zmon.service.OneTimeTokenService;
+import org.zalando.zmon.service.TokenRequestResult;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicLong;
 
 import static java.util.concurrent.TimeUnit.DAYS;
 import static org.zalando.zmon.security.tvtoken.TvTokenService.X_FORWARDED_FOR;
@@ -38,6 +40,7 @@ public class TvTokenController {
     private final Meter rateLimit = new Meter();
 
     private final ControllerProperties config;
+    private AtomicLong lastRequest = new AtomicLong(0);
 
     @Autowired
     public TvTokenController(TvTokenService tvTokenService, OneTimeTokenService oneTimeTokenService, ControllerProperties config) {
@@ -52,6 +55,16 @@ public class TvTokenController {
         return "by-email";
     }
 
+    /* we allow only one request every 15 sec to get through, another global limit is in the DB */
+    private boolean isRateLimitHit() {long time = System.currentTimeMillis();
+        long lastTime = lastRequest.get();
+        if (time - lastTime < 15) {
+            return true;
+        }
+
+        return !lastRequest.compareAndSet(lastTime, time);
+    }
+
     @RequestMapping(path="/tv/by-email", method= RequestMethod.POST)
     public ResponseEntity<String> getByEMail(@RequestParam(value="mail") String mail,
                                              @RequestHeader(name = X_FORWARDED_FOR, required = false) String bindIp,
@@ -64,10 +77,15 @@ public class TvTokenController {
             bindIp = remoteIp(request);
         }
 
+        if(isRateLimitHit()) {
+            return new ResponseEntity<>("SEND_FAILED_RATE_LIMIT", HttpStatus.TOO_MANY_REQUESTS);
+        }
+
         try {
-            boolean sent = oneTimeTokenService.sendByEmail(mail, bindIp);
-            if (sent) {
-                return new ResponseEntity<>("SENT_SUCCESSFULLY", HttpStatus.OK);
+            TokenRequestResult sent = oneTimeTokenService.sendByEmail(mail, bindIp);
+            switch(sent) {
+                case OK: return new ResponseEntity<>("SENT_SUCCESSFULLY", HttpStatus.OK);
+                case RATE_LIMIT_HIT: return new ResponseEntity<>("SEND_FAILED_RATE_LIMIT", HttpStatus.TOO_MANY_REQUESTS);
             }
         }
         catch(Throwable t) {

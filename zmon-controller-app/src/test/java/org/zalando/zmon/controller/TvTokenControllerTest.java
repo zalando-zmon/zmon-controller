@@ -21,6 +21,7 @@ import org.zalando.zmon.domain.OnetimeTokenInfo;
 import org.zalando.zmon.persistence.OnetimeTokensSProcService;
 import org.zalando.zmon.security.tvtoken.TvTokenService;
 import org.zalando.zmon.service.OneTimeTokenService;
+import org.zalando.zmon.service.TokenRequestResult;
 
 public class TvTokenControllerTest {
 
@@ -33,8 +34,8 @@ public class TvTokenControllerTest {
         onetimeTokensSProcService = Mockito.mock(OnetimeTokensSProcService.class);
         oneTimeTokenService = Mockito.mock(OneTimeTokenService.class);
 
-        when(oneTimeTokenService.sendByEmail(eq("user.name"),eq("192.168.23.12"))).thenReturn(true);
-        when(oneTimeTokenService.sendByEmail(eq("user.name.more"),eq("192.168.23.12"))).thenReturn(false);
+        when(oneTimeTokenService.sendByEmail(eq("user.name"),eq("192.168.23.12"))).thenReturn(TokenRequestResult.OK);
+        when(oneTimeTokenService.sendByEmail(eq("user.name.more"),eq("192.168.23.12"))).thenReturn(TokenRequestResult.FAILED);
 
         mockMvc = MockMvcBuilders.standaloneSetup(new TvTokenController(new TvTokenService(onetimeTokensSProcService),
                                                   oneTimeTokenService, new ControllerProperties()))
