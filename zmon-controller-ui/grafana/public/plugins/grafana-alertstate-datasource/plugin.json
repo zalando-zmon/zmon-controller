@@ -1,0 +1,30 @@
+{
+  "id": "grafana-alertstate-datasource",
+  "name": "AlertState",
+  "type": "datasource",
+
+  "metrics": true,
+  "annotations": false,
+
+  "staticRoot": ".",
+
+  "info": {
+    "description": "datasource plugin for AlertState",
+    "author": {
+      "name": "Zalando SE",
+      "url": "https://tech.zalando.com"
+    },
+    "keywords": ["zmon"],
+    "logos": {
+    },
+    "links": [
+    ],
+    "version": "1.0",
+    "updated": "2016-07-05"
+  },
+
+  "dependencies": {
+    "grafanaVersion": "3.x.x",
+    "plugins": [ ]
+  }
+}

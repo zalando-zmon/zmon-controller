@@ -1,5 +1,6 @@
 package org.zalando.zmon.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
@@ -135,6 +136,13 @@ public class ZMonRestService extends AbstractZMonController {
     public void getEntities(@RequestParam(value = "query", defaultValue = "{}") String data, final Writer writer,
                             final HttpServletResponse response) {
         entityApi.getEntities(data, writer, response);
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/entities", method = RequestMethod.POST)
+    public void getEntitiesPost(@RequestBody JsonNode node, final Writer writer,
+                            final HttpServletResponse response) throws JsonProcessingException {
+        entityApi.getEntities(mapper.writeValueAsString(node), writer, response);
     }
 
 
