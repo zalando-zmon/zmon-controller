@@ -52,6 +52,7 @@ public class TvTokenController {
     @RequestMapping("/tv/by-email")
     public String getEmailForm(Model model) {
         model.addAttribute("domain", config.getEmailTokenDomain());
+        model.addAttribute("staticUrl", config.getStaticUrl());
         return "by-email";
     }
 

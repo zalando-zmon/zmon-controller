@@ -12,7 +12,7 @@ public class ControllerProperties {
     public int grafanaMinInterval;
 
     public boolean emailTokenEnabled = false;
-    public String emailTokenDomain = "example.com";
+    public String emailTokenDomain = "@example.com";
     public String emailTokenFrom = "zmon@example.com";
     public String emailUserName = "";
     public String emailPassword = "";
