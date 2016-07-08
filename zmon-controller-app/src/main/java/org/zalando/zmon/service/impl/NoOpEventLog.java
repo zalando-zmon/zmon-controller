@@ -9,7 +9,7 @@ public class NoOpEventLog {
 	private final Logger LOG = LoggerFactory.getLogger(NoOpEventLog.class);
 	
 	public void log(Object ... objects){
-		LOG.warn(objects.toString());
+		LOG.info("EventLog: {}", objects);
 	}
 
 }

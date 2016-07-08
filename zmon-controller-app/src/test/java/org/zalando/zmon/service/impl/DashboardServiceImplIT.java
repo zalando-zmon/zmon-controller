@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.transaction.annotation.Transactional;
+import org.zalando.test.ServiceTestConfiguration;
 import org.zalando.zmon.domain.Dashboard;
 import org.zalando.zmon.domain.DashboardIsEqual;
 import org.zalando.zmon.generator.DashboardGenerator;

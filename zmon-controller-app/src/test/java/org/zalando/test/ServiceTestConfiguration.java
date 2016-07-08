@@ -1,4 +1,4 @@
-package org.zalando.zmon.service.impl;
+package org.zalando.test;
 
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -15,7 +15,12 @@ import org.zalando.zmon.persistence.ZMonSProcServiceConfig;
 import org.zalando.zmon.security.permission.DefaultZMonPermissionService;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.zalando.zmon.service.impl.NoOpEventLog;
+import org.zalando.zmon.service.impl.ZMonServiceImpl;
 
+/**
+ * NOTE: this class is outside "org.zalando.zmon" to not be collected by component scan!
+ */
 @Configuration
 @EnableConfigurationProperties({ SchedulerProperties.class, EventLogProperties.class })
 @Import({ DataSourceProviderConfiguration.class, ZMonSProcServiceConfig.class, XmlConfigFileConfiguration.class,
