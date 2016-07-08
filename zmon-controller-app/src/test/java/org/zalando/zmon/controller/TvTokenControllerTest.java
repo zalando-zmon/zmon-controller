@@ -5,6 +5,7 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -62,44 +63,32 @@ public class TvTokenControllerTest {
 
     @Test
     public void invalidEmails() throws Exception {
-        // @formatter:off
-        /*
-        mockMvc.perform(get("/tv/by-email/user.name@domain.tld")
+        mockMvc.perform(post("/tv/by-email")
                 .header("X-FORWARDED-FOR", "192.168.23.12")
-                .cookie(new Cookie("JSESSIONID", "987654321")))
-                .andExpect(status().is(404));
+                .cookie(new Cookie("JSESSIONID", "987654321"))
+                .param("mail", "test@example.com"))
+                .andExpect(status().is(400));
 
-        mockMvc.perform(get("/tv/by-email/user.name%40@domain.tld")
+        mockMvc.perform(post("/tv/by-email")
                 .header("X-FORWARDED-FOR", "192.168.23.12")
-                .cookie(new Cookie("JSESSIONID", "987654321")))
-                .andExpect(status().is(404));
-
-        mockMvc.perform(get("/tv/by-email/")
-                .header("X-FORWARDED-FOR", "192.168.23.12")
-                .cookie(new Cookie("JSESSIONID", "987654321")))
-                .andExpect(status().is(302));
-                */
-        // @formatter:on
+                .cookie(new Cookie("JSESSIONID", "987654321"))
+                .param("mail", "test.summary%40example.com"))
+                .andExpect(status().is(400));
     }
 
     @Test
     public void validEmail() throws Exception {
-        // @formatter:off
-        /*
-        mockMvc.perform(get("/tv/by-email/user.name")
+        mockMvc.perform(post("/tv/by-email")
                 .header("X-FORWARDED-FOR", "192.168.23.12")
-                .cookie(new Cookie("JSESSIONID", "987654321")))
+                .cookie(new Cookie("JSESSIONID", "987654321"))
+                .param("mail","user.name"))
                 .andExpect(status().is(200));
 
-        mockMvc.perform(get("/tv/by-email/user.name.more")
+        // verify rate limit hit
+        mockMvc.perform(post("/tv/by-email")
                 .header("X-FORWARDED-FOR", "192.168.23.12")
-                .cookie(new Cookie("JSESSIONID", "987654321")))
-                .andExpect(status().is(500));
-*/
-        // @formatter:on
-
-    //    verify(oneTimeTokenService).sendByEmail(eq("user.name"), eq("192.168.23.12"));
-  //      verify(oneTimeTokenService).sendByEmail(eq("user.name.more"), eq("192.168.23.12"));
+                .cookie(new Cookie("JSESSIONID", "987654321"))
+                .param("mail","user.name"))
+                .andExpect(status().is(429));
     }
-
 }

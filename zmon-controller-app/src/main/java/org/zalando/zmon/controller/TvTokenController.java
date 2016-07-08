@@ -58,7 +58,7 @@ public class TvTokenController {
     /* we allow only one request every 15 sec to get through, another global limit is in the DB */
     private boolean isRateLimitHit() {long time = System.currentTimeMillis();
         long lastTime = lastRequest.get();
-        if (time - lastTime < 15) {
+        if (time - lastTime < 15000) {
             return true;
         }
 
