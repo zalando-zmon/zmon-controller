@@ -3,10 +3,14 @@ package org.zalando.zmon.api;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import org.postgresql.util.PSQLException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.zalando.zmon.persistence.EntitySProcService;
@@ -27,24 +31,34 @@ public class EntityApi {
 
     private final Logger log = LoggerFactory.getLogger(EntityApi.class);
 
-    @Autowired
     EntitySProcService entitySprocs;
 
-    @Autowired
     ObjectMapper mapper;
 
-    @Autowired
     DefaultZMonPermissionService authService;
+
+    @Autowired
+    public EntityApi(EntitySProcService entitySprocs, ObjectMapper mapper, DefaultZMonPermissionService authService) {
+        this.entitySprocs = entitySprocs;
+        this.mapper = mapper;
+        this.authService = authService;
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<String> handleCheckConstraintViolation(DataIntegrityViolationException exception) {
+        if (exception.getCause() instanceof PSQLException && exception.getMessage().contains("violates check constraint")) {
+            return new ResponseEntity<>("Check constraint violated", HttpStatus.BAD_REQUEST);
+        }
+        throw exception;
+    }
 
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    @RequestMapping(value = "/", method = RequestMethod.PUT)
+    @RequestMapping(value = {"/", ""}, method = {RequestMethod.PUT, RequestMethod.POST})
     public void addEntity(@RequestBody JsonNode entity) {
-        /*
         if(entity.has("team") && !authService.getTeams().contains(entity.get("team").textValue())) {
-            throw new ZMonRuntimeException("Entity Team does not match any of your Teams! " + authService.getTeams());
+            throw new AccessDeniedException("Your team does not match entity team");
         }
-        */
 
         try {
             String data = mapper.writeValueAsString(entity);
@@ -57,9 +71,12 @@ public class EntityApi {
 
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    @RequestMapping(value = "/", method = RequestMethod.GET)
-    public void getEntities(@RequestParam(value = "query", defaultValue = "{}") String data, final Writer writer,
+    @RequestMapping(value = {"/", ""}, method = RequestMethod.GET)
+    public void getEntities(@RequestParam(value = "query", defaultValue = "[{}]") String data, final Writer writer,
                             final HttpServletResponse response) {
+        if (data.startsWith("{")) {
+            data = "[" + data + "]";
+        }
         List<String> entities = entitySprocs.getEntities(data);
 
         response.setContentType("application/json");
@@ -83,8 +100,7 @@ public class EntityApi {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     @RequestMapping(value = "/{id}/")
-    public void getEntity(@PathVariable(value = "id") String id, final Writer writer,
-                          final HttpServletResponse response) {
+    public void getEntity(@PathVariable(value = "id") String id, final Writer writer) {
         List<String> entities = entitySprocs.getEntityById(id);
         try {
             for (String s : entities) {

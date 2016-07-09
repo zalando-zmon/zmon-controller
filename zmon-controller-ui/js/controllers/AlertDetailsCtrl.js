@@ -53,6 +53,21 @@ angular.module('zmon2App').controller('AlertDetailsCtrl', ['$scope', '$location'
             $scope.showAlertsInDowntime = true;
         }
 
+        //FIXME
+        var fetchEntityData = function(entities, cb) {
+            var entities = _.map(entities, function(e) {
+                return { 'id': e } ;}, []);
+
+            if (entities.length) {
+                CommunicationService.getEntityMetaData(entities).then(function(response) {
+                    return cb(response);
+                });
+            } else {
+                return cb([]);
+            }
+        };
+
+
         $scope.$watch('[activeAlerts, alertsInDowntime, checkResults]', function() {
             $scope.allAlertsAndChecks = _.reduce([$scope.activeAlerts, $scope.alertsInDowntime, $scope.checkResults], function(result, nextDataArray) {
                 if (nextDataArray && nextDataArray.length !== 0) {
@@ -168,6 +183,8 @@ angular.module('zmon2App').controller('AlertDetailsCtrl', ['$scope', '$location'
                                     $scope.activeAlerts = [];
                                     $scope.alertsInDowntime = [];
 
+                                    var entityIds = [];
+
                                     _.each($scope.alertDetails.entities, function(nextAlert) {
                                         if (nextAlert.result.downtimes && nextAlert.result.downtimes.length) {
                                             // Add it to alertsInDowntime if any of its downtimes is active now; otherwise add it to activeAlerts
@@ -183,6 +200,18 @@ angular.module('zmon2App').controller('AlertDetailsCtrl', ['$scope', '$location'
                                             nextAlert.isActiveAlert = true;
                                             $scope.activeAlerts.push(nextAlert);
                                         }
+
+                                        entityIds.push(nextAlert.entity);
+                                    });
+
+                                    fetchEntityData(entityIds, function(data) {
+                                        _.each($scope.alertDetails.entities, function(nextAlert) {
+                                            _.each(data, function(meta) {
+                                                if (meta.id === nextAlert.entity) {
+                                                    nextAlert.entityMeta = meta
+                                                }
+                                            })
+                                        });
                                     });
 
                                     $scope.namesOfEntitiesWithAlert = _.reduce($scope.alertDetails.entities, function(prev, curr) {
@@ -192,17 +221,29 @@ angular.module('zmon2App').controller('AlertDetailsCtrl', ['$scope', '$location'
 
                                     CommunicationService.getCheckResultsForAlert($scope.alertDefinitionId, 1).then(
                                         function(response) {
+                                            var checkEntityIds = []
                                             $scope.checkResults = _.map(_.filter(response, function(entityRes) {
                                                 return !(entityRes.entity in $scope.namesOfEntitiesWithAlert);
                                             }), function(entityRes) {
+                                                checkEntityIds.push(entityRes.entity);
+
                                                 return {
                                                     'entity': entityRes.entity,
                                                     'result': entityRes.results[0],
                                                     'isCheckResult': true
                                                 };
                                             });
-                                        }
 
+                                            fetchEntityData(checkEntityIds, function(data) {
+                                                _.each($scope.checkResults, function(checkResult) {
+                                                    _.each(data, function(meta) {
+                                                        if (meta.id === checkResult.entity) {
+                                                            checkResult.entityMeta = meta
+                                                        }
+                                                    })
+                                                });
+                                            });
+                                        }
                                     );
 
                                     CommunicationService.getDowntimes($scope.alertDefinitionId).then(
