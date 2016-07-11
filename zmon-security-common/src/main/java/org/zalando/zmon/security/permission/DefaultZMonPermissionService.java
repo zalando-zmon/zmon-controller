@@ -19,6 +19,7 @@ import org.zalando.zmon.domain.DefinitionStatus;
 import org.zalando.zmon.exception.ZMonAuthorizationException;
 import org.zalando.zmon.persistence.AlertDefinitionSProcService;
 import org.zalando.zmon.persistence.DashboardSProcService;
+import org.zalando.zmon.security.authority.ZMonAdminAuthority;
 import org.zalando.zmon.security.authority.ZMonAuthority;
 import org.zalando.zmon.security.authority.ZMonUserAuthority;
 
@@ -219,7 +220,8 @@ public class DefaultZMonPermissionService {
         }
     }
 
-    public boolean hasOnetimeTokenPrivilege() {
-        return getUserAuthorities().stream().anyMatch(x -> x instanceof ZMonUserAuthority);
+    // bad name but every admin is also user for now
+    public boolean hasUserAuthority() {
+        return getUserAuthorities().stream().anyMatch(x -> x instanceof ZMonUserAuthority || x instanceof ZMonAdminAuthority);
     }
 }
