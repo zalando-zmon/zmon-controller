@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [ ! -f zmon-controller-app/target/zmon-controller-1.0.1-SNAPSHOT.jar ]; then
-	./mvnw clean install
+	./mvnw clean install -DskipTests
 fi
 
 echo 'Make sure the provided Vagrant-Box is up and all services are running.'
