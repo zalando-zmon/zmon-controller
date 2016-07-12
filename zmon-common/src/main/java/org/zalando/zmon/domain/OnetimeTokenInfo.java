@@ -23,6 +23,9 @@ public class OnetimeTokenInfo {
     @DatabaseField
     private Date boundAt;
 
+    @DatabaseField
+    private Date boundExpires;
+
     public String getToken() {
         return token;
     }
@@ -53,5 +56,13 @@ public class OnetimeTokenInfo {
 
     public void setBoundAt(Date boundAt) {
         this.boundAt = boundAt;
+    }
+
+    public Date getBoundExpires() {
+        return boundExpires;
+    }
+
+    public void setBoundExpires(Date boundExpires) {
+        this.boundExpires = boundExpires;
     }
 }

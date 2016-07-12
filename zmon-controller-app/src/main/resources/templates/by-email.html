@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      xmlns:data="https://github.com/mxab/thymeleaf-extras-data-attribute">
+<body>
+<head>
+    <link rel="stylesheet" type="text/css" th:href="${staticUrl} + '/asset/css/zalando-bootstrap.css?t=@buildTime@'"/>
+    <link rel="stylesheet" type="text/css" th:href="${staticUrl} + '/asset/css/font-awesome.min.css?t=@buildTime@'"/>
+</head>
+<div class="container">
+    <div class="row">
+        <div class="col-md-4 col-md-offset-3">
+            <form method="POST" url="/tv/by-email">
+                <div class="form-group">
+                    <h2>Request ZMON login link</h2>
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="mail" name="mail" placeholder="Email">
+                        <span class="input-group-addon" th:text="${domain}"></span>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-default">Submit</button>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>
