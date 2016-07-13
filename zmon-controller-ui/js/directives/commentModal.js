@@ -4,7 +4,8 @@ angular.module('zmon2App').directive('commentModal', ['$uibModal', '$timeout', '
             restrict: 'A',
             scope: {
                 alertId: '=',
-                count: '='
+                count: '=',
+                entity: '='
             },
             link: function(scope, elem, attributes) {
 
@@ -21,7 +22,8 @@ angular.module('zmon2App').directive('commentModal', ['$uibModal', '$timeout', '
                     $scope.offset = 0;
                     $scope.comment = {
                         comment: '',
-                        alert_definition_id: alertId
+                        alert_definition_id: alertId,
+                        entity_id: scope.entity
                     };
 
                     var fetchComments = function(cb) {

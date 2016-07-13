@@ -190,11 +190,6 @@ angular.module('zmon2App').controller('AlertDetailsCtrl', [ '$location', '$route
         return $scope.allAlerts.length && JSON.stringify($scope.downtimeEntities.sort()) === JSON.stringify(_.map($scope.allAlerts, 'entity').sort());
     };
 
-    // infinite scroll limit
-    $scope.incLimit = function() {
-        $scope.limit += 20;
-    };
-
     $scope.timestampIsOld = function(entity) {
         var now = new Date()/1000;
         var interval = $scope.check.interval;

@@ -2,7 +2,10 @@
     <thead>
         <tr>
             <th class="text-center actions-col" ng-if="userInfo['delete-downtime']">
-                <button id="delete-downtimes-button" ng-disabled="deleteDowntimeUUIDs.length == 0" ng-click="deleteDowntimes()" class="fa fa-trash-o btn btn-primary"><sup ng-if="!!downtimesSelected.length" class="counter">{{downtimesSelected.length}}</button>
+                <button id="delete-downtimes-button" ng-disabled="!downtimesSelected.length" ng-click="deleteDowntimes()" class="fa fa-trash-o btn btn-primary">
+                    <sup ng-if="!!downtimesSelected.length && downtimesSelected.length < 100" class="counter">{{::downtimesSelected.length}}</sup>
+                    <sup ng-if="!!downtimesSelected.length && downtimesSelected.length >= 100" class="counter">99+</sup>
+                </button>
                 <input id="select-all-delete-downtimes" class="set-downtime-checkbox" type="checkbox" ng-checked="areAllDowntimesSelected()" ng-click="toggleAllDowntimes()">
             </th>
             <th class="name-col" ng-click="sortType = 'entity'; sortOrder = !sortOrder">Entity
@@ -29,13 +32,13 @@
     </thead>
     <tbody>
         <!-- And then show the entities downtimes -->
-        <tr class="warning" ng-repeat="downtimeInstance in downtimes| filter:alertDetailsSearch.str | orderBy:sortTypeDowntimes:sortOrderDowntimes">
+        <tr class="warning" ng-repeat="downtimeInstance in ::downtimes | filter:alertDetailsSearch.str | orderBy:sortTypeDowntimes:sortOrderDowntimes">
             <td ng-if="userInfo['delete-downtime']" class="text-center"><input type="checkbox" ng-checked="downtimesSelected.indexOf(downtimeInstance.id) !== -1" ng-click="toggleSingleDeleteDowntime(downtimeInstance.id)"></td>
-            <td>{{downtimeInstance.entity}}</td>
-            <td>{{downtimeInstance.start_time | epochToDate}}</td>
-            <td>{{downtimeInstance.end_time | epochToDate}}</td>
-            <td class="ellipsis" expand>{{downtimeInstance.comment}}</td>
-            <td>{{downtimeInstance.created_by}}</td>
+            <td>{{::downtimeInstance.entity}}</td>
+            <td>{{::downtimeInstance.start_time | epochToDate}}</td>
+            <td>{{::downtimeInstance.end_time | epochToDate}}</td>
+            <td class="ellipsis" expand>{{::downtimeInstance.comment}}</td>
+            <td>{{::downtimeInstance.created_by}}</td>
         </tr>
     </tbody>
 </table>

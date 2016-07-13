@@ -2,10 +2,10 @@
     <div class="modal-header">
         <div class="row">
             <div class="col-md-11">
-                <h3>Entity: {{alert.name}}</h3>
+                <h3>Entity: {{::alert.name}}</h3>
             </div>
             <div class="col-md-1">
-                <i class="fa fa-clock-o"></i> {{alert.ts.getHours()}}:{{alert.ts.getMinutes()}}
+                <i class="fa fa-clock-o"></i> {{::alert.ts.getHours()}}:{{::alert.ts.getMinutes()}}
             </div>
         </div>
     </div>
@@ -31,7 +31,7 @@
         </div>
     </div>
     <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" ngclipboard data-clipboard-text={{alert.value}}>
+        <button type="button" class="btn btn-secondary" ngclipboard data-clipboard-text={{::alert.value}}>
             <i class="fa fa-clipboard"></i> Copy to Clipboard
         </button>
         <button type="button" class="btn btn-primary" ng-click="close()">Close</button>
