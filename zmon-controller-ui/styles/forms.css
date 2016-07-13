@@ -148,9 +148,10 @@
     margin-top: 5px;
 }
 
-.zmon-data-table #set-downtimes-button
+.zmon-data-table #set-downtimes-button,
+.zmon-data-table #delete-downtimes-button
 {
-    padding-left: 10px;
+    padding-left: 5px;
     margin-left: 10px;
     width: 49px;
     overflow: hidden;
