@@ -1,28 +1,32 @@
 <div class="row">
     <div class="col-md-6">
-        <h1>Alert: {{alertDefinition.name}} <priority prio="alertDefinition.priority" /></h1>
+        <h1>Alert: {{alert.name}} <priority prio="alert.priority" /></h1>
     </div>
     <div class="col-md-6 text-right">
-        <p>
-            ID: {{alertDefinition.id}},
-            Status: <status status="alertDefinition.status"/>,
-            Team: {{alertDefinition.team}}
-        </p>
-        <p>
-            <a ng-show="alertDefinition.editable && alertDefinition.status != 'DELETED'" href="#/alert-definitions/edit/{{alertDefinition.id}}" title="Edit alert definition"><i class="fa fa-fw fa-edit"></i> Edit</a>
-            <span ng-hide="alertDefinition.editable || alertDefinition.status == 'DELETED'"><i class="fa fa-fw fa-edit semi-transparent"></i> Edit</span>
-            <a ng-show="alertDefinition.cloneable && alertDefinition.status != 'DELETED'" href="#/alert-definitions/clone/{{alertDefinition.id}}" title="Clone alert definition"><i class="fa fa-fw fa-copy"></i> Clone</a>
-            <span ng-hide="alertDefinition.cloneable || alertDefinition.status == 'DELETED'"><i class="fa fa-fw fa-copy semi-transparent"></i> Clone</span>
-            <a ng-show="alertDefinition.cloneable && alertDefinition.status != 'DELETED'" href="#/alert-definitions/inherit/{{alertDefinition.id}}" title="Inherit alert definition"><i class="fa fa-fw fa-sitemap"></i> Inherit</a>
-            <span ng-hide="alertDefinition.cloneable || alertDefinition.status == 'DELETED'"><i class="fa fa-fw fa-sitemap semi-transparent"></i> Inherit</span>
-            <a ng-show="alertDefinition.deletable" href=""ng-click="showDeleteAlertDefinitionModal()" title="Delete alert definition"><i class="fa fa-fw fa-trash-o"></i> Delete</a>
-            <span ng-hide="alertDefinition.deletable"><i class="fa fa-fw fa-trash-o semi-transparent"></i> Delete</span>
-            <a href="#/history?alert_definition_id={{alertDefinition.id}}"><i class="fa fa-clock-o"></i> History</a>
+        <div>
+            ID: {{alert.id}},
+            Status: <status status="alert.status"/>,
+            Team: {{alert.team}}
+        </div>
+        <div class="top-links">
+            <a ng-show="alert.editable && alert.status != 'DELETED'" href="#/alert-definitions/edit/{{alert.id}}" title="Edit alert definition"><i class="fa fa-fw fa-edit"></i> Edit</a>
+            <span ng-hide="alert.editable || alert.status == 'DELETED'"><i class="fa fa-fw fa-edit semi-transparent"></i> Edit</span>
+            <a ng-show="alert.cloneable && alert.status != 'DELETED'" href="#/alert-definitions/clone/{{alert.id}}" title="Clone alert definition"><i class="fa fa-fw fa-copy"></i> Clone</a>
+            <span ng-hide="alert.cloneable || alert.status == 'DELETED'"><i class="fa fa-fw fa-copy semi-transparent"></i> Clone</span>
+            <a ng-show="alert.cloneable && alert.status != 'DELETED'" href="#/alert-definitions/inherit/{{alert.id}}" title="Inherit alert definition"><i class="fa fa-fw fa-sitemap"></i> Inherit</a>
+            <span ng-hide="alert.cloneable || alert.status == 'DELETED'"><i class="fa fa-fw fa-sitemap semi-transparent"></i> Inherit</span>
+            <a ng-show="alert.deletable" href=""ng-click="showDeleteAlertDefinitionModal()" title="Delete alert definition"><i class="fa fa-fw fa-trash-o"></i> Delete</a>
+            <span ng-hide="alert.deletable"><i class="fa fa-fw fa-trash-o semi-transparent"></i> Delete</span>
+            <a href="#/history?alert_definition_id={{alert.id}}"><i class="fa fa-clock-o"></i> History</a>
             <a class="clickable" href="/#/trial-run?json={{alertJson}}"><i class="fa fa-play"></i> Trial Run</a>
             <a class="clickable" ng-if="userInfo['instantaneous-alert-evaluation']" ng-click="forceAlertEvaluation()"><i class="fa fa-play"></i> Evaluate</a>
             <a class="clickable" ng-if="userInfo['instantaneous-alert-evaluation']" ng-click="forceAlertCleanup()"><i class="fa fa-eraser"></i> Cleanup</a>
-            <comment-dialog class="fake-link comment-dialog-trigger" indicator="true" uid="alertDefinition.id" label="Comments" update="true" data="alertComments" save="saveComment(comment, cb)" delete="deleteComment(id, cb)" load="getComments(id, limit, offset, cb)" show-count="true"></comment-dialog>
-        </p>
+            <a class="clickable" ng-if="userInfo['add-comment']" comment-modal alert-id="alertId" count="commentsCount">
+                <i class="fa fa-fw fa-comments-o"></i>Comments
+                <span ng-show="commentsCount <= 10">({{commentsCount}})</span>
+                <span ng-show="commentsCount > 10">(10+)</span>
+            </a>
+        </div>
     </div>
 </div>
 
@@ -30,11 +34,11 @@
     <div class="panel-body">
         <dl class="dl-horizontal">
             <dt>Description</dt>
-            <dd class="form-control" ng-bind-html="alertDefinition.description | markdown"></dd>
+            <dd class="form-control" ng-bind-html="alert.description | markdown"></dd>
             <dt>Condition</dt>
-            <dd><pre class="z-code">{{alertDefinition.condition}}</pre></dd>
+            <dd><pre class="z-code">{{alert.condition}}</pre></dd>
             <dt>Responsible Team</dt>
-            <dd>{{alertDefinition.responsible_team}}</dd>
+            <dd>{{alert.responsible_team}}</dd>
         </dl>
     </div>
 </div>
@@ -43,55 +47,54 @@
     <div class="panel-heading panel-toggle" ng-click="showDetails = !showDetails"><i class="fa fa-fw fa-toggle-{{ showDetails ? 'up' : 'down' }}"></i> Details</div>
     <div class="panel-body">
         <dl class="dl-horizontal">
-            <dt ng-if="checkDefinition.potential_impact" >Potential Impact</dt>
-            <dd ng-if="checkDefinition.potential_impact" ng-bind-html="checkDefinition.potential_impact | markdown"></dd>
-            <dt ng-if="checkDefinition.potential_analysis">Potential Analysis</dt>
-            <dd ng-if="checkDefinition.potential_analysis" ng-bind-html="checkDefinition.potential_analysis | markdown"></dd>
-            <dt ng-if="checkDefinition.potential_solution">Potential Solution</dt>
-            <dd ng-if="checkDefinition.potential_solution" ng-bind-html="checkDefinition.potential_solution | markdown"></dd>
-            <dt ng-if="checkDefinition.technical_details">Technical Details</dt>
-            <dd ng-if="checkDefinition.technical_details" ng-bind-html="checkDefinition.technical_details | markdown"></dd>
-            <dt ng-if="alertDefinition.parent_id">Inherits from</dt>
-            <dd ng-if="alertDefinition.parent_id"><a href="/#/alert-details/{{alertDefinition.parent_id}}">{{parentAlertDefinition.name || "(no name)"}}</a>, ID: <a href="/#/alert-details/{{alertDefinition.parent_id}}">{{alertDefinition.parent_id}}</a></dd>
+            <dt ng-if="check.potential_impact" >Potential Impact</dt>
+            <dd ng-if="check.potential_impact" ng-bind-html="check.potential_impact | markdown"></dd>
+            <dt ng-if="check.potential_analysis">Potential Analysis</dt>
+            <dd ng-if="check.potential_analysis" ng-bind-html="check.potential_analysis | markdown"></dd>
+            <dt ng-if="check.potential_solution">Potential Solution</dt>
+            <dd ng-if="check.potential_solution" ng-bind-html="check.potential_solution | markdown"></dd>
+            <dt ng-if="check.technical_details">Technical Details</dt>
+            <dd ng-if="check.technical_details" ng-bind-html="check.technical_details | markdown"></dd>
+            <dt ng-if="alert.parent_id">Inherits from</dt>
+            <dd ng-if="alert.parent_id"><a href="/#/alert-details/{{alert.parent_id}}">{{parentAlertDefinition.name || "(no name)"}}</a>, ID: <a href="/#/alert-details/{{alert.parent_id}}">{{alert.parent_id}}</a></dd>
             <dt>Check Name, ID, History</dt>
-            <dd><a href="#/check-definitions/view/{{checkDefinition.id}}">{{checkDefinition.name}}</a>, ID: {{checkDefinition.id}}, <a href="#/history?check_definition_id={{checkDefinition.id}}">History</a></dd>
+            <dd><a href="#/check-definitions/view/{{check.id}}">{{check.name}}</a>, ID: {{check.id}}, <a href="#/history?check_definition_id={{check.id}}">History</a></dd>
             <dt>Check Team</dt>
-            <dd>{{checkDefinition.owning_team}}</dd>
+            <dd>{{check.owning_team}}</dd>
             <dt>Check Command</dt>
-            <dd><pre class="z-code">{{checkDefinition.command}}</pre></dd>
+            <dd><pre class="z-code">{{check.command}}</pre></dd>
             <dt>Check Interval</dt>
-            <dd>{{checkDefinition.interval|timespan:'s'}}</dd>
+            <dd>{{check.interval|timespan:'s'}}</dd>
             <dt>Check Entities</dt>
-            <dd ng-bind-html="checkDefinition.entities | entities"></dd>
+            <dd ng-bind-html="check.entities | entities"></dd>
             <dt>Parameters</dt>
-            <dd class="text-muted" ng-if="alertDefinition.parameters == null">(no parameters)</dd>
-            <dd ng-repeat="(name, parameter) in alertDefinition.parameters">
+            <dd class="text-muted" ng-if="alert.parameters == null">(no parameters)</dd>
+            <dd ng-repeat="(name, parameter) in alert.parameters">
                 {{name}} = {{parameter.value}}
             </dd>
             <dt>Entities Filter</dt>
-            <dd><span class="text-muted" ng-show="alertDefinition.entities.length === 0">(no entities)</span>
-            <div ng-bind-html="alertDefinition.entities | entities"></div></dd>
+            <dd><span class="text-muted" ng-show="alert.entities.length === 0">(no entities)</span>
+            <div ng-bind-html="alert.entities | entities"></div></dd>
             <dt>Excluded Entities Filter</dt>
-            <dd><span class="text-muted" ng-show="alertDefinition.entities_exclude === undefined || alertDefinition.entities_exclude.length === 0">(no excluded entities)</span>
-            <div ng-bind-html="alertDefinition.entities_exclude | entities"></div></dd>
+            <dd><span class="text-muted" ng-show="alert.entities_exclude === undefined || alert.entities_exclude.length === 0">(no excluded entities)</span>
+            <div ng-bind-html="alert.entities_exclude | entities"></div></dd>
             <dt>Notifications</dt>
-            <dd><span class="text-muted" ng-show="alertDefinition.notifications.length === 0">(no notifications defined)</span><code ng-repeat="notification in alertDefinition.notifications">{{notification}}</code></dd>
+            <dd><span class="text-muted" ng-show="alert.notifications.length === 0">(no notifications defined)</span><code ng-repeat="notification in alert.notifications">{{notification}}</code></dd>
             <dt>Time Period</dt>
-            <dd><span class="text-muted" ng-show="!alertDefinition.period">(no time periods defined)</span>{{alertDefinition.period}}</dd>
+            <dd><span class="text-muted" ng-show="!alert.period">(no time periods defined)</span>{{alert.period}}</dd>
             <dt><label class="select2-details">Tags</label></dt>
-            <dd><input type="hidden" class="form-control disabled" zmon-select multi="true" tags="true" visible="true" width="100%" disabled="disabled" default="alertDefinition.tags"/></dd>
+            <dd><input type="hidden" class="form-control disabled" zmon-select multi="true" tags="true" visible="true" width="100%" disabled="disabled" default="alert.tags"/></dd>
         </dl>
     </div>
 </div>
-    <div ng-if="alertDefinition.status == 'ACTIVE'">
+    <div ng-if="alert.status == 'ACTIVE'">
         <uib-tabset>
             <uib-tab id="alerts-tab" heading="Alerts/Checks">
                 <div class="zmon-controls row">
                     <div class="col-md-8">
-                        <button class="btn" ng-class="{'active-page': showActiveAlerts && activeAlerts.length > 0}" ng-disabled="activeAlerts.length === 0" ng-click="toggleShowEntities('activeAlerts')">Alerts ({{activeAlerts.length}})</button>
-                        <button class="btn" ng-class="{'active-page': showAlertsInDowntime && alertsInDowntime.length > 0}" ng-disabled="alertsInDowntime.length === 0" ng-click="toggleShowEntities('alertsInDowntime')">In downtime ({{alertsInDowntime.length}})</button>
-                        <button class="btn" ng-class="{'active-page': showCheckResults && checkResults.length > 0}" ng-disabled="checkResults.length === 0" ng-click="toggleShowEntities('checkResults')">OK ({{checkResults.length}})</button>
-                        <span ng-show="addDowntimeEntities != 0">Selected: {{addDowntimeEntities.length}}</span>
+                        <button class="btn" ng-class="{'active-page': selection.activeAlerts && activeAlerts.length > 0}" ng-disabled="activeAlerts.length === 0" ng-click="selection.activeAlerts = !selection.activeAlerts">Alerts ({{activeAlerts.length}})</button>
+                        <button class="btn" ng-class="{'active-page': selection.alertsInDowntime && alertsInDowntime.length > 0}" ng-disabled="alertsInDowntime.length === 0" ng-click="selection.alertsInDowntime = !selection.alertsInDowntime">In downtime ({{alertsInDowntime.length}})</button>
+                        <button class="btn" ng-class="{'active-page': selection.checkResults && checkResults.length > 0}" ng-disabled="checkResults.length === 0" ng-click="selection.checkResults = !selection.checkResults">OK ({{checkResults.length}})</button>
                     </div>
                     <div class="col-md-4 text-right">
                         <form id="searchbar" class="form-inline">
@@ -113,8 +116,11 @@
                             <tr>
                                 <th class="actions-col">
                                     <div ng-if="userInfo['schedule-downtime']">
-                                        <input id="select-all-schedule-downtimes" type="checkbox" ng-checked="areAllDisplayedAlertsChecked()" ng-show="getTotalNumDisplayedAlerts()" ng-click="toggleAllEntitiesAddDowntime()">
-                                        <button id="set-downtimes-button" ng-disabled="addDowntimeEntities.length == 0" ng-click="showDowntimeModal(alertDetails.alert_definition.id)" class="fa fa-flag btn btn-primary" title="Schedule downtime"> </button>
+                                        <button id="set-downtimes-button" downtime-modal alert-id="alertId" downtime-entities="downtimeEntities" class="fa fa-flag btn btn-primary" title="Schedule downtime for {{downtimeEntities.length}} alerts" ng-disabled="!!!downtimeEntities.length">
+                                            <sup ng-if="downtimeEntities.length && downtimeEntities.length < 100" class="counter">{{downtimeEntities.length}}</sup>
+                                            <sup ng-if="downtimeEntities.length && downtimeEntities.length >= 100" class="counter">99+</sup>
+                                        </button>
+                                        <input id="select-all-schedule-downtimes" class="set-downtime-checkbox" type="checkbox" ng-checked="areAllAlertsMarkedForDowntime()" ng-click="toggleAllAlertsForDowntime()">
                                     </div>
                                 </th>
                                 <th class="name-col" ng-click="sortType = 'entity'; sortOrder = !sortOrder">Name
@@ -140,21 +146,21 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr ng-repeat="entityInstance in allAlertsAndChecks | filter:alertDetailsSearch.str | inDisplayedGroup:showActiveAlerts:showAlertsInDowntime:showCheckResults | orderBy:sortType:sortOrder track by entityInstance.entity" ng-class="{'danger': entityInstance.isActiveAlert == true, 'active-downtime': entityInstance.isAlertInDowntime == true, 'success': entityInstance.isCheckResult == true}">
+                            <tr ng-repeat="entityInstance in allAlerts | filter:alertDetailsSearch.str | orderBy:sortType:sortOrder track by entityInstance.entity" ng-class="{'danger': entityInstance.isActiveAlert == true, 'active-downtime': entityInstance.isAlertInDowntime == true, 'success': entityInstance.isCheckResult == true}">
                                 <td class="text-center">
-                                    <input ng-if="userInfo['schedule-downtime']" class="set-downtime-checkbox" type="checkbox" ng-checked="addDowntimeEntities.indexOf(entityInstance.entity) > -1" ng-click="toggleEntityAddDowntime(entityInstance.entity)">
-                                    <a href="/grafana/dashboard/db/zmon-check-{{checkDefinition.id}}-{{ entityInstance.entity }}"><i class="fa fa-fw fa-bar-chart-o"></i></a>
-                                    <a target="_new" ng-if="entityInstance.entityMeta && entityInstance.entityMeta.type && entityInstance.entityMeta.type == 'instance'" href="https://{{entityInstance.entityMeta.region}}.console.aws.amazon.com/ec2/v2/home?region={{entityInstance.entityMeta.region}}#Instances:search={{entityInstance.entityMeta.aws_id}};sort=Name" title="ip: {{entityInstance.entityMeta.ip}}"><i class="fa fa-fw fa-cloud"></i></a>
-                                    <a target="_new" ng-if="entityInstance.entityMeta && entityInstance.entityMeta.type && entityInstance.entityMeta.type == 'elb'" href="https://{{entityInstance.entityMeta.region}}.console.aws.amazon.com/ec2/v2/home?region={{entityInstance.entityMeta.region}}#LoadBalancers:search={{entityInstance.entityMeta.name}}"><i class="fa fa-fw fa-cloud"></i></a>
-                                    <comment-dialog class="fake-link" uid="alertDefinition.id" entity="entityInstance.entity"  save="saveComment(comment, cb)" delete="deleteComment(id, cb)" load="getComments(id, limit, offset, cb)" show-count="false"></comment-dialog>
+                                    <a href="/grafana/dashboard/db/zmon-check-{{check.id}}-{{ entityInstance.entity }}"><i class="fa fa-fw fa-bar-chart-o"></i></a>
+                                    <a class="clickable" ng-if="userInfo['add-comment']" comment-modal alert-id="alertId" count="commentsCount" entity="entityInstance.entity">
+                                        <i class="fa fa-fw fa-comments-o"></i>
+                                    </a>
+                                    <input ng-if="userInfo['schedule-downtime']" class="set-downtime-checkbox" type="checkbox" ng-checked="downtimeEntities.indexOf(entityInstance.entity) !== -1" ng-click="toggleAlertForDowntime(entityInstance.entity)">
                                 </td>
                                 <td><a href="/#/entities?ef=id:{{entityInstance.entity}}" title="{{entityInstance.entity}}">{{entityInstance.entity | entityName}}</a></td>
                                 <td><div title="{{entityInstance.result.td * 1000|timespan}} {{entityInstance.result.worker}}">
-                                        <span ng-class="{'alert-is-too-old': timestampIsOld(entityInstance)}">{{entityInstance.result.ts|datetime}} ({{timeAgo(entityInstance.result.ts)}} ago)</span></div></td>
+                                        <span ng-class="{'alert-is-too-old': timestampIsOld(entityInstance)}">{{entityInstance.result.ts|datetime}} ({{entityInstance.result.ts | timeago}} ago)</span></div></td>
                                 <td>
                                     <div ng-if="entityInstance.result.start_time">
                                         {{entityInstance.result.start_time | datetime}}
-                                        ({{timeAgo(entityInstance.result.start_time)}} ago)
+                                        ({{entityInstance.result.start_time | timeago}} ago)
                                     </div>
                                 </td>
                                 <td>
@@ -171,82 +177,16 @@
                         </tbody>
                     </table>
                 </div>
+
+
             </uib-tab>
-            <uib-tab id="downtimes-tab" heading="Downtimes ({{allDowntimes.length}})" disabled="allDowntimes.length == 0">
-                <table class="zmon-data-table table table-striped table-bordered table-hover table-condensed">
-                    <thead>
-                        <tr>
-                            <th class="text-center actions-col" ng-if="userInfo['delete-downtime']">
-                                <button id="delete-downtimes-button" ng-disabled="deleteDowntimeUUIDs.length == 0" ng-click="deleteMultiDowntimes()" class="fa fa-trash-o btn btn-primary"> </button>
-                                <input id="select-all-delete-downtimes" type="checkbox" ng-checked="areAllDowntimesChecked()" ng-click="toggleAllDeleteDowntimes()">
-                            </th>
-                            <th class="name-col" ng-click="sortType = 'entity'; sortOrder = !sortOrder">Entity
-                                    <i class="fa fa-fw fa-sort-asc sort-arrow" ng-show="sortType === 'entity' && sortOrder"></i>
-                                    <i class="fa fa-fw fa-sort-desc sort-arrow" ng-show="sortType === 'entity' && !sortOrder"></i>
-                            </th>
-                            <th class="timestamp-col" ng-click="sortType = 'start_time'; sortOrder = !sortOrder">Start time
-                                    <i class="fa fa-fw fa-sort-asc sort-arrow" ng-show="sortType === 'start_time' && sortOrder"></i>
-                                    <i class="fa fa-fw fa-sort-desc sort-arrow" ng-show="sortType === 'start_time' && !sortOrder"></i>
-                            </th>
-                            <th class="timestamp-col" ng-click="sortType = 'end_time'; sortOrder = !sortOrder">End time
-                                    <i class="fa fa-fw fa-sort-asc sort-arrow" ng-show="sortType === 'end_time' && sortOrder"></i>
-                                    <i class="fa fa-fw fa-sort-desc sort-arrow" ng-show="sortType === 'end_time' && !sortOrder"></i>
-                            </th>
-                            <th ng-click="sortType = 'comment'; sortOrder = !sortOrder">Comment
-                                    <i class="fa fa-fw fa-sort-asc sort-arrow" ng-show="sortType === 'comment' && sortOrder"></i>
-                                    <i class="fa fa-fw fa-sort-desc sort-arrow" ng-show="sortType === 'comment' && !sortOrder"></i>
-                            </th>
-                            <th class="modified-by-col" ng-click="sortType = 'created_by'; sortOrder = !sortOrder">Created by
-                                    <i class="fa fa-fw fa-sort-asc sort-arrow" ng-show="sortType === 'created_by' && sortOrder"></i>
-                                    <i class="fa fa-fw fa-sort-desc sort-arrow" ng-show="sortType === 'created_by' && !sortOrder"></i>
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <!-- And then show the entities downtimes -->
-                        <tr class="warning" ng-repeat="downtimeInstance in allDowntimes| filter:alertDetailsSearch.str | orderBy:sortTypeDowntimes:sortOrderDowntimes">
-                            <td ng-if="userInfo['delete-downtime']" class="text-center"><input type="checkbox" ng-checked="deleteDowntimeUUIDs.indexOf(downtimeInstance.id) > -1" ng-click="toggleSingleDeleteDowntime(downtimeInstance.id)"></td>
-                            <td>{{downtimeInstance.entity}}</td>
-                            <td>{{downtimeInstance.start_time | epochToDate}}</td>
-                            <td>{{downtimeInstance.end_time | epochToDate}}</td>
-                            <td class="ellipsis" expand>{{downtimeInstance.comment}}</td>
-                            <td>{{downtimeInstance.created_by}}</td>
-                        </tr>
-                    </tbody>
-                </table>
+            <uib-tab id="downtimes-tab" heading="Downtimes ({{downtimes.length}})" disabled="downtimes.length == 0">
+                <alert-downtimes alert-id="alertId" downtimes="downtimes"></alert-downtimes>
             </uib-tab>
-            <uib-tab heading="History" select="fetchHistoryLastNDays(1)">
-                <div class="zmon-controls">
-                    Events from <em>{{historyFromInEpochSeconds * 1000 | date:'medium'}}</em> till now
-                    <button class="btn" ng-class="{'active-page': activeHistoryButton['1']}" ng-click="fetchHistoryLastNDays(1)">Last day</button>
-                    <button class="btn" ng-class="{'active-page': activeHistoryButton['7']}" ng-click="fetchHistoryLastNDays(7)">Last 7 days</button>
-                    <button class="btn" ng-class="{'active-page': activeHistoryButton['14']}" ng-click="fetchHistoryLastNDays(14)">Last 14 days</button>
-                    <button class="btn" ng-class="{'active-page': activeHistoryButton['-1']}" ng-click="fetchOneMoreWeekOfHistory()">+1 week</button>
-                </div>
-                <table class="table table-striped table-bordered table-hover table-condensed">
-                    <thead>
-                        <tr>
-                            <th class="col-sm-2">When</th>
-                            <th class="col-sm-2">Type</th>
-                            <th>User</th>
-                            <th>Entity</th>
-                            <th>Content</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr ng-repeat="entry in allHistory" ng-if="entry.type_name != 'TRIAL_RUN_SCHEDULED'">
-                            <td>{{entry.time | epochToDate}}</td>
-                            <td class="text-center">
-                            <span class="history-tag" style="background-color: hsla({{HSLaFromHistoryEventTypeId(entry.type_id)}}, 50%, 50%, 1);">{{entry.type_name}}</span>
-                            </td>
-                            <td>{{entry.attributes.userName}}</td>
-                            <td>{{entry.attributes.entity}}</td>
-                            <td>{{getHistoryContent(entry.type_name, entry.attributes)}} </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </uib-tab>
-            <uib-tab id="children-tab" heading="Children ({{alertDefinitionChildren.length}})" disabled="alertDefinitionChildren.length == 0">
+            <uib-tab heading="History">
+                <alert-history alert-id="alertId"></alert-history>
+             </uib-tab>
+            <uib-tab id="children-tab" heading="Children ({{alert.children.length}})" disabled="alert.children.length == 0">
                 <table class="zmon-data-table table table-striped table-bordered table-hover table-condensed">
                     <thead>
                         <tr>
@@ -286,7 +226,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr ng-repeat="def in alertDefinitionChildren | orderBy:sortTypeChildren:sortOrderChildren" repeat-monitor last="$last">
+                        <tr ng-repeat="def in alert.children | orderBy:sortTypeChildren:sortOrderChildren" repeat-monitor last="$last">
                             <td><a uib-tooltip-html-unsafe="{{def.description | markdown}}" tooltip-placement="right" href="#/alert-details/{{def.id}}">{{def.name || '(no name)'}}</a></td>
                             <td class="ellipsis" expand>{{def.condition}}</td>
                             <td><dd ng-repeat="(name, parameter) in def.parameters">{{name}} = {{parameter.value}}</dd></td>
@@ -303,10 +243,10 @@
         </uib-tabset>
     </div>
 
-    <div ng-if="alertDefinition.status === 'INACTIVE'" class="alert alert-info">
-        This alert definition has status {{ alertDefinition.status }}. Change the status to ACTIVE to enable alerting and see alert entities.
+    <div ng-if="alert.status === 'INACTIVE'" class="alert alert-info">
+        This alert definition has status {{ alert.status }}. Change the status to ACTIVE to enable alerting and see alert entities.
     </div>
 
-    <div ng-if="alertDefinition.status === 'DELETED'" class="alert alert-info">
-        This alert definition has status {{ alertDefinition.status }}. To finalize alert deletion please <a ng-show="alertDefinition.deletable" href=""ng-click="showDeleteAlertDefinitionModal()" title="Delete alert definition"><em>click here</em> <i class="fa fa-fw fa-trash-o"></i></a> and confirm your choice.
+    <div ng-if="alert.status === 'DELETED'" class="alert alert-info">
+        This alert definition has status {{ alert.status }}. To finalize alert deletion please <a ng-show="alert.deletable" href=""ng-click="showDeleteAlertDefinitionModal()" title="Delete alert definition"><em>click here</em> <i class="fa fa-fw fa-trash-o"></i></a> and confirm your choice.
     </div>

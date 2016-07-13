@@ -47,7 +47,7 @@
 
 .zmon-data-table th.actions-col
 {
-    width: 6%;
+    width: 7%;
 }
 
 .zmon-data-table th.event-name-col
@@ -140,6 +140,20 @@
 .zmon-data-table th i.fa-sort-asc
 {
     top: 5px;
+}
+
+.zmon-data-table .set-downtime-checkbox
+{
+    float: left;
+    margin-top: 5px;
+}
+
+.zmon-data-table #set-downtimes-button
+{
+    padding-left: 10px;
+    margin-left: 10px;
+    width: 49px;
+    overflow: hidden;
 }
 
 /* ALERTS AND CHECK DEFINITIONS */
