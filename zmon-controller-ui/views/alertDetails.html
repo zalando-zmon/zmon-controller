@@ -148,11 +148,12 @@
                         </thead>
                         <tbody>
                             <tr ng-repeat="entityInstance in ::allAlerts | filter:alertDetailsSearch.str | orderBy:sortType:sortOrder track by entityInstance.entity" ng-class="{'danger': entityInstance.isActiveAlert == true, 'active-downtime': entityInstance.isAlertInDowntime == true, 'success': entityInstance.isCheckResult == true}">
-                                <td class="text-center">
+                                <td>
                                     <a href="/grafana/dashboard/db/zmon-check-{{::check.id}}-{{ ::entityInstance.entity | entityName }}"><i class="fa fa-fw fa-bar-chart-o"></i></a>
                                     <a class="clickable" ng-if="userInfo['add-comment']" comment-modal alert-id="alertId" count="commentsCount" entity="::entityInstance.entity">
                                         <i class="fa fa-fw fa-comments-o"></i>
                                     </a>
+                                    <a target="_new" ng-if="entityInstance.entityMeta && entityInstance.entityMeta.infrastructure_account && entityInstance.entityMeta.region && entityInstance.entityMeta.instance_id" href="https://{{::entityInstance.entityMeta.region}}.console.aws.amazon.com/ec2/v2/home?region={{::entityInstance.entityMeta.region}}#Instances:search={{::entityInstance.entityMeta.instance_id}};sort=Name"><i class="fa fa-fw fa-cloud"></i></a>
                                     <input ng-if="userInfo['schedule-downtime']" class="set-downtime-checkbox" type="checkbox" ng-checked="downtimeEntities.indexOf(entityInstance.entity) !== -1" ng-click="toggleAlertForDowntime(entityInstance.entity)">
                                 </td>
                                 <td><a href="/#/entities?ef=id:{{::entityInstance.entity}}" title="{{::entityInstance.entity}}">{{::entityInstance.entity | entityName}}</a></td>

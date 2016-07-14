@@ -60,6 +60,24 @@ angular.module('zmon2App').controller('AlertDetailsCtrl', [ '$location', '$route
             });
     };
 
+    var fetchEntityData = function(entities) {
+        var entitiesId = _.map(_.map(entities, 'entity'), function(id) {
+            return { 'id': id };
+        }, []);
+        if (!entitiesId.length) {
+            return;
+        }
+        CommunicationService.getEntityMetaData(entitiesId).then(function(response) {
+            _.each(entities, function(next) {
+                _.each(response, function(meta) {
+                    if (meta.id === next.entity) {
+                        next.entityMeta = meta;
+                    }
+                });
+            });
+        });
+    };
+
     var fetchData = function(cb) {
         CommunicationService.getAlertDefinition($scope.alertId).then(function(alert) {
             $scope.alert = alert;
@@ -67,8 +85,10 @@ angular.module('zmon2App').controller('AlertDetailsCtrl', [ '$location', '$route
                 $scope.check = check;
                 CommunicationService.getAlertDetails($scope.alert.id).then(function (details) {
                     $scope.alert.details = details;
+                    fetchEntityData($scope.alert.details.entities);
                     CommunicationService.getCheckResultsForAlert($scope.alert.id, 1).then(function(results) {
                         $scope.checkResults = filterEntitiesWithAlert(results);
+                        fetchEntityData($scope.checkResults.entities);
                         cb();
                     });
                 });
