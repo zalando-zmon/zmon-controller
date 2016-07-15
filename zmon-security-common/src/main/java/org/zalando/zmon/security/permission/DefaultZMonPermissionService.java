@@ -32,6 +32,12 @@ public class DefaultZMonPermissionService {
 
     private static final String ANONYMOUS_USER = "anonymousUser";
 
+    @Autowired
+    private AlertDefinitionSProcService alertDefinitionSProc;
+
+    @Autowired
+    private DashboardSProcService dashboardSProc;
+
     public String getUserName() {
         final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return authentication == null ? ANONYMOUS_USER : authentication.getName();
