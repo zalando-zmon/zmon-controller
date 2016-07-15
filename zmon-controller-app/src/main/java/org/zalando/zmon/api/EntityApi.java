@@ -10,8 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.zalando.zmon.api.domain.ResourceNotFoundException;
 import org.zalando.zmon.persistence.EntitySProcService;
 import org.zalando.zmon.security.permission.DefaultZMonPermissionService;
 
@@ -56,7 +58,10 @@ public class EntityApi {
     public void addEntity(@RequestBody JsonNode entity) {
         try {
             String data = mapper.writeValueAsString(entity);
-            entitySprocs.createOrUpdateEntity(data, Lists.newArrayList(authService.getTeams()), authService.getUserName());
+            String id = entitySprocs.createOrUpdateEntity(data, Lists.newArrayList(authService.getTeams()), authService.getUserName());
+            if (id == null) {
+                throw new AccessDeniedException("Access denied: entity was not updated");
+            }
         } catch (IOException ex) {
             log.error("Entity not serializable", ex);
         }
@@ -91,9 +96,12 @@ public class EntityApi {
 
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    @RequestMapping(value = "/{id}/")
+    @RequestMapping(value = {"/{id}/", "/{id}"})
     public void getEntity(@PathVariable(value = "id") String id, final Writer writer) {
         List<String> entities = entitySprocs.getEntityById(id);
+        if (entities.isEmpty()) {
+            throw new ResourceNotFoundException();
+        }
         try {
             for (String s : entities) {
                 writer.write(s);// there is at most one entity
@@ -105,7 +113,7 @@ public class EntityApi {
 
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    @RequestMapping(value = "/{id}/", method = RequestMethod.DELETE)
+    @RequestMapping(value = {"/{id}/", "/{id}"}, method = RequestMethod.DELETE)
     public int deleteEntity(@PathVariable(value = "id") String id) {
         List<String> teams = Lists.newArrayList(authService.getTeams());
         log.info("Deleting entity {} from user {} with teams {}", id, authService.getUserName(), teams);
