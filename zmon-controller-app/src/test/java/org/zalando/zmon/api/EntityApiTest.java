@@ -36,6 +36,8 @@ public class EntityApiTest {
 
     @Test
     public void testAddEntity() throws Exception {
+        List<String> teams = ImmutableList.of();
+        when(entitySProcService.createOrUpdateEntity("{}", teams, "anonymousUser")).thenReturn("myid");
         MvcResult result = mockMvc.perform(post("/api/v1/entities").header("Content-Type", "application/json").content("{}")).andReturn();
         assertThat(result.getResponse().getStatus()).isEqualTo(200);
     }
