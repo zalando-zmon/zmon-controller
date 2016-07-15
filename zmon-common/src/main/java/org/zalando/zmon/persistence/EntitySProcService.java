@@ -13,7 +13,7 @@ import java.util.List;
 public interface EntitySProcService {
 
     @SProcCall
-    String createOrUpdateEntity(@SProcParam String data, @SProcParam String teamName, @SProcParam String userName);
+    String createOrUpdateEntity(@SProcParam String data, @SProcParam List<String> teams, @SProcParam String userName);
 
     @SProcCall
     List<String> getEntityById(@SProcParam String id);
@@ -22,5 +22,5 @@ public interface EntitySProcService {
     List<String> getEntities(@SProcParam String filter);
 
     @SProcCall
-    List<String> deleteEntity(@SProcParam String id, @SProcParam List<String> teams);
+    List<String> deleteEntity(@SProcParam String id, @SProcParam List<String> teams, @SProcParam String userName);
 }

@@ -2,7 +2,7 @@ package org.zalando.zmon.api;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
+import com.google.common.collect.Lists;
 import org.postgresql.util.PSQLException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,13 +13,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.zalando.zmon.api.domain.ResourceNotFoundException;
 import org.zalando.zmon.persistence.EntitySProcService;
 import org.zalando.zmon.security.permission.DefaultZMonPermissionService;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.Writer;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -56,15 +56,13 @@ public class EntityApi {
     @ResponseBody
     @RequestMapping(value = {"/", ""}, method = {RequestMethod.PUT, RequestMethod.POST})
     public void addEntity(@RequestBody JsonNode entity) {
-        if(entity.has("team") && !authService.getTeams().contains(entity.get("team").textValue())) {
-            throw new AccessDeniedException("Your team does not match entity team");
-        }
-
         try {
             String data = mapper.writeValueAsString(entity);
-            entitySprocs.createOrUpdateEntity(data, "", authService.getUserName());
-        }
-        catch(IOException ex) {
+            String id = entitySprocs.createOrUpdateEntity(data, Lists.newArrayList(authService.getTeams()), authService.getUserName());
+            if (id == null) {
+                throw new AccessDeniedException("Access denied: entity was not updated");
+            }
+        } catch (IOException ex) {
             log.error("Entity not serializable", ex);
         }
     }
@@ -83,54 +81,44 @@ public class EntityApi {
         try {
             writer.write("[");
             boolean first = true;
-            for(String s : entities) {
-                if(!first) {
+            for (String s : entities) {
+                if (!first) {
                     writer.write(",");
                 }
                 first = false;
                 writer.write(s);
             }
             writer.write("]");
-        }
-        catch(IOException ex) {
+        } catch (IOException ex) {
             log.error("", ex);
         }
     }
 
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    @RequestMapping(value = "/{id}/")
+    @RequestMapping(value = {"/{id}/", "/{id}"})
     public void getEntity(@PathVariable(value = "id") String id, final Writer writer) {
         List<String> entities = entitySprocs.getEntityById(id);
+        if (entities.isEmpty()) {
+            throw new ResourceNotFoundException();
+        }
         try {
             for (String s : entities) {
                 writer.write(s);// there is at most one entity
             }
-        }
-        catch(IOException ex) {
+        } catch (IOException ex) {
             log.error("", ex);
         }
     }
 
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    @RequestMapping(value = "/{id}/", method = RequestMethod.DELETE)
+    @RequestMapping(value = {"/{id}/", "/{id}"}, method = RequestMethod.DELETE)
     public int deleteEntity(@PathVariable(value = "id") String id) {
-        List<String> teams = new ArrayList<>();
-        teams.addAll(authService.getTeams());
+        List<String> teams = Lists.newArrayList(authService.getTeams());
         log.info("Deleting entity {} from user {} with teams {}", id, authService.getUserName(), teams);
-        List<String> ids = entitySprocs.deleteEntity(id, teams);
+        List<String> ids = entitySprocs.deleteEntity(id, teams, authService.getUserName());
         return ids.size();
     }
-    
-    @ResponseStatus(HttpStatus.OK)
-    @ResponseBody
-    @RequestMapping(value = "/", method = RequestMethod.DELETE)
-    public int deleteEntityByQuery(@RequestParam(value = "id") String id) {
-        List<String> teams = new ArrayList<>();
-        teams.addAll(authService.getTeams());
-        log.info("Deleting entity {} from user {} with teams {}", id, authService.getUserName(), teams);
-        List<String> ids = entitySprocs.deleteEntity(id, teams);
-        return ids.size();
-    }  
+
 }
