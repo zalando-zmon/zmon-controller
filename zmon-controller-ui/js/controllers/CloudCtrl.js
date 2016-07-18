@@ -1,5 +1,5 @@
-angular.module('zmon2App').controller('CloudCtrl', ['$scope', '$interval', '$location', 'CommunicationService','MainAlertService', 'LoadingIndicatorService', 'UserInfoService',
-    function($scope, $interval, $location, CommunicationService, MainAlertService, LoadingIndicatorService, UserInfoService) {
+angular.module('zmon2App').controller('CloudCtrl', ['$scope', '$interval', '$location', 'CommunicationService', 'localStorageService', 'MainAlertService', 'LoadingIndicatorService', 'UserInfoService',
+    function($scope, $interval, $location, CommunicationService, localStorageService, MainAlertService, LoadingIndicatorService, UserInfoService) {
 
         // Set 'Cloud' tab as active
         $scope.$parent.activePage = 'cloud';
@@ -20,11 +20,11 @@ angular.module('zmon2App').controller('CloudCtrl', ['$scope', '$interval', '$loc
         // flag true if tracked apps are present
         $scope.trackedApplications = false;
 
-        // Get user info with preferences i.e. cloud check
-        this.userInfo = UserInfoService.get();
-
         // Determine cloud check to use
-        var cloudCheck = this.userInfo['cloud-check'] || 0;
+        var cloudCheck = UserInfoService.get()['cloud-check'] || 0;
+
+        // teams filter
+        $scope.teamSearch = localStorageService.get('cloudTeamSearch') || ''
 
         // loading indicator
         LoadingIndicatorService.start();
@@ -302,6 +302,10 @@ angular.module('zmon2App').controller('CloudCtrl', ['$scope', '$interval', '$loc
             if (!$scope.selectedApplication) {
                 fastFetchTeamApps(teamName);
             }
+        });
+
+        $scope.$watch('teamSearch', function(val) {
+            localStorageService.set('cloudTeamSearch', val);
         });
 
         // set state from url parameters whenever they change

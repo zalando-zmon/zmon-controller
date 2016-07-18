@@ -3,31 +3,39 @@
     <div class="col-md-12">
         <div class="row">
             <div class="col-md-10" ng-show="haveTeams()">
-                <h3>
-                    <span ng-click="setTeam(null)" class="clickable" style="padding-left:5px;"><a>teams</a></span>
+                <h3 class="header-control">
+                    <span ng-click="setTeam(null)" class="clickable"><a>teams</a></span>
                     <span ng-click="setApp(null)" ng-if="selectedTeam" class="clickable"> > <a>{{selectedTeam}}</a></span>
                     <span ng-click="setEndpoint(null)" ng-if="selectedApplication" class="clickable"> > <a>{{selectedApplication}}</a></span>
                     <span ng-if="selectedEndpoint"> > {{selectedEndpoint}}</span>
                 </h3>
             </div>
-            <!-- div class="col-md-2">
-                <label>Timespan:
-                    <div class="btn-group" ng-if="selectedApplication">
-                        <label class="btn btn-default" ng-class="{'btn-primary':timespan === 30}" ng-model="radioModel" uib-uib-btn-radio="30'" ng-click="setTimespan(30)" uncheckable>30'</label>
-                        <label class="btn btn-default" ng-class="{'btn-primary':timespan === 60}"  ng-model="radioModel" uib-uib-btn-radio="60'" ng-click="setTimespan(60)"  uncheckable>60'</label>
-                        <label class="btn btn-default" ng-class="{'btn-primary':timespan === 120}"  ng-model="radioModel" uib-uib-btn-radio="120'" ng-click="setTimespan(120)" uncheckable>120'</label>
-                    </div>
-                </label>
-            </div-->
         </div>
         <div class="row">
-            <div class="col-md-12">
+            <div class="col-md-8">
+                <form id="searchbar" class="form-inline header-control searchbar" ng-if="!selectedTeam">
+                    <div class="form-group">
+                        <div class="input-group">
+                            <span class="input-group-btn">
+                                <button class="btn btn-primary"><i class="fa fa-fw fa-search"></i></button>
+                            </span>
+                            <input class="form-control" placeholder="type a team name..."  type="text" ng-model="teamSearch" autofocus />
+                                <i class="clear-input clickable fa fa-times" ng-if="teamSearch" ng-click="teamSearch = ''"></i>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="row" ng-if="!selectedTeam">
+            <div class="col-md-12 cards-container">
                 <div class="no-teams" ng-hide="haveTeams()"><h4>No teams available.</h4></div>
-                <div ng-repeat="teamName in teamNames" class="clickable card" ng-hide="selectedTeam" ng-click="setTeam(teamName)">
+                <div ng-repeat="teamName in teamNames | filter: teamSearch" class="clickable card" ng-click="setTeam(teamName)">
                     <a><h4>{{teamName}}</h4></a>
-                    <div><span class="number">{{teams[teamName].applications.length}}</span><span class="lbl">apps</span></div>
-                    <div><span class="number">{{teams[teamName].instances.length}}</span><span class="lbl">instances</span></div>
-                    <div><span class="number">{{getPublicElbsByTeam(teams[teamName])}}/{{teams[teamName].elbs.length}}</span><span class="lbl">Public/ELBs</span></div>
+                    <ul class="list-unstyled">
+                        <li class="number">{{teams[teamName].applications.length}}</span><span class="lbl">apps</li>
+                        <li class="number">{{teams[teamName].instances.length}}</span><span class="lbl">instances</li>
+                        <li class="number">{{getPublicElbsByTeam(teams[teamName])}}/{{teams[teamName].elbs.length}}</span><span class="lbl">Public/ELBs</li>
+                    </ul>
                 </div>
             </div>
         </div>
@@ -56,7 +64,7 @@
             </div>
         </div>
 
-        <div ng-repeat="app in teams[selectedTeam].applications | filter:hasMetrics | orderBy:['application_id']" class="app-row clickable" ng-click="showApp(app.application_id, null, true)" class="clickable" ng-class="{'warning':app.results.epercent > 5}">
+        <div ng-repeat="app in teams[selectedTeam].applications | filter:hasMetrics | orderBy:['application_id']" class="app-row clickable" ng-click="showApp(app.application_id, null, true)" ng-class="{'warning':app.results.epercent > 5}">
             <div class="col-md-2"><h4>{{app.application_id}}</h4></div>
             <div class="col-md-10">
                 <div class="col-md-3">
