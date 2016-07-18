@@ -65,6 +65,11 @@ public class EntityApiIT {
                 "{\"id\":\"testentity\",\"type\":\"test\",\"foo\":\"bar\"}"));
         assertThat(response.returnResponse().getStatusLine().getStatusCode()).isEqualTo(200);
 
+        // updating twice should work
+        response = executor.execute(updateEntity(
+                "{\"id\":\"testentity\",\"type\":\"test\",\"foo\":\"bar\"}"));
+        assertThat(response.returnResponse().getStatusLine().getStatusCode()).isEqualTo(200);
+
         content = executor.execute(getEntity("testentity")).returnContent().asString();
         assertThat(content).contains("\"foo\": \"bar\"");
 
