@@ -5,7 +5,7 @@ DECLARE
   _data jsonb;
 BEGIN
   SELECT e_data INTO _data FROM zzm_data.entity WHERE (e_data->'id')::text = ((entity_data::jsonb)->'id')::text;
-  IF _data IS NOT DISTINCT FROM entity_data::jsonb THEN
+  IF (entity_data::json->'type')::text IS DISTINCT FROM '"local"' AND _data IS NOT DISTINCT FROM entity_data::jsonb THEN
     RETURN (_data->'id')::text;
   END IF;
 
