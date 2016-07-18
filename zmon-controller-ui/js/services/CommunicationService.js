@@ -164,7 +164,7 @@ angular.module('zmon2App').factory('CommunicationService', ['$http', '$q', '$log
         };
 
         service.getEntityMetaData = function(query) {
-            var params = JSON.stringify(query)
+            var params = JSON.stringify(query);
             return doHttpCall("POST", "rest/entities", params);
         };
 
@@ -173,7 +173,7 @@ angular.module('zmon2App').factory('CommunicationService', ['$http', '$q', '$log
                 type: type
             };
 
-            return service.getEntityMetaData(t)
+            return service.getEntityMetaData(t);
         };
 
         service.getCheckResultsFiltered = function(id, filter) {
@@ -425,17 +425,18 @@ angular.module('zmon2App').factory('CommunicationService', ['$http', '$q', '$log
          *          "entity_ids": ["a", "b"]
          *      }
          */
-        service.scheduleDowntime = function(comment, startTime, endTime, entitiesPerAlert) {
-            PreconditionsService.isNotEmpty(comment);
-            PreconditionsService.isNotEmpty(startTime);
-            PreconditionsService.isDate(startTime);
-            PreconditionsService.isNotEmpty(endTime);
-            PreconditionsService.isDate(endTime);
+        service.scheduleDowntime = function(downtime, entitiesPerAlert) {
+            PreconditionsService.isNotEmpty(downtime);
+            PreconditionsService.isNotEmpty(downtime.comment);
+            PreconditionsService.isNotEmpty(downtime.startTime);
+            PreconditionsService.isDate(downtime.startTime);
+            PreconditionsService.isNotEmpty(downtime.endTime);
+            PreconditionsService.isDate(downtime.endTime);
             PreconditionsService.isNotEmpty(entitiesPerAlert);
             var postData = {
-                "comment": comment,
-                "start_time": parseInt(startTime.getTime() / 1000, 10), // convert to seconds
-                "end_time": parseInt(endTime.getTime() / 1000, 10),
+                "comment": downtime.comment,
+                "start_time": parseInt(downtime.startTime.getTime() / 1000, 10), // convert to seconds
+                "end_time": parseInt(downtime.endTime.getTime() / 1000, 10),
                 "downtime_entities": entitiesPerAlert
             };
             var headers = {

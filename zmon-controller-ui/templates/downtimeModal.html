@@ -4,21 +4,21 @@
         <div class="row">
             <div class="col-md-8">
                 <uib-tabset>
-                    <uib-tab heading="Duration" ng-click="setDurationTabActive(true)">
+                    <uib-tab heading="Duration" ng-click="scheduleMode = false">
                         <div>
                             <p style="margin-top: 20px">Downtime ends at <em>{{calcDowntimeEndtime() | date:'HH:mm'}}</em></p>
                             <i class="fa fa-clock-o"> </i>
                             <div class="downtime-section">
-                                <uib-timepicker ng-model="models.downtimeDuration" hour-step="1" minute-step="15" show-meridian="false"></uib-timepicker>
+                                <uib-timepicker ng-model="models.duration" hour-step="1" minute-step="15" show-meridian="false"></uib-timepicker>
                             </div>
                         </div>
                         <div>
                             <div class="downtime-section mandatory">
-                                <textarea class="form-control downtime-reason" ng-model="models.downtimeComment" placeholder="Downtime reason" rows="5" cols="60" required></textarea>
+                                <textarea class="form-control downtime-reason" ng-model="models.comment" placeholder="Downtime reason" rows="5" cols="60" required></textarea>
                             </div>
                         </div>
                     </uib-tab>
-                    <uib-tab heading="Schedule" ng-click="setDurationTabActive(false)">
+                    <uib-tab heading="Schedule" ng-click="scheduleMode = true">
                         <div class="row">
                             <div class="col-md-8">
                                 <uib-table>
@@ -29,7 +29,7 @@
                                                 <span class="input-group-btn" style="vertical-align: middle">
                                                     <button class="btn btn-default" ng-click="openDatepicker($event, 'start')"><i class="glyphicon glyphicon-calendar"></i></button>
                                                 </span>
-                                                <input type="text" class="form-control" uib-datepicker-popup="{{dateFormat}}" is-open="models.startDatepickerOpened" ng-model="models.downStartDate" min="minDate" max="maxDate" datepicker-options="dateOptions" ng-required="true" close-text="Close"/>
+                                                <input type="text" class="form-control" uib-datepicker-popup="{{dateFormat}}" is-open="models.startDatepickerOpened" ng-model="models.startDate" min="minDate" max="maxDate" datepicker-options="dateOptions" ng-required="true" close-text="Close"/>
                                             </div>
                                         </td>
                                     </tr>
@@ -37,7 +37,7 @@
                             </div>
                             <div class="col-md-4">
                                 <div style="display:inline-block; width: 190px">
-                                    <uib-timepicker ng-model="models.downStartTime" hour-step="1" minute-step="1" show-meridian="false"></uib-timepicker>
+                                    <uib-timepicker ng-model="models.startTime" hour-step="1" minute-step="1" show-meridian="false"></uib-timepicker>
                                 </div>
                             </div>
                         </div>
@@ -51,7 +51,7 @@
                                                 <span class="input-group-btn" style="vertical-align: middle">
                                                 <button class="btn btn-default" ng-click="openDatepicker($event, 'end')"><i class="glyphicon glyphicon-calendar"></i></button>
                                                 </span>
-                                                <input type="text" class="form-control" uib-datepicker-popup="{{dateFormat}}" is-open="models.endDatepickerOpened" ng-model="models.downEndDate" min="minDate" max="maxDate" datepicker-options="dateOptions" ng-required="true" close-text="Close"/>
+                                                <input type="text" class="form-control" uib-datepicker-popup="{{dateFormat}}" is-open="models.endDatepickerOpened" ng-model="models.endDate" min="minDate" max="maxDate" datepicker-options="dateOptions" ng-required="true" close-text="Close"/>
                                             </div>
                                         </td>
                                     </tr>
@@ -59,13 +59,13 @@
                             </div>
                             <div class="col-md-4">
                                 <div style="display:inline-block; width: 190px">
-                                    <uib-timepicker ng-model="models.downEndTime" hour-step="1" minute-step="1" show-meridian="false"></uib-timepicker>
+                                    <uib-timepicker ng-model="models.endTime" hour-step="1" minute-step="1" show-meridian="false"></uib-timepicker>
                                 </div>
                             </div>
                         </div>
                         <div>
                             <div class="downtime-section mandatory">
-                                <textarea class="form-control downtime-reason" ng-model="models.downtimeComment" placeholder="Downtime reason" rows="5" cols="60" required></textarea>
+                                <textarea class="form-control downtime-reason" ng-model="models.comment" placeholder="Downtime reason" rows="5" cols="60" required></textarea>
                             </div>
                         </div>
                     </uib-tab>
