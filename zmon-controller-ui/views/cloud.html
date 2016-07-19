@@ -3,9 +3,9 @@
     <div class="col-md-12">
         <div class="row">
             <div class="col-md-10" ng-show="haveTeams()">
-                <h3 class="header-control">
+                <h3 ng-if="selectedTeam">
                     <span ng-click="setTeam(null)" class="clickable"><a>teams</a></span>
-                    <span ng-click="setApp(null)" ng-if="selectedTeam" class="clickable"> > <a>{{selectedTeam}}</a></span>
+                    <span ng-click="setApp(null)" class="clickable"> > <a>{{selectedTeam}}</a></span>
                     <span ng-click="setEndpoint(null)" ng-if="selectedApplication" class="clickable"> > <a>{{selectedApplication}}</a></span>
                     <span ng-if="selectedEndpoint"> > {{selectedEndpoint}}</span>
                 </h3>
@@ -13,7 +13,7 @@
         </div>
         <div class="row">
             <div class="col-md-8">
-                <form id="searchbar" class="form-inline header-control searchbar" ng-if="!selectedTeam">
+                <form id="searchbar" class="form-inline searchbar" ng-if="!selectedTeam">
                     <div class="form-group">
                         <div class="input-group">
                             <span class="input-group-btn">
