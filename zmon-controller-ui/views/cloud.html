@@ -19,8 +19,8 @@
                             <span class="input-group-btn">
                                 <button class="btn btn-primary"><i class="fa fa-fw fa-search"></i></button>
                             </span>
-                            <input class="form-control" placeholder="type a team name..."  type="text" ng-model="teamSearch" autofocus />
-                                <i class="clear-input clickable fa fa-times" ng-if="teamSearch" ng-click="teamSearch = ''"></i>
+                            <input class="form-control" placeholder="type a team name..."  type="text" ng-model="teamSearch.str" autofocus />
+                                <i class="clear-input clickable fa fa-times" ng-if="teamSearch.str" ng-click="teamSearch.str = ''"></i>
                         </div>
                     </div>
                 </form>
@@ -29,7 +29,7 @@
         <div class="row" ng-if="!selectedTeam">
             <div class="col-md-12 cards-container">
                 <div class="no-teams" ng-hide="haveTeams()"><h4>No teams available.</h4></div>
-                <div ng-repeat="teamName in teamNames | filter: teamSearch" class="clickable card" ng-click="setTeam(teamName)">
+                <div ng-repeat="teamName in teamNames | filter: teamSearch.str" class="clickable card" ng-click="setTeam(teamName)">
                     <a><h4>{{teamName}}</h4></a>
                     <ul class="list-unstyled">
                         <li class="number">{{teams[teamName].applications.length}}</span><span class="lbl">apps</li>

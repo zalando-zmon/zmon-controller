@@ -24,7 +24,7 @@ angular.module('zmon2App').controller('CloudCtrl', ['$scope', '$interval', '$loc
         var cloudCheck = UserInfoService.get()['cloud-check'] || 0;
 
         // teams filter
-        $scope.teamSearch = localStorageService.get('cloudTeamSearch') || ''
+        $scope.teamSearch = { str: localStorageService.get('cloudTeamSearch') || '' };
 
         // loading indicator
         LoadingIndicatorService.start();
@@ -304,7 +304,7 @@ angular.module('zmon2App').controller('CloudCtrl', ['$scope', '$interval', '$loc
             }
         });
 
-        $scope.$watch('teamSearch', function(val) {
+        $scope.$watch('teamSearch.str', function(val) {
             localStorageService.set('cloudTeamSearch', val);
         });
 
