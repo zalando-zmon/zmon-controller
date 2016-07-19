@@ -173,6 +173,7 @@ describe('AlertDetailsCtrl', function() {
                 "cloneable":true,
                 "deletable":true
             });
+            httpBackend.when('POST', 'rest/entities').respond({});
         });
     });
 

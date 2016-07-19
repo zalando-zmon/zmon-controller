@@ -88,7 +88,7 @@ angular.module('zmon2App').controller('AlertDetailsCtrl', [ '$location', '$route
                     fetchEntityData($scope.alert.details.entities);
                     CommunicationService.getCheckResultsForAlert($scope.alert.id, 1).then(function(results) {
                         $scope.checkResults = filterEntitiesWithAlert(results);
-                        fetchEntityData($scope.checkResults.entities);
+                        fetchEntityData($scope.checkResults);
                         cb();
                     });
                 });
