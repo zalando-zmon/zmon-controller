@@ -52,6 +52,9 @@ public class ZauthTeamService implements TeamService {
         try {
             List<Team> teams = restTemplate.exchange(builder.build().toUri(), HttpMethod.GET, null, TYPE_REF).getBody();
             for (Team team : teams) {
+                if (team.getName().equals("")) {
+                    continue;
+                }
                 result.add(team.getName());
             }
         }
