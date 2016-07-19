@@ -1,4 +1,4 @@
-package org.zalando.zmon.config;
+package org.zalando.test;
 
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
@@ -10,11 +10,15 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.zalando.zmon.config.RedisPoolConfiguration;
 import org.zalando.zmon.config.annotation.RedisWrite;
 import org.zalando.zmon.config.redis.WriteRedisProperties;
 
 import redis.clients.jedis.JedisPool;
 
+/**
+ * NOTE: this class is outside "org.zalando.zmon" to not be collected by component scan!
+ */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration
 public class RedisConfigTest {

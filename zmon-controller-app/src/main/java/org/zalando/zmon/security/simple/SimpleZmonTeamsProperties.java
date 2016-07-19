@@ -15,6 +15,16 @@ import com.google.common.collect.Maps;
 @ConfigurationProperties(prefix = "zmon.teams.simple")
 public class SimpleZmonTeamsProperties {
 
+	public String defaultTeam = null;
+
+	public String getDefaultTeam() {
+		return defaultTeam;
+	}
+
+	public void setDefaultTeam(String defaultTeam) {
+		this.defaultTeam = defaultTeam;
+	}
+
 	private Map<String, List<String>> teams = Maps.newHashMap();
 
 	public Map<String, List<String>> getTeams() {

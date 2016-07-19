@@ -26,6 +26,11 @@ public class SimpleTeamService implements TeamService {
 		if (teams != null) {
 			return Sets.newHashSet(teams);
 		}
+
+		if (teamProperties.getDefaultTeam() != null && !"".equals(teamProperties.getDefaultTeam())) {
+			return Sets.newHashSet(teamProperties.getDefaultTeam());
+		}
+
 		return Sets.newHashSet();
 	}
 

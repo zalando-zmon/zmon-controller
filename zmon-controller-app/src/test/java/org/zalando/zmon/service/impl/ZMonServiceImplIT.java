@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.transaction.annotation.Transactional;
+import org.zalando.test.ServiceTestConfiguration;
 import org.zalando.zmon.domain.AlertDefinition;
 import org.zalando.zmon.domain.AlertDefinitionIsEqual;
 import org.zalando.zmon.domain.AlertDefinitionsDiff;

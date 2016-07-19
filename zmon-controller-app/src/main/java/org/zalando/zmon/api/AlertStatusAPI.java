@@ -9,14 +9,17 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.zalando.zmon.domain.Alert;
 import org.zalando.zmon.domain.CheckResults;
 import org.zalando.zmon.domain.ExecutionStatus;
 import org.zalando.zmon.redis.ResponseHolder;
+import org.zalando.zmon.service.AlertService;
 import org.zalando.zmon.service.ZMonService;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.Pipeline;
 
+import javax.websocket.server.PathParam;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,9 +41,12 @@ public class AlertStatusAPI {
     private final JedisPool jedisPool;
     protected ObjectMapper mapper;
 
+    private AlertService alertService;
+
     @Autowired
-    public AlertStatusAPI(final ZMonService service, final JedisPool p, final ObjectMapper m) {
+    public AlertStatusAPI(final ZMonService service, final AlertService alertService, final JedisPool p, final ObjectMapper m) {
         this.service = service;
+        this.alertService = alertService;
         jedisPool = p;
         mapper = m;
     }
@@ -113,5 +119,23 @@ public class AlertStatusAPI {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return new ResponseEntity<>(node, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/alert/{alert_id}/details")
+    public ResponseEntity<Alert> getAlert(@PathParam(value = "alert_id") final Integer alertId) {
+        final Alert alert = alertService.getAlert(alertId);
+
+        return alert == null ? new ResponseEntity<>(HttpStatus.NOT_FOUND)
+                : new ResponseEntity<>(alert, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/active-alerts", method = RequestMethod.GET)
+    public ResponseEntity<List<Alert>> getAllAlerts(
+            @RequestParam(value = "team", required = false) final Set<String> teams,
+            @RequestParam(value = "tags", required = false) final Set<String> tags) {
+        final List<Alert> alerts = teams == null && tags == null ? alertService.getAllAlerts()
+                : alertService.getAllAlertsByTeamAndTag(teams, tags);
+
+        return new ResponseEntity<>(alerts, HttpStatus.OK);
     }
 }

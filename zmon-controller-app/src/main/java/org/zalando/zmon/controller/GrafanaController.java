@@ -350,6 +350,11 @@ public class GrafanaController extends AbstractZMonController {
     @ResponseBody
     @RequestMapping(value = "/api/dashboards/db/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<JsonNode> deleteG2Dashboard(@PathVariable(value = "id") String id) {
+        if(!authService.hasUserAuthority()) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+
+        LOG.info("Deleting grafana dashboard: id={} user={}", id, authService.getUserName());
         grafanaService.deleteGrafanaDashboard(id, authService.getUserName());
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -358,11 +363,10 @@ public class GrafanaController extends AbstractZMonController {
     @ResponseBody
     @RequestMapping(value = "/api/dashboards/db", method = RequestMethod.POST, produces = "application/json")
     public ResponseEntity<JsonNode> saveDashboard(@RequestBody(required = true) final JsonNode grafanaData) throws IOException {
-        /*
-        if(authService.hasOnetimeTokenPrivilege()) {
+        if(!authService.hasUserAuthority()) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
-         */
+
         String title = grafanaData.get("dashboard").get("title").textValue();
         if (title == null || "".equals(title)) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -404,15 +408,23 @@ public class GrafanaController extends AbstractZMonController {
 
     @RequestMapping(value = "/api/user/stars/dashboard/{id}", method = RequestMethod.POST)
     @ResponseBody
-    public JsonNode starDashboard(@PathVariable String id) {
+    public ResponseEntity<JsonNode> starDashboard(@PathVariable String id) {
+        if(!authService.hasUserAuthority()) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+
         grafanaService.starGrafanaDashboard(id, authService.getUserName());
-        return mapper.createObjectNode();
+        return new ResponseEntity<>(mapper.createObjectNode(), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/api/user/stars/dashboard/{id}", method = RequestMethod.DELETE)
     @ResponseBody
-    public JsonNode unstarDashboard(@PathVariable String id) {
+    public ResponseEntity<JsonNode> unstarDashboard(@PathVariable String id) {
+        if(!authService.hasUserAuthority()) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+
         grafanaService.unstarGrafanaDashboard(id, authService.getUserName());
-        return mapper.createObjectNode();
+        return new ResponseEntity<>(mapper.createObjectNode(), HttpStatus.OK);
     }
 }

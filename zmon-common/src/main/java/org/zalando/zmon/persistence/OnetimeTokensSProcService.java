@@ -14,10 +14,10 @@ import org.zalando.zmon.domain.OnetimeTokenInfo;
 @SProcService
 public interface OnetimeTokensSProcService {
     @SProcCall
-    List<Integer> createOnetimeToken(@SProcParam String user, @SProcParam String ip, @SProcParam String token);
+    Integer createOnetimeToken(@SProcParam String user, @SProcParam String ip, @SProcParam String token, @SProcParam int expiresInDays);
 
     @SProcCall
-    List<Integer> bindOnetimeToken(@SProcParam String token, @SProcParam String bindIp, @SProcParam String sessionId);
+    List<OnetimeTokenInfo> bindOnetimeToken(@SProcParam String token, @SProcParam String bindIp, @SProcParam String sessionId);
 
     @SProcCall
     List<OnetimeTokenInfo> getOnetimeTokensByUser(@SProcParam String user);
