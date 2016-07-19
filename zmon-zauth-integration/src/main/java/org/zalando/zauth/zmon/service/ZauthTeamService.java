@@ -45,18 +45,13 @@ public class ZauthTeamService implements TeamService {
 
     @Override
     public Set<String> getTeams(String username) {
-        Set<String> result = Sets.newHashSet();
+        final Set<String> result = Sets.newHashSet();
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(zauthProperties.getTeamServiceUrl().toString()).path("/api/teams")
                 .queryParam("member", username);
 
         try {
             List<Team> teams = restTemplate.exchange(builder.build().toUri(), HttpMethod.GET, null, TYPE_REF).getBody();
-            for (Team team : teams) {
-                if (team.getName().equals("")) {
-                    continue;
-                }
-                result.add(team.getName());
-            }
+            teams.stream().filter(t -> !t.getName().equals("")).forEach(t -> result.add(t.getName()));
         }
         catch(RestClientException ex) {
             log.error("Failed to call team service, no teams for now!", ex);
