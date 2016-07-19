@@ -117,7 +117,7 @@
                             <tr>
                                 <th class="actions-col">
                                     <div ng-if="userInfo['schedule-downtime']">
-                                        <button id="set-downtimes-button" downtime-modal alert-id="alertId" downtime-entities="downtimeEntities" class="fa fa-flag btn btn-primary" title="Schedule downtime for {{::downtimeEntities.length}} alerts" ng-disabled="!!!downtimeEntities.length">
+                                        <button id="set-downtimes-button" downtime-modal alert-id="alertId" downtime-entities="downtimeEntities" class="fa fa-flag btn btn-primary" title="Schedule downtime for {{downtimeEntities.length}} alerts" ng-disabled="!!!downtimeEntities.length">
                                             <sup ng-if="downtimeEntities.length && downtimeEntities.length < 100" class="counter">{{downtimeEntities.length}}</sup>
                                             <sup ng-if="downtimeEntities.length && downtimeEntities.length >= 100" class="counter">99+</sup>
                                         </button>
@@ -147,34 +147,34 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr ng-repeat="entityInstance in ::allAlerts | filter:alertDetailsSearch.str | orderBy:sortType:sortOrder track by entityInstance.entity" ng-class="{'danger': entityInstance.isActiveAlert == true, 'active-downtime': entityInstance.isAlertInDowntime == true, 'success': entityInstance.isCheckResult == true}">
+                            <tr ng-repeat="entityInstance in allAlerts | filter:alertDetailsSearch.str | orderBy:sortType:sortOrder track by entityInstance.entity" ng-class="{'danger': entityInstance.isActiveAlert == true, 'active-downtime': entityInstance.isAlertInDowntime == true, 'success': entityInstance.isCheckResult == true}">
                                 <td>
-                                    <a href="/grafana/dashboard/db/zmon-check-{{::check.id}}-{{ ::entityInstance.entity | entityName }}"><i class="fa fa-fw fa-bar-chart-o"></i></a>
-                                    <a class="clickable" ng-if="userInfo['add-comment']" comment-modal alert-id="alertId" count="commentsCount" entity="::entityInstance.entity">
+                                    <a href="/grafana/dashboard/db/zmon-check-{{check.id}}-{{ entityInstance.entity | entityName }}"><i class="fa fa-fw fa-bar-chart-o"></i></a>
+                                    <a class="clickable" ng-if="userInfo['add-comment']" comment-modal alert-id="alertId" count="commentsCount" entity="entityInstance.entity">
                                         <i class="fa fa-fw fa-comments-o"></i>
                                     </a>
-                                    <a target="_new" ng-if="entityInstance.entityMeta && entityInstance.entityMeta.infrastructure_account && entityInstance.entityMeta.region && entityInstance.entityMeta.instance_id" href="https://{{::entityInstance.entityMeta.region}}.console.aws.amazon.com/ec2/v2/home?region={{::entityInstance.entityMeta.region}}#Instances:search={{::entityInstance.entityMeta.instance_id}};sort=Name"><i class="fa fa-fw fa-cloud"></i></a>
+                                    <a target="_new" ng-if="entityInstance.entityMeta && entityInstance.entityMeta.infrastructure_account && entityInstance.entityMeta.region && entityInstance.entityMeta.instance_id" href="https://{{entityInstance.entityMeta.region}}.console.aws.amazon.com/ec2/v2/home?region={{entityInstance.entityMeta.region}}#Instances:search={{entityInstance.entityMeta.instance_id}};sort=Name"><i class="fa fa-fw fa-cloud"></i></a>
                                     <input ng-if="userInfo['schedule-downtime']" class="set-downtime-checkbox" type="checkbox" ng-checked="downtimeEntities.indexOf(entityInstance.entity) !== -1" ng-click="toggleAlertForDowntime(entityInstance.entity)">
                                 </td>
-                                <td><a href="/#/entities?ef=id:{{::entityInstance.entity}}" title="{{::entityInstance.entity}}">{{::entityInstance.entity | entityName}}</a></td>
-                                <td><div title="{{::entityInstance.result.td * 1000|timespan}} {{::entityInstance.result.worker}}">
-                                        <span ng-class="{'alert-is-too-old': timestampIsOld(entityInstance)}">{{::entityInstance.result.ts|datetime}} ({{::entityInstance.result.ts | timeago}} ago)</span></div></td>
+                                <td><a href="/#/entities?ef=id:{{entityInstance.entity}}" title="{{entityInstance.entity}}">{{entityInstance.entity | entityName}}</a></td>
+                                <td><div title="{{entityInstance.result.td * 1000|timespan}} {{entityInstance.result.worker}}">
+                                        <span ng-class="{'alert-is-too-old': timestampIsOld(entityInstance)}">{{entityInstance.result.ts|datetime}} ({{entityInstance.result.ts | timeago}} ago)</span></div></td>
                                 <td>
                                     <div ng-if="entityInstance.result.start_time">
-                                        {{::entityInstance.result.start_time | datetime}}
-                                        ({{::entityInstance.result.start_time | timeago}} ago)
+                                        {{entityInstance.result.start_time | datetime}}
+                                        ({{entityInstance.result.start_time | timeago}} ago)
                                     </div>
                                 </td>
                                 <td>
                                     <div class="ellipsis" alert-value-modal name="entityInstance.entity" value="entityInstance.result.value">{{entityInstance.result.value}}
                                         <div ng-if="entityInstance.isAlertInDowntime == true">
-                                            {{::entityInstance.result.downtimes | downtimeReasons}}
+                                            {{entityInstance.result.downtimes | downtimeReasons}}
                                         </div>
                                     </div>
 
                                 </td>
                                 <td>
-                                    <div class="ellipsis" expand>{{::entityInstance.result.captures}}</div>
+                                    <div class="ellipsis" expand>{{entityInstance.result.captures}}</div>
                                 </td>
                             </tr>
                         </tbody>
@@ -228,13 +228,13 @@
                     </thead>
                     <tbody>
                         <tr ng-repeat="def in alert.children | orderBy:sortTypeChildren:sortOrderChildren" repeat-monitor last="$last">
-                            <td><a uib-tooltip-html-unsafe="{{::def.description | markdown}}" tooltip-placement="right" href="#/alert-details/{{::def.id}}">{{::def.name || '(no name)'}}</a></td>
-                            <td class="ellipsis" expand>{{::def.condition}}</td>
-                            <td><dd ng-repeat="(name, parameter) in ::def.parameters">{{::name}} = {{::parameter.value}}</dd></td>
+                            <td><a uib-tooltip-html-unsafe="{{def.description | markdown}}" tooltip-placement="right" href="#/alert-details/{{def.id}}">{{def.name || '(no name)'}}</a></td>
+                            <td class="ellipsis" expand>{{def.condition}}</td>
+                            <td><dd ng-repeat="(name, parameter) in def.parameters">{{name}} = {{parameter.value}}</dd></td>
                             <td><span class="text-muted" ng-show="def.entities.length === 0">(no entity filter)</span><div ng-bind-html="def.entities | entities"></div></td>
-                            <td><a href="#/check-definitions/view/{{::def.check_definition_id}}">{{::def.check_definition_id}}</a></td>
-                            <td>{{::def.team}}</td>
-                            <td>{{::def.responsible_team}}</td>
+                            <td><a href="#/check-definitions/view/{{def.check_definition_id}}">{{def.check_definition_id}}</a></td>
+                            <td>{{def.team}}</td>
+                            <td>{{def.responsible_team}}</td>
                             <td class="text-center"><priority prio="def.priority"></priority></td>
                             <td>
                                 <status status="def.status"></status><i id="star" class='fa fa-star' ng-show="def.star" title="new alert"></i>
