@@ -18,6 +18,7 @@ import org.zalando.zauth.zmon.domain.Team;
 import org.zalando.zmon.security.TeamService;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Created by hjacobs on 2/4/16.
@@ -45,13 +46,13 @@ public class ZauthTeamService implements TeamService {
 
     @Override
     public Set<String> getTeams(String username) {
-        final Set<String> result = Sets.newHashSet();
+        Set<String> result = Sets.newHashSet();
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(zauthProperties.getTeamServiceUrl().toString()).path("/api/teams")
                 .queryParam("member", username);
 
         try {
             List<Team> teams = restTemplate.exchange(builder.build().toUri(), HttpMethod.GET, null, TYPE_REF).getBody();
-            teams.stream().filter(t -> !t.getName().equals("")).forEach(t -> result.add(t.getName()));
+            result = teams.stream().filter(t -> !t.getName().equals("")).map(t -> t.getName()).collect(Collectors.toSet());
         }
         catch(RestClientException ex) {
             log.error("Failed to call team service, no teams for now!", ex);
