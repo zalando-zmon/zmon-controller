@@ -26,6 +26,7 @@ public class IsAllowedOrgaSignupCondition extends GithubSignupCondition {
 
     private final Logger log = LoggerFactory.getLogger(IsAllowedOrgaSignupCondition.class);
 
+    private final UriTemplate membersUriTemplate = new UriTemplate(MEMBERS_REQUEST);
     private final GithubSignupConditionProperties signupProperties;
 
     public IsAllowedOrgaSignupCondition(final GithubSignupConditionProperties signupProperties) {
@@ -52,8 +53,8 @@ public class IsAllowedOrgaSignupCondition extends GithubSignupCondition {
             try {
 
                 log.info("Checking Orga : {}", orga);
-                URI uri = new UriTemplate(MEMBERS_REQUEST).expand(orga);
-                ResponseEntity<String> response = rest.getForEntity(uri, String.class);
+                URI uri = buildUri(orga);
+                ResponseEntity<Object> response = rest.getForEntity(uri, Object.class);
                 if (response.getStatusCode().equals(HttpStatus.OK)) {
                     log.info("{} is a member of {}", username, orga);
                     return true;
@@ -65,6 +66,10 @@ public class IsAllowedOrgaSignupCondition extends GithubSignupCondition {
 
         log.info("{} is not a member of orgas {}", username, signupProperties.getAllowedOrgas());
         return false;
+    }
+
+    protected URI buildUri(String orga) {
+        return membersUriTemplate.expand(orga);
     }
 
 }
