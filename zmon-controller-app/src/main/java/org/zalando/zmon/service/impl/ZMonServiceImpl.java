@@ -512,4 +512,9 @@ public class ZMonServiceImpl implements ZMonService {
             return null;
         }
     }
+
+    @Override
+    public Date getMaxCheckDefinitionLastModified() {
+        return checkDefinitionSProc.getCheckLastModifiedMax();
+    }
 }

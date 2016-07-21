@@ -1,5 +1,6 @@
 package org.zalando.zmon.api;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -44,6 +45,12 @@ public class AlertDefinitionsApi extends AbstractZMonController {
     public AlertDefinitionsApi(final AlertService alertService, final DefaultZMonPermissionService authorityService) {
         this.service = Preconditions.checkNotNull(alertService, "alertService is null");
         this.authorityService = Preconditions.checkNotNull(authorityService, "authorityService is null");
+    }
+
+    @ResponseBody
+    @RequestMapping(method=RequestMethod.HEAD)
+    public Date getMaxLastModified() {
+        return service.getMaxLastModified();
     }
 
     @RequestMapping(method = RequestMethod.POST)
