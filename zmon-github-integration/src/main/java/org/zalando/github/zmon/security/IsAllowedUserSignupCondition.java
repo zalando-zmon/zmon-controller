@@ -2,9 +2,7 @@ package org.zalando.github.zmon.security;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.social.github.api.GitHub;
-
 import org.springframework.util.Assert;
 
 /**
@@ -33,6 +31,9 @@ public class IsAllowedUserSignupCondition extends GithubSignupCondition {
 
         final String username = api.userOperations().getProfileId();
 
-        return signupProperties.getAllowedUsers().contains(username);
+        final boolean isAllowedUser = signupProperties.getAllowedUsers().contains(username);
+
+        log.info("The user : {} is allowed to signup : {}", username, isAllowedUser);
+        return isAllowedUser;
     }
 }
