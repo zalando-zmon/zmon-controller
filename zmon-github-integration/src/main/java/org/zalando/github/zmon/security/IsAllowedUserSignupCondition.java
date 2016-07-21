@@ -6,7 +6,7 @@ import org.springframework.social.github.api.GitHub;
 import org.springframework.util.Assert;
 
 /**
- * @author  jbellmann
+ * @author jbellmann
  */
 public class IsAllowedUserSignupCondition extends GithubSignupCondition {
 
@@ -17,6 +17,7 @@ public class IsAllowedUserSignupCondition extends GithubSignupCondition {
     public IsAllowedUserSignupCondition(final GithubSignupConditionProperties signupProperties) {
         Assert.notNull(signupProperties, "'signupProperties' should never be null");
         this.signupProperties = signupProperties;
+        logAllowedUsers();
     }
 
     @Override
@@ -35,5 +36,10 @@ public class IsAllowedUserSignupCondition extends GithubSignupCondition {
 
         log.info("The user : {} is allowed to signup : {}", username, isAllowedUser);
         return isAllowedUser;
+    }
+
+    protected void logAllowedUsers() {
+        log.info("{} was configured for allowed users : {}", getClass().getSimpleName(),
+                signupProperties.getAllowedUsers());
     }
 }

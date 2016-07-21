@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.social.github.api.GitHub;
+import org.springframework.util.Assert;
 import org.springframework.web.client.RestOperations;
 import org.springframework.web.util.UriTemplate;
 
@@ -30,7 +31,9 @@ public class IsAllowedOrgaSignupCondition extends GithubSignupCondition {
     private final GithubSignupConditionProperties signupProperties;
 
     public IsAllowedOrgaSignupCondition(final GithubSignupConditionProperties signupProperties) {
+        Assert.notNull(signupProperties, "'signupProperties' should never be null");
         this.signupProperties = signupProperties;
+        logAllowedOrgas();
     }
 
     @Override
@@ -70,6 +73,11 @@ public class IsAllowedOrgaSignupCondition extends GithubSignupCondition {
 
     protected URI buildUri(String orga) {
         return membersUriTemplate.expand(orga);
+    }
+
+    protected void logAllowedOrgas() {
+        log.info("{} was configured to check for orgas : {}", getClass().getSimpleName(),
+                signupProperties.getAllowedOrgas());
     }
 
 }
