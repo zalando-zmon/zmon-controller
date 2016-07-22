@@ -145,7 +145,7 @@ public class GithubSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Bean
     public UserDetailsManager userDetailsManager() {
-        return new InMemoryUserDetailsManager(new ArrayList<UserDetails>());
+        return new InMemoryUserDetailsManager(new ArrayList<>());
     }
 
     @Bean

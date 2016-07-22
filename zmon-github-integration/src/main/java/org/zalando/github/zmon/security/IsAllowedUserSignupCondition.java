@@ -33,13 +33,10 @@ public class IsAllowedUserSignupCondition extends GithubSignupCondition {
         final String username = api.userOperations().getProfileId();
 
         final boolean isAllowedUser = signupProperties.getAllowedUsers().contains(username);
-
-        log.info("The user : {} is allowed to signup : {}", username, isAllowedUser);
         return isAllowedUser;
     }
 
     protected void logAllowedUsers() {
-        log.info("{} was configured for allowed users : {}", getClass().getSimpleName(),
-                signupProperties.getAllowedUsers());
+        log.info("Github users allowed: {}", signupProperties.getAllowedUsers());
     }
 }

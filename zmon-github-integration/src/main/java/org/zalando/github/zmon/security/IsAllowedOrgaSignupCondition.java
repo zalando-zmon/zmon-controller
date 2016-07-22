@@ -54,7 +54,6 @@ public class IsAllowedOrgaSignupCondition extends GithubSignupCondition {
         final String username = api.userOperations().getProfileId();
         for (String orga : signupProperties.getAllowedOrgas()) {
             try {
-
                 log.info("Checking Orga : {}", orga);
                 URI uri = buildUri(orga);
                 ResponseEntity<Object> response = rest.getForEntity(uri, Object.class);
@@ -76,8 +75,6 @@ public class IsAllowedOrgaSignupCondition extends GithubSignupCondition {
     }
 
     protected void logAllowedOrgas() {
-        log.info("{} was configured to check for orgas : {}", getClass().getSimpleName(),
-                signupProperties.getAllowedOrgas());
+        log.info("Github organizations allowed: {}", signupProperties.getAllowedOrgas());
     }
-
 }
