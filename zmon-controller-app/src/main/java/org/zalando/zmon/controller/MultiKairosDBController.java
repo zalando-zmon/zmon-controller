@@ -4,6 +4,8 @@ import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.util.concurrent.ListenableFuture;
@@ -28,6 +30,8 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 @RestController
 @RequestMapping(value = "/rest/kairosdbs/")
 public class MultiKairosDBController extends AbstractZMonController {
+
+    private final Logger log = LoggerFactory.getLogger(MultiKairosDBController.class);
 
     public static final String KAIROSDB_TOKEN_ID = "kairosdb";
 
@@ -56,6 +60,7 @@ public class MultiKairosDBController extends AbstractZMonController {
 
         for (KairosDBProperties.KairosDBServiceConfig c : kairosDBProperties.getKairosdbs()) {
             kairosdbServices.put(c.getName(), c);
+            log.info("Registering: name={} url={} oauth={}", c.getName(), c.getUrl(), c.isOauth2());
         }
     }
 
