@@ -16,6 +16,7 @@ import org.springframework.security.oauth2.provider.OAuth2Request;
 import org.springframework.security.oauth2.provider.token.ResourceServerTokenServices;
 import org.springframework.social.github.api.impl.GitHubTemplate;
 import org.springframework.web.client.HttpClientErrorException;
+import org.zalando.github.zmon.security.GithubSignupConditionProperties;
 import org.zalando.zmon.security.AuthorityService;
 
 import com.google.common.collect.Maps;
@@ -30,9 +31,12 @@ public class GithubResourceServerTokenServices implements ResourceServerTokenSer
 
     private Environment environment;
 
-    public GithubResourceServerTokenServices(AuthorityService authorityService, Environment environment) {
+    private GithubSignupConditionProperties githubProperties;
+
+    public GithubResourceServerTokenServices(AuthorityService authorityService, Environment environment, GithubSignupConditionProperties githubProperties) {
         this.authorityService = authorityService;
         this.environment = environment;
+        this.githubProperties = githubProperties;
     }
 
     @Override
@@ -47,10 +51,15 @@ public class GithubResourceServerTokenServices implements ResourceServerTokenSer
             username = tpl.userOperations().getProfileId();
         } catch (HttpClientErrorException ex) {
             if (HttpStatus.UNAUTHORIZED == ex.getStatusCode()) {
-                throw new InvalidTokenException("Invalid GitHub access token");
+                throw new InvalidTokenException("Invalid GitHub access token!");
             }
             throw ex;
         }
+
+        if (!githubProperties.getAllowedUsers().contains(username)) {
+            throw new InvalidTokenException("Github user not allowed! user=" + username);
+        }
+
         Collection<? extends GrantedAuthority> authorities = authorityService.getAuthorities(username);
 
         UsernamePasswordAuthenticationToken user = new UsernamePasswordAuthenticationToken(username, "N/A",
