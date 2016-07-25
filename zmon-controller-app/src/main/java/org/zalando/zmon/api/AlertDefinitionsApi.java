@@ -1,7 +1,12 @@
 package org.zalando.zmon.api;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +49,16 @@ public class AlertDefinitionsApi extends AbstractZMonController {
     public AlertDefinitionsApi(final AlertService alertService, final DefaultZMonPermissionService authorityService) {
         this.service = Preconditions.checkNotNull(alertService, "alertService is null");
         this.authorityService = Preconditions.checkNotNull(authorityService, "authorityService is null");
+    }
+
+    @RequestMapping(method=RequestMethod.HEAD)
+    public void getMaxLastModified(HttpServletResponse response) {
+        TimeZone tz = TimeZone.getTimeZone("UTC");
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
+        df.setTimeZone(tz);
+
+        Date date = service.getMaxLastModified();
+        response.setHeader("Last-Modified", df.format(date));
     }
 
     @RequestMapping(method = RequestMethod.POST)

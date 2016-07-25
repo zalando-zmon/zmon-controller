@@ -2,6 +2,7 @@ package org.zalando.zmon.api;
 
 import com.google.common.base.Preconditions;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.slf4j.Logger;
@@ -18,8 +19,12 @@ import org.zalando.zmon.exception.ZMonException;
 import org.zalando.zmon.security.permission.DefaultZMonPermissionService;
 import org.zalando.zmon.service.ZMonService;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.TimeZone;
 
 @Controller
 @RequestMapping("/api/v1/check-definitions")
@@ -35,6 +40,16 @@ public class CheckDefinitionsApi extends AbstractZMonController {
     public CheckDefinitionsApi(final ZMonService zMonService, final DefaultZMonPermissionService authorityService) {
         this.zMonService = Preconditions.checkNotNull(zMonService, "zMonService is null");
         this.authorityService = Preconditions.checkNotNull(authorityService, "authorityService is null");
+    }
+
+    @RequestMapping(method=RequestMethod.HEAD)
+    public void getMaxLastModified(HttpServletResponse response) {
+        TimeZone tz = TimeZone.getTimeZone("UTC");
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
+        df.setTimeZone(tz);
+
+        Date date = zMonService.getMaxCheckDefinitionLastModified();
+        response.setHeader("Last-Modified", df.format(date));
     }
 
     @RequestMapping(method = RequestMethod.POST)

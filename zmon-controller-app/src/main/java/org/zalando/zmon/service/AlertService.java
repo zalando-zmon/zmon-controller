@@ -1,6 +1,7 @@
 package org.zalando.zmon.service;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -53,4 +54,6 @@ public interface AlertService {
     void cleanAlertState(int alertDefinitionId);
 
     List<String> getAllTags();
+
+    Date getMaxLastModified();
 }
