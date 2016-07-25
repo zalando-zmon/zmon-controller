@@ -1,7 +1,9 @@
 package org.zalando.zauth.zmon.config;
 
 import java.util.ArrayList;
+import java.util.List;
 
+import com.google.common.collect.ImmutableList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,19 +20,19 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurer;
+import org.springframework.security.oauth2.provider.token.ResourceServerTokenServices;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.social.security.SocialUserDetailsService;
 import org.springframework.social.security.SpringSocialConfigurer;
 import org.zalando.stups.oauth2.spring.server.TokenInfoResourceServerTokenServices;
-import org.zalando.zmon.security.TeamService;
-import org.zalando.zmon.security.WebSecurityConstants;
-import org.zalando.zmon.security.ZmonAuthenticationEntrypoint;
-import org.zalando.zmon.security.ZmonResourceServerConfigurer;
+import org.zalando.zmon.security.*;
 import org.zalando.zmon.security.jwt.JWTRememberMeServices;
 import org.zalando.zmon.security.jwt.JWTService;
 import org.zalando.zmon.security.rememberme.MultiRememberMeServices;
+import org.zalando.zmon.security.service.ChainedResourceServerTokenServices;
+import org.zalando.zmon.security.service.PresharedTokensResourceServerTokenServices;
 import org.zalando.zmon.security.service.SimpleSocialUserDetailsService;
 import org.zalando.zmon.security.tvtoken.TvTokenService;
 import org.zalando.zmon.security.tvtoken.ZMonTvRememberMeServices;
@@ -47,6 +49,9 @@ import org.zalando.zmon.security.tvtoken.ZMonTvRememberMeServices;
 public class ZauthSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private static final String LOGIN_PAGE_URL = "/signin";
+
+    @Autowired
+    private AuthorityService authorityService;
 
     @Autowired
     private Environment environment;
@@ -139,8 +144,12 @@ public class ZauthSecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     public ResourceServerConfigurer zmonResourceServerConfigurer() {
         String tokenInfoUri = environment.getProperty("security.oauth2.resource.userInfoUri");
-        return new ZmonResourceServerConfigurer(
+
+        final List<ResourceServerTokenServices> chain = ImmutableList.of(
+                new PresharedTokensResourceServerTokenServices(authorityService, environment),
                 new TokenInfoResourceServerTokenServices(tokenInfoUri, new ZmonAuthenticationExtractor(teamService)));
+
+        return new ZmonResourceServerConfigurer(new ChainedResourceServerTokenServices(chain));
     }
 
 }
