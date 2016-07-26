@@ -149,7 +149,7 @@
                         <tbody>
                             <tr ng-repeat="entityInstance in allAlerts | filter:alertDetailsSearch.str | orderBy:sortType:sortOrder track by entityInstance.entity" ng-class="{'danger': entityInstance.isActiveAlert == true, 'active-downtime': entityInstance.isAlertInDowntime == true, 'success': entityInstance.isCheckResult == true}">
                                 <td>
-                                    <a href="/grafana/dashboard/db/zmon-check-{{check.id}}-{{ entityInstance.entity | entityName }}"><i class="fa fa-fw fa-bar-chart-o"></i></a>
+                                    <a href="/grafana/dashboard/db/zmon-check-{{check.id}}-{{ entityInstance.entity }}"><i class="fa fa-fw fa-bar-chart-o"></i></a>
                                     <a class="clickable" ng-if="userInfo['add-comment']" comment-modal alert-id="alertId" count="commentsCount" entity="entityInstance.entity">
                                         <i class="fa fa-fw fa-comments-o"></i>
                                     </a>
