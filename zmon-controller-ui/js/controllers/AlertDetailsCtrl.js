@@ -192,7 +192,7 @@ angular.module('zmon2App').controller('AlertDetailsCtrl', [ '$location', '$route
 
     // Force cleanup of alert state
     $scope.forceAlertCleanup = function() {
-        CommunicationService.forceAlertCleanup($scope.alertDefinitionId).then(function() {
+        CommunicationService.forceAlertCleanup($scope.alertId).then(function() {
             FeedbackMessageService.showSuccessMessage('Cleanup of alert state successfully forced...');
         });
     };
