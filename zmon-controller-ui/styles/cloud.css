@@ -3,6 +3,16 @@
     margin-top: 30px;
 }
 
+.cards-container
+{
+    margin-top: 20px;
+}
+
+.cards-container ul
+{
+    margin-left: 5px;
+}
+
 /* team view */
 .card
 {
@@ -11,7 +21,7 @@
     width:180px;
     border:1px solid #ccc;
     margin:5px;
-    padding:5px;
+    padding:10px;
     box-shadow: 3px 3px 2px -2px grey;
 }
 
