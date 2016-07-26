@@ -185,7 +185,7 @@ angular.module('zmon2App').controller('AlertDetailsCtrl', [ '$location', '$route
 
     // Force evaluation of alert definition
     $scope.forceAlertEvaluation = function() {
-        CommunicationService.forceAlertEvaluation($scope.alertDefinitionId).then(function() {
+        CommunicationService.forceAlertEvaluation($scope.alertId).then(function() {
             FeedbackMessageService.showSuccessMessage('Evaluation of alert successfully forced...');
         });
     };
