@@ -15,7 +15,7 @@
             <span ng-hide="alert.cloneable || alert.status == 'DELETED'"><i class="fa fa-fw fa-copy semi-transparent"></i> Clone</span>
             <a ng-show="alert.cloneable && alert.status != 'DELETED'" href="#/alert-definitions/inherit/{{alert.id}}" title="Inherit alert definition"><i class="fa fa-fw fa-sitemap"></i> Inherit</a>
             <span ng-hide="alert.cloneable || alert.status == 'DELETED'"><i class="fa fa-fw fa-sitemap semi-transparent"></i> Inherit</span>
-            <a ng-show="alert.deletable" href=""ng-click="showDeleteAlertDefinitionModal()" title="Delete alert definition"><i class="fa fa-fw fa-trash-o"></i> Delete</a>
+            <a ng-show="alert.deletable" href="" alert-delete alert="alert" title="Delete alert definition"><i class="fa fa-fw fa-trash-o"></i> Delete</a>
             <span ng-hide="alert.deletable"><i class="fa fa-fw fa-trash-o semi-transparent"></i> Delete</span>
             <a href="#/history?alert_definition_id={{alert.id}}"><i class="fa fa-clock-o"></i> History</a>
             <a class="clickable" href="/#/trial-run?json={{alertJson}}"><i class="fa fa-play"></i> Trial Run</a>
