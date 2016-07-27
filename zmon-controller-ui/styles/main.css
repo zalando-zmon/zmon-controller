@@ -465,10 +465,38 @@ a[rel=help]
     color: #262626;
 }
 
+.downtime-entities .select2-choices
+{
+    min-height: 120px !important;
+    max-height: 120px !important;
+    overflow-y: auto !important;
+    background: none !important;
+}
+
 .downtime-section
 {
     display: inline-block;
     vertical-align: middle;
+}
+
+.downtime-time-label
+{
+    margin-top: 19px;
+}
+
+.downtime-duration-label
+{
+    margin-top: 40px;
+}A
+
+.downtime-modal .modal-body
+{
+    padding-bottom: 0;
+}
+
+.downtime-modal .downtime-reason
+{
+    height: 80px;
 }
 
 .mandatory:before
@@ -482,13 +510,6 @@ a[rel=help]
 .danger a, .danger i,
 .success a, .success i {
     color: #262626;
-}
-
-.downtime-reason
-{
-    width: 95%;
-    vertical-align: top;
-    display: inline;
 }
 
 .active-downtime

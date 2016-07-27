@@ -35,7 +35,7 @@ angular.module('zmon2App').directive('downtimeModal', [ '$uibModal', '$timeout',
                         var startTime = new Date();
                         var endTime = $scope.calcDowntimeEndtime();
 
-                        if (!$scope.scheduleMode) {
+                        if ($scope.scheduleMode) {
                             var sd = $scope.models.startDate;
                             var st = $scope.models.startTime;
                             var ed = $scope.models.endDate;
@@ -49,9 +49,11 @@ angular.module('zmon2App').directive('downtimeModal', [ '$uibModal', '$timeout',
                         }
 
                         $uibModalInstance.close({
+                            "alert_definition_id": scope.alertId,
                             "startTime": startTime,
                             "endTime": endTime,
-                            "comment": $scope.models.comment
+                            "comment": $scope.models.comment,
+                            "entity_ids": downtimeEntities
                         });
                     };
 
@@ -80,20 +82,23 @@ angular.module('zmon2App').directive('downtimeModal', [ '$uibModal', '$timeout',
 
                     $scope.removeEntity = function(exclEntity) {
                         $scope.downtimeEntities.splice($scope.downtimeEntities.indexOf(exclEntity), 1);
+
                         if ($scope.downtimeEntities.length === 0) {
                             $scope.cancel();
                         }
                     };
                 };
 
-                var open = function(alertId) {
+                var open = function() {
+
                     var modalInstance = $uibModal.open({
                         templateUrl: '/templates/downtimeModal.html',
                         controller: modalCtrl,
                         backdrop: false,
+                        windowClass: 'downtime-modal',
                         resolve: {
                             downtimeAlertId: function() {
-                                return alertId;
+                                return scope.alertId;
                             },
                             downtimeEntities: function() {
                                 return scope.downtimeEntities;
@@ -102,15 +107,9 @@ angular.module('zmon2App').directive('downtimeModal', [ '$uibModal', '$timeout',
                     });
 
                     modalInstance.result.then(function(downtime) {
-                        var entitiesPerAlert = [{
-                            "alert_definition_id": scope.alertId,
-                            "entity_ids": scope.downtimeEntities
-                        }];
-
-                        CommunicationService.scheduleDowntime(downtime, entitiesPerAlert).then(function(downtimeUUIDs) {
-                            var message = 'Success setting ' + scope.downtimeEntities.length;
-                                message += (scope.downtimeEntities.length > 1 ? ' downtimes' : ' downtime');
-
+                        CommunicationService.scheduleDowntime(downtime).then(function(downtimeUUIDs) {
+                            var message = 'Success setting ' + downtimeUUIDs.length;
+                                message += (downtimeUUIDs.length > 1 ? ' downtimes' : ' downtime');
                             FeedbackMessageService.showSuccessMessage(message);
                         });
                     });

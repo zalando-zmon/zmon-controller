@@ -425,19 +425,23 @@ angular.module('zmon2App').factory('CommunicationService', ['$http', '$q', '$log
          *          "entity_ids": ["a", "b"]
          *      }
          */
-        service.scheduleDowntime = function(downtime, entitiesPerAlert) {
+        service.scheduleDowntime = function(downtime) {
             PreconditionsService.isNotEmpty(downtime);
             PreconditionsService.isNotEmpty(downtime.comment);
             PreconditionsService.isNotEmpty(downtime.startTime);
             PreconditionsService.isDate(downtime.startTime);
             PreconditionsService.isNotEmpty(downtime.endTime);
             PreconditionsService.isDate(downtime.endTime);
-            PreconditionsService.isNotEmpty(entitiesPerAlert);
+            PreconditionsService.isNotEmpty(downtime.entity_ids);
+            PreconditionsService.isNotEmpty(downtime.alert_definition_id);
             var postData = {
                 "comment": downtime.comment,
                 "start_time": parseInt(downtime.startTime.getTime() / 1000, 10), // convert to seconds
                 "end_time": parseInt(downtime.endTime.getTime() / 1000, 10),
-                "downtime_entities": entitiesPerAlert
+                "downtime_entities": [{
+                    "alert_definition_id": downtime.alert_definition_id,
+                    "entity_ids": downtime.entity_ids
+                }]
             };
             var headers = {
                 'Content-Type': 'application/json;charset=utf-8'
