@@ -3,13 +3,16 @@ package org.zalando.zmon.api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.*;
 import org.zalando.zmon.domain.*;
 import org.zalando.zmon.service.AlertService;
 import org.zalando.zmon.service.ZMonService;
+
+import javax.servlet.http.HttpServletResponse;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.TimeZone;
 
 /**
  * Created by jmussler on 3/10/15.
@@ -30,6 +33,16 @@ public class CheckAPI {
         return service.getCheckDefinitions(null);
     }
 
+    @RequestMapping(value = "/all-active-check-definitions", method= RequestMethod.HEAD)
+    public void getMaxLastModified(HttpServletResponse response) {
+        TimeZone tz = TimeZone.getTimeZone("UTC");
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
+        df.setTimeZone(tz);
+
+        Date date = service.getMaxCheckDefinitionLastModified();
+        response.setHeader("Last-Modified", df.format(date));
+    }
+
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     @RequestMapping(value = "/all-active-check-definitions")
@@ -42,6 +55,16 @@ public class CheckAPI {
     @RequestMapping(value = "/check-definitions-diff")
     public CheckDefinitionsDiff getCheckDefinitionsDiff(@RequestParam(value = "lastSnapshotId") Long snapshotId) {
         return service.getCheckDefinitionsDiff(snapshotId);
+    }
+
+    @RequestMapping(value = "/all-active-alert-definitions", method= RequestMethod.HEAD)
+    public void getMaxLastModifiedAlert(HttpServletResponse response) {
+        TimeZone tz = TimeZone.getTimeZone("UTC");
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
+        df.setTimeZone(tz);
+
+        Date date = alertService.getMaxLastModified();
+        response.setHeader("Last-Modified", df.format(date));
     }
 
     @ResponseStatus(HttpStatus.OK)
