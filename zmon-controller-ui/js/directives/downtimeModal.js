@@ -10,7 +10,7 @@ angular.module('zmon2App').directive('downtimeModal', [ '$uibModal', '$timeout',
 
                 var modalCtrl = function($scope, $uibModalInstance, downtimeAlertId, downtimeEntities) {
                     $scope.downtimeAlertId = downtimeAlertId;
-                    $scope.downtimeEntities = downtimeEntities;
+                    $scope.downtimeEntities = { ids: downtimeEntities };
                     $scope.scheduleMode = false;
                     $scope.minDate = new Date();
                     $scope.maxDate = new Date($scope.minDate.getFullYear() + 1, $scope.minDate.getMonth(), $scope.minDate.getDate() - 1);
@@ -53,7 +53,7 @@ angular.module('zmon2App').directive('downtimeModal', [ '$uibModal', '$timeout',
                             "startTime": startTime,
                             "endTime": endTime,
                             "comment": $scope.models.comment,
-                            "entity_ids": downtimeEntities
+                            "entity_ids": $scope.downtimeEntities.ids
                         });
                     };
 
@@ -78,14 +78,6 @@ angular.module('zmon2App').directive('downtimeModal', [ '$uibModal', '$timeout',
 
                     $scope.cancel = function() {
                         $uibModalInstance.dismiss();
-                    };
-
-                    $scope.removeEntity = function(exclEntity) {
-                        $scope.downtimeEntities.splice($scope.downtimeEntities.indexOf(exclEntity), 1);
-
-                        if ($scope.downtimeEntities.length === 0) {
-                            $scope.cancel();
-                        }
                     };
                 };
 

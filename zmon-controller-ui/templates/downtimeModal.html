@@ -1,5 +1,5 @@
 <div class="modal-header">
-    <h3>Schedule {{downtimeEntities.length}} downtime{{downtimeEntities.length>1 ? 's' : ''}}</h3>
+    <h3>Schedule {{downtimeEntities.ids.length}} downtime{{downtimeEntities.ids.length>1 ? 's' : ''}}</h3>
 </div>
 
 <div class="modal-body" id="set-downtimes-modal" >
@@ -9,7 +9,12 @@
         <div class="form-group">
             <label class="col-sm-2">Entities</label>
             <div class="col-sm-10">
-                <input type="hidden" class="downtime-entities" zmon-select multi="true" visible="true" width="100%" default="downtimeEntities" unselect="removeEntity(unselected)"/>
+                <ui-select multiple tagging class="downtime-select" ng-model="downtimeEntities.ids" theme="bootstrap" sortable="true" ng-disabled="false" title="Choose an entity"  close-on-select="false" onkeypress="return false;" >
+                    <ui-select-match placeholder="Select entities...">{{$item}}</ui-select-match>
+                    <ui-select-choices repeat="entity in downtimeEntities.ids | filter:$select.search">
+                        {{entity}}
+                    </ui-select-choices>
+                </ui-select>
             </div>
         </div>
 

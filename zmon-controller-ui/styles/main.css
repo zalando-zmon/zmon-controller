@@ -465,12 +465,10 @@ a[rel=help]
     color: #262626;
 }
 
-.downtime-entities .select2-choices
+.downtime-select.ui-select-multiple.ui-select-bootstrap
 {
-    min-height: 120px !important;
-    max-height: 120px !important;
-    overflow-y: auto !important;
-    background: none !important;
+    height: 100px;
+    overflow-y: auto;
 }
 
 .downtime-section
@@ -487,7 +485,7 @@ a[rel=help]
 .downtime-duration-label
 {
     margin-top: 40px;
-}A
+}
 
 .downtime-modal .modal-body
 {
