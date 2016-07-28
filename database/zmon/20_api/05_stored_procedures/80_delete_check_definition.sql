@@ -29,7 +29,8 @@ BEGIN
             cd_command,
             cd_status,
             cd_source_url,
-            cd_last_modified_by
+            cd_last_modified_by,
+            cd_last_modified
        INTO p_check_definition;
 
        --  recursively set all alerts as deleted

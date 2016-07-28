@@ -22,7 +22,8 @@ BEGIN
               cd_command,
               cd_status,
               cd_source_url,
-              cd_last_modified_by;
+              cd_last_modified_by,
+              cd_last_modified;
 END;
 $BODY$
 LANGUAGE 'plpgsql' VOLATILE SECURITY DEFINER

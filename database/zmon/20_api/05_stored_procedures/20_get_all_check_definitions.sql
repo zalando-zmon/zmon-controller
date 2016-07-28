@@ -59,7 +59,8 @@ BEGIN
                cd_command,
                cd_status,
                cd_source_url,
-               cd_last_modified_by)::check_definition_type)
+               cd_last_modified_by,
+               cd_last_modified)::check_definition_type)
           INTO check_definitions
           FROM zzm_data.check_definition
          WHERE (status IS NULL OR cd_status = status::zzm_data.definition_status);
