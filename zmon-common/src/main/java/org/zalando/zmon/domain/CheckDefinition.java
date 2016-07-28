@@ -1,5 +1,6 @@
 package org.zalando.zmon.domain;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -77,6 +78,17 @@ public class CheckDefinition implements StatusDiff {
     @XmlElement(required = true)
     @DatabaseField
     private String lastModifiedBy;
+
+    @DatabaseField
+    private Date lastModified;
+
+    public Date getLastModified() {
+        return lastModified;
+    }
+
+    public void setLastModified(Date lastModified) {
+        this.lastModified = lastModified;
+    }
 
     public Integer getId() {
         return id;

@@ -18,7 +18,8 @@ BEGIN
                cd_command,
                cd_status,
                cd_source_url,
-               cd_last_modified_by
+               cd_last_modified_by,
+               cd_last_modified
           FROM zzm_data.check_definition
          WHERE (status IS NULL OR cd_status = status)
            AND cd_owning_team ILIKE ANY (owning_teams);
