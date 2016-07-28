@@ -33,6 +33,13 @@ angular.module('zmon2App').directive('downtimeModal', [ '$uibModal', '$timeout',
                     };
 
                     $scope.ok = function() {
+
+                        if (!$scope.setDowntimeForm.$valid) {
+                            $scope.setDowntimeForm.submitted = true;
+                            $scope.focusedElement = null;
+                            return;
+                        }
+
                         var startTime = new Date();
                         var endTime = $scope.calcDowntimeEndtime();
 
@@ -78,6 +85,7 @@ angular.module('zmon2App').directive('downtimeModal', [ '$uibModal', '$timeout',
                     };
 
                     $scope.cancel = function() {
+                        $scope.setDowntimeForm.submitted = false;
                         $uibModalInstance.dismiss();
                     };
                 };
