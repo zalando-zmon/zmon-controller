@@ -6,7 +6,7 @@ if nc -w 5 -z localhost 5432; then
     exit 1
 fi
 
-PGVERSION=9.4.5
+PGVERSION=9.5.3
 
 container=$(docker ps | grep postgres:$PGVERSION)
 if [ -z "$container" ]; then

@@ -23,7 +23,8 @@ BEGIN
            c.cd_command,
            c.cd_status,
            c.cd_source_url,
-           c.cd_last_modified_by)::check_definition_type)
+           c.cd_last_modified_by,
+           c.cd_last_modified)::check_definition_type)
       INTO check_definitions
       FROM (
                 SELECT DISTINCT cdh_check_definition_id
