@@ -61,8 +61,11 @@ angular.module('zmon2App').directive('downtimeModal', [ '$uibModal', '$timeout',
                             "startTime": startTime,
                             "endTime": endTime,
                             "comment": $scope.models.comment,
-                            "entity_ids": $scope.downtimeEntities.ids
+                            "entity_ids": _.extend([], $scope.downtimeEntities.ids)
                         });
+
+                        // clear downtimeEntities list to unselect checkboxes on table
+                        scope.downtimeEntities.length = 0;
                     };
 
                     $scope.openDatepicker = function($event, which) {
@@ -88,6 +91,12 @@ angular.module('zmon2App').directive('downtimeModal', [ '$uibModal', '$timeout',
                         $scope.setDowntimeForm.submitted = false;
                         $uibModalInstance.dismiss();
                     };
+
+                    $scope.$watch('downtimeEntities.ids', function(ids) {
+                        if (ids.length === 0) {
+                            $scope.cancel();
+                        }
+                    });
                 };
 
                 var open = function() {
