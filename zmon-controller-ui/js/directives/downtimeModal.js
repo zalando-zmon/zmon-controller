@@ -12,6 +12,7 @@ angular.module('zmon2App').directive('downtimeModal', [ '$uibModal', '$timeout',
                     $scope.downtimeAlertId = downtimeAlertId;
                     $scope.downtimeEntities = { ids: downtimeEntities };
                     $scope.scheduleMode = false;
+                    $scope.entityFilterInputMethod = 'delta';
                     $scope.minDate = new Date();
                     $scope.maxDate = new Date($scope.minDate.getFullYear() + 1, $scope.minDate.getMonth(), $scope.minDate.getDate() - 1);
                     $scope.dateFormat = 'dd-MMMM-yyyy';

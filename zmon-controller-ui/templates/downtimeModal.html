@@ -21,8 +21,8 @@
         <div class="form-group">
             <label class="col-sm-2 downtime-time-label">Time
                 <div id="entity-filter-buttons">
-                    <button type="button" class="btn btn-primary fa fa-hourglass-end" uib-btn-radio="'text'" title="Delta time input" ng-model="entityFilterInputMethod" ng-click="scheduleMode = false;" ></button>
-                    <button type="button" class="btn btn-primary fa fa-calendar" uib-btn-radio="'form'" title="Calendar schedule input" ng-model="entityFilterInputMethod" ng-click="scheduleMode = true;"></button>
+                    <button type="button" class="btn btn-primary fa fa-hourglass-end" uib-btn-radio="'delta'" title="Delta time input" ng-model="entityFilterInputMethod" ng-click="scheduleMode = false;" ></button>
+                    <button type="button" class="btn btn-primary fa fa-calendar" uib-btn-radio="'schedule'" title="Calendar schedule input" ng-model="entityFilterInputMethod" ng-click="scheduleMode = true;"></button>
                 </div>
             </label>
             <div class="col-sm-10">
@@ -30,7 +30,7 @@
                     <div class="col-sm-3 downtime-section">
                         <uib-timepicker ng-model="models.duration" hour-step="1" minute-step="15" show-meridian="false"></uib-timepicker>
                     </div>
-                    <div class="col-sm-4 downtime-duration-label">Downtime ends at  <i class="fa fa-clock-o"></i><em>{{calcDowntimeEndtime() | date:'HH:mm'}}</em>
+                    <div class="col-sm-4 downtime-duration-label">Downtime ends at <i class="fa fa-clock-o"></i> <em>{{calcDowntimeEndtime() | date:'HH:mm'}}</em>
                     </div>
                 </div>
                 <div ng-if="scheduleMode">

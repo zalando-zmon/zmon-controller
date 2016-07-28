@@ -487,6 +487,11 @@ a[rel=help]
     margin-top: 40px;
 }
 
+.downtime-duration-label i
+{
+    margin-left: 5px;
+}
+
 .downtime-modal .modal-body
 {
     padding-bottom: 0;
