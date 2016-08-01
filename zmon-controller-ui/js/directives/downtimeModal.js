@@ -13,6 +13,7 @@ angular.module('zmon2App').directive('downtimeModal', [ '$uibModal', '$timeout',
                     $scope.downtimeEntities = { ids: downtimeEntities };
                     $scope.scheduleMode = false;
                     $scope.entityFilterInputMethod = 'delta';
+                    $scope.minDuration = new Date(2013, 0, 0, 0, 0);
                     $scope.minDate = new Date();
                     $scope.maxDate = new Date($scope.minDate.getFullYear() + 1, $scope.minDate.getMonth(), $scope.minDate.getDate() - 1);
                     $scope.dateFormat = 'dd-MMMM-yyyy';
@@ -35,7 +36,7 @@ angular.module('zmon2App').directive('downtimeModal', [ '$uibModal', '$timeout',
                     $scope.ok = function() {
 
                         // do not submit if form is invalid or duration time is 0 (1356908400000 ==  Date(2013, 0, 0, 0, 0)
-                        if (!$scope.setDowntimeForm.$valid || $scope.models.duration.getTime() === 1356908400000) {
+                        if (!$scope.setDowntimeForm.$valid || $scope.models.duration.getTime() === $scope.minDuration.getTime()) {
                             $scope.setDowntimeForm.submitted = true;
                             $scope.focusedElement = null;
                             return;
