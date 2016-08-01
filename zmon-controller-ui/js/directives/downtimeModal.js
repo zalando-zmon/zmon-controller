@@ -22,7 +22,7 @@ angular.module('zmon2App').directive('downtimeModal', [ '$uibModal', '$timeout',
                         'show-weeks': true
                     };
                     $scope.models = {
-                        duration: new Date(2013, 0, 0, 0, 0), // using Date object, but will only be using the HH:MM part as duration
+                        duration: new Date(2013, 0, 0, 0, 15), // using Date object, but will only be using the HH:MM part as duration
                         startDate: new Date(),
                         startTime: new Date(),
                         endDate: new Date(),
@@ -34,7 +34,8 @@ angular.module('zmon2App').directive('downtimeModal', [ '$uibModal', '$timeout',
 
                     $scope.ok = function() {
 
-                        if (!$scope.setDowntimeForm.$valid) {
+                        // do not submit if form is invalid or duration time is 0 (1356908400000 ==  Date(2013, 0, 0, 0, 0)
+                        if (!$scope.setDowntimeForm.$valid || $scope.models.duration.getTime() === 1356908400000) {
                             $scope.setDowntimeForm.submitted = true;
                             $scope.focusedElement = null;
                             return;
