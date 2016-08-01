@@ -281,3 +281,9 @@ input.checkbox
 {
     padding-top: 36px;
 }
+
+.modal-body label.schedule
+{
+    margin-top: 5px;
+    text-align: right;
+}

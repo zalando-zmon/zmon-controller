@@ -30,6 +30,7 @@ module.exports = function(config) {
         '../lib/ng-infinite-scroll/ng-infinite-scroll.min.js',
         '../lib/clipboard/clipboard.min.js',
         '../lib/ngclipboard/ngclipboard.min.js',
+        '../lib/angular-ui-select/select.min.js',
         '../js/app.js',
         '../js/filters/*.js',
         '../js/services/*.js',
