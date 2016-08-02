@@ -101,7 +101,7 @@ public class AlertDefinition implements StatusDiff {
 
     @DatabaseField
     @NotNull(message = "template is mandatory")
-    private Boolean template;
+    private Boolean template = false;
 
     @DatabaseField
     private Integer parentId;
