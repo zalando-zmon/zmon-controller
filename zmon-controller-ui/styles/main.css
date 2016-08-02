@@ -925,9 +925,9 @@ a.non-href-anchor
 i.ace-editor-modal
 {
     position: absolute;
-    top: 5px;
+    top: 7px;
     right: 32px;
-    font-size: 18px;
+    font-size: 20px;
     color: lightgray;
     z-index: 1;
 }

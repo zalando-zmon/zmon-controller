@@ -1,4 +1,4 @@
-angular.module('zmon2App').directive('codeEditorModal', [ '$uibModal', function($uibModal, APP_CONST) {
+angular.module('zmon2App').directive('codeEditorModal', [ '$uibModal', function($uibModal) {
     return {
         restrict: 'A',
         scope: {

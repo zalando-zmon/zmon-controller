@@ -38,7 +38,7 @@
     <div class="form-group" ng-class="{'has-error': cdForm.submitted && cdForm.check_command.$error.required}" ng-focus="cdForm.submitted">
         <label for="inp-command" class="col-sm-2 control-label"><a href="/docs/check-definitions.html" rel="help" target="docs">Check Command</a></label>
         <div class="col-sm-10 code-editor-container">
-            <i class="fa fa-fw fa-external-link-square ace-editor-modal clickable" code-editor-modal code="check.command" title="{{check.name}}"></i>
+            <i class="fa fa-fw fa-external-link ace-editor-modal clickable" code-editor-modal code="check.command" title="{{check.name}}"></i>
             <div id="inp-command" name="check_command" class="code-editor" ng-model="check.command" code-language="python" code-editor required ng-focus="cdForm.submitted && cdForm.check_command.$error.required"></div>
             <span class="help-block">Valid Python expression used to query the instances specified in entities filter.</span>
         </div>
