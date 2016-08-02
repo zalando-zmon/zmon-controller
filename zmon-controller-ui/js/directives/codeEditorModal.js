@@ -1,14 +1,17 @@
 angular.module('zmon2App').directive('codeEditorModal', [ '$uibModal', function($uibModal) {
     return {
-        restrict: 'A',
+        restrict: 'E',
+        template: '<i class="fa fa-fw fa-external-link ace-editor-modal clickable"></i>',
         scope: {
-            title: '@',
-            code: '='
+            code: '=',
+            language: '@',
+            title: '@'
         },
         link: function(scope, elem, attrs) {
 
-            var modalCtrl = function($scope, $uibModalInstance, code, title) {
+            var modalCtrl = function($scope, $uibModalInstance, code, language, title) {
                 $scope.code = code;
+                $scope.language = language;
                 $scope.title = title;
 
                 $scope.apply = function() {
@@ -31,6 +34,9 @@ angular.module('zmon2App').directive('codeEditorModal', [ '$uibModal', function(
                     resolve: {
                         code: function() {
                             return scope.code;
+                        },
+                        language: function() {
+                            return scope.language;
                         },
                         title: function() {
                             return scope.title;

@@ -84,6 +84,7 @@
     <div class="form-group" ng-class="{'has-error': adForm.submitted && adForm.condition.$error.required}" ng-focus="adForm.submitted">
         <label for="inp-condition" class="col-sm-2 control-label"><a href="/docs/alert-definitions.html#condition" rel="help" target="docs">Alert Condition</a></label>
         <div class="col-sm-10">
+            <code-editor-modal code="alertDefinition.condition" title="Alert Condition" language="python"></code-editor-modal>
             <div class="inheritance-overwrite">
                 <a ng-show="mode === 'inherit' || alertDefinition.parent_id" ng-class="{'semi-transparent':isInheriting('condition'), 'clickable':!isInheriting('condition')}" ng-attr-title="{{isInheriting('condition') ? 'Condition is being inherited from parent Alert' : 'Click to inherit value from parent Alert'}}" ng-click="inheritProperty('condition')"><i class="fa fa-sitemap"></i></a>
             </div>
@@ -149,6 +150,7 @@
             </div>
         </label>
         <div class="col-sm-10">
+            <code-editor-modal code="entityFilter.textEntityFilters" title="Included Entities" language="python" ng-show="entityFilterInputMethod === 'text'"></code-editor-modal>
             <div class="inheritance-overwrite">
                 <a ng-show="mode === 'inherit' || alertDefinition.parent_id" ng-class="{'semi-transparent':isInheriting('entities'), 'clickable':!isInheriting('entities')}" ng-attr-title="{{isInheriting('entities') ? 'Entities inherited from parent Alert' : 'Click to inherit value from parent Alert'}}" ng-click="inheritProperty('entities')"><i class="fa fa-sitemap"></i></a>
             </div>
@@ -170,6 +172,7 @@
             </div>
         </label>
         <div class="col-sm-10">
+            <code-editor-modal code="entityExcludeFilter.textEntityFilters" title="Excluded Entities" language="python" ng-show="entityExcludeFilterInputMethod === 'text'"></code-editor-modal>
             <div class="inheritance-overwrite">
                 <a ng-show="mode === 'inherit' || alertDefinition.parent_id" ng-class="{'semi-transparent':isInheriting('entities_exclude'), 'clickable':!isInheriting('entities_exclude')}" ng-attr-title="{{isInheriting('entities_exclude') ? 'Excluded entities inherited from parent Alert' : 'Click to inherit value from parent Alert'}}" ng-click="inheritProperty('entities_exclude')"><i class="fa fa-sitemap"></i></a>
             </div>
@@ -183,6 +186,7 @@
     <div class="form-group" ng-class="{'has-error': adForm.submitted && adForm.notifications.$error['valid-json'] || adForm.notifications.$error.required}">
         <label for="inp-notifications" class="col-sm-2 control-label">Notifications</label>
         <div class="col-sm-10">
+            <code-editor-modal code="notificationsJson" title="Notifications"></code-editor-modal>
             <div class="inheritance-overwrite">
                 <a ng-show="mode === 'inherit' || alertDefinition.parent_id" ng-class="{'semi-transparent':isInheriting('notifications'), 'clickable':!isInheriting('notifications')}" ng-attr-title="{{isInheriting('notifications') ? 'Notifications is being inherited from parent Alert' : 'Click to inherit value from parent Alert'}}" ng-click="inheritProperty('notifications')"><i class="fa fa-sitemap"></i></a>
             </div>
