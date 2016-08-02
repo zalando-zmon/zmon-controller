@@ -907,11 +907,6 @@ a.non-href-anchor
 /* CODE EDITOR WITH SYNTAX HIGHLIGHTING */
 /* -------------------------------------------------------------------------- */
 
-.code-editor-container
-{
-    position: relative;
-}
-
 .code-editor
 {
     border: 1px solid #CCCCCC;
