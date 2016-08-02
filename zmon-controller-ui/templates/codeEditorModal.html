@@ -1,0 +1,18 @@
+<div class="code-editor-modal">
+    <div class="modal-header">
+        <div class="row">
+            <div class="col-md-12">
+                <h3>{{title}}</h3>
+            </div>
+        </div>
+    </div>
+    <div class="modal-body">
+        <div class="editor-container">
+            <div id="editor" ng-model="code" code-editor code-language="{{language}}"></div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" ng-click="cancel()">Cancel</button>
+        <button type="button" class="btn btn-primary" ng-click="apply()">Apply Changes</button>
+    </div>
+</div>
