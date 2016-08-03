@@ -161,8 +161,8 @@
                         <div class="col-sm-12 text-right">
                             <button class="btn btn-primary" ng-click="TrialRunCtrl.save()">
                                 <i class="fa fa-fw fa-save" ></i>
-                                <span ng-if="alert.id">Save changes</span>
-                                <span ng-if="!alert.id">Save as New Check</span>
+                                <span ng-if="alert.checkId">Save changes</span>
+                                <span ng-if="!alert.checkId">Save as New Check</span>
                             </button>
                             <button id="download-button" class="btn btn-warning" ng-click="TrialRunCtrl.download($event)"><i class="fa fa-fw fa-download" ></i>Download</button>
                         </div>
