@@ -64,7 +64,7 @@
             </div>
         </div>
 
-        <div ng-repeat="app in teams[selectedTeam].applications | filter:hasMetrics | orderBy:['application_id']" class="app-row clickable" ng-click="showApp(app.application_id, null, true)" ng-class="{'warning':app.results.epercent > 5}">
+        <div ng-repeat="app in teams[selectedTeam].applications | filter:hasMetrics | filter:{hasOldData:false} | orderBy:['application_id']" class="app-row clickable" ng-click="showApp(app.application_id, null, true)" ng-class="{'warning':app.results.epercent > 5}">
             <div class="col-md-2"><h4>{{app.application_id}}</h4></div>
             <div class="col-md-10">
                 <div class="col-md-3">
@@ -90,7 +90,8 @@
         <div class="col-md-12 header-top">
             <div class="col-md-2">Untracked Applications:</div>
             <div class="col-md-10">
-                <span ng-repeat="app in teams[selectedTeam].applications | filter:notHasMetrics | orderBy:['application_id']">{{app.application_id}}<em ng-if="!$last">, </em></span>
+                <span ng-repeat="app in untrackedApps = (teams[selectedTeam].applications | filter:isUntracked | orderBy:['application_id'])">{{app.application_id}}<em ng-if="!$last">, </em></span>
+                <span ng-hide="untrackedApps.length">(no untracked applications)</span>
             </div>
         </div>
     </div>

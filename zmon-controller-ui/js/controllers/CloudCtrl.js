@@ -214,6 +214,7 @@ angular.module('zmon2App').controller('CloudCtrl', ['$scope', '$interval', '$loc
         var fastFetchTeamApps = function(teamId) {
             var team = $scope.teams[teamId];
             var awsTeamId = $scope.teams[teamId].awsId;
+            var twoWeeksAgo = new Date(+new Date() - 12096e5);
             CommunicationService.getCheckResultsFiltered(cloudCheck, awsTeamId).then(function(metrics) {
                 _.each(team.applications, function(app) {
                     app.instances = 0;
@@ -225,6 +226,12 @@ angular.module('zmon2App').controller('CloudCtrl', ['$scope', '$interval', '$loc
                             app.instances += 1;
                             app.einstances = hasErrorCodes(instance) ? app.einstances + 1 : app.einstances;
                             app.metrics.push(instance[0].value);
+
+                            // mark app as outdated if metric data is older than 2 weeks
+                            app.hasOldData = false;
+                            if (new Date(instance[0].ts * 1000) < twoWeeksAgo) {
+                                app.hasOldData = true;
+                            }
                         }
                     });
                     aggregateResults(app);
@@ -323,8 +330,8 @@ angular.module('zmon2App').controller('CloudCtrl', ['$scope', '$interval', '$loc
         };
 
         // filter for untracked applications
-        $scope.notHasMetrics = function(app) {
-            return !app.metrics.length;
+        $scope.isUntracked = function(app) {
+            return !app.metrics.length || app.hasOldData;
         };
 
         // check if teams object is populated
