@@ -262,32 +262,52 @@
                 currentStatus.queues = _.sortBy(currentStatus.queues, "name");
 
                 // Get workers detailed status.
-                statusHtml += "<div class='workers'><h6>Workers</h6>";
+                workerHtml = "";
                 var schedulerHtml = "";
+                var workerHtml = "";
+                var dataHtml ="";
 
                 _.each(currentStatus.workers, function(worker) {
-                    if(worker.name.indexOf('s-')!=0) {
-                        statusHtml += "<div>";
-                        statusHtml += "<span class='name'>" + worker.name + "</span>";
-                        statusHtml += "<span class='calls'>" + worker.checksPerSecond.toFixed(2) + "/s</span>";
-                        statusHtml += "<span class='last'> " + worker.lastExecutionTime + "</span>";
-                        statusHtml += "</div>";
-                    }
-                    else {
+                    if (worker.name.startsWith('s-')) {
                         schedulerHtml += "<div>";
                         schedulerHtml += "<span class='name'>" + worker.name.substr(2) + "</span>";
                         schedulerHtml += "<span class='calls'>" + worker.checksPerSecond.toFixed(2) + "/s</span>";
                         schedulerHtml += "<span class='last'> " + worker.lastExecutionTime + "</span>";
                         schedulerHtml += "</div>";
                     }
+                    else if (worker.name.startsWith('d-')) {
+                        dataHtml += "<div>";
+                        dataHtml += "<span class='name'>" + worker.name.substr(2) + "</span>";
+                        dataHtml += "<span class='calls'>" + worker.checksPerSecond.toFixed(2) + "/s</span>";
+                        dataHtml += "<span class='last'> " + worker.lastExecutionTime + "</span>";
+                        dataHtml += "</div>";
+                    }
+                    else {
+                        workerHtml += "<div>";
+                        workerHtml += "<span class='name'>" + worker.name + "</span>";
+                        workerHtml += "<span class='calls'>" + worker.checksPerSecond.toFixed(2) + "/s</span>";
+                        workerHtml += "<span class='last'> " + worker.lastExecutionTime + "</span>";
+                        workerHtml += "</div>";
+                    }
                 });
 
-                statusHtml += "</div>";
+                if (workerHtml != "") {
+                    statusHtml += "<div class='workers'><h6>Workers</h6>";
+                    statusHtml += workerHtml;
+                    statusHtml += "</div>";
+                }
 
-                // Get workers detailed status.
-                statusHtml += "<div class='workers'><h6>Schedulers</h6>";
-                statusHtml += schedulerHtml;
-                statusHtml += "</div>";
+                if (schedulerHtml != "") {
+                    statusHtml += "<div class='workers'><h6>Schedulers</h6>";
+                    statusHtml += schedulerHtml;
+                    statusHtml += "</div>";
+                }
+
+                if (dataHtml != "") {
+                    statusHtml += "<div class='workers'><h6>Data Services</h6>";
+                    statusHtml += dataHtml;
+                    statusHtml += "</div>";
+                }
 
                 // Get queues detailed status.
                 statusHtml += "<div class='queues'><h6>Queues</h6>";
