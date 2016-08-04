@@ -144,71 +144,71 @@
     </div>
 </body>
 
-<script src="js/app.js?t=${buildTime}"></script>
-<script src="js/filters/entities.js?t=${buildTime}"></script>
-<script src="js/filters/timespan.js?t=${buildTime}"></script>
-<script src="js/filters/datetime.js?t=${buildTime}"></script>
-<script src="js/filters/time.js?t=${buildTime}"></script>
-<script src="js/filters/prettify.js?t=${buildTime}"></script>
-<script src="js/filters/markdown.js?t=${buildTime}"></script>
-<script src="js/filters/epochToDate.js?t=${buildTime}"></script>
-<script src="js/filters/downtimeReasons.js?t=${buildTime}"></script>
-<script src="js/filters/inDisplayedGroup.js?t=${buildTime}"></script>
-<script src="js/filters/encodeUri.js?t=${buildTime}"></script>
-<script src="js/filters/entityName.js?t=${buildTime}"></script>
-<script src="js/filters/timeago.js?t=${buildTime}"></script>
-<script src="js/directives/priority.js?t=${buildTime}"></script>
-<script src="js/directives/status.js?t=${buildTime}"></script>
-<script src="js/directives/chart.js?t=${buildTime}"></script>
-<script src="js/directives/chartd3.js?t=${buildTime}"></script>
-<script src="js/directives/gauge.js?t=${buildTime}"></script>
-<script src="js/directives/trend.js?t=${buildTime}"></script>
-<script src="js/directives/startStop.js?t=${buildTime}"></script>
-<script src="js/directives/dashboardWidget.js?t=${buildTime}"></script>
-<script src="js/directives/networkMap.js?t=${buildTime}"></script>
-<script src="js/directives/json.js?t=${buildTime}"></script>
-<script src="js/directives/expand.js?t=${buildTime}"></script>
-<script src="js/directives/focus.js?t=${buildTime}"></script>
-<script src="js/directives/autofocus.js?t=${buildTime}"></script>
-<script src="js/directives/commentModal.js?t=${buildTime}"></script>
-<script src="js/directives/entityFilterContainer.js?t=${buildTime}"></script>
-<script src="js/directives/entityFilterForm.js?t=${buildTime}"></script>
-<script src="js/directives/widgetConfigContainer.js?t=${buildTime}"></script>
-<script src="js/directives/widgetConfigChart.js?t=${buildTime}"></script>
-<script src="js/directives/codeEditor.js?t=${buildTime}"></script>
-<script src="js/directives/repeatMonitor.js?t=${buildTime}"></script>
-<script src="js/directives/modelChangeBlur.js?t=${buildTime}"></script>
-<script src="js/directives/select2.js?t=${buildTime}"></script>
-<script src="js/directives/clickOutside.js?t=${buildTime}"></script>
-<script src="js/directives/dropdown.js?t=${buildTime}"></script>
-<script src="js/directives/alertValueModal.js?t=${buildTime}"></script>
-<script src="js/directives/downtimeModal.js?t=${buildTime}"></script>
-<script src="js/directives/alertHistory.js?t=${buildTime}"></script>
-<script src="js/directives/alertDowntimes.js?t=${buildTime}"></script>
-<script src="js/directives/alertDeleteModal.js?t=${buildTime}"></script>
-<script src="js/directives/codeEditorModal.js?t=${buildTime}"></script>
-<script src="js/services/MainAlertService.js?t=${buildTime}"></script>
-<script src="js/services/CommunicationService.js?t=${buildTime}"></script>
-<script src="js/services/FeedbackMessageService.js?t=${buildTime}"></script>
-<script src="js/services/HttpResponseInterceptor.js?t=${buildTime}"></script>
-<script src="js/services/UserInfoService.js?t=${buildTime}"></script>
-<script src="js/services/DowntimesService.js?t=${buildTime}"></script>
-<script src="js/services/PreconditionsService.js?t=${buildTime}"></script>
-<script src="js/services/LoadingIndicatorService.js?t=${buildTime}"></script>
-<script src="js/controllers/DashboardCtrl.js?t=${buildTime}"></script>
-<script src="js/controllers/CloudCtrl.js?t=${buildTime}"></script>
-<script src="js/controllers/CloudEndpointsCtrl.js?t=${buildTime}"></script>
-<script src="js/controllers/AlertDetailsCtrl.js?t=${buildTime}"></script>
-<script src="js/controllers/AlertDefinitionCtrl.js?t=${buildTime}"></script>
-<script src="js/controllers/CheckDefinitionCtrl.js?t=${buildTime}"></script>
-<script src="js/controllers/CheckDefinitionEditCtrl.js?t=${buildTime}"></script>
-<script src="js/controllers/DashboardDefinitionCtrl.js?t=${buildTime}"></script>
-<script src="js/controllers/AlertDefinitionEditCtrl.js?t=${buildTime}"></script>
-<script src="js/controllers/DashboardConfigurationCtrl.js?t=${buildTime}"></script>
-<script src="js/controllers/CheckChartsCtrl.js?t=${buildTime}"></script>
-<script src="js/controllers/TrialRunCtrl.js?t=${buildTime}"></script>
-<script src="js/controllers/HistoryCtrl.js?t=${buildTime}"></script>
-<script src="js/controllers/EntityCtrl.js?t=${buildTime}"></script>
+<script th:src="${staticUrl} + 'js/app.js?t=@buildTime@'"></script>
+<script th:src="${staticUrl} + 'js/filters/entities.js?t=@buildTime@'"></script>
+<script th:src="${staticUrl} + 'js/filters/timespan.js?t=@buildTime@'"></script>
+<script th:src="${staticUrl} + 'js/filters/datetime.js?t=@buildTime@'"></script>
+<script th:src="${staticUrl} + 'js/filters/time.js?t=@buildTime@'"></script>
+<script th:src="${staticUrl} + 'js/filters/prettify.js?t=@buildTime@'"></script>
+<script th:src="${staticUrl} + 'js/filters/markdown.js?t=@buildTime@'"></script>
+<script th:src="${staticUrl} + 'js/filters/epochToDate.js?t=@buildTime@'"></script>
+<script th:src="${staticUrl} + 'js/filters/downtimeReasons.js?t=@buildTime@'"></script>
+<script th:src="${staticUrl} + 'js/filters/inDisplayedGroup.js?t=@buildTime@'"></script>
+<script th:src="${staticUrl} + 'js/filters/encodeUri.js?t=@buildTime@'"></script>
+<script th:src="${staticUrl} + 'js/filters/entityName.js?t=@buildTime@'"></script>
+<script th:src="${staticUrl} + 'js/filters/timeago.js?t=@buildTime@'"></script>
+<script th:src="${staticUrl} + 'js/directives/priority.js?t=@buildTime@'"></script>
+<script th:src="${staticUrl} + 'js/directives/status.js?t=@buildTime@'"></script>
+<script th:src="${staticUrl} + 'js/directives/chart.js?t=@buildTime@'"></script>
+<script th:src="${staticUrl} + 'js/directives/chartd3.js?t=@buildTime@'"></script>
+<script th:src="${staticUrl} + 'js/directives/gauge.js?t=@buildTime@'"></script>
+<script th:src="${staticUrl} + 'js/directives/trend.js?t=@buildTime@'"></script>
+<script th:src="${staticUrl} + 'js/directives/startStop.js?t=@buildTime@'"></script>
+<script th:src="${staticUrl} + 'js/directives/dashboardWidget.js?t=@buildTime@'"></script>
+<script th:src="${staticUrl} + 'js/directives/networkMap.js?t=@buildTime@'"></script>
+<script th:src="${staticUrl} + 'js/directives/json.js?t=@buildTime@'"></script>
+<script th:src="${staticUrl} + 'js/directives/expand.js?t=@buildTime@'"></script>
+<script th:src="${staticUrl} + 'js/directives/focus.js?t=@buildTime@'"></script>
+<script th:src="${staticUrl} + 'js/directives/autofocus.js?t=@buildTime@'"></script>
+<script th:src="${staticUrl} + 'js/directives/commentModal.js?t=@buildTime@'"></script>
+<script th:src="${staticUrl} + 'js/directives/entityFilterContainer.js?t=@buildTime@'"></script>
+<script th:src="${staticUrl} + 'js/directives/entityFilterForm.js?t=@buildTime@'"></script>
+<script th:src="${staticUrl} + 'js/directives/widgetConfigContainer.js?t=@buildTime@'"></script>
+<script th:src="${staticUrl} + 'js/directives/widgetConfigChart.js?t=@buildTime@'"></script>
+<script th:src="${staticUrl} + 'js/directives/codeEditor.js?t=@buildTime@'"></script>
+<script th:src="${staticUrl} + 'js/directives/repeatMonitor.js?t=@buildTime@'"></script>
+<script th:src="${staticUrl} + 'js/directives/modelChangeBlur.js?t=@buildTime@'"></script>
+<script th:src="${staticUrl} + 'js/directives/select2.js?t=@buildTime@'"></script>
+<script th:src="${staticUrl} + 'js/directives/clickOutside.js?t=@buildTime@'"></script>
+<script th:src="${staticUrl} + 'js/directives/dropdown.js?t=@buildTime@'"></script>
+<script th:src="${staticUrl} + 'js/directives/alertValueModal.js?t=@buildTime@'"></script>
+<script th:src="${staticUrl} + 'js/directives/downtimeModal.js?t=@buildTime@'"></script>
+<script th:src="${staticUrl} + 'js/directives/alertHistory.js?t=@buildTime@'"></script>
+<script th:src="${staticUrl} + 'js/directives/alertDowntimes.js?t=@buildTime@'"></script>
+<script th:src="${staticUrl} + 'js/directives/alertDeleteModal.js?t=@buildTime@'"></script>
+<script th:src="${staticUrl} + 'js/directives/codeEditorModal.js?t=@buildTime@'"></script>
+<script th:src="${staticUrl} + 'js/services/MainAlertService.js?t=@buildTime@'"></script>
+<script th:src="${staticUrl} + 'js/services/CommunicationService.js?t=@buildTime@'"></script>
+<script th:src="${staticUrl} + 'js/services/FeedbackMessageService.js?t=@buildTime@'"></script>
+<script th:src="${staticUrl} + 'js/services/HttpResponseInterceptor.js?t=@buildTime@'"></script>
+<script th:src="${staticUrl} + 'js/services/UserInfoService.js?t=@buildTime@'"></script>
+<script th:src="${staticUrl} + 'js/services/DowntimesService.js?t=@buildTime@'"></script>
+<script th:src="${staticUrl} + 'js/services/PreconditionsService.js?t=@buildTime@'"></script>
+<script th:src="${staticUrl} + 'js/services/LoadingIndicatorService.js?t=@buildTime@'"></script>
+<script th:src="${staticUrl} + 'js/controllers/DashboardCtrl.js?t=@buildTime@'"></script>
+<script th:src="${staticUrl} + 'js/controllers/CloudCtrl.js?t=@buildTime@'"></script>
+<script th:src="${staticUrl} + 'js/controllers/CloudEndpointsCtrl.js?t=@buildTime@'"></script>
+<script th:src="${staticUrl} + 'js/controllers/AlertDetailsCtrl.js?t=@buildTime@'"></script>
+<script th:src="${staticUrl} + 'js/controllers/AlertDefinitionCtrl.js?t=@buildTime@'"></script>
+<script th:src="${staticUrl} + 'js/controllers/CheckDefinitionCtrl.js?t=@buildTime@'"></script>
+<script th:src="${staticUrl} + 'js/controllers/CheckDefinitionEditCtrl.js?t=@buildTime@'"></script>
+<script th:src="${staticUrl} + 'js/controllers/DashboardDefinitionCtrl.js?t=@buildTime@'"></script>
+<script th:src="${staticUrl} + 'js/controllers/AlertDefinitionEditCtrl.js?t=@buildTime@'"></script>
+<script th:src="${staticUrl} + 'js/controllers/DashboardConfigurationCtrl.js?t=@buildTime@'"></script>
+<script th:src="${staticUrl} + 'js/controllers/CheckChartsCtrl.js?t=@buildTime@'"></script>
+<script th:src="${staticUrl} + 'js/controllers/TrialRunCtrl.js?t=@buildTime@'"></script>
+<script th:src="${staticUrl} + 'js/controllers/HistoryCtrl.js?t=@buildTime@'"></script>
+<script th:src="${staticUrl} + 'js/controllers/EntityCtrl.js?t=@buildTime@'"></script>
 
 <script type="text/javascript">
     angular.module('zmon2App').controller('IndexCtrl', ['$scope', '$location', 'localStorageService', 'MainAlertService', '$interval', 'APP_CONST', 'LoadingIndicatorService', 'UserInfoService',
