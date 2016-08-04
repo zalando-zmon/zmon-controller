@@ -5,6 +5,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.social.github.api.GitHub;
 import org.springframework.util.Assert;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 /**
  * @author jbellmann
  */
@@ -12,31 +15,32 @@ public class IsAllowedUserSignupCondition extends GithubSignupCondition {
 
     private final Logger log = LoggerFactory.getLogger(IsAllowedUserSignupCondition.class);
 
-    private final GithubSignupConditionProperties signupProperties;
+    private final List<String> allowedUsers;
 
     public IsAllowedUserSignupCondition(final GithubSignupConditionProperties signupProperties) {
         Assert.notNull(signupProperties, "'signupProperties' should never be null");
-        this.signupProperties = signupProperties;
+        allowedUsers = signupProperties.getAllowedUsers().stream().map(String::toLowerCase).collect(Collectors.toList());
         logAllowedUsers();
     }
 
     @Override
     public boolean matches(final GitHub api) {
-        if (signupProperties.getAllowedUsers().isEmpty()) {
+        if (allowedUsers.isEmpty()) {
             return false;
         }
 
-        if (signupProperties.getAllowedUsers().contains(ALL_AUTHORIZED)) {
+        if (allowedUsers.contains(ALL_AUTHORIZED)) {
             return true;
         }
 
         final String username = api.userOperations().getProfileId();
 
-        final boolean isAllowedUser = signupProperties.getAllowedUsers().contains(username);
+        final boolean isAllowedUser = allowedUsers.contains(username.toLowerCase());
+
         return isAllowedUser;
     }
 
     protected void logAllowedUsers() {
-        log.info("Github users allowed: {}", signupProperties.getAllowedUsers());
+        log.info("Github users allowed: {}", allowedUsers);
     }
 }

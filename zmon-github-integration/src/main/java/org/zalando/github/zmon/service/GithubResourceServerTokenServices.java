@@ -47,7 +47,7 @@ public class GithubResourceServerTokenServices implements ResourceServerTokenSer
             boolean matchUser = userCondition.matches(github);
             boolean matchOrgas = orgaCondition.matches(github);
 
-            if (!matchUser && !matchOrgas) {
+            if (!matchUser || !matchOrgas) {
                 throw new InvalidTokenException("User or Organization access not allowed");
             }
 

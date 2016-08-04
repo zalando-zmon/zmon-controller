@@ -16,4 +16,6 @@ export REDIS_PORT=38086                  # use Redis in Vagrant box
 export POSTGRES_URL=jdbc:postgresql://localhost:38088/local_zmon_db
 export ZMON_SCHEDULER_URL=http://localhost:38085
 export ZMON_EVENTLOG_URL=http://localhost:38081
+export ZMON_SIGNUP_GITHUB_ALLOWED_USERS=*
+export ZMON_SIGNUP_GITHUB_ALLOWED_ORGAS=*
 java -Xmx240m -jar zmon-controller-app/target/zmon-controller-1.0.1-SNAPSHOT.jar
