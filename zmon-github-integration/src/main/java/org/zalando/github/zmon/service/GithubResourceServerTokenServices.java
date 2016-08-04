@@ -4,7 +4,6 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
-import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
@@ -16,7 +15,8 @@ import org.springframework.security.oauth2.provider.OAuth2Request;
 import org.springframework.security.oauth2.provider.token.ResourceServerTokenServices;
 import org.springframework.social.github.api.impl.GitHubTemplate;
 import org.springframework.web.client.HttpClientErrorException;
-import org.zalando.github.zmon.security.GithubSignupConditionProperties;
+import org.zalando.github.zmon.security.IsAllowedOrgaSignupCondition;
+import org.zalando.github.zmon.security.IsAllowedUserSignupCondition;
 import org.zalando.zmon.security.AuthorityService;
 
 import com.google.common.collect.Maps;
@@ -29,26 +29,28 @@ public class GithubResourceServerTokenServices implements ResourceServerTokenSer
 
     private AuthorityService authorityService;
 
-    private Environment environment;
+    private final IsAllowedUserSignupCondition userCondition;
+    private final IsAllowedOrgaSignupCondition orgaCondition;
 
-    private GithubSignupConditionProperties githubProperties;
-
-    public GithubResourceServerTokenServices(AuthorityService authorityService, Environment environment, GithubSignupConditionProperties githubProperties) {
+    public GithubResourceServerTokenServices(AuthorityService authorityService, IsAllowedUserSignupCondition userCondition, IsAllowedOrgaSignupCondition orgaCondition) {
         this.authorityService = authorityService;
-        this.environment = environment;
-        this.githubProperties = githubProperties;
+        this.userCondition = userCondition;
+        this.orgaCondition = orgaCondition;
     }
 
     @Override
     public OAuth2Authentication loadAuthentication(String accessToken)
             throws AuthenticationException, InvalidTokenException {
-        GitHubTemplate tpl = new GitHubTemplate(accessToken);
+        GitHubTemplate github = new GitHubTemplate(accessToken);
 
-        // TODO: Important: we need to check the GitHub user's organization etc
-        // to comply with out configured "SignupConditions"
-        String username;
         try {
-            username = tpl.userOperations().getProfileId();
+            boolean matchUser = userCondition.matches(github);
+            boolean matchOrgas = orgaCondition.matches(github);
+
+            if (!matchUser && !matchOrgas) {
+                throw new InvalidTokenException("User or Organization access not allowed");
+            }
+
         } catch (HttpClientErrorException ex) {
             if (HttpStatus.UNAUTHORIZED == ex.getStatusCode()) {
                 throw new InvalidTokenException("Invalid GitHub access token!");
@@ -56,13 +58,11 @@ public class GithubResourceServerTokenServices implements ResourceServerTokenSer
             throw ex;
         }
 
-        if (!githubProperties.getAllowedUsers().contains(username)) {
-            throw new InvalidTokenException("Github user not allowed! user=" + username);
-        }
+        String userName = github.userOperations().getProfileId();
 
-        Collection<? extends GrantedAuthority> authorities = authorityService.getAuthorities(username);
+        Collection<? extends GrantedAuthority> authorities = authorityService.getAuthorities(userName);
 
-        UsernamePasswordAuthenticationToken user = new UsernamePasswordAuthenticationToken(username, "N/A",
+        UsernamePasswordAuthenticationToken user = new UsernamePasswordAuthenticationToken(userName, "N/A",
                 authorities);
 
         Set<String> scopes = Sets.newHashSet("uid");

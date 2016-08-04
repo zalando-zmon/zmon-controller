@@ -27,6 +27,8 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.social.security.SocialUserDetailsService;
 import org.springframework.social.security.SpringSocialConfigurer;
 import org.zalando.github.zmon.security.GithubSignupConditionProperties;
+import org.zalando.github.zmon.security.IsAllowedOrgaSignupCondition;
+import org.zalando.github.zmon.security.IsAllowedUserSignupCondition;
 import org.zalando.github.zmon.service.GithubResourceServerTokenServices;
 import org.zalando.zmon.security.AuthorityService;
 import org.zalando.zmon.security.TeamService;
@@ -75,6 +77,12 @@ public class GithubSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private GithubSignupConditionProperties githubProperties;
+
+    @Autowired
+    private IsAllowedOrgaSignupCondition orgaCondition;
+
+    @Autowired
+    private IsAllowedUserSignupCondition userCondition;
 
     @Autowired
     public void configureGlobal(final AuthenticationManagerBuilder auth) throws Exception {
@@ -156,7 +164,7 @@ public class GithubSecurityConfig extends WebSecurityConfigurerAdapter {
     public ResourceServerConfigurer zmonResourceServerConfigurer() {
         final List<ResourceServerTokenServices> chain = ImmutableList.of(
                 new PresharedTokensResourceServerTokenServices(authorityService, environment),
-                new GithubResourceServerTokenServices(authorityService, environment, githubProperties));
+                new GithubResourceServerTokenServices(authorityService, userCondition, orgaCondition));
         return new ZmonResourceServerConfigurer(new ChainedResourceServerTokenServices(chain));
     }
 }
