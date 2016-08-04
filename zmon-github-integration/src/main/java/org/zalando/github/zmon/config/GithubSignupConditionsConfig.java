@@ -14,17 +14,17 @@ import org.zalando.github.zmon.security.IsAllowedUserSignupCondition;
  */
 @Configuration
 public class GithubSignupConditionsConfig {
-	
-	@Autowired
-	private GithubSignupConditionProperties signupProperties;
 
-	@Bean
-	public IsAllowedUserSignupCondition allowedUserSignupCondition(){
-		return new IsAllowedUserSignupCondition(signupProperties);
-	}
-	
-	@Bean
-	public IsAllowedOrgaSignupCondition allowedOrgaSignupCondition(){
-		return new IsAllowedOrgaSignupCondition(signupProperties);
-	}
+    @Autowired
+    private GithubSignupConditionProperties signupProperties;
+
+    @Bean
+    public IsAllowedUserSignupCondition allowedUserSignupCondition() {
+        return new IsAllowedUserSignupCondition(signupProperties);
+    }
+
+    @Bean
+    public IsAllowedOrgaSignupCondition allowedOrgaSignupCondition() {
+        return new IsAllowedOrgaSignupCondition(signupProperties);
+    }
 }

@@ -1,8 +1,6 @@
 package org.zalando.github.zmon.config;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import com.google.common.collect.ImmutableList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,7 +14,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurer;
@@ -26,12 +23,11 @@ import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.social.security.SocialUserDetailsService;
 import org.springframework.social.security.SpringSocialConfigurer;
+import org.zalando.github.zmon.security.GithubSignupConditionProperties;
+import org.zalando.github.zmon.security.IsAllowedOrgaSignupCondition;
+import org.zalando.github.zmon.security.IsAllowedUserSignupCondition;
 import org.zalando.github.zmon.service.GithubResourceServerTokenServices;
-import org.zalando.zmon.security.AuthorityService;
-import org.zalando.zmon.security.TeamService;
-import org.zalando.zmon.security.WebSecurityConstants;
-import org.zalando.zmon.security.ZmonAuthenticationEntrypoint;
-import org.zalando.zmon.security.ZmonResourceServerConfigurer;
+import org.zalando.zmon.security.*;
 import org.zalando.zmon.security.jwt.JWTRememberMeServices;
 import org.zalando.zmon.security.jwt.JWTService;
 import org.zalando.zmon.security.rememberme.MultiRememberMeServices;
@@ -41,7 +37,8 @@ import org.zalando.zmon.security.service.SimpleSocialUserDetailsService;
 import org.zalando.zmon.security.tvtoken.TvTokenService;
 import org.zalando.zmon.security.tvtoken.ZMonTvRememberMeServices;
 
-import com.google.common.collect.ImmutableList;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Nothing to add here.
@@ -71,6 +68,15 @@ public class GithubSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private TeamService teamService;
+
+    @Autowired
+    private GithubSignupConditionProperties githubProperties;
+
+    @Autowired
+    private IsAllowedOrgaSignupCondition orgaCondition;
+
+    @Autowired
+    private IsAllowedUserSignupCondition userCondition;
 
     @Autowired
     public void configureGlobal(final AuthenticationManagerBuilder auth) throws Exception {
@@ -145,14 +151,14 @@ public class GithubSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Bean
     public UserDetailsManager userDetailsManager() {
-        return new InMemoryUserDetailsManager(new ArrayList<UserDetails>());
+        return new InMemoryUserDetailsManager(new ArrayList<>());
     }
 
     @Bean
     public ResourceServerConfigurer zmonResourceServerConfigurer() {
         final List<ResourceServerTokenServices> chain = ImmutableList.of(
                 new PresharedTokensResourceServerTokenServices(authorityService, environment),
-                new GithubResourceServerTokenServices(authorityService, environment));
+                new GithubResourceServerTokenServices(authorityService, userCondition, orgaCondition));
         return new ZmonResourceServerConfigurer(new ChainedResourceServerTokenServices(chain));
     }
 }

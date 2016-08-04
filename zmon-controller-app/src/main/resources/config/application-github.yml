@@ -10,13 +10,13 @@ zmon:
     github:
       # Specify users who are authorized to log in
       # Empty list allows all users to log in
-      allowed-users: ['*']
+      allowed-users: []
       # Specify organizations who are authorized to log in
-      allowed-orgas: ['*']
+      allowed-orgas: []
   authorities:
     simple:
-      admins: ['*']
-      users: ['*']
+      admins: []
+      users: []
   teams:
     simple:
       teams:
