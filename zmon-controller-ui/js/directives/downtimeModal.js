@@ -10,8 +10,10 @@ angular.module('zmon2App').directive('downtimeModal', [ '$uibModal', '$timeout',
 
                 var modalCtrl = function($scope, $uibModalInstance, downtimeAlertId, downtimeEntities) {
                     $scope.downtimeAlertId = downtimeAlertId;
-                    $scope.downtimeEntities = downtimeEntities;
+                    $scope.downtimeEntities = { ids: downtimeEntities };
                     $scope.scheduleMode = false;
+                    $scope.entityFilterInputMethod = 'delta';
+                    $scope.minDuration = new Date(2013, 0, 0, 0, 0);
                     $scope.minDate = new Date();
                     $scope.maxDate = new Date($scope.minDate.getFullYear() + 1, $scope.minDate.getMonth(), $scope.minDate.getDate() - 1);
                     $scope.dateFormat = 'dd-MMMM-yyyy';
@@ -21,7 +23,7 @@ angular.module('zmon2App').directive('downtimeModal', [ '$uibModal', '$timeout',
                         'show-weeks': true
                     };
                     $scope.models = {
-                        duration: new Date(2013, 0, 0, 0, 0), // using Date object, but will only be using the HH:MM part as duration
+                        duration: new Date(2013, 0, 0, 0, 15), // using Date object, but will only be using the HH:MM part as duration
                         startDate: new Date(),
                         startTime: new Date(),
                         endDate: new Date(),
@@ -32,10 +34,18 @@ angular.module('zmon2App').directive('downtimeModal', [ '$uibModal', '$timeout',
                     };
 
                     $scope.ok = function() {
+
+                        // do not submit if form is invalid or duration time is 0 (1356908400000 ==  Date(2013, 0, 0, 0, 0)
+                        if (!$scope.setDowntimeForm.$valid || $scope.models.duration.getTime() === $scope.minDuration.getTime()) {
+                            $scope.setDowntimeForm.submitted = true;
+                            $scope.focusedElement = null;
+                            return;
+                        }
+
                         var startTime = new Date();
                         var endTime = $scope.calcDowntimeEndtime();
 
-                        if (!$scope.scheduleMode) {
+                        if ($scope.scheduleMode) {
                             var sd = $scope.models.startDate;
                             var st = $scope.models.startTime;
                             var ed = $scope.models.endDate;
@@ -49,10 +59,15 @@ angular.module('zmon2App').directive('downtimeModal', [ '$uibModal', '$timeout',
                         }
 
                         $uibModalInstance.close({
+                            "alert_definition_id": scope.alertId,
                             "startTime": startTime,
                             "endTime": endTime,
-                            "comment": $scope.models.comment
+                            "comment": $scope.models.comment,
+                            "entity_ids": _.extend([], $scope.downtimeEntities.ids)
                         });
+
+                        // clear downtimeEntities list to unselect checkboxes on table
+                        scope.downtimeEntities.length = 0;
                     };
 
                     $scope.openDatepicker = function($event, which) {
@@ -75,25 +90,27 @@ angular.module('zmon2App').directive('downtimeModal', [ '$uibModal', '$timeout',
                     };
 
                     $scope.cancel = function() {
+                        $scope.setDowntimeForm.submitted = false;
                         $uibModalInstance.dismiss();
                     };
 
-                    $scope.removeEntity = function(exclEntity) {
-                        $scope.downtimeEntities.splice($scope.downtimeEntities.indexOf(exclEntity), 1);
-                        if ($scope.downtimeEntities.length === 0) {
+                    $scope.$watch('downtimeEntities.ids', function(ids) {
+                        if (ids.length === 0) {
                             $scope.cancel();
                         }
-                    };
+                    });
                 };
 
-                var open = function(alertId) {
+                var open = function() {
+
                     var modalInstance = $uibModal.open({
                         templateUrl: '/templates/downtimeModal.html',
                         controller: modalCtrl,
                         backdrop: false,
+                        windowClass: 'downtime-modal',
                         resolve: {
                             downtimeAlertId: function() {
-                                return alertId;
+                                return scope.alertId;
                             },
                             downtimeEntities: function() {
                                 return scope.downtimeEntities;
@@ -102,15 +119,9 @@ angular.module('zmon2App').directive('downtimeModal', [ '$uibModal', '$timeout',
                     });
 
                     modalInstance.result.then(function(downtime) {
-                        var entitiesPerAlert = [{
-                            "alert_definition_id": scope.alertId,
-                            "entity_ids": scope.downtimeEntities
-                        }];
-
-                        CommunicationService.scheduleDowntime(downtime, entitiesPerAlert).then(function(downtimeUUIDs) {
-                            var message = 'Success setting ' + scope.downtimeEntities.length;
-                                message += (scope.downtimeEntities.length > 1 ? ' downtimes' : ' downtime');
-
+                        CommunicationService.scheduleDowntime(downtime).then(function(downtimeUUIDs) {
+                            var message = 'Success setting ' + downtimeUUIDs.length;
+                                message += (downtimeUUIDs.length > 1 ? ' downtimes' : ' downtime');
                             FeedbackMessageService.showSuccessMessage(message);
                         });
                     });

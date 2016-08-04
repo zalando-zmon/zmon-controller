@@ -59,6 +59,7 @@
             </div>
         </label>
         <div class="col-sm-10">
+            <code-editor-modal code="widgetsJson" title="Widgets Configuration" ng-show="!widgetConfigFormVisible" ></code-editor-modal>
             <div id="inp-widgets" name="widgets" ng-show="!widgetConfigFormVisible" class="code-editor" ng-model="widgetsJson" json code-editor required></div>
             <div ng-show="widgetConfigFormVisible">
                 <widget-config-container widget-types="widgetTypes" widgets="widgets" widgets-json="widgetsJson" is-visible="widgetConfigFormVisible" invalid-json="ddForm.widgets.$error['valid-json']" empty-json="ddForm.widgets.$error['non-empty-json']"></widget-config-container>
@@ -69,6 +70,7 @@
     <div class="form-group" ng-class="{'has-error': ddForm.submitted && ( ddForm.teams.$error.required || ddForm.teams.$error['valid-json'] || ddForm.teams.$error['non-empty-json']) }">
         <label for="inp-widgets-team" class="col-sm-2 control-label">Alert Teams</label>
         <div class="col-sm-10">
+            <code-editor-modal code="teamsJson" title="Alert Teams"></code-editor-modal>
             <div id="inp-widgets-team" name="teams" class="code-editor" ng-model="teamsJson" json code-editor non-empty-json non-empty-json-if="!!!dashboard.tags" required></div>
         </div>
     </div>

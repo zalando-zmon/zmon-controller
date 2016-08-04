@@ -49,6 +49,7 @@
                     <div class="form-group" ng-class="{'has-error': trForm.submitted && trForm.check_command.$error.required}">
                         <label for="inp-command" class="col-sm-2 control-label"><a href="/docs/check-definitions.html" rel="help" target="docs">Check Command</a></label>
                         <div class="col-sm-10">
+                            <code-editor-modal code="alert.check_command" title="Check Command" language="python"></code-editor-modal>
                             <div id="inp-command" name="check_command" class="code-editor" ng-model="alert.check_command" code-language="python" code-editor required ng-focus="trForm.submitted && trForm.check_command.$error.required"></div>
                             <span class="help-block">Valid Python expression used to query the instances specified in entities filter.</span>
                         </div>
@@ -57,6 +58,7 @@
                     <div class="form-group">
                         <label for="inp-condition" class="col-sm-2 control-label"><a href="/docs/alert-definitions.html#condition" rel="help" target="docs">Alert Condition</a></label>
                         <div class="col-sm-10">
+                            <code-editor-modal code="alert.alert_condition" title="Alert Condition" language="python"></code-editor-modal>
                             <div id="inp-condition" name="alert_condition" class="code-editor" ng-model="alert.alert_condition" code-language="python" code-editor></div>
                             <span class="help-block">Valid Python expression to return true when alert should be "on". Use <code>value</code> to access the check result value.</span>
                         </div>
@@ -109,6 +111,7 @@
                             </div>
                         </label>
                         <div class="col-sm-10" ng-class="{'has-error': trForm.submitted && trForm.entities.$error['non-empty-json']}">
+                            <code-editor-modal code="TrialRunCtrl.entityFilter.textEntityFilters" title="Included Entities" ng-show="TrialRunCtrl.entityFilterInputMethod === 'text'"></code-editor-modal>
                             <div id="inp-entities" name="entities" ng-show="TrialRunCtrl.entityFilterInputMethod == 'text'" class="code-editor" ng-model="TrialRunCtrl.entityFilter.textEntityFilters" json non-empty-json code-editor required></div>
                             <div ng-show="TrialRunCtrl.entityFilterInputMethod == 'form'">
                                 <entity-filter-container entity-filter-types="TrialRunCtrl.entityFilter.types" form-entity-filters="TrialRunCtrl.entityFilter.formEntityFilters" invalid-json="trForm.entities.$error['valid-json']" empty-json="trForm.entities.$error['non-empty-json']"></entity-filter-container>
@@ -125,6 +128,7 @@
                             </div>
                         </label>
                         <div class="col-sm-10" ng-class="{'has-error': trForm.submitted && trForm.entitiesExclude.$error['non-empty-json']}">
+                            <code-editor-modal code="TrialRunCtrl.entityExcludeFilter.textEntityFilters" title="Excluded Entities" ng-show="TrialRunCtrl.entityExcludeFilterInputMethod === 'text'"></code-editor-modal>
                             <div id="inp-entities-exclude" name="entitiesExclude" ng-show="TrialRunCtrl.entityExcludeFilterInputMethod == 'text'" class="code-editor" ng-model="TrialRunCtrl.entityExcludeFilter.textEntityFilters" json code-editor required></div>
                             <div ng-show="TrialRunCtrl.entityExcludeFilterInputMethod == 'form'">
                                 <entity-filter-container entity-filter-types="TrialRunCtrl.entityExcludeFilter.types" form-entity-filters="TrialRunCtrl.entityExcludeFilter.formEntityFilters" invalid-json="trForm.entitiesExclude.$error['valid-json']" empty-json="trForm.entitiesExclude.$error['non-empty-json']" exclude="true"></entity-filter-container>

@@ -13,7 +13,7 @@ angular.module("zmon2App").directive("codeEditor", ["$timeout",
                 editor.setShowPrintMargin(false);
 
                 // Get language (edit mode) from the element data. If not set, use JSON.
-                var editMode = $(elem).attr("code-language");
+                var editMode = attrs.codeLanguage;
                 if (editMode) {
                     editMode = "ace/mode/" + editMode;
                 } else {

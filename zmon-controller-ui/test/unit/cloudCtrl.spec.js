@@ -78,6 +78,6 @@ describe('CloudCtrl', function() {
         httpBackend.expectPOST('rest/entities', '{"type":"elb"}');
         httpBackend.flush();
         expect(scope.hasMetrics(scope.applications.aaa)).toBe(false);
-        expect(scope.notHasMetrics(scope.applications.aaa)).toBe(true);
+        expect(scope.isUntracked(scope.applications.aaa)).toBe(true);
     });
 });

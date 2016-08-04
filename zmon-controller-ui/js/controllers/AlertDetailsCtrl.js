@@ -1,4 +1,4 @@
-angular.module('zmon2App').controller('AlertDetailsCtrl', [ '$location', '$routeParams', '$scope', 'timespanFilter', 'CommunicationService', 'DowntimesService', 'localStorageService', 'MainAlertService', 'UserInfoService', 'APP_CONST', function($location, $routeParams, $scope, timespanFilter, CommunicationService, DowntimesService, localStorageService, MainAlertService, UserInfoService, APP_CONST) {
+angular.module('zmon2App').controller('AlertDetailsCtrl', [ '$location', '$routeParams', '$scope', 'timespanFilter', 'CommunicationService', 'DowntimesService', 'FeedbackMessageService', 'localStorageService', 'MainAlertService', 'UserInfoService', 'APP_CONST', function($location, $routeParams, $scope, timespanFilter, CommunicationService, DowntimesService, FeedbackMessageService, localStorageService, MainAlertService, UserInfoService, APP_CONST) {
 
     // Set in parent scope which page is active for the menu styling
     $scope.$parent.activePage = 'alert-details'; // is not a menu option, but still set
@@ -185,14 +185,14 @@ angular.module('zmon2App').controller('AlertDetailsCtrl', [ '$location', '$route
 
     // Force evaluation of alert definition
     $scope.forceAlertEvaluation = function() {
-        CommunicationService.forceAlertEvaluation($scope.alertDefinitionId).then(function() {
+        CommunicationService.forceAlertEvaluation($scope.alertId).then(function() {
             FeedbackMessageService.showSuccessMessage('Evaluation of alert successfully forced...');
         });
     };
 
     // Force cleanup of alert state
     $scope.forceAlertCleanup = function() {
-        CommunicationService.forceAlertCleanup($scope.alertDefinitionId).then(function() {
+        CommunicationService.forceAlertCleanup($scope.alertId).then(function() {
             FeedbackMessageService.showSuccessMessage('Cleanup of alert state successfully forced...');
         });
     };

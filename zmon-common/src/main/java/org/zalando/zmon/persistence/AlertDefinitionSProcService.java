@@ -73,4 +73,7 @@ public interface AlertDefinitionSProcService {
 
     @SProcCall
     List<String> getAllTags();
+
+    @SProcCall
+    Date getAlertLastModifiedMax();
 }

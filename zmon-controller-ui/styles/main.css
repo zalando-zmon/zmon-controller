@@ -465,10 +465,41 @@ a[rel=help]
     color: #262626;
 }
 
+.downtime-select.ui-select-multiple.ui-select-bootstrap
+{
+    height: 100px;
+    overflow-y: auto;
+}
+
 .downtime-section
 {
     display: inline-block;
     vertical-align: middle;
+}
+
+.downtime-time-label
+{
+    margin-top: 19px;
+}
+
+.downtime-duration-label
+{
+    margin-top: 40px;
+}
+
+.downtime-duration-label i
+{
+    margin-left: 5px;
+}
+
+.downtime-modal .modal-body
+{
+    padding-bottom: 0;
+}
+
+.downtime-modal .downtime-reason
+{
+    height: 80px;
 }
 
 .mandatory:before
@@ -482,13 +513,6 @@ a[rel=help]
 .danger a, .danger i,
 .success a, .success i {
     color: #262626;
-}
-
-.downtime-reason
-{
-    width: 95%;
-    vertical-align: top;
-    display: inline;
 }
 
 .active-downtime
@@ -651,17 +675,21 @@ a.non-href-anchor
     resize: none;
 }
 
+.code-editor-modal-window .modal-dialog,
 .alert-value-modal-window .modal-dialog
 {
     width: 60% !important;
     height: 90% !important;
 }
 
+.code-editor-modal-window .modal-content,
 .alert-value-modal-window .modal-content
 {
     height: 100%;
 }
 
+
+.code-editor-modal,
 .alert-value-modal
 {
     position: absolute;
@@ -681,12 +709,14 @@ a.non-href-anchor
     right: 0;
 }
 
+.code-editor-modal .modal-footer,
 .alert-value-modal .modal-footer
 {
     position: absolute;
     bottom: 0;
     left: 0;
     right: 0;
+    border: 0;
 }
 
 .alert-value-modal .input-group
@@ -699,6 +729,7 @@ a.non-href-anchor
     padding-left: 10px;
 }
 
+.code-editor-modal .editor-container,
 .alert-value-modal .editor-container
 {
     position: relative;
@@ -706,6 +737,7 @@ a.non-href-anchor
     height: 100%;
 }
 
+.code-editor-modal #editor,
 .alert-value-modal #editor
 {
     position: absolute;
@@ -714,6 +746,23 @@ a.non-href-anchor
     left: 0;
     right: 0;
     border: 1px solid #ccc;
+}
+
+.code-editor-modal .modal-header
+{
+    border: 0;
+}
+
+.code-editor-modal .modal-body
+{
+    position: absolute;
+    top: 49px;
+    bottom: 72px;
+    left: 0;
+    right: 0;
+    padding: 0;
+    padding-left: 10px;
+    padding-right: 10px;
 }
 
 .history-tag
@@ -890,6 +939,16 @@ a.non-href-anchor
     height: 100px;
     width: auto;
     margin-bottom: 10px;
+}
+
+i.ace-editor-modal
+{
+    position: absolute;
+    top: 7px;
+    right: 32px;
+    font-size: 20px;
+    color: lightgray;
+    z-index: 1;
 }
 
 .has-error .code-editor

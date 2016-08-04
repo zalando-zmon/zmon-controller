@@ -1,83 +1,83 @@
+<div class="modal-header">
+    <h3>Schedule {{downtimeEntities.ids.length}} downtime{{downtimeEntities.ids.length>1 ? 's' : ''}}</h3>
+</div>
+
 <div class="modal-body" id="set-downtimes-modal" >
-    <h4>Schedule {{downtimeEntities.length}} downtime{{downtimeEntities.length>1 ? 's' : ''}}</h4>
-    <form name="setDowntimeForm" novalidate>
-        <div class="row">
-            <div class="col-md-8">
-                <uib-tabset>
-                    <uib-tab heading="Duration" ng-click="scheduleMode = false">
-                        <div>
-                            <p style="margin-top: 20px">Downtime ends at <em>{{calcDowntimeEndtime() | date:'HH:mm'}}</em></p>
-                            <i class="fa fa-clock-o"> </i>
-                            <div class="downtime-section">
-                                <uib-timepicker ng-model="models.duration" hour-step="1" minute-step="15" show-meridian="false"></uib-timepicker>
-                            </div>
-                        </div>
-                        <div>
-                            <div class="downtime-section mandatory">
-                                <textarea class="form-control downtime-reason" ng-model="models.comment" placeholder="Downtime reason" rows="5" cols="60" required></textarea>
-                            </div>
-                        </div>
-                    </uib-tab>
-                    <uib-tab heading="Schedule" ng-click="scheduleMode = true">
-                        <div class="row">
-                            <div class="col-md-8">
-                                <uib-table>
-                                    <tr>
-                                        <td>
-                                            <div class="input-group">
-                                                Start:&nbsp;
-                                                <span class="input-group-btn" style="vertical-align: middle">
-                                                    <button class="btn btn-default" ng-click="openDatepicker($event, 'start')"><i class="glyphicon glyphicon-calendar"></i></button>
-                                                </span>
-                                                <input type="text" class="form-control" uib-datepicker-popup="{{dateFormat}}" is-open="models.startDatepickerOpened" ng-model="models.startDate" min="minDate" max="maxDate" datepicker-options="dateOptions" ng-required="true" close-text="Close"/>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                </uib-table>
-                            </div>
-                            <div class="col-md-4">
-                                <div style="display:inline-block; width: 190px">
-                                    <uib-timepicker ng-model="models.startTime" hour-step="1" minute-step="1" show-meridian="false"></uib-timepicker>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-8">
-                                <uib-table>
-                                    <tr>
-                                        <td>
-                                            <div class="input-group">
-                                                End:&nbsp;
-                                                <span class="input-group-btn" style="vertical-align: middle">
-                                                <button class="btn btn-default" ng-click="openDatepicker($event, 'end')"><i class="glyphicon glyphicon-calendar"></i></button>
-                                                </span>
-                                                <input type="text" class="form-control" uib-datepicker-popup="{{dateFormat}}" is-open="models.endDatepickerOpened" ng-model="models.endDate" min="minDate" max="maxDate" datepicker-options="dateOptions" ng-required="true" close-text="Close"/>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                </uib-table>
-                            </div>
-                            <div class="col-md-4">
-                                <div style="display:inline-block; width: 190px">
-                                    <uib-timepicker ng-model="models.endTime" hour-step="1" minute-step="1" show-meridian="false"></uib-timepicker>
-                                </div>
-                            </div>
-                        </div>
-                        <div>
-                            <div class="downtime-section mandatory">
-                                <textarea class="form-control downtime-reason" ng-model="models.comment" placeholder="Downtime reason" rows="5" cols="60" required></textarea>
-                            </div>
-                        </div>
-                    </uib-tab>
-                </uib-tabset>
-            </div> <!-- end of left side with forms -->
-            <div class="col-md-4 downtime-modal-entity-list">
-                <button class="btn btn-primary downtime-modal-entity" ng-repeat="entity in downtimeEntities">{{entity}} <i ng-click="removeEntity(entity)" class="fa fa-minus-square"></i></button>
+
+    <form class="form-horizontal" role="form" name="setDowntimeForm" novalidate>
+
+        <div class="form-group">
+            <label class="col-sm-2">Entities</label>
+            <div class="col-sm-10">
+                <ui-select multiple tagging class="downtime-select" ng-model="downtimeEntities.ids" theme="bootstrap" sortable="true" ng-disabled="false" title="Choose an entity"  close-on-select="false" onkeypress="return false;">
+                    <ui-select-match placeholder="Select entities...">{{$item}}</ui-select-match>
+                    <ui-select-choices repeat="entity in downtimeEntities.ids | filter:$select.search">
+                        {{entity}}
+                    </ui-select-choices>
+                </ui-select>
             </div>
         </div>
+
+        <div class="form-group">
+            <label class="col-sm-2 downtime-time-label">Time
+                <div id="entity-filter-buttons">
+                    <button type="button" class="btn btn-primary fa fa-hourglass-end" uib-btn-radio="'delta'" title="Delta time input" ng-model="entityFilterInputMethod" ng-click="scheduleMode = false;" ></button>
+                    <button type="button" class="btn btn-primary fa fa-calendar" uib-btn-radio="'schedule'" title="Calendar schedule input" ng-model="entityFilterInputMethod" ng-click="scheduleMode = true;"></button>
+                </div>
+            </label>
+
+            <div class="col-sm-10" ng-class="{'has-error': setDowntimeForm.submitted && models.duration.getTime() === minDuration.getTime()}">
+                <div class="row" ng-if="!scheduleMode">
+                    <div class="col-sm-3 downtime-section">
+                        <uib-timepicker ng-model="models.duration" hour-step="1" minute-step="15" show-meridian="false"></uib-timepicker>
+                    </div>
+                    <div class="col-sm-4 downtime-duration-label">Downtime ends at <i class="fa fa-clock-o"></i> <em>{{calcDowntimeEndtime() | date:'HH:mm'}}</em>
+                    </div>
+                </div>
+                <div ng-if="scheduleMode">
+                    <div class="row">
+                        <label class="input-group col-sm-2 schedule">Start</label>
+                        <div class="input-group col-sm-5">
+                            <span class="input-group-btn">
+                                <button class="btn btn-default" ng-click="openDatepicker($event, 'start')">
+                                    <i class="glyphicon glyphicon-calendar"></i>
+                                </button>
+                            </span>
+                            <input type="text" class="form-control col-sm-2" uib-datepicker-popup="{{dateFormat}}" is-open="models.startDatepickerOpened" ng-model="models.startDate" min="minDate" max="maxDate" datepicker-options="dateOptions" ng-required="true" close-text="Close"/>
+                        </div>
+                        <div class="col-sm-4">
+                            <uib-timepicker ng-model="models.startTime" hour-step="1" minute-step="1" show-meridian="false"></uib-timepicker>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label class="input-group col-sm-2 schedule">End</label>
+                        <div class="input-group col-sm-5">
+                            <span class="input-group-btn">
+                                <button class="btn btn-default" ng-click="openDatepicker($event, 'end')">
+                                    <i class="glyphicon glyphicon-calendar"></i>
+                                </button>
+                            </span>
+                            <input type="text" class="form-control col-sm-2" uib-datepicker-popup="{{dateFormat}}" is-open="models.endDatepickerOpened" ng-model="models.endDate" min="minDate" max="maxDate" datepicker-options="dateOptions" ng-required="true" close-text="Close"/>
+                        </div>
+                        <div class="col-sm-4">
+                            <uib-timepicker ng-model="models.endTime" hour-step="1" minute-step="1" show-meridian="false"></uib-timepicker>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group" ng-class="{'has-error': setDowntimeForm.submitted && setDowntimeForm.comment.$error.required}">
+            <label class="col-sm-2">Comment</label>
+            <div class="col-sm-10">
+                <textarea name="comment" class="form-control downtime-reason" ng-model="models.comment" placeholder="Reason for downtime" rows="5" cols="60" required></textarea>
+            </div>
+        </div>
+
     </form>
 </div>
+
 <div class="modal-footer">
-    <button class="btn btn-primary set-downtimes-ok-button" ng-disabled="setDowntimeForm.$invalid" ng-click="ok()">OK</button>
+    <button class="btn btn-primary set-downtimes-ok-button" ng-click="ok()">OK</button>
     <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
 </div>

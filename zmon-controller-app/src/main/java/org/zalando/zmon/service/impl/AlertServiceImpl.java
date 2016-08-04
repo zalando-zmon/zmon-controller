@@ -476,4 +476,9 @@ public class AlertServiceImpl implements AlertService {
 
         return result;
     }
+
+    @Override
+    public Date getMaxLastModified() {
+        return alertDefinintionSProc.getAlertLastModifiedMax();
+    }
 }
