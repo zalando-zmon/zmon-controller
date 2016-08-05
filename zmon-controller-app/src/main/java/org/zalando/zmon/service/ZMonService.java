@@ -36,7 +36,7 @@ public interface ZMonService {
 
     List<CheckResults> getCheckAlertResults(int alertId, int limit);
 
-    CheckDefinition createOrUpdateCheckDefinition(CheckDefinitionImport checkDefinition);
+    CheckDefinition createOrUpdateCheckDefinition(CheckDefinitionImport checkDefinition, String userName, List<String> teams);
 
     void deleteCheckDefinition(String userName, String name, String owningTeam);
 

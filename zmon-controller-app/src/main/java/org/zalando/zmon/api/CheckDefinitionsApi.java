@@ -5,6 +5,7 @@ import com.google.common.base.Preconditions;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
+import com.google.common.collect.Lists;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +43,7 @@ public class CheckDefinitionsApi extends AbstractZMonController {
         this.authorityService = Preconditions.checkNotNull(authorityService, "authorityService is null");
     }
 
-    @RequestMapping(method=RequestMethod.HEAD)
+    @RequestMapping(method = RequestMethod.HEAD)
     public void getMaxLastModified(HttpServletResponse response) {
         TimeZone tz = TimeZone.getTimeZone("UTC");
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
@@ -56,18 +57,20 @@ public class CheckDefinitionsApi extends AbstractZMonController {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public CheckDefinition createOrUpdate(@Valid
-            @RequestBody(required = true)
-            final CheckDefinitionImport checkDefinition) throws ZMonException {
+                                          @RequestBody(required = true)
+                                          final CheckDefinitionImport checkDefinition) throws ZMonException {
 
-        return zMonService.createOrUpdateCheckDefinition(checkDefinition);
+        checkDefinition.setLastModifiedBy(authorityService.getUserName());
+
+        return zMonService.createOrUpdateCheckDefinition(checkDefinition, authorityService.getUserName(), Lists.newArrayList(authorityService.getTeams()));
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public CheckDefinition createOrUpdateById(@Valid
-                                          @RequestBody(required = true)
-                                          final CheckDefinitionImport checkDefinition, @PathVariable(value = "id") int id) throws ZMonException {
+                                              @RequestBody(required = true)
+                                              final CheckDefinitionImport checkDefinition, @PathVariable(value = "id") int id) throws ZMonException {
 
         if (null == checkDefinition.getId()) {
             throw new ZMonException("ID missing in body");
@@ -77,7 +80,9 @@ public class CheckDefinitionsApi extends AbstractZMonController {
             throw new ZMonException("ID from path does not match the one received in body");
         }
 
-        return zMonService.createOrUpdateCheckDefinition(checkDefinition);
+        checkDefinition.setLastModifiedBy(authorityService.getUserName());
+
+        return zMonService.createOrUpdateCheckDefinition(checkDefinition, authorityService.getUserName(), Lists.newArrayList(authorityService.getTeams()));
     }
 
     @RequestMapping(value = "/{id}")
@@ -117,7 +122,7 @@ public class CheckDefinitionsApi extends AbstractZMonController {
         LOG.info("Deleting unused check id={} user={} teams={}", id, authorityService.getUserName(), authorityService.getTeams());
 
         List<Integer> ids = zMonService.deleteUnusedCheckDef(id, authorityService.getTeams());
-        if(ids.size() == 1) {
+        if (ids.size() == 1) {
             return new ResponseEntity<>("Deleted", HttpStatus.OK);
         }
         return new ResponseEntity<>("Id not found or not part of owning team", HttpStatus.NOT_FOUND);

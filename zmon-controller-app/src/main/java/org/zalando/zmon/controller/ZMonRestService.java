@@ -76,16 +76,13 @@ public class ZMonRestService extends AbstractZMonController {
 
     @RequestMapping(value = "/updateCheckDefinition")
     public ResponseEntity<CheckDefinition> updateCheckDefinition(@RequestBody(required = true) CheckDefinitionImport check) {
-        if (check.getOwningTeam() == null || check.getOwningTeam().equals("")) {
-            if (authService.getTeams().isEmpty()) {
-                check.setOwningTeam("ZMON");
-            } else {
-                check.setOwningTeam((String) authService.getTeams().toArray()[0]);
-            }
+        if (check.getOwningTeam() == null || "".equals(check.getOwningTeam())) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
         check.setLastModifiedBy(authService.getUserName());
-        CheckDefinition saved = service.createOrUpdateCheckDefinition(check);
+
+        CheckDefinition saved = service.createOrUpdateCheckDefinition(check, authService.getUserName(), Lists.newArrayList(authService.getTeams()));
         return new ResponseEntity<>(saved, HttpStatus.OK);
     }
 
@@ -141,7 +138,7 @@ public class ZMonRestService extends AbstractZMonController {
     @ResponseBody
     @RequestMapping(value = "/entities", method = RequestMethod.POST)
     public void getEntitiesPost(@RequestBody JsonNode node, final Writer writer,
-                            final HttpServletResponse response) throws JsonProcessingException {
+                                final HttpServletResponse response) throws JsonProcessingException {
         entityApi.getEntities(mapper.writeValueAsString(node), writer, response);
     }
 

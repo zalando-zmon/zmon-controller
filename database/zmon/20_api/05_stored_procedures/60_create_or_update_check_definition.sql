@@ -1,10 +1,22 @@
 CREATE OR REPLACE FUNCTION create_or_update_check_definition (
      IN check_definition_import check_definition_import,
+     IN user_name text,
+     IN user_teams text[],
      OUT entity                 check_definition_type,
-     OUT new_entity             boolean
+     OUT new_entity             boolean,
+     OUT permission_denied      boolean
 ) AS
 $BODY$
 BEGIN
+
+    IF check_definition_import.id IS DISTINCT FROM NULL THEN
+      IF NOT EXISTS (SELECT 1 FROM zzm_data.check_definition WHERE cd_id = check_definition_import.id AND (cd_owning_team =ANY(user_teams) OR cd_created_by = user_name)) THEN
+        permission_denied = true;
+        RETURN;
+      END IF;
+
+    END IF;
+
     entity.name                 = check_definition_import.name;
     entity.description          = check_definition_import.description;
     entity.technical_details    = check_definition_import.technical_details;
