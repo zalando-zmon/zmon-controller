@@ -17,6 +17,7 @@ import org.zalando.zmon.controller.AbstractZMonController;
 import org.zalando.zmon.domain.CheckDefinition;
 import org.zalando.zmon.domain.CheckDefinitionImport;
 import org.zalando.zmon.exception.ZMonException;
+import org.zalando.zmon.persistence.CheckDefinitionImportResult;
 import org.zalando.zmon.security.permission.DefaultZMonPermissionService;
 import org.zalando.zmon.service.ZMonService;
 
@@ -56,19 +57,23 @@ public class CheckDefinitionsApi extends AbstractZMonController {
     @RequestMapping(method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public CheckDefinition createOrUpdate(@Valid
+    public ResponseEntity<CheckDefinition> createOrUpdate(@Valid
                                           @RequestBody(required = true)
                                           final CheckDefinitionImport checkDefinition) throws ZMonException {
 
-        checkDefinition.setLastModifiedBy(authorityService.getUserName());
+        CheckDefinitionImportResult result = zMonService.createOrUpdateCheckDefinition(checkDefinition, authorityService.getUserName(), Lists.newArrayList(authorityService.getTeams()));
 
-        return zMonService.createOrUpdateCheckDefinition(checkDefinition, authorityService.getUserName(), Lists.newArrayList(authorityService.getTeams()));
+        if (result.isPermissionDenied()) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
+
+        return new ResponseEntity<>(result.getEntity(), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public CheckDefinition createOrUpdateById(@Valid
+    public ResponseEntity<CheckDefinition> createOrUpdateById(@Valid
                                               @RequestBody(required = true)
                                               final CheckDefinitionImport checkDefinition, @PathVariable(value = "id") int id) throws ZMonException {
 
@@ -80,9 +85,7 @@ public class CheckDefinitionsApi extends AbstractZMonController {
             throw new ZMonException("ID from path does not match the one received in body");
         }
 
-        checkDefinition.setLastModifiedBy(authorityService.getUserName());
-
-        return zMonService.createOrUpdateCheckDefinition(checkDefinition, authorityService.getUserName(), Lists.newArrayList(authorityService.getTeams()));
+        return createOrUpdate(checkDefinition);
     }
 
     @RequestMapping(value = "/{id}")

@@ -22,6 +22,7 @@ import org.zalando.zmon.domain.ExecutionStatus;
 import org.zalando.zmon.exception.ZMonException;
 import org.zalando.zmon.api.EntityApi;
 import org.zalando.zmon.api.domain.CheckChartResult;
+import org.zalando.zmon.persistence.CheckDefinitionImportResult;
 import org.zalando.zmon.security.permission.DefaultZMonPermissionService;
 import org.zalando.zmon.service.ZMonService;
 
@@ -80,10 +81,12 @@ public class ZMonRestService extends AbstractZMonController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        check.setLastModifiedBy(authService.getUserName());
+        CheckDefinitionImportResult result = service.createOrUpdateCheckDefinition(check, authService.getUserName(), Lists.newArrayList(authService.getTeams()));
+        if (result.isPermissionDenied()) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
 
-        CheckDefinition saved = service.createOrUpdateCheckDefinition(check, authService.getUserName(), Lists.newArrayList(authService.getTeams()));
-        return new ResponseEntity<>(saved, HttpStatus.OK);
+        return new ResponseEntity<>(result.getEntity(), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/checkDefinition")

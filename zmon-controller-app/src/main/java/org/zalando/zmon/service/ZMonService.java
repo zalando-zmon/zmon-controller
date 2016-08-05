@@ -14,6 +14,7 @@ import org.zalando.zmon.domain.ExecutionStatus;
 import org.zalando.zmon.api.domain.CheckChartResult;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import org.zalando.zmon.persistence.CheckDefinitionImportResult;
 
 // TODO split into multiple services
 public interface ZMonService {
@@ -36,7 +37,7 @@ public interface ZMonService {
 
     List<CheckResults> getCheckAlertResults(int alertId, int limit);
 
-    CheckDefinition createOrUpdateCheckDefinition(CheckDefinitionImport checkDefinition, String userName, List<String> teams);
+    CheckDefinitionImportResult createOrUpdateCheckDefinition(CheckDefinitionImport checkDefinition, String userName, List<String> teams);
 
     void deleteCheckDefinition(String userName, String name, String owningTeam);
 
