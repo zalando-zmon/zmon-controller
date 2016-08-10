@@ -38,7 +38,7 @@ export class SearchCtrl {
     this.giveSearchFocus = 0;
     this.selectedIndex = -1;
     this.results = [];
-    this.query = { query: '', tag: [], starred: false };
+    this.query = { query: '', tag: [], starred: !!localStorage.getItem('zmon-starred') || false };
     this.currentSearchId = 0;
     this.ignoreClose = true;
 
@@ -139,6 +139,7 @@ export class SearchCtrl {
   showStarred() {
     this.query.starred = !this.query.starred;
     this.giveSearchFocus = this.giveSearchFocus + 1;
+    localStorage.setItem('zmon-starred', this.query.starred ? 'true' : '');
     this.search();
   };
 
