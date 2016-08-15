@@ -98,7 +98,7 @@ angular.module('zmon2App').controller('AlertDetailsCtrl', [ '$location', '$route
             CommunicationService.getAlertComments($scope.alert.id, 11, 0).then(function(comments) {
                 $scope.commentsCount = comments.length;
             });
-            if ($scope.alert.status !== 'INACTIVE') {
+            if ($scope.alert.status === 'ACTIVE') {
                 CommunicationService.getAlertDetails($scope.alert.id).then(function (details) {
                     $scope.alert.details = details;
                     fetchEntityData($scope.alert.details.entities);
