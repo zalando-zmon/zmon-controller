@@ -83,14 +83,10 @@ angular.module('zmon2App').controller('AlertDetailsCtrl', [ '$location', '$route
             $scope.alert = alert;
             CommunicationService.getCheckDefinition($scope.alert.check_definition_id).then(function(check) {
                 $scope.check = check;
-                CommunicationService.getAlertDetails($scope.alert.id).then(function (details) {
-                    $scope.alert.details = details;
-                    fetchEntityData($scope.alert.details.entities);
-                    CommunicationService.getCheckResultsForAlert($scope.alert.id, 1).then(function(results) {
-                        $scope.checkResults = filterEntitiesWithAlert(results);
-                        fetchEntityData($scope.checkResults);
-                        cb();
-                    });
+                CommunicationService.getCheckResultsForAlert($scope.alert.id, 1).then(function(results) {
+                    $scope.checkResults = filterEntitiesWithAlert(results);
+                    fetchEntityData($scope.checkResults);
+                    cb();
                 });
             });
             CommunicationService.getAlertDefinitionChildren($scope.alert.id).then(function(children) {
@@ -102,6 +98,12 @@ angular.module('zmon2App').controller('AlertDetailsCtrl', [ '$location', '$route
             CommunicationService.getAlertComments($scope.alert.id, 11, 0).then(function(comments) {
                 $scope.commentsCount = comments.length;
             });
+            if ($scope.alert.status === 'ACTIVE') {
+                CommunicationService.getAlertDetails($scope.alert.id).then(function (details) {
+                    $scope.alert.details = details;
+                    fetchEntityData($scope.alert.details.entities);
+                });
+            }
             if ($scope.alert.parent_id) {
                 CommunicationService.getAlertDefinition($scope.alert.parent_id).then(function(parent) {
                     $scope.alert.parent = parent;
