@@ -287,3 +287,8 @@ input.checkbox
     margin-top: 5px;
     text-align: right;
 }
+
+.borderless .select2-choices
+{
+    border: none !important;
+}

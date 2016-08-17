@@ -877,6 +877,11 @@ below styles are active for a widget */
 
 /* Tags */
 
+#tagbar
+{
+    padding-top: 10px;
+}
+
 .dashboard-tags-container
 {
     position: relative;
@@ -885,72 +890,11 @@ below styles are active for a widget */
 
 .dashboard-tags
 {
-    display: block;
-    border: 0;
-    background: transparent;
-    width: 280px;
-    height: 140px;
-    top: -15px;
-    padding: 1px;
-    margin-left: -295px;
-    border-radius: 3px;
-}
-
-.dashboard-tags .select2-container
-{
-    background: transparent;
-    width: 280px !important;
-    border-radius: 5px;
-    display: block !important;
+    background: #464646;
     border: 1px solid black;
 }
 
-.dashboard-tags ul.select2-choices
+.dashboard-tags .tag-placeholder
 {
-    background: #464646;
-    border-radius: 0 !important;
-    height: 138px !important;
-    width: 278px;
-    overflow: auto;
-    padding: 1px;
-    padding-top: 3px;
-    color: white;
-    border-radius: 3px !important;
-}
-
-.dashboard-tags .select2-search-choice
-{
-    background: black;
-    color: white;
-    border: 0;
-}
-
-.dashboard-tags .select2-search-field input
-{
-    color: #8F8F8F !important;
-    border-radius: 3px !important;
-    padding-left: 10px !important;
-}
-
-.dashboard-tags .arrow-right-container
-{
-    position: relative;
-    z-index: 1;
-}
-
-.dashboard-tags .arrow-right
-{
-    position: absolute;
-    top: 20px;
-    right: -13px;
-}
-
-.dashboard-tags .arrow-right-border
-{
-    position: absolute;
-    top: 20px;
-    right: -15px;
-    border-top: 12px solid transparent;
-    border-bottom: 12px solid transparent;
-    border-left: 13px solid black;
+    padding-left: 10px;
 }
