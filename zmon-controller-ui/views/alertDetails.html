@@ -83,7 +83,12 @@
             <dt>Time Period</dt>
             <dd><span class="text-muted" ng-show="!alert.period">(no time periods defined)</span>{{alert.period}}</dd>
             <dt><label class="select2-details">Tags</label></dt>
-            <dd><input type="hidden" class="form-control disabled" zmon-select multi="true" tags="true" visible="true" width="100%" disabled="disabled" default="alert.tags"/></dd>
+            <dd>
+                <ui-select class="borderless" multiple tagging ng-model="alert.tags" theme="select2" sortable="true" title="Tags" ng-disabled="true">
+                    <ui-select-match>{{$item}}</ui-select-match>
+                    <ui-select-choices repeat="tag in alert.tags">{{tag}}</ui-select-choices>
+                </ui-select>
+            </dd>
         </dl>
     </div>
 </div>

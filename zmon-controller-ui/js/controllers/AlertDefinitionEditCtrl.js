@@ -406,23 +406,6 @@ angular.module('zmon2App').controller('AlertDefinitionEditCtrl', ['$scope', '$ro
             return parameters;
         };
 
-        // Add a tag to the tags array
-        $scope.addTag = function(tag) {
-            if (typeof $scope.alertDefinition.tags === 'undefined' || $scope.alertDefinition.tags === null) {
-                $scope.alertDefinition.tags = [];
-            }
-            if ($scope.alertDefinition.tags.indexOf(tag.text) === -1) {
-                $scope.alertDefinition.tags.push(tag.text);
-                $scope.markAsOverwritten('tags');
-            }
-        };
-
-        // Remove a tag from the tags array
-        $scope.removeTag = function(tag) {
-            $scope.alertDefinition.tags = _.without($scope.alertDefinition.tags, tag.id);
-            $scope.markAsOverwritten('tags');
-        };
-
         // Revert only one property back to its inherited parent value
         $scope.inheritProperty = function(property) {
             $scope.oProps = _.without($scope.oProps, property);
@@ -610,7 +593,7 @@ angular.module('zmon2App').controller('AlertDefinitionEditCtrl', ['$scope', '$ro
         // Get all available tags
         CommunicationService.getAllTags().then(
             function(data) {
-                $scope.allTags = data;
+                $scope.allTags = _.map(data, 'text');
             }
         );
 

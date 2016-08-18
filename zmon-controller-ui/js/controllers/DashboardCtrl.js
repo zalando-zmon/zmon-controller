@@ -26,6 +26,7 @@ angular.module('zmon2App').controller('DashboardCtrl', ['$scope', '$log', '$rout
         $scope.compact = false;
         $scope.tagsEditOpen = false;
         $scope.allTags = [];
+        $scope.dashboardTags = { tags: []};
         $scope.showAlertsWithAllEntitiesInDowntime = $location.search().ad || false;
 
         $scope.$watch('showWidgets', function() {
@@ -41,7 +42,7 @@ angular.module('zmon2App').controller('DashboardCtrl', ['$scope', '$log', '$rout
                 var widgetConfigurations = JSON.parse(data.widget_configuration);
                 // $scope.widgets contains the widget configuration and is passed to directive dashboard-widget (see dashboard.html)
                 $scope.widgetsConf = $scope.layoutWidgets(widgetConfigurations);
-                $scope.dashboardTags = data.tags;
+                $scope.dashboardTags.tags = data.tags;
 
                 // Get compact view variable from query string, then from database, or set default to false.
                 var isCompact = $location.search().compact || data.view_mode == "COMPACT" || false;
@@ -169,7 +170,7 @@ angular.module('zmon2App').controller('DashboardCtrl', ['$scope', '$log', '$rout
 
                     // Set default filter tags
                     if (data.tags && data.tags.length) {
-                        $scope.dashboardTags = data.tags;
+                        $scope.dashboardTags.tags = data.tags;
                         $scope.filter.tags = data.tags.toString();
                     }
 
@@ -181,12 +182,12 @@ angular.module('zmon2App').controller('DashboardCtrl', ['$scope', '$log', '$rout
 
                     //Override default filter tags with QS parameter
                     if (queryStringParams.tags) {
-                        if (queryStringParams.tags === 'none') {
-                            $scope.dashboardTags = [];
+                        if (queryStringParams.tags === '') {
+                            $scope.dashboardTags.tags = [];
                             delete $scope.filter.tags;
                         } else {
-                            $scope.dashboardTags = queryStringParams.tags.split(',');
-                            $scope.filter.tags = $scope.dashboardTags;
+                            $scope.dashboardTags.tags = queryStringParams.tags.split(',');
+                            $scope.filter.tags = $scope.dashboardTags.tags;
                         }
                     }
 
@@ -326,24 +327,16 @@ angular.module('zmon2App').controller('DashboardCtrl', ['$scope', '$log', '$rout
 
         // Add a tag to the tags array
         $scope.addTag = function(tag) {
-            if (typeof $scope.dashboardTags === 'undefined' || $scope.dashboardTags === null) {
-                $scope.dashboardTags = [];
-            }
-            if ($scope.dashboardTags.indexOf(tag.text) === -1) {
-                $scope.dashboardTags.push(tag.text);
-                $scope.filter.tags = $scope.dashboardTags.toString();
-            }
+            $scope.filter.tags = $scope.dashboardTags.tags.toString();
             $location.search('tags', $scope.filter.tags);
             $scope.showAllDashboardAlerts($scope.filter);
         };
 
         // Remove a tag from the tags array
         $scope.removeTag = function(tag) {
-            $scope.dashboardTags = _.without($scope.dashboardTags, tag.id);
-            $scope.filter.tags = $scope.dashboardTags.toString();
-            if ($scope.dashboardTags.length === 0) {
-                delete $scope.dashboardTags;
-                $scope.filter.tags = 'none';
+            $scope.filter.tags = $scope.dashboardTags.tags.toString();
+            if ($scope.dashboardTags.tags.length === 0) {
+                $scope.filter.tags = '';
             }
             $location.search('tags', $scope.filter.tags);
             $scope.showAllDashboardAlerts($scope.filter);
@@ -351,7 +344,7 @@ angular.module('zmon2App').controller('DashboardCtrl', ['$scope', '$log', '$rout
 
         // Get all tags for autocomplete
         CommunicationService.getAllTags().then(function(data) {
-            $scope.allTags = data;
+            $scope.allTags = _.map(data, 'text');
         });
 
         /*

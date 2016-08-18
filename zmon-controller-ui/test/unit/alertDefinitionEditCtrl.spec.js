@@ -109,14 +109,6 @@ describe('AlertDefinitionEditCtrl', function() {
         expect(scope.alertDefinition.check_definition_id).toBe(2);
     });
 
-    it('should add and remove a tag to/from the tags array', function() {
-        httpBackend.flush();
-        scope.addTag('tagX');
-        expect(scope.alertDefinition.tags.length).toBe(1);
-        scope.removeTag('tagX');
-        expect(scope.alertDefinition.tags.length).toBe(0);
-    });
-
     it('should validate a python variable name', function() {
         httpBackend.flush();
         expect(scope.paramNameIsValid('_goodVariableName12')).toBe(true);
