@@ -83,11 +83,7 @@ angular.module('zmon2App').controller('AlertDetailsCtrl', [ '$location', '$route
             $scope.alert = alert;
             CommunicationService.getCheckDefinition($scope.alert.check_definition_id).then(function(check) {
                 $scope.check = check;
-                CommunicationService.getCheckResultsForAlert($scope.alert.id, 1).then(function(results) {
-                    $scope.checkResults = filterEntitiesWithAlert(results);
-                    fetchEntityData($scope.checkResults);
-                    cb();
-                });
+                cb();
             });
             CommunicationService.getAlertDefinitionChildren($scope.alert.id).then(function(children) {
                 $scope.alert.children = children;
@@ -102,6 +98,10 @@ angular.module('zmon2App').controller('AlertDetailsCtrl', [ '$location', '$route
                 CommunicationService.getAlertDetails($scope.alert.id).then(function (details) {
                     $scope.alert.details = details;
                     fetchEntityData($scope.alert.details.entities);
+                    CommunicationService.getCheckResultsForAlert($scope.alert.id, 1).then(function(results) {
+                        $scope.checkResults = filterEntitiesWithAlert(results);
+                        fetchEntityData($scope.checkResults);
+                    });
                 });
             }
             if ($scope.alert.parent_id) {
@@ -139,7 +139,7 @@ angular.module('zmon2App').controller('AlertDetailsCtrl', [ '$location', '$route
     };
 
     var setAlertStates = function() {
-        if ($scope.alert.status !== 'ACTIVE') {
+        if ($scope.alert.status !== 'ACTIVE' || !$scope.alert.details) {
             return;
         }
         $scope.alertsInDowntime = [];
