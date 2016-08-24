@@ -21,7 +21,9 @@
             <span class="history-tag" style="background-color: hsla({{::HSLaFromHistoryEventTypeId(entry.type_id)}}, 50%, 50%, 1);">{{::entry.type_name}}</span>
             </td>
             <td>{{::entry.attributes.entity}}</td>
-            <td>{{::entry.attributes.value}}</td>
+            <td>
+                <div alert-value-modal name="entriy.attributes.entity" value="entry.attributes.value">{{entry.attributes.value}}</div>
+            </td>
         </tr>
     </tbody>
 </table>
