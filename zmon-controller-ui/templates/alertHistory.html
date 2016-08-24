@@ -10,9 +10,8 @@
         <tr>
             <th class="col-sm-2">When</th>
             <th class="col-sm-2">Type</th>
-            <th>User</th>
             <th>Entity</th>
-            <th>Content</th>
+            <th>Value</th>
         </tr>
     </thead>
     <tbody>
@@ -21,9 +20,10 @@
             <td class="text-center">
             <span class="history-tag" style="background-color: hsla({{::HSLaFromHistoryEventTypeId(entry.type_id)}}, 50%, 50%, 1);">{{::entry.type_name}}</span>
             </td>
-            <td>{{::entry.attributes.userName}}</td>
             <td>{{::entry.attributes.entity}}</td>
-            <td>{{::getHistoryContent(entry.type_name, entry.attributes)}} </td>
+            <td>
+                <div alert-value-modal name="entry.attributes.entity" value="entry.attributes.value">{{entry.attributes.value}}</div>
+            </td>
         </tr>
     </tbody>
 </table>
