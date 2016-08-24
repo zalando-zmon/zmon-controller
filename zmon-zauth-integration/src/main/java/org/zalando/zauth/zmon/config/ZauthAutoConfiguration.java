@@ -7,8 +7,10 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Profile;
 import org.zalando.stups.tokens.AccessTokens;
+import org.zalando.zauth.zmon.service.ZauthAuthorityService;
 import org.zalando.zauth.zmon.service.ZauthTeamService;
 import org.zalando.zmon.config.ZmonOAuth2Properties;
+import org.zalando.zmon.security.AuthorityService;
 import org.zalando.zmon.security.SigninController;
 import org.zalando.zmon.security.TeamService;
 
@@ -34,10 +36,8 @@ public class ZauthAutoConfiguration {
         return new ZauthTeamService(zauthProperties, accessTokens);
     }
 
-    // this now comes with 'spring-boot-zalando-stups-tokens'
-    // @Bean
-    // public AccessTokens accessTokens() throws URISyntaxException {
-    // return
-    // Tokens.createAccessTokensWithUri(zauthProperties.getOauth2AccessTokenUrl().toURI()).manageToken("team-service").addScope("uid").done().start();
-    // }
+    @Bean
+    public AuthorityService authorityService(TeamService teamService, AccessTokens accessTokens) {
+        return new ZauthAuthorityService(zauthProperties, teamService, accessTokens);
+    }
 }
