@@ -7,7 +7,7 @@ before_script:
   - pip install --user codecov
 
 script:
-  - mvn clean verify -Pintegration-test
+  - ./mvnw clean verify -Pintegration-test
   - ./ui-test.sh
 
 after_success:
