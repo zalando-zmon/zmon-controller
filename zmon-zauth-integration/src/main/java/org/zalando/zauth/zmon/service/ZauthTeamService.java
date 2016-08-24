@@ -2,7 +2,6 @@ package org.zalando.zauth.zmon.service;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Sets;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.ParameterizedTypeReference;
@@ -17,7 +16,10 @@ import org.zalando.zauth.zmon.config.ZauthProperties;
 import org.zalando.zauth.zmon.domain.Team;
 import org.zalando.zmon.security.TeamService;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 /**
@@ -53,12 +55,11 @@ public class ZauthTeamService implements TeamService {
         try {
             List<Team> teams = restTemplate.exchange(builder.build().toUri(), HttpMethod.GET, null, TYPE_REF).getBody();
             result = teams.stream().filter(t -> !t.getName().equals("")).map(t -> t.getName()).collect(Collectors.toSet());
-        }
-        catch(RestClientException ex) {
+        } catch (RestClientException ex) {
             log.error("Failed to call team service, no teams for now!", ex);
         }
 
-        if(zauthProperties.getTeamOverlay().containsKey(username)) {
+        if (zauthProperties.getTeamOverlay().containsKey(username)) {
             List<String> teams = zauthProperties.getTeamOverlay().get(username);
             log.info("Adding teams from overlay to {}: {}", username, teams);
             result.addAll(teams);
