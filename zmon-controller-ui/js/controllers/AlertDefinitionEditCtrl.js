@@ -493,6 +493,19 @@ angular.module('zmon2App').controller('AlertDefinitionEditCtrl', ['$scope', '$ro
             return false;
         };
 
+        // Used by ui-select in view to return list of teams for Team field dropdown
+        // and allow inserting new values
+        $scope.getItems = function(prop, search) {
+            if (!prop) {
+                return [];
+            }
+            var options = [ prop ];
+            if (search && options.indexOf(search) === -1) {
+                options.unshift(search);
+            }
+            return options;
+        };
+
         // Validate a parameter's name to be a valid python variable name
         $scope.paramNameIsValid = function(name) {
             var re = /^[_a-zA-Z][_a-zA-Z0-9]*/;
