@@ -1,11 +1,11 @@
 package org.zalando.zauth.zmon.config;
 
+import com.google.common.collect.Maps;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
-
-import com.google.common.collect.Maps;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
  * Created by hjacobs on 2/4/16.
@@ -59,7 +59,6 @@ public class ZauthProperties {
     }
 
     public void setTeamExtension(Map<String, List<String>> teamExtension) {
-
         this.teamExtension = teamExtension;
     }
 
