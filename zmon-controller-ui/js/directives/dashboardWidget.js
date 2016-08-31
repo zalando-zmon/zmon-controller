@@ -44,7 +44,7 @@ angular.module('zmon2App').directive('dashboardWidget', ['CommunicationService',
                 }
 
                 var checkDefinitionId = $scope.config.checkDefinitionId;
-                var alertIds = $scope.config.options.alertIds || $scope.config.alertIds || [];
+                var alertIds = $scope.config.options.alertIds || $scope.config.alertIds;
 
                 // entity is 'undefined' for multi-entity line charts e.g. Jan's redis queue size chart; in this case the getCheckResults() here is mandatory
                 var entity = $scope.config.entityId;
