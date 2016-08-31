@@ -44,7 +44,7 @@ angular.module('zmon2App').directive('dashboardWidget', ['CommunicationService',
                 }
 
                 var checkDefinitionId = $scope.config.checkDefinitionId;
-                var alertIds = $scope.config.options.alertIds || $scope.config.alertIds;
+                var alertIds = $scope.config.options.alertIds || $scope.config.alertIds || [];
 
                 // entity is 'undefined' for multi-entity line charts e.g. Jan's redis queue size chart; in this case the getCheckResults() here is mandatory
                 var entity = $scope.config.entityId;
@@ -215,7 +215,12 @@ angular.module('zmon2App').directive('dashboardWidget', ['CommunicationService',
                 var refreshWidgetData = function() {
 
                     $scope.isOutdated =  new Date() / 1000 - $scope.lastUpdate > 30 ? true : false;
-                    alertIds = $scope.config.options.alertIds || $scope.config.alertIds;
+                    alertIds = $scope.config.options.alertIds || $scope.config.alertIds || [];
+
+                    // include as alert Ids all alertStyle ids (i.e. "red": [3, 5, 10]);
+                    _.each($scope.config.alertStyles, function(ids) {
+                        alertIds = _.uniq(alertIds.concat(ids));
+                    });
 
                     var limit = null;
                     if ($scope.config.type === 'value') {
@@ -225,7 +230,7 @@ angular.module('zmon2App').directive('dashboardWidget', ['CommunicationService',
                     // Get data if alertId is specified
                     if (alertIds !== undefined && alertIds !== null && alertIds !== "") {
                         var activeAlertIds = [];
-                        return CommunicationService.getAlertsById(alertIds).then(function(data) {
+                        CommunicationService.getAlertsById(alertIds).then(function(data) {
                             _.each(data, function(alert) {
                                 if (!DowntimesService.hasAllEntitiesInDowntime(alert)) {
                                     activeAlertIds.push(alert);
