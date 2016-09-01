@@ -381,7 +381,7 @@ public class GrafanaController extends AbstractZMonController {
             id = id.toLowerCase();
         }
 
-        if("new".equals(id) || "new-dashboard".equals(id)) {
+        if ("new".equals(id) || "new-dashboard".equals(id)) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
