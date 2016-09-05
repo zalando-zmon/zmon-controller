@@ -571,6 +571,14 @@ angular.module('zmon2App').factory('CommunicationService', ['$http', '$q', '$log
             return doHttpCall("POST", "rest/alertCoverage", postData, headers);
         };
 
+        service.getGrafanaDashboards = function() {
+            var params = {
+                query: '',
+                starred: false
+            };
+            return doHttpCall('GET', '/rest/grafana/api/search', params);
+        };
+
         return service;
     }
 ]);

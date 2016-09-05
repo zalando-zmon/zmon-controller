@@ -1,0 +1,32 @@
+<div id="search" class="global-search col-md-3" ng-show="visible">
+    <div class="col-md-12" style="height:100%;">
+        <div class="input-group">
+            <div class="input-group-btn">
+                <button class="btn btn-primary" title="global search">
+                    <i class="fa fa-fw fa-search"></i>
+                </button>
+            </div>
+            <input type="text" class="form-control" ng-model="search" placeholder="what are you looking for?"/>
+        </div>
+        <ul class="col-md-12 list-unstyled">
+            <li ng-repeat="item in data | filter:search | orderBy:['type','name']">
+                <div ng-if="item.type === 'alert'">
+                    <span class="tag alert">ALERT</span>
+                    <div class="title">{{item.name}}</div>
+                </div>
+                <div ng-if="item.type === 'check'">
+                    <span class="tag check">CHECK</span>
+                    <div class="title">{{item.name}}</div>
+                </div>
+                <div ng-if="item.type === 'dashboard'">
+                    <span class="tag dashboard">DASH</span>
+                    <div class="title">{{item.name}}</div>
+                </div>
+                <div ng-if="item.type === 'grafana'">
+                    <span class="tag grafana">GRAF</span>
+                    <div class="title">{{item.title}}</div>
+                </div>
+            </li>
+        </ul>
+    </div>
+</div>

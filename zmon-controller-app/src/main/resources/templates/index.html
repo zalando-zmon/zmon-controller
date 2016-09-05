@@ -60,7 +60,7 @@
     <script th:src="${staticUrl} + '/lib/angular-ui-select/select.min.js?t=@buildTime@'" chartset="utf-8"></script>
 
 </head>
-<body ng-class="activePage">
+<body ng-class="activePage" ng-keydown="keyDown($event)">
     <div class="loading-indicator" ng-show="IndexCtrl.getLoadingIndicatorState()">
         Loading...
     </div>
@@ -131,12 +131,17 @@
                             <li><a href="logout" data-test="logout" th:href="@{/logout}">Logout</a></li>
                         </ul>
                    </span>
+                   <span>
+                       <i class="fa fa-fw fa-search clickable" ng-click="globalSearchVisible = !globalSearchVisible"></i>
+                   </span>
                 </div>
             </div>
         </div>
     </nav>
 
     <div id="main" ng-view></div>
+
+    <global-search visible="globalSearchVisible"></global-search>
 
     <div id="message-manager-wrapper">
         <span class="message"></span>
@@ -185,6 +190,7 @@
 <script th:src="${staticUrl} + '/js/directives/alertDowntimes.js?t=@buildTime@'"></script>
 <script th:src="${staticUrl} + '/js/directives/alertDeleteModal.js?t=@buildTime@'"></script>
 <script th:src="${staticUrl} + '/js/directives/codeEditorModal.js?t=@buildTime@'"></script>
+<script th:src="${staticUrl} + '/js/directives/globalSearch.js?t=@buildTime@'"></script>
 <script th:src="${staticUrl} + '/js/services/MainAlertService.js?t=@buildTime@'"></script>
 <script th:src="${staticUrl} + '/js/services/CommunicationService.js?t=@buildTime@'"></script>
 <script th:src="${staticUrl} + '/js/services/FeedbackMessageService.js?t=@buildTime@'"></script>
@@ -218,6 +224,7 @@
             $scope.serviceStatus = {};
             $scope.checkInvocationsCache = {};
             $scope.userTeamsOnPopover = '(no team)';
+            $scope.globalSearchVisible = false;
 
             this.userInfo = UserInfoService.get();
 
@@ -241,6 +248,17 @@
             $scope.$on('$routeChangeStart', function() {
                 localStorageService.set('returnTo', '/#' + $location.path());
             });
+
+            $scope.keyDown = function(e) {
+                // toggle globalSearch on Alt
+                if (e.keyCode === 18) {
+                    $scope.globalSearchVisible = !$scope.globalSearchVisible;
+                }
+                // close on Esc
+                if (e.keyCode === 27) {
+                    $scope.globalSearchVisible = false;
+                }
+            };
 
             // Start periodic refresh of the app's overall status only (Q-size etc.)
             // Not related to the periodic data refresh that the page content might by having (e.g. dashboard, alert details etc.)
