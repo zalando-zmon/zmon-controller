@@ -1,5 +1,6 @@
 package org.zalando.zmon.service.impl;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.hamcrest.MatcherAssert;
@@ -39,6 +40,13 @@ public class HistoryServiceImplIT extends AbstractServiceIntegrationTest {
     private DataGenerator<CheckDefinitionImport> checkImportGenerator;
     private DataGenerator<AlertDefinition> alertGenerator;
 
+    private static final String USER_NAME ="default_user";
+    private static final List<String> USER_TEAMS = Arrays.asList("Platform/Software");
+
+    private CheckDefinition createNewCheckDefinition() {
+        return service.createOrUpdateCheckDefinition(checkImportGenerator.generate(), USER_NAME, USER_TEAMS).getEntity();
+    }
+
     @Before
     public void setup() {
         checkImportGenerator = new CheckDefinitionImportGenerator();
@@ -48,8 +56,7 @@ public class HistoryServiceImplIT extends AbstractServiceIntegrationTest {
     @Test
     public void testGetCheckDefinitionHistory() throws Exception {
 
-        final CheckDefinition newCheckDefinition = service.createOrUpdateCheckDefinition(
-                checkImportGenerator.generate());
+        final CheckDefinition newCheckDefinition = createNewCheckDefinition();
 
         // TODO test history pagination
         // TODO improve this test: check each field
@@ -62,8 +69,7 @@ public class HistoryServiceImplIT extends AbstractServiceIntegrationTest {
     @Test
     public void testGetAlertDefinitionHistory() throws Exception {
 
-        final CheckDefinition newCheckDefinition = service.createOrUpdateCheckDefinition(
-                checkImportGenerator.generate());
+        final CheckDefinition newCheckDefinition = createNewCheckDefinition();
 
         AlertDefinition newAlertDefinition = alertGenerator.generate();
         newAlertDefinition.setCheckDefinitionId(newCheckDefinition.getId());

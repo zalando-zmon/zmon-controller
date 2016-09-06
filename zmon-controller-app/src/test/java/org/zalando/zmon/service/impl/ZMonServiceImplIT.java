@@ -1,6 +1,7 @@
 package org.zalando.zmon.service.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -27,6 +28,7 @@ import org.zalando.zmon.domain.DefinitionStatus;
 import org.zalando.zmon.generator.AlertDefinitionGenerator;
 import org.zalando.zmon.generator.CheckDefinitionImportGenerator;
 import org.zalando.zmon.generator.DataGenerator;
+import org.zalando.zmon.persistence.CheckDefinitionImportResult;
 import org.zalando.zmon.service.AlertService;
 import org.zalando.zmon.service.ZMonService;
 
@@ -47,6 +49,9 @@ public class ZMonServiceImplIT extends AbstractServiceIntegrationTest {
     private DataGenerator<CheckDefinitionImport> checkImportGenerator;
     private DataGenerator<AlertDefinition> alertGenerator;
 
+    private static final String USER_NAME ="default_user";
+    private static final List<String> USER_TEAMS = Arrays.asList("Platform/Software");
+
     @Before
     public void setup() {
         checkImportGenerator = new CheckDefinitionImportGenerator();
@@ -56,7 +61,7 @@ public class ZMonServiceImplIT extends AbstractServiceIntegrationTest {
     @Test
     public void testCreateCheckDefinition() throws Exception {
         final CheckDefinition newCheckDefinition = service.createOrUpdateCheckDefinition(
-                checkImportGenerator.generate());
+                checkImportGenerator.generate(), USER_NAME, USER_TEAMS).getEntity();
 
         final CheckDefinitions checkDefinitions = service.getCheckDefinitions(null);
 
@@ -69,11 +74,11 @@ public class ZMonServiceImplIT extends AbstractServiceIntegrationTest {
     @Test
     public void testUpdateCheckDefinitionWithExistingSourceURL() throws Exception {
         final CheckDefinitionImport toImport = checkImportGenerator.generate();
-        service.createOrUpdateCheckDefinition(toImport);
+        service.createOrUpdateCheckDefinition(toImport, USER_NAME, USER_TEAMS).getEntity();
 
         toImport.setName(toImport.getName() + " UPDATE");
 
-        final CheckDefinition newCheckDefinition = service.createOrUpdateCheckDefinition(toImport);
+        final CheckDefinition newCheckDefinition = service.createOrUpdateCheckDefinition(toImport, USER_NAME, USER_TEAMS).getEntity();
 
         final CheckDefinitions checkDefinitions = service.getCheckDefinitions(null);
 
@@ -86,11 +91,11 @@ public class ZMonServiceImplIT extends AbstractServiceIntegrationTest {
     @Test
     public void testUpdateCheckDefinitionWithExistingNameAndTeam() throws Exception {
         final CheckDefinitionImport toImport = checkImportGenerator.generate();
-        service.createOrUpdateCheckDefinition(toImport);
+        service.createOrUpdateCheckDefinition(toImport, USER_NAME, USER_TEAMS);
 
         toImport.setSourceUrl(toImport.getSourceUrl() + "?update=1");
 
-        final CheckDefinition newCheckDefinition = service.createOrUpdateCheckDefinition(toImport);
+        final CheckDefinition newCheckDefinition = service.createOrUpdateCheckDefinition(toImport, USER_NAME, USER_TEAMS).getEntity();
 
         final CheckDefinitions checkDefinitions = service.getCheckDefinitions(null);
 
@@ -106,12 +111,12 @@ public class ZMonServiceImplIT extends AbstractServiceIntegrationTest {
         // create an inactive check
         CheckDefinitionImport toImport = checkImportGenerator.generate();
         toImport.setStatus(DefinitionStatus.INACTIVE);
-        service.createOrUpdateCheckDefinition(toImport);
+        service.createOrUpdateCheckDefinition(toImport, USER_NAME, USER_TEAMS).getEntity();
 
         // create an active check
         toImport = checkImportGenerator.generate();
 
-        final CheckDefinition newCheckDefinition = service.createOrUpdateCheckDefinition(toImport);
+        final CheckDefinition newCheckDefinition = service.createOrUpdateCheckDefinition(toImport, USER_NAME, USER_TEAMS).getEntity();
 
         final CheckDefinitions checkDefinitions = service.getCheckDefinitions(DefinitionStatus.ACTIVE);
 
@@ -124,12 +129,12 @@ public class ZMonServiceImplIT extends AbstractServiceIntegrationTest {
     @Test
     public void testGetCheckDefinitionsById() throws Exception {
         final CheckDefinitionImport toImport = checkImportGenerator.generate();
-        final CheckDefinition newCheckDefinition0 = service.createOrUpdateCheckDefinition(toImport);
+        final CheckDefinition newCheckDefinition0 = service.createOrUpdateCheckDefinition(toImport, USER_NAME, USER_TEAMS).getEntity();
 
         toImport.setName(toImport.getName() + " UPDATE");
         toImport.setSourceUrl(toImport.getSourceUrl() + "?update=1");
 
-        final CheckDefinition newCheckDefinition1 = service.createOrUpdateCheckDefinition(toImport);
+        final CheckDefinition newCheckDefinition1 = service.createOrUpdateCheckDefinition(toImport, USER_NAME, USER_TEAMS).getEntity();
 
         final List<CheckDefinition> checkDefinitions = service.getCheckDefinitions(null,
                 Collections.singletonList(newCheckDefinition0.getId()));
@@ -144,12 +149,12 @@ public class ZMonServiceImplIT extends AbstractServiceIntegrationTest {
         final List<CheckDefinition> newChecks = new ArrayList<>(2);
 
         final CheckDefinitionImport toImport = checkImportGenerator.generate();
-        newChecks.add(service.createOrUpdateCheckDefinition(toImport));
+        newChecks.add(service.createOrUpdateCheckDefinition(toImport, USER_NAME, USER_TEAMS).getEntity());
 
         toImport.setName(toImport.getName() + " UPDATE");
         toImport.setSourceUrl(toImport.getSourceUrl() + "?update=1");
 
-        newChecks.add(service.createOrUpdateCheckDefinition(toImport));
+        newChecks.add(service.createOrUpdateCheckDefinition(toImport, USER_NAME, USER_TEAMS).getEntity());
 
         final List<CheckDefinition> checkDefinitions = service.getCheckDefinitions(null,
                 Lists.newArrayList(newChecks.get(0).getId(), newChecks.get(1).getId()));
@@ -161,12 +166,12 @@ public class ZMonServiceImplIT extends AbstractServiceIntegrationTest {
     @Test
     public void testGetCheckDefinitionsByOwningTeam() throws Exception {
         final CheckDefinitionImport toImport = checkImportGenerator.generate();
-        final CheckDefinition newCheckDefinition0 = service.createOrUpdateCheckDefinition(toImport);
+        final CheckDefinition newCheckDefinition0 = service.createOrUpdateCheckDefinition(toImport, USER_NAME, USER_TEAMS).getEntity();
 
         toImport.setOwningTeam("TEST");
         toImport.setName(toImport.getName() + " UPDATE");
         toImport.setSourceUrl(toImport.getSourceUrl() + "?update=1");
-        service.createOrUpdateCheckDefinition(toImport);
+        service.createOrUpdateCheckDefinition(toImport, USER_NAME, USER_TEAMS).getEntity();
 
         final List<CheckDefinition> checkDefinitions = service.getCheckDefinitions(null,
                 Sets.newHashSet(newCheckDefinition0.getOwningTeam()));
@@ -178,14 +183,14 @@ public class ZMonServiceImplIT extends AbstractServiceIntegrationTest {
     @Test
     public void testAllCheckDefinitionsDiff() throws Exception {
         final CheckDefinitionImport toImport = checkImportGenerator.generate();
-        final CheckDefinition newCheckDefinition0 = service.createOrUpdateCheckDefinition(toImport);
+        final CheckDefinition newCheckDefinition0 = service.createOrUpdateCheckDefinition(toImport, USER_NAME, USER_TEAMS).getEntity();
 
         toImport.setOwningTeam("TEST");
         toImport.setName(toImport.getName() + " UPDATE");
         toImport.setSourceUrl(toImport.getSourceUrl() + "?update=1");
         toImport.setStatus(DefinitionStatus.INACTIVE);
 
-        final CheckDefinition newCheckDefinition1 = service.createOrUpdateCheckDefinition(toImport);
+        final CheckDefinition newCheckDefinition1 = service.createOrUpdateCheckDefinition(toImport, USER_NAME, USER_TEAMS).getEntity();
 
         final CheckDefinitionsDiff diff = service.getCheckDefinitionsDiff(null);
 
@@ -198,7 +203,7 @@ public class ZMonServiceImplIT extends AbstractServiceIntegrationTest {
 
     @Test
     public void testEmptyCheckDefinitionsDiff() throws Exception {
-        service.createOrUpdateCheckDefinition(checkImportGenerator.generate());
+        service.createOrUpdateCheckDefinition(checkImportGenerator.generate(), USER_NAME, USER_TEAMS);
 
         final CheckDefinitions allCheckDefinitions = service.getCheckDefinitions(null);
         final CheckDefinitionsDiff diff = service.getCheckDefinitionsDiff(allCheckDefinitions.getSnapshotId());
@@ -212,7 +217,7 @@ public class ZMonServiceImplIT extends AbstractServiceIntegrationTest {
     @Test
     public void testDeleteNonDetachedCheckDefinitions() throws Exception {
         final CheckDefinition newCheckDefinition = service.createOrUpdateCheckDefinition(
-                checkImportGenerator.generate());
+                checkImportGenerator.generate(), USER_NAME, USER_TEAMS).getEntity();
 
         service.deleteDetachedCheckDefinitions();
 
@@ -227,7 +232,7 @@ public class ZMonServiceImplIT extends AbstractServiceIntegrationTest {
     @Test
     public void testDeleteDetachedCheckDefinitions() throws Exception {
         final CheckDefinition newCheckDefinition = service.createOrUpdateCheckDefinition(
-                checkImportGenerator.generate());
+                checkImportGenerator.generate(), USER_NAME, USER_TEAMS).getEntity();
 
         // delete the check definition
         service.deleteCheckDefinition(newCheckDefinition.getLastModifiedBy(), newCheckDefinition.getName(),
@@ -246,7 +251,7 @@ public class ZMonServiceImplIT extends AbstractServiceIntegrationTest {
 
         // create a new check
         final CheckDefinition newCheckDefinition = service.createOrUpdateCheckDefinition(
-                checkImportGenerator.generate());
+                checkImportGenerator.generate(), USER_NAME, USER_TEAMS).getEntity();
         newCheckDefinition.setStatus(DefinitionStatus.DELETED);
 
         // create a new alert
@@ -280,7 +285,7 @@ public class ZMonServiceImplIT extends AbstractServiceIntegrationTest {
 
         // create a new check
         final CheckDefinition newCheckDefinition = service.createOrUpdateCheckDefinition(
-                checkImportGenerator.generate());
+                checkImportGenerator.generate(), USER_NAME, USER_TEAMS).getEntity();
         newCheckDefinition.setStatus(DefinitionStatus.DELETED);
 
         // create a new alert
@@ -316,7 +321,7 @@ public class ZMonServiceImplIT extends AbstractServiceIntegrationTest {
 
         // create a new check
         final CheckDefinition newCheckDefinition = service.createOrUpdateCheckDefinition(
-                checkImportGenerator.generate());
+                checkImportGenerator.generate(), USER_NAME, USER_TEAMS).getEntity();
         newCheckDefinition.setStatus(DefinitionStatus.DELETED);
 
         // delete the check definition
@@ -344,14 +349,14 @@ public class ZMonServiceImplIT extends AbstractServiceIntegrationTest {
         // create a new check
         CheckDefinitionImport toImport = checkImportGenerator.generate();
         toImport.setOwningTeam("Platform/Software");
-        service.createOrUpdateCheckDefinition(toImport);
+        service.createOrUpdateCheckDefinition(toImport, USER_NAME, USER_TEAMS).getEntity();
 
         toImport = checkImportGenerator.generate();
         toImport.setName(toImport.getName() + " UPDATE");
         toImport.setSourceUrl(toImport.getSourceUrl() + "?update=1");
         toImport.setOwningTeam("Platform/RQM");
 
-        final CheckDefinition newCheckDefinition = service.createOrUpdateCheckDefinition(toImport);
+        final CheckDefinition newCheckDefinition = service.createOrUpdateCheckDefinition(toImport, USER_NAME, USER_TEAMS).getEntity();
 
         // create a new alert
         final AlertDefinition newAlertDefinition = alertGenerator.generate();
