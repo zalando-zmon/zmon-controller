@@ -41,6 +41,11 @@
     border-color: #d40018;
 }
 
+.has-error .ui-select-container
+{
+    border: 1px solid #d40018;
+}
+
 .alert-is-too-old
 {
     color: blue;

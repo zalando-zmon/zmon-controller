@@ -83,6 +83,9 @@ angular.module('zmon2App').controller('AlertDetailsCtrl', [ '$location', '$route
             $scope.alert = alert;
             CommunicationService.getCheckDefinition($scope.alert.check_definition_id).then(function(check) {
                 $scope.check = check;
+                if ($scope.alert.status !== 'ACTIVE') {
+                    return cb();
+                }
                 CommunicationService.getAlertDetails($scope.alert.id).then(function (details) {
                     $scope.alert.details = details;
                     fetchEntityData($scope.alert.details.entities);
@@ -137,7 +140,7 @@ angular.module('zmon2App').controller('AlertDetailsCtrl', [ '$location', '$route
     };
 
     var setAlertStates = function() {
-        if ($scope.alert.status !== 'ACTIVE') {
+        if ($scope.alert.status !== 'ACTIVE' || !$scope.alert.details) {
             return;
         }
         $scope.alertsInDowntime = [];

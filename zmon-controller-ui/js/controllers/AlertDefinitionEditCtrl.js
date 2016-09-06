@@ -406,23 +406,6 @@ angular.module('zmon2App').controller('AlertDefinitionEditCtrl', ['$scope', '$ro
             return parameters;
         };
 
-        // Add a tag to the tags array
-        $scope.addTag = function(tag) {
-            if (typeof $scope.alertDefinition.tags === 'undefined' || $scope.alertDefinition.tags === null) {
-                $scope.alertDefinition.tags = [];
-            }
-            if ($scope.alertDefinition.tags.indexOf(tag.text) === -1) {
-                $scope.alertDefinition.tags.push(tag.text);
-                $scope.markAsOverwritten('tags');
-            }
-        };
-
-        // Remove a tag from the tags array
-        $scope.removeTag = function(tag) {
-            $scope.alertDefinition.tags = _.without($scope.alertDefinition.tags, tag.id);
-            $scope.markAsOverwritten('tags');
-        };
-
         // Revert only one property back to its inherited parent value
         $scope.inheritProperty = function(property) {
             $scope.oProps = _.without($scope.oProps, property);
@@ -508,6 +491,17 @@ angular.module('zmon2App').controller('AlertDefinitionEditCtrl', ['$scope', '$ro
                     return true;
             }
             return false;
+        };
+
+        // Used by ui-select in view to return list of teams for Team field dropdown
+        // and allow inserting new values
+        $scope.getItems = function(prop, search) {
+            var teams = _.extend([], $scope.teams);
+            var options = teams.indexOf(prop) === -1 ? teams.concat(prop) : teams; 
+            if (search && options.indexOf(search) === -1) {
+                options.unshift(search);
+            }
+            return options;
         };
 
         // Validate a parameter's name to be a valid python variable name
@@ -610,7 +604,7 @@ angular.module('zmon2App').controller('AlertDefinitionEditCtrl', ['$scope', '$ro
         // Get all available tags
         CommunicationService.getAllTags().then(
             function(data) {
-                $scope.allTags = data;
+                $scope.allTags = _.map(data, 'text');
             }
         );
 

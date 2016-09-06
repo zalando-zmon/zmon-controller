@@ -7,6 +7,7 @@ angular.module('zmon2App').directive('alertHistory', [ 'CommunicationService', f
         },
         link: function(scope, elem, attrs) {
             scope.history = null;
+            scope.historyFromInEpochSeconds = null;
 
             // History button active
             scope.activeHistoryButton = {
@@ -58,39 +59,6 @@ angular.module('zmon2App').directive('alertHistory', [ 'CommunicationService', f
                         scope.history = scope.history.concat(response);
                     }
                 );
-            };
-
-            scope.historyFromInEpochSeconds = null;
-            /**
-             * Returns the content to be displayed for this type of history entry
-             * "historyType" is one of:   ALERT_{STARTED|ENDED}, ALERT_ENTITY_{STARTED|ENDED}, DOWNTIME_{STARTED|ENDED}, DOWNTIME_SCHEDULED, TRIAL_RUN_SCHEDULED,
-             *                          NEW_ALERT_COMMENT, CHECK_DEFINITION_{CREATED|UPDATED}, ALERT_DEFINITION_{CREATED|UPDATED}
-             * "aattributes" is
-             */
-            scope.getHistoryContent = function(historyType, attributes) {
-                switch (historyType) {
-                    case 'ALERT_STARTED':
-                    case 'ALERT_ENDED':
-                    case 'ALERT_ENTITY_STARTED':
-                    case 'ALERT_ENTITY_ENDED':
-                        return "";
-                    case 'DOWNTIME_STARTED':
-                    case 'DOWNTIME_ENDED':
-                    case 'DOWNTIME_SCHEDULED':
-                    case 'DOWNTIME_REMOVED':
-                        return attributes.comment;
-                    case 'ALERT_COMMENT_CREATED':
-                    case 'ALERT_COMMENT_REMOVED':
-                        return attributes.comment;
-                    case 'CHECK_DEFINITION_CREATED':
-                    case 'CHECK_DEFINITION_UPDATED':
-                        return JSON.stringify(attributes);
-                    case 'ALERT_DEFINITION_CREATED':
-                    case 'ALERT_DEFINITION_UPDATED':
-                        return JSON.stringify(attributes);
-                    default:
-                        return "N/A";
-                }
             };
 
             scope.HSLaFromHistoryEventTypeId = function(eventTypeId) {

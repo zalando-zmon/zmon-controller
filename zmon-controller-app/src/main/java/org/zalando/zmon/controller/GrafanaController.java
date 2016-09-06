@@ -368,7 +368,7 @@ public class GrafanaController extends AbstractZMonController {
         }
 
         String title = grafanaData.get("dashboard").get("title").textValue();
-        if (title == null || "".equals(title)) {
+        if (title == null || "".equals(title) || "".equals("New dashboard")) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
@@ -379,6 +379,10 @@ public class GrafanaController extends AbstractZMonController {
             id = title.replace(" ", "-").replace("'", "").toLowerCase();
         } else {
             id = id.toLowerCase();
+        }
+
+        if ("new".equals(id) || "new-dashboard".equals(id)) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
         LOG.info("Saving Grafana 2 dashboard title: \"{}\" id: {}", title, id);

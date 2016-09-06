@@ -13,7 +13,20 @@
                         <span class="input-group-btn">
                             <button class="btn"><i class="fa fa-fw fa-search"></i></button>
                         </span>
-                        <input class="form-control" placeholder="Filter alerts"  type="text" ng-model="alertSearch" ng-model-options="{debounce:500}" autofocus />
+                        <input class="form-control" placeholder="Search for alerts"  type="text" ng-model="alertSearch" ng-model-options="{debounce:500}" autofocus />
+                    </div>
+                </div>
+            </form>
+            <form id="tagbar" class="form-inline" ng-show="tagsEditOpen">
+                <div class="form-group">
+                    <div class="input-group">
+                        <span class="input-group-btn">
+                            <button class="btn"><i class="fa fa-fw fa-tag"></i></button>
+                        </span>
+                        <ui-select class="dashboard-tags" multiple tagging tagging-label="(custom 'new' tag)" ng-model="dashboardTags.tags" theme="bootstrap" sortable="true" title="Tags" on-select="addTag($item)" on-remove="removeTag($item)">
+                            <ui-select-match class="tag-placeholder" placeholder="Add a tag filter">{{$item}}</ui-select-match>
+                            <ui-select-choices repeat="tag in allTags | filter: $select.search">{{tag}}</ui-select-choices>
+                        </ui-select>
                     </div>
                 </div>
             </form>
@@ -22,17 +35,9 @@
         <div class="col-md-4 text-right">
 
             <div class="dashboard-tags-container">
-                <button class="btn" click-outside="closeTagsEditPopup()" title="Tags" ng-click="toggleTagsEditPopup()">
-                    <i class="fa fa-fw fa-tags"></i> {{dashboardTags.length || 0}}
+                <button class="btn" title="Tags" ng-click="toggleTagsEditPopup()">
+                    <i class="fa fa-fw fa-tags"></i> {{dashboardTags.tags.length || 0}}
                 </button>
-                <div ng-if="tagsEditOpen" class="dashboard-tags popover">
-                    <div class="arrow-right-container">
-                        <div class="arrow-right-border"></div>
-                        <div class="arrow-right"></div>
-                    </div>
-                    <input id="select-tags" type="hidden" class="form-control" zmon-select multi="true" tags="true" visible="true" placeholder="No tag filter selected" data="allTags" default="dashboardTags" unselect="removeTag(unselected)" select="addTag(selected)" init-once="true"/>
-                </div>
-
             </div>
 
             <button id="alerts-in-downtime-toggle-button" class="btn" title="Show/Hide Alerts in Downtime" ng-show="alertsInDowntime.length" ng-click="toggleAlertsWithAllDowntime()"><i class="fa fa-flag" ng-hide="showAlertsWithAllEntitiesInDowntime"></i><i class="fa fa-flag-o" ng-show="showAlertsWithAllEntitiesInDowntime"></i> {{ alertsInDowntime.length }}</button>

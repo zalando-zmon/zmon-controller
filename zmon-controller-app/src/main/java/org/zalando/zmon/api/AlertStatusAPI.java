@@ -3,7 +3,6 @@ package org.zalando.zmon.api;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.google.common.collect.Maps;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,13 +18,11 @@ import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.Pipeline;
 
-import javax.websocket.server.PathParam;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static java.util.function.Function.identity;
@@ -37,11 +34,11 @@ import static java.util.function.Function.identity;
 @RequestMapping("/api/v1/status")
 public class AlertStatusAPI {
 
-    private ZMonService service;
+    private final ZMonService service;
     private final JedisPool jedisPool;
     protected ObjectMapper mapper;
 
-    private AlertService alertService;
+    private final AlertService alertService;
 
     @Autowired
     public AlertStatusAPI(final ZMonService service, final AlertService alertService, final JedisPool p, final ObjectMapper m) {
@@ -122,7 +119,7 @@ public class AlertStatusAPI {
     }
 
     @RequestMapping(value = "/alert/{alert_id}/details")
-    public ResponseEntity<Alert> getAlert(@PathParam(value = "alert_id") final Integer alertId) {
+    public ResponseEntity<Alert> getAlert(@PathVariable(value = "alert_id") final Integer alertId) {
         final Alert alert = alertService.getAlert(alertId);
 
         return alert == null ? new ResponseEntity<>(HttpStatus.NOT_FOUND)

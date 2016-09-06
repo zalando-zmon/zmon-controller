@@ -14,3 +14,5 @@ tokens:
       scopes: uid
     - token-id: team-service
       scopes: uid
+    - token-id: user-service
+      scopes: uid

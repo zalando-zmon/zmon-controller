@@ -161,7 +161,7 @@ describe('AlertDetailsCtrl', function() {
                 "condition":"['load1']>1",
                 "notifications":[],
                 "check_definition_id":2,
-                "status":"INACTIVE",
+                "status":"ACTIVE",
                 "priority":1,
                 "last_modified":1407504616498,
                 "last_modified_by":"userZ",
@@ -183,18 +183,11 @@ describe('AlertDetailsCtrl', function() {
     });
 
     it('should initially have one alert with id "1"', function() {
-        httpBackend.expectGET('rest/alertDefinition?id=1');
-        httpBackend.expectGET('rest/checkDefinition?check_id=2');
-        httpBackend.expectGET('rest/alertDetails?alert_id=1');
         httpBackend.flush();
         expect(scope.alert.id).toBe(1);
     });
 
     it('should display no alerts after filtering with inexisting id', function() {
-        httpBackend.expectGET('rest/alertDefinition?id=1');
-        httpBackend.expectGET('rest/checkDefinition?check_id=2');
-        httpBackend.expectGET('rest/alertDetails?alert_id=1');
-        httpBackend.expectGET('rest/checkAlertResults?alert_id=1&limit=1');
         httpBackend.flush();
         scope.alertDetailsSearch = { "str": 'notExistingAlertId' };
         expect(scope.allAlerts.length).toBe(0);

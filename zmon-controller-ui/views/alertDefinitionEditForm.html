@@ -60,7 +60,12 @@
             <div class="inheritance-overwrite">
                 <a ng-show="mode === 'inherit' || alertDefinition.parent_id" ng-class="{'semi-transparent':isInheriting('tags'), 'clickable':!isInheriting('tags')}" ng-attr-title="{{isInheriting('tags') ? 'Description is being inherited from parent Alert' : 'Click to inherit value from parent Alert'}}" ng-click="inheritProperty('tags')"><i class="fa fa-sitemap"></i></a>
             </div>
-            <input type="hidden" class="form-control" zmon-select multi="true" tags="true" visible="true" placeholder="Tags..." width="100%" default="alertDefinition.tags" data="allTags" unselect="removeTag(unselected)" select="addTag(selected)"/>
+            <ui-select multiple tagging tagging-label="(custom 'new' tag)" ng-model="alertDefinition.tags" theme="bootstrap" sortable="true" title="Tags" on-select="markAsOverwritten('tags')" on-remove="markAsOverwritten('tags')">
+                <ui-select-match placeholder="Add tags...">{{$item}}</ui-select-match>
+                <ui-select-choices repeat="tag in allTags | filter:$select.search">
+                    {{tag}}
+                </ui-select-choices>
+            </ui-select>
         </div>
     </div>
 
@@ -207,7 +212,12 @@
     <div class="form-group" ng-class="{'has-error': adForm.submitted && adForm.team.$error.required}">
         <label for="inp-team" class="col-sm-2 control-label">Team</label>
         <div class="col-sm-10">
-            <input type="text" class="form-control" id="inp-team" name="team" placeholder="Team name (e.g. 'STUPS')" ng-model="alertDefinition.team" ng-class="{'has-error': pForm.team.$error.required}" ng-change="markAsOverwritten('team')" uib-typeahead="t for t in teams" required>
+            <ui-select name="team" ng-model="alertDefinition.team" theme="select2" on-select="markAsOverwritten('team')" required>
+                <ui-select-match placeholder="Select or search a team in the list...">{{$select.selected}}</ui-select-match>
+                <ui-select-choices repeat="item in getItems(alertDefinition.team, $select.search) | filter: $select.search">
+                    <div ng-bind="item"></div>
+                </ui-select-choices>
+            </ui-select>
             <span class="help-block">Team dashboard to show alert on.</span>
         </div>
     </div>
@@ -215,7 +225,12 @@
     <div class="form-group" ng-class="{'has-error': adForm.submitted && adForm.responsible.$error.required}">
         <label for="inp-responsible" class="col-sm-2 control-label">Responsible Team</label>
         <div class="col-sm-10">
-            <input class="form-control" id="inp-responsible" name="responsible" placeholder="Responsible Team name (e.g. 'Platform/Software')" ng-model="alertDefinition.responsible_team" ng-change="markAsOverwritten('responsible_team')" uib-typeahead="t for t in teams" required>
+            <ui-select name="responsible" ng-model="alertDefinition.responsible_team" theme="select2" required on-select="markAsOverwritten('responsible_team')">
+                <ui-select-match placeholder="Select or search a team in the list...">{{$select.selected}}</ui-select-match>
+                <ui-select-choices repeat="item in getItems(alertDefinition.responsible_team, $select.search) | filter: $select.search">
+                    <div ng-bind="item"></div>
+                </ui-select-choices>
+            </ui-select>
         </div>
     </div>
 

@@ -107,24 +107,6 @@ angular.module('zmon2App').controller('DashboardConfigurationCtrl', ['$scope', '
             }
         };
 
-        // Add a tag to the tags array
-        $scope.addTag = function(tag) {
-            if (typeof $scope.dashboard.tags === 'undefined' || $scope.dashboard.tags === null) {
-                $scope.dashboard.tags = [];
-            }
-            if ($scope.dashboard.tags.indexOf(tag.text) === -1) {
-                $scope.dashboard.tags.push(tag.text);
-            }
-        };
-
-        // Remove a tag from the tags array
-        $scope.removeTag = function(tag) {
-            $scope.dashboard.tags = _.without($scope.dashboard.tags, tag.id);
-            if ($scope.dashboard.tags.length === 0) {
-                delete $scope.dashboard.tags;
-            }
-        };
-
         // Get all available tags
         CommunicationService.getAllTags().then(
             function(data) {
