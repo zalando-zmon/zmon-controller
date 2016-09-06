@@ -6,7 +6,7 @@
                     <i class="fa fa-fw fa-search"></i>
                 </button>
             </div>
-            <input type="text" class="form-control" ng-model="search" placeholder="what are you looking for?"/>
+            <input type="text" class="form-control" ng-model="query" placeholder="what are you looking for?"/>
         </div>
         <ul class="col-md-12 list-unstyled">
             <li ng-repeat="item in data | filter:search | orderBy:['type','name'] | limitTo:100">
