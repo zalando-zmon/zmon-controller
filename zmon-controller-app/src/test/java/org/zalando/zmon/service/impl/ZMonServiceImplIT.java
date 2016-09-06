@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import junit.framework.Assert;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.hamcrest.core.IsNull;
@@ -69,6 +70,14 @@ public class ZMonServiceImplIT extends AbstractServiceIntegrationTest {
         MatcherAssert.assertThat(checkDefinitions.getSnapshotId(), Matchers.greaterThan(0L));
         MatcherAssert.assertThat(checkDefinitions.getCheckDefinitions(),
             Matchers.contains(CheckDefinitionIsEqual.equalTo(newCheckDefinition)));
+    }
+
+    @Test
+    public void testCreateCheckDefinitionWithWrongTeam() throws Exception {
+        final CheckDefinitionImportResult newCheckDefinition = service.createOrUpdateCheckDefinition(
+                checkImportGenerator.generate(), USER_NAME, Arrays.asList("Platform/Database"));
+
+        MatcherAssert.assertThat("Permission is denied", newCheckDefinition.isPermissionDenied());
     }
 
     @Test
