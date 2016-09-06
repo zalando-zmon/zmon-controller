@@ -1202,11 +1202,12 @@ body.entities-page .type-col {
 {
     padding: 2px 5px 2px 5px;
     margin: 5px;
-    border-radius: 5px;
     display: inline;
     float: left;
-    width: 55px;
+    width: 60px;
     overflow: hidden;
+    text-align: left;
+    font-weight: 700;
     text-align: center;
 }
 
@@ -1232,20 +1233,20 @@ body.entities-page .type-col {
 
 .global-search .tag.alert
 {
-    background: #ff9999;
+    color: #ff9999;
 }
 
 .global-search .tag.check
 {
-    background: #99ccff;
+    color: #5f81a3;
 }
 
 .global-search .tag.dashboard
 {
-    background: #33cc33;
+    color: #33cc33;
 }
 
 .global-search .tag.grafana
 {
-    background: #ff4000;
+    color: #ff4000;
 }

@@ -10,21 +10,12 @@
         </div>
         <ul class="col-md-12 list-unstyled">
             <li ng-repeat="item in data | filter:search | orderBy:['type','name'] | limitTo:100">
-                <div ng-if="item.type === 'alert'">
-                    <span class="tag alert">ALERT</span>
-                    <div class="title">{{item.name}}</div>
-                </div>
-                <div ng-if="item.type === 'check'">
-                    <span class="tag check">CHECK</span>
-                    <div class="title">{{item.name}}</div>
-                </div>
-                <div ng-if="item.type === 'dashboard'">
-                    <span class="tag dashboard">DASH</span>
-                    <div class="title">{{item.name}}</div>
-                </div>
-                <div ng-if="item.type === 'grafana'">
-                    <span class="tag grafana">GRAF</span>
-                    <div class="title">{{item.title}}</div>
+                <div>
+                    <span ng-if="item.type === 'alert'" class="tag alert" title="alert">{{item.id}}</span>
+                    <span ng-if="item.type === 'check'" class="tag check" title="check">{{item.id}}</span>
+                    <span ng-if="item.type === 'dashboard'" class="tag dashboard" title="dashboard">{{item.id}}</span>
+                    <span ng-if="item.type === 'grafana'" class="tag grafana" title="grafana dashboard">{{item.id}}</span>
+                    <div class="title">{{item.name || item.title}}</div>
                 </div>
             </li>
         </ul>
