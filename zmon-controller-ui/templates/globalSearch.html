@@ -9,14 +9,21 @@
             <input type="text" class="form-control" ng-model="query" placeholder="what are you looking for?"/>
         </div>
         <ul class="col-md-12 list-unstyled">
-            <li ng-repeat="item in data | filter:search | orderBy:['type','name'] | limitTo:100">
-                <div>
-                    <span ng-if="item.type === 'alert'" class="tag alert" title="alert">{{item.id}}</span>
-                    <span ng-if="item.type === 'check'" class="tag check" title="check">{{item.id}}</span>
-                    <span ng-if="item.type === 'dashboard'" class="tag dashboard" title="dashboard">{{item.id}}</span>
-                    <span ng-if="item.type === 'grafana'" class="tag grafana" title="grafana dashboard">{{item.id}}</span>
-                    <div class="title">{{item.name || item.title}}</div>
-                </div>
+            <li ng-repeat="item in data.alerts | filter:search | orderBy:['title'] | limitTo:100">
+                <span class="tag alert" title="alert">{{item.id}}</span>
+                <div class="title">{{item.title}}</div>
+            </li>
+            <li ng-repeat="item in data.checks | filter:search | orderBy:['title'] | limitTo:100">
+                <span class="tag check" title="check">{{item.id}}</span>
+                <div class="title">{{item.title}}</div>
+            </li>
+            <li ng-repeat="item in data.dashboards | filter:search | orderBy:['title'] | limitTo:100">
+                <span class="tag dashboard" title="dashboard">{{item.id}}</span>
+                <div class="title">{{item.title}}</div>
+            </li>
+            <li ng-repeat="item in data.grafana_dashboards | filter:search | orderBy:['title'] | limitTo:100">
+                <span class="tag grafana" title="grafana dashboard">{{item.id}}</span>
+                <div class="title">{{item.title}}</div>
             </li>
         </ul>
     </div>

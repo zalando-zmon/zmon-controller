@@ -8,31 +8,17 @@ angular.module('zmon2App').directive('globalSearch', [ '$timeout', 'Communicatio
         link: function(scope, elem, attrs) {
             scope.data = [];
 
-            CommunicationService.getAllDashboards().then(function(dashboards) {
-                _.each(dashboards, function(dashboard) { dashboard.type = 'dashboard'; });
-                scope.data = scope.data.concat(dashboards);
-            });
-
-            CommunicationService.getAlertDefinitions().then(function(alerts) {
-                _.each(alerts, function(alert) { alert.type = 'alert'; });
-                scope.data = scope.data.concat(alerts);
-            });
-
-            CommunicationService.getCheckDefinitions().then(function(checks) {
-                _.each(checks, function(check) { check.type = 'check'; });
-                scope.data = scope.data.concat(checks);
-            });
-
-            CommunicationService.getGrafanaDashboards().then(function(grafs) {
-                _.each(grafs, function(graf) { graf.type = 'grafana'; });
-                scope.data = scope.data.concat(grafs);
-            });
-
             // filtery by name/title or ID only
             scope.search = function(item) {
                 return (angular.lowercase(item.name || item.title).indexOf(angular.lowercase(scope.query) || '') !== -1 ||
                         angular.lowercase(String(item.id)).indexOf(angular.lowercase(scope.query) || '') !== -1);
             };
+
+            scope.$watch('query', function(query) {
+                CommunicationService.search(query).then(function(response) {
+                    scope.data = response;
+                });
+            });
 
             // focus input field on open
             scope.$watch('visible', function(v) {
@@ -41,6 +27,11 @@ angular.module('zmon2App').directive('globalSearch', [ '$timeout', 'Communicatio
                         elem.find('input').focus();
                     });
                 }
+            });
+
+            // initialize with as much data as possible
+            CommunicationService.search('').then(function(response) {
+                scope.data = response;
             });
         }
     };
