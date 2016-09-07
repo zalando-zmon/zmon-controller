@@ -39,6 +39,8 @@ public interface ZMonService {
 
     CheckDefinitionImportResult createOrUpdateCheckDefinition(CheckDefinitionImport checkDefinition, String userName, List<String> teams);
 
+    CheckDefinitionImportResult createOrUpdateCheckDefinition(CheckDefinitionImport checkDefinition, String userName, List<String> teams, boolean isAdmin);
+
     void deleteCheckDefinition(String userName, String name, String owningTeam);
 
     void deleteDetachedCheckDefinitions();

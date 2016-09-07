@@ -190,14 +190,19 @@ public class ZMonServiceImpl implements ZMonService {
     }
 
     @Override
-    public CheckDefinitionImportResult createOrUpdateCheckDefinition(final CheckDefinitionImport checkDefinition, final String userName, final List<String> teams) {
+    public CheckDefinitionImportResult createOrUpdateCheckDefinition(final CheckDefinitionImport checkDefinition, final String userName, final List<String> teams, final boolean isAdmin) {
         Preconditions.checkNotNull(checkDefinition);
-        log.info("Saving check definition '{}' from team '{}'", checkDefinition.getName(),
-                checkDefinition.getOwningTeam());
+        log.info("Saving check definition name='{}', owningTeam='{}', user={}, teams={}, isAdmin={}", checkDefinition.getName(),
+                checkDefinition.getOwningTeam(), userName, teams, isAdmin);
 
         checkDefinition.setLastModifiedBy(userName);
 
-        return checkDefinitionSProc.createOrUpdateCheckDefinition(checkDefinition, userName, teams);
+        return checkDefinitionSProc.createOrUpdateCheckDefinition(checkDefinition, userName, teams, isAdmin);
+    }
+
+    @Override
+    public CheckDefinitionImportResult createOrUpdateCheckDefinition(final CheckDefinitionImport checkDefinition, final String userName, final List<String> teams) {
+        return createOrUpdateCheckDefinition(checkDefinition, userName, teams, false);
     }
 
     @Override

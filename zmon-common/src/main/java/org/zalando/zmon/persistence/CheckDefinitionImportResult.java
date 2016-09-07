@@ -1,9 +1,11 @@
 package org.zalando.zmon.persistence;
 
+import de.zalando.typemapper.annotations.DatabaseType;
 import org.zalando.zmon.domain.CheckDefinition;
 
 import de.zalando.typemapper.annotations.DatabaseField;
 
+@DatabaseType
 public class CheckDefinitionImportResult {
 
     @DatabaseField

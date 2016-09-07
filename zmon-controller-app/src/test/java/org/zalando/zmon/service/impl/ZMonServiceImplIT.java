@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import junit.framework.Assert;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.hamcrest.core.IsNull;
@@ -74,10 +73,26 @@ public class ZMonServiceImplIT extends AbstractServiceIntegrationTest {
 
     @Test
     public void testCreateCheckDefinitionWithWrongTeam() throws Exception {
-        final CheckDefinitionImportResult newCheckDefinition = service.createOrUpdateCheckDefinition(
-                checkImportGenerator.generate(), USER_NAME, Arrays.asList("Platform/Database"));
+        CheckDefinitionImport newCheck = checkImportGenerator.generate();
+        CheckDefinitionImportResult result;
 
-        MatcherAssert.assertThat("Permission is denied", newCheckDefinition.isPermissionDenied());
+        result = service.createOrUpdateCheckDefinition(newCheck, USER_NAME, Arrays.asList("Platform/Database"));
+
+        MatcherAssert.assertThat("Permission is not ok (do not create for different team)", result.isPermissionDenied());
+
+        result = service.createOrUpdateCheckDefinition(newCheck, USER_NAME, Arrays.asList("Platform/Software"));
+
+        MatcherAssert.assertThat("Permission is ok (same team)", !result.isPermissionDenied());
+
+        newCheck.setId(result.getEntity().getId());
+
+        CheckDefinitionImportResult failedResult = service.createOrUpdateCheckDefinition(newCheck, USER_NAME + "2", Arrays.asList("Platform/Software" + "2"));
+
+        MatcherAssert.assertThat("Permission is denied (No team match, No user match)", failedResult.isPermissionDenied());
+
+        CheckDefinitionImportResult okResult = service.createOrUpdateCheckDefinition(newCheck, USER_NAME + "2", Arrays.asList("Platform/Database"));
+
+        MatcherAssert.assertThat("Permission is not denied for same team", !okResult.isPermissionDenied());
     }
 
     @Test
