@@ -2,7 +2,7 @@
     <div class="row">
         <div class="col-md-8">
             <h1 class="no-margin">Trial Run</h1>
-            <p><a href="/docs/check-definitions.html#trial-run">Trial Run</a> allows the end user to test check commands and alert conditions before using them on the system.</p>
+            <p><a href="https://docs.zmon.io/en/latest/user/check-definitions.html#using-trial-run">Trial Run</a> allows the end user to test check commands and alert conditions before using them on the system.</p>
         </div>
     </div>
 </div>
@@ -47,7 +47,7 @@
                     </div>
 
                     <div class="form-group" ng-class="{'has-error': trForm.submitted && trForm.check_command.$error.required}">
-                        <label for="inp-command" class="col-sm-2 control-label"><a href="/docs/check-definitions.html" rel="help" target="docs">Check Command</a></label>
+                        <label for="inp-command" class="col-sm-2 control-label"><a href="https://docs.zmon.io/en/latest/user/check-commands.html" rel="help" target="docs">Check Command</a></label>
                         <div class="col-sm-10">
                             <code-editor-modal code="alert.check_command" title="Check Command" language="python"></code-editor-modal>
                             <div id="inp-command" name="check_command" class="code-editor" ng-model="alert.check_command" code-language="python" code-editor required ng-focus="trForm.submitted && trForm.check_command.$error.required"></div>
@@ -56,7 +56,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="inp-condition" class="col-sm-2 control-label"><a href="/docs/alert-definitions.html#condition" rel="help" target="docs">Alert Condition</a></label>
+                        <label for="inp-condition" class="col-sm-2 control-label"><a href="https://docs.zmon.io/en/latest/user/alert-definitions.html#condition" rel="help" target="docs">Alert Condition</a></label>
                         <div class="col-sm-10">
                             <code-editor-modal code="alert.alert_condition" title="Alert Condition" language="python"></code-editor-modal>
                             <div id="inp-condition" name="alert_condition" class="code-editor" ng-model="alert.alert_condition" code-language="python" code-editor></div>
@@ -67,7 +67,7 @@
                     <div class="form-group" ng-class="{'has-error': trForm.submitted && trForm.parameters.$error['valid-json'] || trForm.parameters.$error.required }">
                         <label for="inp-parameters" class="col-sm-2 control-label">
                             <div>
-                                <a href="/docs/alert-definitions.html#parameters" rel="help" target="docs">Parameters</a>
+                                <a href="https://docs.zmon.io/en/latest/user/alert-definitions.html#alert-definition-parameters" rel="help" target="docs">Parameters</a>
                             </div>
                         </label>
                         <div class="col-sm-10">
@@ -104,7 +104,7 @@
 
                     <div class="form-group" ng-class="{'has-error': trForm.submitted && trForm.entities.$error['valid-json'] || trForm.entities.$error.required }">
                         <label for="inp-entities" class="col-sm-2 control-label">
-                            <a href="/docs/alert-definitions.html#entities" rel="help" target="docs">Included Entities</a>
+                            <a href="https://docs.zmon.io/en/latest/user/alert-definitions.html#entity-exclude-filter" rel="help" target="docs">Included Entities</a>
                             <div id="entity-filter-buttons">
                                 <button type="button" class="btn btn-primary fa fa-keyboard-o" ng-model="TrialRunCtrl.entityFilterInputMethod" uib-btn-radio="'text'" title="Plain text input"></button>
                                 <button type="button" class="btn btn-primary fa fa-check-square-o" ng-model="TrialRunCtrl.entityFilterInputMethod" uib-btn-radio="'form'" title="Form input"></button>
@@ -121,7 +121,7 @@
 
                     <div class="form-group" ng-class="{'has-error': trForm.submitted && trForm.entitiesExclude.$error['valid-json'] || trForm.entitiesExclude.$error.required }">
                         <label for="inp-entities-exclude" class="col-sm-2 control-label">
-                            <a href="/docs/alert-definitions.html#entities" rel="help" target="docs">Excluded Entities</a>
+                            <a href="https://docs.zmon.io/en/latest/user/alert-definitions.html#entity-exclude-filter" rel="help" target="docs">Excluded Entities</a>
                             <div id="entity-exclude-filter-buttons">
                                 <button type="button" class="btn btn-primary fa fa-keyboard-o" ng-model="TrialRunCtrl.entityExcludeFilterInputMethod" uib-btn-radio="'text'" title="Plain text input"></button>
                                 <button type="button" class="btn btn-primary fa fa-check-square-o" ng-model="TrialRunCtrl.entityExcludeFilterInputMethod" uib-btn-radio="'form'" title="Form input"></button>
@@ -137,14 +137,14 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="inp-period" class="col-sm-2 control-label"><a href="/docs/alert-definitions.html#time-periods" rel="help" target="docs">Time Period</a></label>
+                        <label for="inp-period" class="col-sm-2 control-label"><a href="https://docs.zmon.io/en/latest/user/alert-definitions.html#time-periods" rel="help" target="docs">Time Period</a></label>
                         <div class="col-sm-10">
                             <input class="form-control" id="inp-period" ng-model="alert.period" placeholder="Notification time period (e.g. 'wd {Mon-Fri} hr {9-16}')">
                         </div>
                     </div>
 
                     <div class="form-group" ng-class="{'has-error': trForm.submitted && (trForm.interval.$error.required || trForm.interval.$error.number)}">
-                        <label for="inp-interval" class="col-sm-2 control-label"><a href="/docs/alert-definitions.html#interval" rel="help" target="docs">Interval</a></label>
+                        <label for="inp-interval" class="col-sm-2 control-label"><a href="https://docs.zmon.io/en/latest/user/check-definitions.html#interval" rel="help" target="docs">Interval</a></label>
                         <div class="col-sm-10">
                             <input id="inp-interval" name="interval" type="number" min="5" class="form-control" ng-model="alert.interval" placeholder="Please type interval in seconds" required>
                         </div>
