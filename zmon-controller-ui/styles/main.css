@@ -1170,11 +1170,6 @@ body.entities-page .type-col {
 
 /*** global search */
 
-i.fa-search.active
-{
-    color: #fff;
-}
-
 .global-search
 {
     position:absolute;
@@ -1187,6 +1182,12 @@ i.fa-search.active
     border-left: 1px solid black;
     color: #eee;
     z-index: 4;
+}
+
+.global-search i.fa-users
+{
+    line-height: 35px;
+    color: #999;
 }
 
 .global-search ul
@@ -1203,6 +1204,19 @@ i.fa-search.active
 .global-search ul li
 {
     overflow:hidden;
+    background: #303030;
+    margin-bottom: 5px;
+}
+
+.global-search ul li:hover
+{
+    background: #464646;
+}
+
+.global-search ul li a
+{
+    color: #ddd;
+    text-decoration:none;
 }
 
 .global-search ul li .tag
@@ -1257,3 +1271,10 @@ i.fa-search.active
 {
     color: #ff4000;
 }
+
+i.fa-users.active,
+i.fa-search.active
+{
+    color: #fff;
+}
+

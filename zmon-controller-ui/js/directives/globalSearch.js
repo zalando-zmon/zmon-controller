@@ -7,10 +7,11 @@ angular.module('zmon2App').directive('globalSearch', [ '$timeout', 'Communicatio
         },
         link: function(scope, elem, attrs) {
             scope.data = [];
+            scope.filterByTeam = false;
 
-            scope.$watch('query', function(query, teams) {
+            scope.$watch('query', function(query) {
                 if (query) {
-                    CommunicationService.search(query, teams).then(function(response) {
+                    CommunicationService.search(query).then(function(response) {
                         scope.data = response;
                     });
                 }
