@@ -1,6 +1,6 @@
-body
+.navbar
 {
-    position: relative;
+    z-index: 5;
 }
 
 .navbar-brand
@@ -29,6 +29,16 @@ body
     width: 100%;
 }
 
+.navbar i.fa-search.active
+{
+    color: #fff;
+}
+
+.navbar i.fa-search
+{
+    margin-left: 10px;
+}
+
 @media (max-width: 990px)
 {
     .navbar-text
@@ -42,6 +52,11 @@ body
     .navbar-collapse
     {
         width: 100% !important;
+    }
+
+    .global-search ul
+    {
+        width: 100%;
     }
 }
 
@@ -1163,3 +1178,112 @@ body.entities-page .type-col {
 }
 
 
+/*** global search */
+
+.global-search
+{
+    position:absolute;
+    right: 0;
+    background: #262626;
+    top: 52px;
+    padding: 10px;
+    min-height: 80px;
+    bottom: 0;
+    border-left: 1px solid black;
+    color: #eee;
+    z-index: 4;
+}
+
+.global-search i.fa-users
+{
+    line-height: 38px;
+    color: #999;
+    font-size: 18px;
+}
+
+.global-search ul
+{
+    position:absolute;
+    bottom: 0;
+    top: 45px;
+    left: 0;
+    overflow-y:auto;
+    overflow-x:hidden;
+    white-space:nowrap;
+}
+
+.global-search ul li
+{
+    overflow:hidden;
+    background: #303030;
+    margin-bottom: 5px;
+}
+
+.global-search ul li:hover
+{
+    background: #464646;
+}
+
+.global-search ul li a
+{
+    color: #ddd;
+    text-decoration:none;
+}
+
+.global-search ul li .tag
+{
+    padding: 2px 5px 2px 5px;
+    margin: 5px;
+    display: inline;
+    float: left;
+    width: 60px;
+    overflow: hidden;
+    text-align: left;
+    font-weight: 700;
+    text-align: center;
+}
+
+.global-search ul li .title
+{
+    line-height: 35px;
+}
+
+.global-search input
+{
+    background: #464646;
+    border: 1px solid #080808;
+    color: #fff;
+    height: 35px;
+}
+
+.global-search button.btn
+{
+    background: #222;
+    border: 1px solid #080808;
+    color: #7f7f7;
+}
+
+.global-search .tag.alert
+{
+    color: #ff9999;
+}
+
+.global-search .tag.check
+{
+    color: #5f81a3;
+}
+
+.global-search .tag.dashboard
+{
+    color: #33cc33;
+}
+
+.global-search .tag.grafana
+{
+    color: #ff4000;
+}
+
+.global-search i.fa-users.active
+{
+    color: #fff;
+}

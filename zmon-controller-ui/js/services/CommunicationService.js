@@ -571,6 +571,15 @@ angular.module('zmon2App').factory('CommunicationService', ['$http', '$q', '$log
             return doHttpCall("POST", "rest/alertCoverage", postData, headers);
         };
 
+        service.search = function(query, teams) {
+            PreconditionsService.isNotEmpty(query);
+            var params = {
+                query: query,
+                teams: teams
+            };
+            return doHttpCall("GET", "rest/search", params);
+        };
+
         return service;
     }
 ]);
