@@ -186,7 +186,7 @@ public class ZMonRestService extends AbstractZMonController {
     }
 
     @RequestMapping(value="/search", method = RequestMethod.GET)
-    public ResponseEntity<SearchAPI.QuickSearchResult> search(@RequestParam(name = "search") String search, @RequestParam(required = false, name = "team") List<String> teams, @RequestParam(name = "limit", defaultValue = "25") int limit) {
+    public ResponseEntity<SearchAPI.QuickSearchResult> search(@RequestParam(name = "query") String search, @RequestParam(required = false, name = "team") List<String> teams, @RequestParam(name = "limit", defaultValue = "25") int limit) {
         return searchAPI.search(search, teams, limit);
     }
 }

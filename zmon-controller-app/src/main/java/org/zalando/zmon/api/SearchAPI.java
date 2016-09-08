@@ -28,7 +28,7 @@ public class SearchAPI {
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public ResponseEntity<QuickSearchResult> search(@RequestParam(name = "search") String search, @RequestParam(required = false, name = "team") List<String> teams, @RequestParam(name = "limit", defaultValue = "25") int limit) {
+    public ResponseEntity<QuickSearchResult> search(@RequestParam(name = "query") String search, @RequestParam(required = false, name = "team") List<String> teams, @RequestParam(name = "limit", defaultValue = "25") int limit) {
         QuickSearchResult result = new QuickSearchResult();
 
         List<QuickSearchResultItem> alerts = searchService.quickSearchAlerts(search, teams, limit);
