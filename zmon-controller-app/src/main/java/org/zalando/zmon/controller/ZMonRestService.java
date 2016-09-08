@@ -81,7 +81,7 @@ public class ZMonRestService extends AbstractZMonController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        CheckDefinitionImportResult result = service.createOrUpdateCheckDefinition(check, authService.getUserName(), Lists.newArrayList(authService.getTeams()));
+        CheckDefinitionImportResult result = service.createOrUpdateCheckDefinition(check, authService.getUserName(), Lists.newArrayList(authService.getTeams()), authService.hasAdminAuthority());
         if (result.isPermissionDenied()) {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }

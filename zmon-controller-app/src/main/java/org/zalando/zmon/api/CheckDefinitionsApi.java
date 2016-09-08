@@ -61,7 +61,7 @@ public class CheckDefinitionsApi extends AbstractZMonController {
                                           @RequestBody(required = true)
                                           final CheckDefinitionImport checkDefinition) throws ZMonException {
 
-        CheckDefinitionImportResult result = zMonService.createOrUpdateCheckDefinition(checkDefinition, authorityService.getUserName(), Lists.newArrayList(authorityService.getTeams()));
+        CheckDefinitionImportResult result = zMonService.createOrUpdateCheckDefinition(checkDefinition, authorityService.getUserName(), Lists.newArrayList(authorityService.getTeams()), authorityService.hasAdminAuthority());
 
         if (result.isPermissionDenied()) {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
