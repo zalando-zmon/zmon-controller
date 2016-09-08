@@ -60,7 +60,7 @@
     <script th:src="${staticUrl} + '/lib/angular-ui-select/select.min.js?t=@buildTime@'" chartset="utf-8"></script>
 
 </head>
-<body ng-class="activePage">
+<body ng-class="activePage" ng-keydown="keyDown($event)">
     <div class="loading-indicator" ng-show="IndexCtrl.getLoadingIndicatorState()">
         Loading...
     </div>
@@ -132,7 +132,7 @@
                         </ul>
                    </span>
                    <span>
-                       <i class="fa fa-fw fa-search clickable" ng-click="globalSearchVisible = !globalSearchVisible"></i>
+                       <i class="fa fa-fw fa-search clickable" ng-click="globalSearchVisible = !globalSearchVisible" ng-class="{'active':globalSearchVisible}"></i>
                    </span>
                 </div>
             </div>
@@ -248,6 +248,18 @@
             $scope.$on('$routeChangeStart', function() {
                 localStorageService.set('returnTo', '/#' + $location.path());
             });
+
+            // global search key bindings
+            $scope.keyDown = function(e) {
+                // toggle globalSearch on Alt
+                if (e.keyCode === 18) {
+                    $scope.globalSearchVisible = !$scope.globalSearchVisible;
+                }
+                // close on Esc
+                if (e.keyCode === 27) {
+                    $scope.globalSearchVisible = false;
+                }
+            };
 
             // Start periodic refresh of the app's overall status only (Q-size etc.)
             // Not related to the periodic data refresh that the page content might by having (e.g. dashboard, alert details etc.)

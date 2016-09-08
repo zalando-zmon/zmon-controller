@@ -9,19 +9,19 @@
             <input type="text" class="form-control" ng-model="query" placeholder="what are you looking for?"/>
         </div>
         <ul class="col-md-12 list-unstyled">
-            <li ng-repeat="item in data.alerts | filter:search | orderBy:['title'] | limitTo:100">
+            <li ng-repeat="item in data.alerts | orderBy:['id', 'title']">
                 <span class="tag alert" title="alert">{{item.id}}</span>
                 <div class="title">{{item.title}}</div>
             </li>
-            <li ng-repeat="item in data.checks | filter:search | orderBy:['title'] | limitTo:100">
+            <li ng-repeat="item in data.checks | orderBy:['id', 'title']">
                 <span class="tag check" title="check">{{item.id}}</span>
                 <div class="title">{{item.title}}</div>
             </li>
-            <li ng-repeat="item in data.dashboards | filter:search | orderBy:['title'] | limitTo:100">
+            <li ng-repeat="item in data.dashboards | orderBy:['id', 'title']">
                 <span class="tag dashboard" title="dashboard">{{item.id}}</span>
                 <div class="title">{{item.title}}</div>
             </li>
-            <li ng-repeat="item in data.grafana_dashboards | filter:search | orderBy:['title'] | limitTo:100">
+            <li ng-repeat="item in data.grafana_dashboards | orderBy:['id', 'title']">
                 <span class="tag grafana" title="grafana dashboard">{{item.id}}</span>
                 <div class="title">{{item.title}}</div>
             </li>

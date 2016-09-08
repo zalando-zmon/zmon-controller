@@ -8,16 +8,12 @@ angular.module('zmon2App').directive('globalSearch', [ '$timeout', 'Communicatio
         link: function(scope, elem, attrs) {
             scope.data = [];
 
-            // filtery by name/title or ID only
-            scope.search = function(item) {
-                return (angular.lowercase(item.name || item.title).indexOf(angular.lowercase(scope.query) || '') !== -1 ||
-                        angular.lowercase(String(item.id)).indexOf(angular.lowercase(scope.query) || '') !== -1);
-            };
-
-            scope.$watch('query', function(query) {
-                CommunicationService.search(query).then(function(response) {
-                    scope.data = response;
-                });
+            scope.$watch('query', function(query, teams) {
+                if (query) {
+                    CommunicationService.search(query, teams).then(function(response) {
+                        scope.data = response;
+                    });
+                }
             });
 
             // focus input field on open
@@ -27,11 +23,6 @@ angular.module('zmon2App').directive('globalSearch', [ '$timeout', 'Communicatio
                         elem.find('input').focus();
                     });
                 }
-            });
-
-            // initialize with as much data as possible
-            CommunicationService.search('').then(function(response) {
-                scope.data = response;
             });
         }
     };
