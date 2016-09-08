@@ -28,14 +28,20 @@ public class SearchAPI {
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public ResponseEntity<QuickSearchResult> search(@RequestParam(name = "query") String search, @RequestParam(required = false, name = "team") List<String> teams, @RequestParam(name = "limit", defaultValue = "25") int limit) {
+    public ResponseEntity<QuickSearchResult> search(@RequestParam(name = "query", defaultValue = "") String search, @RequestParam(required = false, name = "team") List<String> teams, @RequestParam(name = "limit", defaultValue = "25") int limit) {
         QuickSearchResult result = new QuickSearchResult();
 
         List<QuickSearchResultItem> alerts = searchService.quickSearchAlerts(search, teams, limit);
         result.put("alerts", alerts);
 
         List<QuickSearchResultItem> checks = searchService.quickSearchChecks(search, teams, limit);
-        result.put("checks", alerts);
+        result.put("checks", checks);
+
+        List<QuickSearchResultItem> dashboards = searchService.quickSearchDashboards(search, teams, limit);
+        result.put("dashboards", dashboards);
+
+        List<QuickSearchResultItem> grafanaDashboards = searchService.quickSearchGrafanaDashboards(search, teams, limit);
+        result.put("grafana-dashboards", grafanaDashboards);
 
         return new ResponseEntity<QuickSearchResult>(result, HttpStatus.OK);
     }
