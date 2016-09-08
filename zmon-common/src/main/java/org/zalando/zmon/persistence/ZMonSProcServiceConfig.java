@@ -48,4 +48,9 @@ public class ZMonSProcServiceConfig {
     public OnetimeTokensSProcService getOnetimeTokenSprocService() {
         return SProcProxyBuilder.build(dataSourceProvider, OnetimeTokensSProcService.class);
     }
+
+    @Bean(autowire = Autowire.BY_TYPE)
+    public QuickSearchSprocService getQuickSearchSprocService() {
+        return SProcProxyBuilder.build(dataSourceProvider, QuickSearchSprocService.class);
+    }
 }
