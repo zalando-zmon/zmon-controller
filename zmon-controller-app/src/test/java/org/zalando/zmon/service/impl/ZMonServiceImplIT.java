@@ -50,7 +50,7 @@ public class ZMonServiceImplIT extends AbstractServiceIntegrationTest {
     private DataGenerator<AlertDefinition> alertGenerator;
 
     private static final String USER_NAME ="default_user";
-    private static final List<String> USER_TEAMS = Arrays.asList("Platform/Software");
+    private static final List<String> USER_TEAMS = Arrays.asList("Platform/Software","Platform/Monitoring");
 
     @Before
     public void setup() {
@@ -84,13 +84,15 @@ public class ZMonServiceImplIT extends AbstractServiceIntegrationTest {
 
         MatcherAssert.assertThat("Permission is ok (same team)", !result.isPermissionDenied());
 
+        MatcherAssert.assertThat("Created new entity", result.isNewEntity());
+
         newCheck.setId(result.getEntity().getId());
 
-        CheckDefinitionImportResult failedResult = service.createOrUpdateCheckDefinition(newCheck, USER_NAME + "2", Arrays.asList("Platform/Software" + "2"));
+        CheckDefinitionImportResult failedResult = service.createOrUpdateCheckDefinition(newCheck, USER_NAME + "_X", Arrays.asList("Platform/System"));
 
         MatcherAssert.assertThat("Permission is denied (No team match, No user match)", failedResult.isPermissionDenied());
 
-        CheckDefinitionImportResult okResult = service.createOrUpdateCheckDefinition(newCheck, USER_NAME + "2", Arrays.asList("Platform/Database"));
+        CheckDefinitionImportResult okResult = service.createOrUpdateCheckDefinition(newCheck, USER_NAME + "2", USER_TEAMS);
 
         MatcherAssert.assertThat("Permission is not denied for same team", !okResult.isPermissionDenied());
     }
@@ -209,7 +211,7 @@ public class ZMonServiceImplIT extends AbstractServiceIntegrationTest {
         final CheckDefinitionImport toImport = checkImportGenerator.generate();
         final CheckDefinition newCheckDefinition0 = service.createOrUpdateCheckDefinition(toImport, USER_NAME, USER_TEAMS).getEntity();
 
-        toImport.setOwningTeam("TEST");
+        toImport.setOwningTeam("Platform/Monitoring");
         toImport.setName(toImport.getName() + " UPDATE");
         toImport.setSourceUrl(toImport.getSourceUrl() + "?update=1");
         toImport.setStatus(DefinitionStatus.INACTIVE);
@@ -380,7 +382,7 @@ public class ZMonServiceImplIT extends AbstractServiceIntegrationTest {
         toImport.setSourceUrl(toImport.getSourceUrl() + "?update=1");
         toImport.setOwningTeam("Platform/RQM");
 
-        final CheckDefinition newCheckDefinition = service.createOrUpdateCheckDefinition(toImport, USER_NAME, USER_TEAMS).getEntity();
+        final CheckDefinition newCheckDefinition = service.createOrUpdateCheckDefinition(toImport, USER_NAME, Arrays.asList("Platform/RQM")).getEntity();
 
         // create a new alert
         final AlertDefinition newAlertDefinition = alertGenerator.generate();

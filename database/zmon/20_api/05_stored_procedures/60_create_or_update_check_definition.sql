@@ -19,7 +19,7 @@ BEGIN
         permission_denied = true;
         RETURN;
       END IF;
-    ELSIF user_is_admin IS NOT FALSE THEN
+    ELSIF user_is_admin IS FALSE THEN
       IF NOT check_definition_import.owning_team = ANY(user_teams) THEN
         permission_denied = true;
         RETURN;
