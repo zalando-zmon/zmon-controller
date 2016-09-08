@@ -10,7 +10,7 @@ CREATE OR REPLACE FUNCTION create_or_update_check_definition (
 $BODY$
 BEGIN
 
-    IF check_definition_import.id IS DISTINCT FROM NULL AND NOT user_is_admin THEN
+    IF check_definition_import.id IS NOT NULL AND NOT user_is_admin THEN
       IF NOT EXISTS (SELECT 1 FROM zzm_data.check_definition
                              WHERE cd_id = check_definition_import.id
                                AND (cd_owning_team = ANY(user_teams) OR cd_created_by = user_name)
@@ -19,11 +19,9 @@ BEGIN
         permission_denied = true;
         RETURN;
       END IF;
-    ELSIF user_is_admin IS FALSE THEN
-      IF NOT check_definition_import.owning_team = ANY(user_teams) THEN
-        permission_denied = true;
-        RETURN;
-      END IF;
+    ELSIF user_is_admin IS FALSE AND NOT check_definition_import.owning_team = ANY(user_teams) THEN
+      permission_denied = true;
+      RETURN;
     END IF;
 
     permission_denied = false;
