@@ -29,6 +29,16 @@
     width: 100%;
 }
 
+.navbar i.fa-search.active
+{
+    color: #fff;
+}
+
+.navbar i.fa-search
+{
+    margin-left: 10px;
+}
+
 @media (max-width: 990px)
 {
     .navbar-text
@@ -1186,8 +1196,9 @@ body.entities-page .type-col {
 
 .global-search i.fa-users
 {
-    line-height: 35px;
+    line-height: 38px;
     color: #999;
+    font-size: 18px;
 }
 
 .global-search ul
@@ -1272,9 +1283,7 @@ body.entities-page .type-col {
     color: #ff4000;
 }
 
-i.fa-users.active,
-i.fa-search.active
+.global-search i.fa-users.active
 {
     color: #fff;
 }
-

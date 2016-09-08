@@ -1,4 +1,4 @@
-angular.module('zmon2App').directive('globalSearch', [ '$timeout', 'CommunicationService', function($timeout, CommunicationService) {
+angular.module('zmon2App').directive('globalSearch', [ '$timeout', 'CommunicationService', 'UserInfoService', function($timeout, CommunicationService, UserInfoService) {
     return {
         restrict: 'E',
         templateUrl: 'templates/globalSearch.html',
@@ -7,11 +7,13 @@ angular.module('zmon2App').directive('globalSearch', [ '$timeout', 'Communicatio
         },
         link: function(scope, elem, attrs) {
             scope.data = [];
-            scope.filterByTeam = false;
+            scope.filterByTeam = true;
 
             scope.$watch('query', function(query) {
+                console.log(query);
                 if (query) {
-                    CommunicationService.search(query).then(function(response) {
+                    var team = scope.filterByTeam ? UserInfoService.get().teams.split(',')[0] : null;
+                    CommunicationService.search(query, team).then(function(response) {
                         scope.data = response;
                     });
                 }
