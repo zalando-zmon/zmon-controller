@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.zalando.stups.tokens.AccessTokens;
+import org.zalando.zmon.api.SearchAPI;
 import org.zalando.zmon.config.MetricCacheProperties;
 import org.zalando.zmon.domain.CheckDefinition;
 import org.zalando.zmon.domain.CheckDefinitionImport;
@@ -48,6 +49,9 @@ public class ZMonRestService extends AbstractZMonController {
 
     @Autowired
     DefaultZMonPermissionService authService;
+
+    @Autowired
+    SearchAPI searchAPI;
 
     @Autowired
     ObjectMapper mapper;
@@ -179,5 +183,10 @@ public class ZMonRestService extends AbstractZMonController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return new ResponseEntity<>(node, HttpStatus.OK);
+    }
+
+    @RequestMapping(value="/search", method = RequestMethod.GET)
+    public ResponseEntity<SearchAPI.QuickSearchResult> search(@RequestParam(name = "search") String search, @RequestParam(required = false, name = "team") List<String> teams, @RequestParam(name = "limit", defaultValue = "25") int limit) {
+        return searchAPI.search(search, teams, limit);
     }
 }
