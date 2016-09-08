@@ -31,7 +31,7 @@ public interface CheckDefinitionSProcService {
     CheckDefinitions getCheckDefinitionsDiff(@SProcParam Long lastSnapshotId);
 
     @SProcCall
-    CheckDefinitionImportResult createOrUpdateCheckDefinition(@SProcParam CheckDefinitionImport checkDefinition);
+    CheckDefinitionImportResult createOrUpdateCheckDefinition(@SProcParam CheckDefinitionImport checkDefinition, @SProcParam String userName, @SProcParam List<String> teams, @SProcParam boolean isAdmin);
 
     @SProcCall
     CheckDefinition deleteCheckDefinition(@SProcParam String userName, @SProcParam String name,

@@ -24,7 +24,7 @@ sleep 5
 
 echo 'Running tests..'
 export MAVEN_OPTS="-Xdebug -Xnoagent -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n"
-./mvnw clean verify -Pintegration-test
+./mvnw clean verify -Pintegration-test $1
 
 echo 'Stopping PostgreSQL instance..'
 docker stop postgres

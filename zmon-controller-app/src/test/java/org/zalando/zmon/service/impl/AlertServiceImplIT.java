@@ -1,5 +1,6 @@
 package org.zalando.zmon.service.impl;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -53,6 +54,9 @@ public class AlertServiceImplIT extends AbstractServiceIntegrationTest {
     private DataGenerator<AlertDefinition> alertGenerator;
     private DataGenerator<AlertComment> commentGenerator;
 
+    private static final String USER_NAME ="default_user";
+    private static final List<String> USER_TEAMS = Arrays.asList("Platform/Software");
+
     @Before
     public void setup() {
         checkImportGenerator = new CheckDefinitionImportGenerator();
@@ -67,13 +71,16 @@ public class AlertServiceImplIT extends AbstractServiceIntegrationTest {
         MatcherAssert.assertThat(alertDefinitions, Matchers.hasSize(0));
     }
 
+    private CheckDefinition createNewCheckDefinition() {
+        return service.createOrUpdateCheckDefinition(checkImportGenerator.generate(), USER_NAME, USER_TEAMS).getEntity();
+    }
+
     @Ignore
     @Test
     public void testCreateAlertDefinition() throws Exception {
 
         // create a new check
-        final CheckDefinition newCheckDefinition = service.createOrUpdateCheckDefinition(
-                checkImportGenerator.generate());
+        final CheckDefinition newCheckDefinition = createNewCheckDefinition();
 
         // create a new alert
         AlertDefinition newAlertDefinition = alertGenerator.generate();
@@ -88,8 +95,7 @@ public class AlertServiceImplIT extends AbstractServiceIntegrationTest {
 
     @Test
     public void testCreateTemplate() throws Exception {
-        final CheckDefinition newCheckDefinition = service.createOrUpdateCheckDefinition(
-                checkImportGenerator.generate());
+        final CheckDefinition newCheckDefinition = createNewCheckDefinition();
 
         // create a template with minimum fields.
         AlertDefinition template = new AlertDefinition();
@@ -114,8 +120,7 @@ public class AlertServiceImplIT extends AbstractServiceIntegrationTest {
 
     @Test
     public void testUpdateTemplate() throws Exception {
-        final CheckDefinition newCheckDefinition = service.createOrUpdateCheckDefinition(
-                checkImportGenerator.generate());
+        final CheckDefinition newCheckDefinition = createNewCheckDefinition();
 
         // create a template with minimum fields.
         AlertDefinition template = new AlertDefinition();
@@ -147,8 +152,7 @@ public class AlertServiceImplIT extends AbstractServiceIntegrationTest {
     public void testExtendAlertDefinition() throws Exception {
 
         // create a new check
-        final CheckDefinition newCheckDefinition = service.createOrUpdateCheckDefinition(
-                checkImportGenerator.generate());
+        final CheckDefinition newCheckDefinition = createNewCheckDefinition();
 
         final Parameter param0 = new Parameter(0, "desc 0", "int");
         final Parameter param1 = new Parameter(1, "desc 1", "float");
@@ -200,8 +204,7 @@ public class AlertServiceImplIT extends AbstractServiceIntegrationTest {
     public void testUpdateAlertDefinition() throws Exception {
 
         // create a new check
-        final CheckDefinition newCheckDefinition = service.createOrUpdateCheckDefinition(
-                checkImportGenerator.generate());
+        final CheckDefinition newCheckDefinition = createNewCheckDefinition();
 
         // create alert number 0
         final AlertDefinition genAlertDefinition = alertGenerator.generate();
@@ -228,8 +231,7 @@ public class AlertServiceImplIT extends AbstractServiceIntegrationTest {
     public void testCreateDuplicateAlertDefinition() throws Exception {
 
         // create a new check
-        final CheckDefinition newCheckDefinition = service.createOrUpdateCheckDefinition(
-                checkImportGenerator.generate());
+        final CheckDefinition newCheckDefinition = createNewCheckDefinition();
 
         final AlertDefinition genAlertDefinition = alertGenerator.generate();
         genAlertDefinition.setCheckDefinitionId(newCheckDefinition.getId());
@@ -246,8 +248,7 @@ public class AlertServiceImplIT extends AbstractServiceIntegrationTest {
     public void testUpdateNonExistingAlertDefinition() throws Exception {
 
         // create a new check
-        final CheckDefinition newCheckDefinition = service.createOrUpdateCheckDefinition(
-                checkImportGenerator.generate());
+        final CheckDefinition newCheckDefinition = createNewCheckDefinition();
 
         final AlertDefinition genAlertDefinition = alertGenerator.generate();
         genAlertDefinition.setId(-1);
@@ -260,8 +261,7 @@ public class AlertServiceImplIT extends AbstractServiceIntegrationTest {
     public void testGetAlertDefinitionChildren() throws Exception {
 
         // create a new check
-        final CheckDefinition newCheckDefinition = service.createOrUpdateCheckDefinition(
-                checkImportGenerator.generate());
+        final CheckDefinition newCheckDefinition = createNewCheckDefinition();
 
         // create a new alert
         AlertDefinition rootAlertDefinition = alertGenerator.generate();
@@ -298,8 +298,7 @@ public class AlertServiceImplIT extends AbstractServiceIntegrationTest {
     public void testGetAlertDefinitionTemplateChildren() throws Exception {
 
         // create a new check
-        final CheckDefinition newCheckDefinition = service.createOrUpdateCheckDefinition(
-                checkImportGenerator.generate());
+        final CheckDefinition newCheckDefinition = createNewCheckDefinition();
 
         // create a template with minimum fields.
         AlertDefinition template = new AlertDefinition();
@@ -326,8 +325,7 @@ public class AlertServiceImplIT extends AbstractServiceIntegrationTest {
     public void testGetAlertDefinitionLeafChildren() throws Exception {
 
         // create a new check
-        final CheckDefinition newCheckDefinition = service.createOrUpdateCheckDefinition(
-                checkImportGenerator.generate());
+        final CheckDefinition newCheckDefinition = createNewCheckDefinition();
 
         // create a new alert
         AlertDefinition newAlertDefinition = alertGenerator.generate();
@@ -343,8 +341,7 @@ public class AlertServiceImplIT extends AbstractServiceIntegrationTest {
     public void testDeleteExistingAlertDefinition() throws Exception {
 
         // create a new check
-        final CheckDefinition newCheckDefinition = service.createOrUpdateCheckDefinition(
-                checkImportGenerator.generate());
+        final CheckDefinition newCheckDefinition = createNewCheckDefinition();
 
         AlertDefinition alertDefinition = alertGenerator.generate();
         alertDefinition.setCheckDefinitionId(newCheckDefinition.getId());
@@ -374,8 +371,7 @@ public class AlertServiceImplIT extends AbstractServiceIntegrationTest {
     public void testDeleteAlertDefinitionsDiff() throws Exception {
 
         // create a new check
-        final CheckDefinition newCheckDefinition = service.createOrUpdateCheckDefinition(
-                checkImportGenerator.generate());
+        final CheckDefinition newCheckDefinition = createNewCheckDefinition();
 
         AlertDefinition alertDefinition = alertGenerator.generate();
         alertDefinition.setCheckDefinitionId(newCheckDefinition.getId());
@@ -397,8 +393,7 @@ public class AlertServiceImplIT extends AbstractServiceIntegrationTest {
 
     @Test
     public void testAllAlertDefinitionsDiff() throws Exception {
-        final CheckDefinition newCheckDefinition = service.createOrUpdateCheckDefinition(
-                checkImportGenerator.generate());
+        final CheckDefinition newCheckDefinition = createNewCheckDefinition();
 
         final AlertDefinition genAlertDefinition = alertGenerator.generate();
         genAlertDefinition.setCheckDefinitionId(newCheckDefinition.getId());
@@ -419,8 +414,7 @@ public class AlertServiceImplIT extends AbstractServiceIntegrationTest {
 
     @Test
     public void testLastAlertDefinitionsDiff() throws Exception {
-        final CheckDefinition newCheckDefinition = service.createOrUpdateCheckDefinition(
-                checkImportGenerator.generate());
+        final CheckDefinition newCheckDefinition = createNewCheckDefinition();
 
         final AlertDefinition genAlertDefinition = alertGenerator.generate();
         genAlertDefinition.setCheckDefinitionId(newCheckDefinition.getId());
@@ -439,8 +433,7 @@ public class AlertServiceImplIT extends AbstractServiceIntegrationTest {
     @Test
     public void testGetAlertDefinitionsByTeam() throws Exception {
 
-        final CheckDefinition newCheckDefinition = service.createOrUpdateCheckDefinition(
-                checkImportGenerator.generate());
+        final CheckDefinition newCheckDefinition = createNewCheckDefinition();
 
         AlertDefinition genAlertDefinition0 = alertGenerator.generate();
         genAlertDefinition0.setCheckDefinitionId(newCheckDefinition.getId());
@@ -466,8 +459,7 @@ public class AlertServiceImplIT extends AbstractServiceIntegrationTest {
     @Test
     public void testGetAlertDefinitionsByResponsibleTeam() throws Exception {
 
-        final CheckDefinition newCheckDefinition = service.createOrUpdateCheckDefinition(
-                checkImportGenerator.generate());
+        final CheckDefinition newCheckDefinition = createNewCheckDefinition();
 
         AlertDefinition genAlertDefinition0 = alertGenerator.generate();
         genAlertDefinition0.setCheckDefinitionId(newCheckDefinition.getId());
@@ -493,8 +485,7 @@ public class AlertServiceImplIT extends AbstractServiceIntegrationTest {
     @Test
     public void testGetAlertDefinitionsByNonExistingTeam() throws Exception {
 
-        final CheckDefinition newCheckDefinition = service.createOrUpdateCheckDefinition(
-                checkImportGenerator.generate());
+        final CheckDefinition newCheckDefinition = createNewCheckDefinition();
 
         final AlertDefinition genAlertDefinition0 = alertGenerator.generate();
         genAlertDefinition0.setCheckDefinitionId(newCheckDefinition.getId());
@@ -510,8 +501,7 @@ public class AlertServiceImplIT extends AbstractServiceIntegrationTest {
 
     @Test
     public void testAddComment() throws Exception {
-        final CheckDefinition newCheckDefinition = service.createOrUpdateCheckDefinition(
-                checkImportGenerator.generate());
+        final CheckDefinition newCheckDefinition = createNewCheckDefinition();
 
         AlertDefinition alertDefinition = alertGenerator.generate();
         alertDefinition.setCheckDefinitionId(newCheckDefinition.getId());
@@ -543,8 +533,7 @@ public class AlertServiceImplIT extends AbstractServiceIntegrationTest {
 
     @Test
     public void testGetComment() throws Exception {
-        final CheckDefinition newCheckDefinition = service.createOrUpdateCheckDefinition(
-                checkImportGenerator.generate());
+        final CheckDefinition newCheckDefinition = createNewCheckDefinition();
 
         AlertDefinition alertDefinition = alertGenerator.generate();
         alertDefinition.setCheckDefinitionId(newCheckDefinition.getId());
@@ -563,8 +552,7 @@ public class AlertServiceImplIT extends AbstractServiceIntegrationTest {
 
     @Test
     public void testCommentPagination() throws Exception {
-        final CheckDefinition newCheckDefinition = service.createOrUpdateCheckDefinition(
-                checkImportGenerator.generate());
+        final CheckDefinition newCheckDefinition = createNewCheckDefinition();
 
         AlertDefinition alertDefinition = alertGenerator.generate();
         alertDefinition.setCheckDefinitionId(newCheckDefinition.getId());
@@ -591,8 +579,7 @@ public class AlertServiceImplIT extends AbstractServiceIntegrationTest {
     @Test
     public void testDeleteExistingComment() throws Exception {
 
-        final CheckDefinition newCheckDefinition = service.createOrUpdateCheckDefinition(
-                checkImportGenerator.generate());
+        final CheckDefinition newCheckDefinition = createNewCheckDefinition();
 
         AlertDefinition alertDefinition = alertGenerator.generate();
         alertDefinition.setCheckDefinitionId(newCheckDefinition.getId());
@@ -616,8 +603,7 @@ public class AlertServiceImplIT extends AbstractServiceIntegrationTest {
 
     @Test
     public void testGetMultipleTags() throws Exception {
-        final CheckDefinition newCheckDefinition = service.createOrUpdateCheckDefinition(
-                checkImportGenerator.generate());
+        final CheckDefinition newCheckDefinition = createNewCheckDefinition();
 
         AlertDefinition alertDefinition = alertGenerator.generate();
         alertDefinition.setCheckDefinitionId(newCheckDefinition.getId());
@@ -628,8 +614,7 @@ public class AlertServiceImplIT extends AbstractServiceIntegrationTest {
 
     @Test
     public void testGetEmptyTags() throws Exception {
-        final CheckDefinition newCheckDefinition = service.createOrUpdateCheckDefinition(
-                checkImportGenerator.generate());
+        final CheckDefinition newCheckDefinition = createNewCheckDefinition();
 
         final AlertDefinition alertDefinition = alertGenerator.generate();
         alertDefinition.setTags(Collections.<String>emptyList());

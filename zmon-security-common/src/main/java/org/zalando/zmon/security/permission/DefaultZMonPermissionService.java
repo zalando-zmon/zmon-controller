@@ -220,8 +220,11 @@ public class DefaultZMonPermissionService {
         }
     }
 
-    // bad name but every admin is also user for now
     public boolean hasUserAuthority() {
         return getUserAuthorities().stream().anyMatch(x -> x instanceof ZMonUserAuthority || x instanceof ZMonAdminAuthority);
+    }
+
+    public boolean hasAdminAuthority() {
+        return getUserAuthorities().stream().anyMatch(x -> x instanceof ZMonAdminAuthority);
     }
 }
