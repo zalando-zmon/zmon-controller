@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.zalando.zmon.persistence.QuickSearchResultItem;
 import org.zalando.zmon.persistence.QuickSearchSprocService;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -28,20 +30,25 @@ public class SearchAPI {
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public ResponseEntity<QuickSearchResult> search(@RequestParam(name = "query", defaultValue = "") String search, @RequestParam(required = false, name = "team") List<String> teams, @RequestParam(name = "limit", defaultValue = "25") int limit) {
+    public ResponseEntity<QuickSearchResult> search(@RequestParam(name = "query", defaultValue = "") String search, @RequestParam(required = false, name = "teams") String teams, @RequestParam(name = "limit", defaultValue = "25") int limit) {
         QuickSearchResult result = new QuickSearchResult();
 
-        List<QuickSearchResultItem> alerts = searchService.quickSearchAlerts(search, teams, limit);
+        List<String> teamList = Arrays.asList();
+        if (null != teams && !"".equals(teams) && !"null".equals(teams)) {
+            teamList = Arrays.asList(teams.split(","));
+        }
+
+        List<QuickSearchResultItem> alerts = searchService.quickSearchAlerts(search, teamList, limit);
         result.put("alerts", alerts);
 
-        List<QuickSearchResultItem> checks = searchService.quickSearchChecks(search, teams, limit);
+        List<QuickSearchResultItem> checks = searchService.quickSearchChecks(search, teamList, limit);
         result.put("checks", checks);
 
-        List<QuickSearchResultItem> dashboards = searchService.quickSearchDashboards(search, teams, limit);
+        List<QuickSearchResultItem> dashboards = searchService.quickSearchDashboards(search, teamList, limit);
         result.put("dashboards", dashboards);
 
-        List<QuickSearchResultItem> grafanaDashboards = searchService.quickSearchGrafanaDashboards(search, teams, limit);
-        result.put("grafana-dashboards", grafanaDashboards);
+        List<QuickSearchResultItem> grafanaDashboards = searchService.quickSearchGrafanaDashboards(search, teamList, limit);
+        result.put("grafana_dashboards", grafanaDashboards);
 
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
