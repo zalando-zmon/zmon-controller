@@ -34,7 +34,7 @@ public class SearchAPI {
         QuickSearchResult result = new QuickSearchResult();
 
         List<String> teamList = Arrays.asList();
-        if (null != teams && !"".equals(teams)) {
+        if (null != teams && !"".equals(teams) && !"null".equals(teams)) {
             teamList = Arrays.asList(teams.split(","));
         }
 
