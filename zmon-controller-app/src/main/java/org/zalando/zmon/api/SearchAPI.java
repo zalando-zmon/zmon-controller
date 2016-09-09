@@ -48,7 +48,7 @@ public class SearchAPI {
         result.put("dashboards", dashboards);
 
         List<QuickSearchResultItem> grafanaDashboards = searchService.quickSearchGrafanaDashboards(search, teamList, limit);
-        result.put("grafana-dashboards", grafanaDashboards);
+        result.put("grafana_dashboards", grafanaDashboards);
 
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
