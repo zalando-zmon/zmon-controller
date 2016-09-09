@@ -33,7 +33,8 @@ public class SearchAPI {
     public ResponseEntity<QuickSearchResult> search(@RequestParam(name = "query", defaultValue = "") String search, @RequestParam(required = false, name = "teams") String teams, @RequestParam(name = "limit", defaultValue = "25") int limit) {
         QuickSearchResult result = new QuickSearchResult();
 
-        List<String> teamList = Arrays.asList();
+        // null has special meaning in sproc -> "do not filter by team"
+        List<String> teamList = null;
         if (null != teams && !"".equals(teams) && !"null".equals(teams)) {
             teamList = Arrays.asList(teams.split(","));
         }
