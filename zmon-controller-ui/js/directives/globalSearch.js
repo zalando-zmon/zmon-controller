@@ -11,8 +11,8 @@ angular.module('zmon2App').directive('globalSearch', [ '$timeout', 'Communicatio
 
             scope.$watch('query', function(query) {
                 if (query) {
-                    var team = scope.filterByTeam ? UserInfoService.get().teams.split(',')[0] : null;
-                    CommunicationService.search(query, team).then(function(response) {
+                    var teams = scope.filterByTeam ? UserInfoService.get().teams : null;
+                    CommunicationService.search(query, teams).then(function(response) {
                         scope.data = response;
                     });
                 }
