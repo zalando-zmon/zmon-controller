@@ -574,9 +574,11 @@ angular.module('zmon2App').factory('CommunicationService', ['$http', '$q', '$log
         service.search = function(query, teams) {
             PreconditionsService.isNotEmpty(query);
             var params = {
-                query: query,
-                teams: teams
+                query: query
             };
+            if (teams) {
+                params.teams = teams;
+            }
             return doHttpCall("GET", "rest/search", params);
         };
 
