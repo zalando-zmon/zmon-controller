@@ -251,9 +251,11 @@
 
             // global search key bindings
             $scope.keyDown = function(e) {
-                // toggle globalSearch on Alt
-                if (e.keyCode === 18) {
+                // toggle globalSearch on CTRL+S
+                if (e.keyCode === 83 && e.ctrlKey) {
                     $scope.globalSearchVisible = !$scope.globalSearchVisible;
+                    e.stopPropagation();
+                    e.preventDefault();
                 }
                 // close on Esc
                 if (e.keyCode === 27) {
