@@ -109,6 +109,9 @@
                             <i class="fa fa-fw fa-area-chart fa-lg"></i>
                         </a>
                     </span>
+                    <span class="app-status">
+                        <i class="fa fa-fw fa-search clickable" ng-click="globalSearchVisible = !globalSearchVisible" ng-class="{'active':globalSearchVisible}"></i>
+                    </span>
                     <span sec:authorize="isAnonymous()" class="auth">
                         <a class="auth-action" ng-href="/signin">Log in</a>
                     </span>
@@ -131,17 +134,16 @@
                             <li><a href="logout" data-test="logout" th:href="@{/logout}">Logout</a></li>
                         </ul>
                    </span>
-                   <span>
-                       <i class="fa fa-fw fa-search clickable" ng-click="globalSearchVisible = !globalSearchVisible" ng-class="{'active':globalSearchVisible}"></i>
-                   </span>
                 </div>
             </div>
         </div>
     </nav>
 
-    <div id="main" ng-view></div>
-
     <global-search visible="globalSearchVisible"></global-search>
+
+    <div class="main-wrapper" ng-class="{'globalSearchVisible':globalSearchVisible}">
+        <div id="main" ng-view></div>
+    </div>
 
     <div id="message-manager-wrapper">
         <span class="message"></span>

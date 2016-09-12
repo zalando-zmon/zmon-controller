@@ -1,6 +1,18 @@
+html, body
+{
+    height: 100%;
+}
+
+.main-wrapper.globalSearchVisible
+{
+    float: left;
+    width: 75%;
+}
+
 .navbar
 {
     z-index: 5;
+    margin-bottom: 0;
 }
 
 .navbar-brand
@@ -34,11 +46,6 @@
     color: #fff;
 }
 
-.navbar i.fa-search
-{
-    margin-left: 10px;
-}
-
 @media (max-width: 990px)
 {
     .navbar-text
@@ -54,9 +61,17 @@
         width: 100% !important;
     }
 
-    .global-search ul
+    .main-wrapper
     {
-        width: 100%;
+        width: 100% !important;
+    }
+
+    .global-search
+    {
+        float: initial !important;
+        width: 100% !important;
+        max-height: 60% !important;
+        height: initial !important;
     }
 }
 
@@ -1182,34 +1197,29 @@ body.entities-page .type-col {
 
 .global-search
 {
-    position:absolute;
-    right: 0;
     background: #262626;
-    top: 52px;
     padding: 10px;
-    min-height: 80px;
-    bottom: 0;
-    border-left: 1px solid black;
     color: #eee;
-    z-index: 4;
+    float: right;
+    width: 25%;
+    border-left: 1px solid black;
+    margin-top: -52px;
+    padding-top: 65px;
+    height: 100%;
+    overflow: hidden;
 }
 
 .global-search i.fa-users
 {
-    line-height: 38px;
     color: #999;
     font-size: 18px;
+    display: table-cell;
+    padding-left: 15px;
 }
 
 .global-search ul
 {
-    position:absolute;
-    bottom: 0;
-    top: 45px;
-    left: 0;
-    overflow-y:auto;
-    overflow-x:hidden;
-    white-space:nowrap;
+    margin-top: 10px;
 }
 
 .global-search ul li
@@ -1219,9 +1229,23 @@ body.entities-page .type-col {
     margin-bottom: 5px;
 }
 
+.global-search ul li.no-results
+{
+    background: none;
+    margin-top: 10px;
+    margin-left: 15px;
+    color: #999;
+    font-style: italic;
+}
+
 .global-search ul li:hover
 {
     background: #464646;
+}
+
+.global-search ul li.no-results:hover
+{
+    background: none;
 }
 
 .global-search ul li a

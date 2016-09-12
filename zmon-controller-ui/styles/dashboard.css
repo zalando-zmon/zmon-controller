@@ -3,11 +3,6 @@ body.dashboard
     background: #323232;
 }
 
-.dashboard .navbar
-{
-    margin-bottom: 15px;
-}
-
 .dashboard button.btn, .auth button.auth-user
 {
     background: #222222;
