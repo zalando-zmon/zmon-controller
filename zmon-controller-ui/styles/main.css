@@ -1209,12 +1209,19 @@ body.entities-page .type-col {
     overflow: hidden;
 }
 
-.global-search i.fa-users
+.global-search button.users
 {
     color: #999;
     font-size: 18px;
     display: table-cell;
     padding-left: 15px;
+    border: none;
+    background: none;
+}
+
+.global-search button.users.active
+{
+    color: #fff;
 }
 
 .global-search ul
@@ -1305,9 +1312,4 @@ body.entities-page .type-col {
 .global-search .tag.grafana
 {
     color: #ff4000;
-}
-
-.global-search i.fa-users.active
-{
-    color: #fff;
 }

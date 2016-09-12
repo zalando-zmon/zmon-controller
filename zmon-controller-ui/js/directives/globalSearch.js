@@ -7,12 +7,12 @@ angular.module('zmon2App').directive('globalSearch', [ '$timeout', 'Communicatio
         },
         link: function(scope, elem, attrs) {
             scope.data = [];
-            scope.filterByTeam = true;
+            scope.teams = UserInfoService.get().teams;
+            scope.filterByTeam = !!scope.teams.length;      // init as enabled only if user has teams
 
-            scope.$watch('query', function(query) {
-                if (query) {
-                    var teams = scope.filterByTeam ? UserInfoService.get().teams : null;
-                    CommunicationService.search(query, teams).then(function(response) {
+            scope.$watch('[query, filterByTeam]', function() {
+                if (scope.query) {
+                    CommunicationService.search(scope.query, scope.teams).then(function(response) {
                         scope.data = response;
                     });
                 }

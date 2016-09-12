@@ -6,7 +6,11 @@
             </button>
         </div>
         <input type="text" class="form-control" ng-model="query" placeholder="what are you looking for?"/>
-        <i class="fa fa-fw fa-users" title="Display results that belong to your team only" ng-class="{'active':filterByTeam}" ng-click="filterByTeam = !filterByTeam"></i>
+        <div class="input-group-btn">
+            <button class="users" title="Display results that belong to your team only" ng-click="filterByTeam = !filterByTeam" ng-class="{'active':filterByTeam}" ng-disabled="!teams">
+                <i class="fa fa-fw fa-users"></i>
+            </button>
+        </div>
     </div>
     <ul class="list-unstyled">
         <li ng-if="query.length" ng-repeat="item in data.alerts | orderBy:['id', 'title']">
