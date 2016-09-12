@@ -1,8 +1,9 @@
 package org.zalando.zmon.security.service;
 
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-
 import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
@@ -13,6 +14,8 @@ import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.OAuth2Request;
 import org.springframework.security.oauth2.provider.token.ResourceServerTokenServices;
 import org.zalando.zmon.security.AuthorityService;
+import org.zalando.zmon.security.authority.ZMonAdminAuthority;
+import org.zalando.zmon.security.authority.ZMonUserAuthority;
 
 import java.util.Collection;
 import java.util.Map;
@@ -47,7 +50,22 @@ public class PresharedTokensResourceServerTokenServices implements ResourceServe
             throw new InvalidTokenException("Pre-shared token expired");
         }
 
-        Collection<? extends GrantedAuthority> authorities = authorityService.getAuthorities(uid);
+        Collection<? extends GrantedAuthority> authorities;
+
+        // allow overwritting the authority of the preshared token UID
+        final String authority = environment.getProperty(String.format("preshared_tokens.%s.authority", accessToken));
+
+        if (authority != null) {
+            // we don't know what team to assign.. => empty list
+            ImmutableSet<String> teams = ImmutableSet.of();
+            if (authority.toUpperCase().contains("ADMIN")) {
+                authorities = Lists.newArrayList(new ZMonAdminAuthority(uid, teams));
+            } else {
+                authorities = Lists.newArrayList(new ZMonUserAuthority(uid, teams));
+            }
+        } else {
+            authorities = authorityService.getAuthorities(uid);
+        }
 
         UsernamePasswordAuthenticationToken user = new UsernamePasswordAuthenticationToken(uid, "N/A", authorities);
         final Set scopes = Sets.newHashSet("uid");
