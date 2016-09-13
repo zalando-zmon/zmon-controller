@@ -12,14 +12,20 @@ angular.module('zmon2App').directive('globalSearch', [ '$timeout', 'Communicatio
 
             scope.$on('keydown', function(msg, obj) {
 
+                var focusedElement = $('.global-search ul li')[scope.focusIndex];
+
+                if (obj.code === 13 && focusedElement) {
+                    return $('.global-search ul li.highlight a').click();
+                }
+
                 if (obj.code === 38 && scope.focusIndex > 0) {
                     scope.focusIndex--;
-                }
-                if (obj.code === 40 && scope.focusIndex < scope.data.length - 1) {
+                } else if (obj.code === 40 && scope.focusIndex < scope.data.length - 1) {
                     scope.focusIndex++;
                 }
 
-                var focusedElement = $('.global-search ul li')[scope.focusIndex];
+                focusedElement = $('.global-search ul li')[scope.focusIndex];
+
                 if (focusedElement) {
                     focusedElement.scrollIntoView();
                 }
