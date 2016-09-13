@@ -5,7 +5,7 @@
                 <i class="fa fa-fw fa-search"></i>
             </button>
         </div>
-        <input id="search-input" type="text" class="form-control" ng-model="query" placeholder="what are you looking for?"/>
+        <input id="search-input" type="text" class="form-control" ng-model="query" placeholder="what are you looking for?" ng-model-options="{debounce:500}" />
         <div class="input-group-btn">
             <button class="users" title="Display results that belong to your team only" ng-click="filterByTeam = !filterByTeam" ng-class="{'active':filterByTeam}" ng-disabled="!teams">
                 <i class="fa fa-fw fa-users"></i>
