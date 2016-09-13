@@ -6,14 +6,37 @@ angular.module('zmon2App').directive('globalSearch', [ '$timeout', 'Communicatio
             visible: '='
         },
         link: function(scope, elem, attrs) {
-            scope.data = [];
             scope.teams = UserInfoService.get().teams;
             scope.filterByTeam = !!scope.teams.length;      // init as enabled only if user has teams
+            scope.focusIndex = 0;
+
+            scope.$on('keydown', function(msg, obj) {
+
+                if (obj.code === 38 && scope.focusIndex > 0) {
+                    scope.focusIndex--;
+                }
+                if (obj.code === 40 && scope.focusIndex < scope.data.length - 1) {
+                    scope.focusIndex++;
+                }
+
+                var focusedElement = $('.global-search ul li')[scope.focusIndex];
+                if (focusedElement) {
+                    focusedElement.scrollIntoView();
+                }
+
+                scope.$apply();
+            });
 
             scope.$watch('[query, filterByTeam]', function() {
                 if (scope.query) {
                     CommunicationService.search(scope.query, scope.teams).then(function(response) {
-                        scope.data = response;
+                        scope.data = [];
+                        _.map(response, function(arr, key) {
+                            _.each(arr, function(a) {
+                                a.type = key;
+                            });
+                            scope.data = scope.data.concat(arr);
+                        }, []);
                     });
                 }
             });

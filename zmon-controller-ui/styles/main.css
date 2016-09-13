@@ -1252,6 +1252,7 @@ body.entities-page .type-col {
     font-style: italic;
 }
 
+.global-search .highlight,
 .global-search ul li:hover
 {
     background: #464646;

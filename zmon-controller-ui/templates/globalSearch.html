@@ -1,11 +1,11 @@
-<div id="search" class="global-search" ng-show="visible">
+<div id="search" class="global-search" ng-show="visible" key-trap>
     <div class="input-group col-md-12">
         <div class="input-group-btn">
             <button class="btn btn-primary" title="global search">
                 <i class="fa fa-fw fa-search"></i>
             </button>
         </div>
-        <input type="text" class="form-control" ng-model="query" placeholder="what are you looking for?"/>
+        <input id="search-input" type="text" class="form-control" ng-model="query" placeholder="what are you looking for?"/>
         <div class="input-group-btn">
             <button class="users" title="Display results that belong to your team only" ng-click="filterByTeam = !filterByTeam" ng-class="{'active':filterByTeam}" ng-disabled="!teams">
                 <i class="fa fa-fw fa-users"></i>
@@ -13,31 +13,25 @@
         </div>
     </div>
     <ul class="list-unstyled">
-        <li ng-if="query.length" ng-repeat="item in data.alerts | orderBy:['id', 'title']">
-            <a href="/#/alert-details/{{item.id}}">
+        <li ng-if="query.length" ng-repeat="item in data | orderBy:['type', 'id', 'title']" ng-class="{'highlight': $index == focusIndex }">
+            <a href="/#/alert-details/{{item.id}}" ng-if="item.type === 'alerts'">
                 <span class="tag alert" title="Alert {{item.id}}">{{item.id}}</span>
                 <div class="title ellipsis">{{item.title}}</div>
             </a>
-        </li>
-        <li ng-if="query.length" ng-repeat="item in data.checks | orderBy:['id', 'title']">
-            <a href="/#/check-definitions/view/{{item.id}}">
+            <a href="/#/check-definitions/view/{{item.id}}" ng-if="item.type === 'checks'">
                 <span class="tag check" title="Check {{item.id}}">{{item.id}}</span>
                 <div class="title ellipsis">{{item.title}}</div>
             </a>
-        </li>
-        <li ng-if="query.length" ng-repeat="item in data.dashboards | orderBy:['id', 'title']">
-            <a href="/#/dashboards/view/{{item.id}}">
+            <a href="/#/dashboards/view/{{item.id}}" ng-if="item.type === 'dashboards'">
                 <span class="tag dashboard" title="Dashboard {{item.id}}">{{item.id}}</span>
                 <div class="title ellipsis">{{item.title}}</div>
             </a>
-        </li>
-        <li ng-if="query.length" ng-repeat="item in data.grafana_dashboards | orderBy:['id', 'title']">
-            <a href="/grafana/dashboard/db/{{item.id}}">
+            <a href="/grafana/dashboard/db/{{item.id}}" ng-if="item.type === 'grafana_dashboards'">
                 <span class="tag grafana" title="Grafana Dashboard {{item.id}}">{{item.id}}</span>
                 <div class="title ellipsis">{{item.title}}</div>
             </a>
         </li>
-        <li class="no-results" ng-if="!query.length || (!data.alerts.length && !data.checks.length && !data.dashboards.length && !data.grafana_dashboards.length)">
+        <li class="no-results" ng-if="!query.length || !data.length">
             <div>No results...</div>
         </li>
     </ul>
