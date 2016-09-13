@@ -7,6 +7,7 @@ angular.module('zmon2App').directive('globalSearch', [ '$timeout', 'Communicatio
         },
         link: function(scope, elem, attrs) {
             scope.teams = UserInfoService.get().teams;
+
             scope.filterByTeam = !!scope.teams.length;      // init as enabled only if user has teams
             scope.focusIndex = 0;
 
@@ -35,7 +36,8 @@ angular.module('zmon2App').directive('globalSearch', [ '$timeout', 'Communicatio
 
             scope.$watch('[query, filterByTeam]', function() {
                 if (scope.query) {
-                    CommunicationService.search(scope.query, scope.teams).then(function(response) {
+                    var teams = scope.filterByTeam ? scope.teams : null;
+                    CommunicationService.search(scope.query, teams).then(function(response) {
                         scope.data = [];
                         _.map(response, function(arr, key) {
                             _.each(arr, function(a) {
