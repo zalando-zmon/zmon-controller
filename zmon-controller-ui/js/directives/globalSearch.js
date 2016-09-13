@@ -6,14 +6,45 @@ angular.module('zmon2App').directive('globalSearch', [ '$timeout', 'Communicatio
             visible: '='
         },
         link: function(scope, elem, attrs) {
-            scope.data = [];
-            scope.filterByTeam = true;
+            scope.teams = UserInfoService.get().teams;
 
-            scope.$watch('query', function(query) {
-                if (query) {
-                    var teams = scope.filterByTeam ? UserInfoService.get().teams : null;
-                    CommunicationService.search(query, teams).then(function(response) {
-                        scope.data = response;
+            scope.filterByTeam = !!scope.teams.length;      // init as enabled only if user has teams
+            scope.focusIndex = 0;
+
+            scope.$on('keydown', function(msg, obj) {
+
+                var focusedElement = $('.global-search ul li')[scope.focusIndex];
+
+                if (obj.code === 13 && focusedElement) {
+                    return $('.global-search ul li.highlight a').click();
+                }
+
+                if (obj.code === 38 && scope.focusIndex > 0) {
+                    scope.focusIndex--;
+                } else if (obj.code === 40 && scope.focusIndex < scope.data.length - 1) {
+                    scope.focusIndex++;
+                }
+
+                focusedElement = $('.global-search ul li')[scope.focusIndex];
+
+                if (focusedElement) {
+                    focusedElement.scrollIntoView();
+                }
+
+                scope.$apply();
+            });
+
+            scope.$watch('[query, filterByTeam]', function() {
+                if (scope.query) {
+                    var teams = scope.filterByTeam ? scope.teams : null;
+                    CommunicationService.search(scope.query, teams).then(function(response) {
+                        scope.data = [];
+                        _.map(response, function(arr, key) {
+                            _.each(arr, function(a) {
+                                a.type = key;
+                            });
+                            scope.data = scope.data.concat(arr);
+                        }, []);
                     });
                 }
             });
