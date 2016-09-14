@@ -7,7 +7,6 @@ angular.module('zmon2App').directive('globalSearch', [ '$timeout', 'Communicatio
         },
         link: function(scope, elem, attrs) {
             scope.teams = UserInfoService.get().teams;
-            scope.teams = 'STUPS,Eagle Eye,Platform';
             scope.filterByTeam = !!scope.teams.length;      // init as enabled only if user has teams
             scope.focusIndex = 0;
 
