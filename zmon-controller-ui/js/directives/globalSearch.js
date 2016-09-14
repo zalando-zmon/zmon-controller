@@ -7,11 +7,28 @@ angular.module('zmon2App').directive('globalSearch', [ '$timeout', 'Communicatio
         },
         link: function(scope, elem, attrs) {
             scope.teams = UserInfoService.get().teams;
-
+            scope.teams = 'STUPS,Eagle Eye,Platform';
             scope.filterByTeam = !!scope.teams.length;      // init as enabled only if user has teams
             scope.focusIndex = 0;
 
+            var fetchData = function() {
+                var teams = scope.filterByTeam ? scope.teams : null;
+                CommunicationService.search(scope.query, teams).then(function(response) {
+                    scope.data = [];
+                    _.map(response, function(arr, key) {
+                        _.each(arr, function(a) {
+                            a.type = key;
+                        });
+                        scope.data = scope.data.concat(arr);
+                    }, []);
+                });
+            };
+
             scope.$on('keydown', function(msg, obj) {
+
+                if (obj.code !== 13 && obj.code !== 38 && obj.code !== 40) {
+                    return;
+                }
 
                 var focusedElement = $('.global-search ul li')[scope.focusIndex];
 
@@ -34,20 +51,16 @@ angular.module('zmon2App').directive('globalSearch', [ '$timeout', 'Communicatio
                 scope.$apply();
             });
 
-            scope.$watch('[query, filterByTeam]', function() {
+            scope.$watch('query', function() {
                 if (scope.query) {
-                    var teams = scope.filterByTeam ? scope.teams : null;
-                    CommunicationService.search(scope.query, teams).then(function(response) {
-                        scope.data = [];
-                        _.map(response, function(arr, key) {
-                            _.each(arr, function(a) {
-                                a.type = key;
-                            });
-                            scope.data = scope.data.concat(arr);
-                        }, []);
-                    });
+                    fetchData();
                 }
             });
+
+            scope.toggleTeamFilter = function() {
+                scope.filterByTeam = !scope.filterByTeam;
+                fetchData();
+            };
 
             // focus input field on open
             scope.$watch('visible', function(v) {
