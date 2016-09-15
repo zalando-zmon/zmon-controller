@@ -63,6 +63,13 @@ angular.module('zmon2App').directive('chart', [ '$timeout', '$window', function(
                 options = _.extend(options, scope.options);
             }
 
+            var onResize = function() {
+                if (scope.data && scope.data.length && elem.height()) {
+                    lastData = scope.data;
+                    chart = $.plot(elem, scope.data, options);
+                }
+            };
+
             scope.$watch('data', function(newData) {
                 // If all entities that threw an alert have non-plottable data, then newData=[] (see MainAlertService.transformResultsToChartData())
                 if (newData && newData.length) {
@@ -126,11 +133,10 @@ angular.module('zmon2App').directive('chart', [ '$timeout', '$window', function(
                 chart = $.plot(elem, scope.data, options);
             });
 
-            angular.element($window).bind('resize', function() {
-                if (scope.data && scope.data.length && elem.height()) {
-                    lastData = scope.data;
-                    chart = $.plot(elem, scope.data, options);
-                }
+            scope.$watch(function () {
+                return [elem[0].offsetWidth, elem[0].offsetHeight].join('x');
+            }, function (value) {
+                onResize();
             });
         }
     };
