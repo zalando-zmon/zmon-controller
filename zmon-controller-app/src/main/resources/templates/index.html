@@ -110,7 +110,9 @@
                         </a>
                     </span>
                     <span class="app-status">
-                        <i class="fa fa-fw fa-search clickable" ng-click="globalSearchVisible = !globalSearchVisible" ng-class="{'active':globalSearchVisible}"></i>
+                        <a title="Global Search">
+                            <i class="fa fa-fw fa-search clickable" ng-click="globalSearchVisible = !globalSearchVisible" ng-class="{'active':globalSearchVisible}"></i>
+                        </a>
                     </span>
                     <span sec:authorize="isAnonymous()" class="auth">
                         <a class="auth-action" ng-href="/signin">Log in</a>
