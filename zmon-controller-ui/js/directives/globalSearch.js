@@ -1,4 +1,4 @@
-angular.module('zmon2App').directive('globalSearch', [ '$timeout', 'CommunicationService', 'UserInfoService', function($timeout, CommunicationService, UserInfoService) {
+angular.module('zmon2App').directive('globalSearch', [ '$timeout', 'CommunicationService', 'localStorageService', 'UserInfoService', function($timeout, CommunicationService, localStorageService, UserInfoService) {
     return {
         restrict: 'E',
         templateUrl: 'templates/globalSearch.html',
@@ -7,8 +7,13 @@ angular.module('zmon2App').directive('globalSearch', [ '$timeout', 'Communicatio
         },
         link: function(scope, elem, attrs) {
             scope.teams = UserInfoService.get().teams;
-            scope.filterByTeam = !!scope.teams.length;      // init as enabled only if user has teams
             scope.focusIndex = 0;
+
+            // get state from Local Storage and intiialize; Team Filter is disabled unless user belongs to teams
+            scope.ls = localStorageService.get('globalSearch') || {};
+            scope.filterByTeam = typeof scope.ls.filterByTeam !== 'undefined' ? scope.ls.filterByTeam : !!scope.teams.length;
+            scope.visible = scope.ls.visible;
+            scope.query = scope.ls.query || '';
 
             var fetchData = function() {
                 var teams = scope.filterByTeam ? scope.teams : null;
@@ -51,6 +56,7 @@ angular.module('zmon2App').directive('globalSearch', [ '$timeout', 'Communicatio
             });
 
             scope.$watch('query', function() {
+                scope.ls.query = scope.query;
                 if (scope.query) {
                     fetchData();
                 }
@@ -58,17 +64,23 @@ angular.module('zmon2App').directive('globalSearch', [ '$timeout', 'Communicatio
 
             scope.toggleTeamFilter = function() {
                 scope.filterByTeam = !scope.filterByTeam;
+                scope.ls.filterByTeam = scope.filterByTeam;
                 fetchData();
             };
 
             // focus input field on open
             scope.$watch('visible', function(v) {
+                scope.ls.visible = v;
                 if (v === true) {
                     $timeout(function() {
                         elem.find('input').focus();
                     });
                 }
             });
+
+            scope.$watch('ls', function() {
+                localStorageService.set('globalSearch', scope.ls);
+            }, true);
         }
     };
 }]);
