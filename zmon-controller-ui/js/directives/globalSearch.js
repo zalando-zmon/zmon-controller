@@ -37,7 +37,11 @@ angular.module('zmon2App').directive('globalSearch', [ '$timeout', 'Communicatio
                 var focusedElement = $('.global-search ul li')[scope.focusIndex];
 
                 if (obj.code === 13 && focusedElement) {
-                    return $('.global-search ul li.highlight a').click();
+                    var link = $('.global-search ul li.highlight a');
+                    if (link.length) {
+                        window.location = link[0].href;
+                    }
+                    return;
                 }
 
                 if (obj.code === 38 && scope.focusIndex > 0) {
