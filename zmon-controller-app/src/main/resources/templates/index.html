@@ -257,8 +257,8 @@
             // global search key bindings
             $scope.keyDown = function(e) {
                 // toggle globalSearch on CTRL+S
-                if (e.keyCode === 83 && e.ctrlKey) {
-                    $scope.globalSearchVisible = !$scope.globalSearchVisible;
+                if (e.keyCode === 191 && document.activeElement.nodeName === "BODY") {
+                    $scope.globalSearchVisible = true;
                     e.stopPropagation();
                     e.preventDefault();
                 }
