@@ -60,7 +60,7 @@
     <script th:src="${staticUrl} + '/lib/angular-ui-select/select.min.js?t=@buildTime@'" chartset="utf-8"></script>
 
 </head>
-<body ng-class="activePage" ng-keydown="keyDown($event)">
+<body ng-class="activePage" ng-keypress="keypress($event)" ng-keydown="keydown($event)">
     <div class="loading-indicator" ng-show="IndexCtrl.getLoadingIndicatorState()">
         Loading...
     </div>
@@ -109,6 +109,11 @@
                             <i class="fa fa-fw fa-area-chart fa-lg"></i>
                         </a>
                     </span>
+                    <span class="app-status">
+                        <a title="Global Search">
+                            <i class="fa fa-fw fa-search clickable" ng-click="globalSearchVisible = !globalSearchVisible" ng-class="{'active':globalSearchVisible}"></i>
+                        </a>
+                    </span>
                     <span sec:authorize="isAnonymous()" class="auth">
                         <a class="auth-action" ng-href="/signin">Log in</a>
                     </span>
@@ -131,17 +136,16 @@
                             <li><a href="logout" data-test="logout" th:href="@{/logout}">Logout</a></li>
                         </ul>
                    </span>
-                   <span>
-                       <i class="fa fa-fw fa-search clickable" ng-click="globalSearchVisible = !globalSearchVisible" ng-class="{'active':globalSearchVisible}"></i>
-                   </span>
                 </div>
             </div>
         </div>
     </nav>
 
-    <div id="main" ng-view></div>
-
     <global-search visible="globalSearchVisible"></global-search>
+
+    <div class="main-wrapper" ng-class="{'globalSearchVisible':globalSearchVisible}">
+        <div id="main" ng-view></div>
+    </div>
 
     <div id="message-manager-wrapper">
         <span class="message"></span>
@@ -191,6 +195,7 @@
 <script th:src="${staticUrl} + '/js/directives/alertDeleteModal.js?t=@buildTime@'"></script>
 <script th:src="${staticUrl} + '/js/directives/codeEditorModal.js?t=@buildTime@'"></script>
 <script th:src="${staticUrl} + '/js/directives/globalSearch.js?t=@buildTime@'"></script>
+<script th:src="${staticUrl} + '/js/directives/keytrap.js?t=@buildTime@'"></script>
 <script th:src="${staticUrl} + '/js/services/MainAlertService.js?t=@buildTime@'"></script>
 <script th:src="${staticUrl} + '/js/services/CommunicationService.js?t=@buildTime@'"></script>
 <script th:src="${staticUrl} + '/js/services/FeedbackMessageService.js?t=@buildTime@'"></script>
@@ -215,8 +220,8 @@
 <script th:src="${staticUrl} + '/js/controllers/EntityCtrl.js?t=@buildTime@'"></script>
 
 <script type="text/javascript">
-    angular.module('zmon2App').controller('IndexCtrl', ['$scope', '$location', 'localStorageService', 'MainAlertService', '$interval', 'APP_CONST', 'LoadingIndicatorService', 'UserInfoService',
-        function($scope, $location, localStorageService, MainAlertService, $interval, APP_CONST, LoadingIndicatorService, UserInfoService) {
+    angular.module('zmon2App').controller('IndexCtrl', ['$scope', '$location', '$rootScope', 'localStorageService', 'MainAlertService', '$interval', 'APP_CONST', 'LoadingIndicatorService', 'UserInfoService',
+        function($scope, $location, $rootScope, localStorageService, MainAlertService, $interval, APP_CONST, LoadingIndicatorService, UserInfoService) {
             $scope.IndexCtrl = this;
             $scope.IndexCtrl.activePage = null; // will be set be corresponding controller i.e. from the child $scope
             $scope.statusTooltip = "Loading status...";
@@ -225,6 +230,8 @@
             $scope.checkInvocationsCache = {};
             $scope.userTeamsOnPopover = '(no team)';
             $scope.globalSearchVisible = false;
+
+            $rootScope.globalSearchQuery = '';
 
             this.userInfo = UserInfoService.get();
 
@@ -250,13 +257,17 @@
             });
 
             // global search key bindings
-            $scope.keyDown = function(e) {
-                // toggle globalSearch on CTRL+S
-                if (e.keyCode === 83 && e.ctrlKey) {
-                    $scope.globalSearchVisible = !$scope.globalSearchVisible;
+            $scope.keypress = function(e) {
+                // toggle globalSearch on any key onlye when no element is focused
+                if (document.activeElement.nodeName === "BODY") {
                     e.stopPropagation();
                     e.preventDefault();
+                    $scope.globalSearchVisible = true;
+                    $rootScope.globalSearchQuery = '' + String.fromCharCode(e.which);
                 }
+            };
+
+            $scope.keydown = function(e) {
                 // close on Esc
                 if (e.keyCode === 27) {
                     $scope.globalSearchVisible = false;
@@ -373,7 +384,6 @@
                 localStorageService.set('signinRedirTo', null);
                 return $location.url(signinRedirTo);
             }
-
         }]);
 </script>
 </html>

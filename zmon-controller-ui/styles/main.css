@@ -1,6 +1,18 @@
+html, body
+{
+    height: 100%;
+}
+
+.main-wrapper.globalSearchVisible
+{
+    float: left;
+    width: 75%;
+}
+
 .navbar
 {
     z-index: 5;
+    margin-bottom: 0;
 }
 
 .navbar-brand
@@ -34,11 +46,6 @@
     color: #fff;
 }
 
-.navbar i.fa-search
-{
-    margin-left: 10px;
-}
-
 @media (max-width: 990px)
 {
     .navbar-text
@@ -54,9 +61,15 @@
         width: 100% !important;
     }
 
-    .global-search ul
+    .main-wrapper
     {
-        width: 100%;
+        width: 100% !important;
+    }
+
+    .global-search
+    {
+        float: initial !important;
+        width: 100% !important;
     }
 }
 
@@ -1182,34 +1195,44 @@ body.entities-page .type-col {
 
 .global-search
 {
-    position:absolute;
-    right: 0;
     background: #262626;
-    top: 52px;
     padding: 10px;
-    min-height: 80px;
-    bottom: 0;
-    border-left: 1px solid black;
     color: #eee;
-    z-index: 4;
+    float: right;
+    width: 25%;
+    border-left: 1px solid black;
+    margin-top: -52px;
+    padding-top: 65px;
+    height: 100%;
+    position: relative;
 }
 
-.global-search i.fa-users
+.global-search button.users
 {
-    line-height: 38px;
     color: #999;
     font-size: 18px;
+    display: table-cell;
+    padding-left: 15px;
+    border: none;
+    background: none;
+}
+
+.global-search button.users.active
+{
+    color: #fff;
 }
 
 .global-search ul
 {
-    position:absolute;
-    bottom: 0;
-    top: 45px;
-    left: 0;
-    overflow-y:auto;
-    overflow-x:hidden;
-    white-space:nowrap;
+    margin-top: 10px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    position: absolute;
+    top: 100px;
+    bottom: 10px;
+    left: 10px;
+    right: 10px;
+    white-space: nowrap;
 }
 
 .global-search ul li
@@ -1219,9 +1242,24 @@ body.entities-page .type-col {
     margin-bottom: 5px;
 }
 
+.global-search ul li.no-results
+{
+    background: none;
+    margin-top: 10px;
+    margin-left: 15px;
+    color: #999;
+    font-style: italic;
+}
+
+.global-search .highlight,
 .global-search ul li:hover
 {
     background: #464646;
+}
+
+.global-search ul li.no-results:hover
+{
+    background: none;
 }
 
 .global-search ul li a
@@ -1281,9 +1319,4 @@ body.entities-page .type-col {
 .global-search .tag.grafana
 {
     color: #ff4000;
-}
-
-.global-search i.fa-users.active
-{
-    color: #fff;
 }
