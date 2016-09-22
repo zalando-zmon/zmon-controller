@@ -10,7 +10,7 @@ angular.module('zmon2App').controller('CheckDefinitionEditCtrl', ['$scope', '$ro
         $scope.entityFilterInputMethod = 'text';
 
         var user = UserInfoService.get();
-        $scope.teams = user.teams !== "" ? user.teams.split(',').sort() : [];
+        $scope.teams = user.teams !== "" ? user.teams.split(',') : [];
 
         $scope.entityFilter = {
             "types":
