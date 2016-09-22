@@ -501,7 +501,7 @@ angular.module('zmon2App').controller('AlertDefinitionEditCtrl', ['$scope', '$ro
             if (search && options.indexOf(search) === -1) {
                 options.unshift(search);
             }
-            return options;
+            return options.sort();
         };
 
         // Validate a parameter's name to be a valid python variable name

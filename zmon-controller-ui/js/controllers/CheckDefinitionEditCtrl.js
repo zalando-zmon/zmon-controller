@@ -83,6 +83,17 @@ angular.module('zmon2App').controller('CheckDefinitionEditCtrl', ['$scope', '$ro
             }
         };
 
+        // Used by ui-select in view to return list of teams for Team field dropdown
+        // and allow inserting new values
+        $scope.getItems = function(prop, search) {
+            var teams = _.extend([], $scope.teams);
+            var options = teams.indexOf(prop) === -1 ? teams.concat(prop) : teams; 
+            if (search && options.indexOf(search) === -1) {
+                options.unshift(search);
+            }
+            return options.sort();
+        };
+
         // Get a check definition from the backend
         var getCheckDefinition = function() {
             CommunicationService.getCheckDefinition($scope.checkId).then(
