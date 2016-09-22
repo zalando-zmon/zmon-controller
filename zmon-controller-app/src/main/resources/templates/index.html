@@ -60,7 +60,7 @@
     <script th:src="${staticUrl} + '/lib/angular-ui-select/select.min.js?t=@buildTime@'" chartset="utf-8"></script>
 
 </head>
-<body ng-class="activePage" ng-keydown="keyDown($event)">
+<body ng-class="activePage" ng-keypress="keypress($event)" ng-keydown="keydown($event)">
     <div class="loading-indicator" ng-show="IndexCtrl.getLoadingIndicatorState()">
         Loading...
     </div>
@@ -220,8 +220,8 @@
 <script th:src="${staticUrl} + '/js/controllers/EntityCtrl.js?t=@buildTime@'"></script>
 
 <script type="text/javascript">
-    angular.module('zmon2App').controller('IndexCtrl', ['$scope', '$location', 'localStorageService', 'MainAlertService', '$interval', 'APP_CONST', 'LoadingIndicatorService', 'UserInfoService',
-        function($scope, $location, localStorageService, MainAlertService, $interval, APP_CONST, LoadingIndicatorService, UserInfoService) {
+    angular.module('zmon2App').controller('IndexCtrl', ['$scope', '$location', '$rootScope', 'localStorageService', 'MainAlertService', '$interval', 'APP_CONST', 'LoadingIndicatorService', 'UserInfoService',
+        function($scope, $location, $rootScope, localStorageService, MainAlertService, $interval, APP_CONST, LoadingIndicatorService, UserInfoService) {
             $scope.IndexCtrl = this;
             $scope.IndexCtrl.activePage = null; // will be set be corresponding controller i.e. from the child $scope
             $scope.statusTooltip = "Loading status...";
@@ -230,6 +230,8 @@
             $scope.checkInvocationsCache = {};
             $scope.userTeamsOnPopover = '(no team)';
             $scope.globalSearchVisible = false;
+
+            $rootScope.globalSearchQuery = '';
 
             this.userInfo = UserInfoService.get();
 
@@ -255,13 +257,17 @@
             });
 
             // global search key bindings
-            $scope.keyDown = function(e) {
-                // toggle globalSearch on CTRL+S
-                if (e.keyCode === 191 && document.activeElement.nodeName === "BODY") {
-                    $scope.globalSearchVisible = true;
+            $scope.keypress = function(e) {
+                // toggle globalSearch on any key onlye when no element is focused
+                if (document.activeElement.nodeName === "BODY") {
                     e.stopPropagation();
                     e.preventDefault();
+                    $scope.globalSearchVisible = true;
+                    $rootScope.globalSearchQuery = '' + String.fromCharCode(e.which);
                 }
+            };
+
+            $scope.keydown = function(e) {
                 // close on Esc
                 if (e.keyCode === 27) {
                     $scope.globalSearchVisible = false;
@@ -378,7 +384,6 @@
                 localStorageService.set('signinRedirTo', null);
                 return $location.url(signinRedirTo);
             }
-
         }]);
 </script>
 </html>

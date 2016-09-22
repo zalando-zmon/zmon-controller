@@ -1,4 +1,4 @@
-angular.module('zmon2App').directive('globalSearch', [ '$timeout', 'CommunicationService', 'localStorageService', 'UserInfoService', function($timeout, CommunicationService, localStorageService, UserInfoService) {
+angular.module('zmon2App').directive('globalSearch', [ '$timeout', '$rootScope', 'CommunicationService', 'localStorageService', 'UserInfoService', function($timeout, $rootScope, CommunicationService, localStorageService, UserInfoService) {
     return {
         restrict: 'E',
         templateUrl: 'templates/globalSearch.html',
@@ -30,6 +30,7 @@ angular.module('zmon2App').directive('globalSearch', [ '$timeout', 'Communicatio
 
             scope.$on('keydown', function(msg, obj) {
 
+                // exit unless its up/down arrow keys or enter
                 if (obj.code !== 13 && obj.code !== 38 && obj.code !== 40) {
                     return;
                 }
@@ -59,11 +60,16 @@ angular.module('zmon2App').directive('globalSearch', [ '$timeout', 'Communicatio
                 scope.$apply();
             });
 
-            scope.$watch('query', function() {
+            scope.$watch('query', function(q) {
                 scope.ls.query = scope.query;
+                $rootScope.globalSearchQuery = scope.query;
                 if (scope.query) {
                     fetchData();
                 }
+            });
+
+            $rootScope.$watch('globalSearchQuery', function(query) {
+                scope.query = query;
             });
 
             scope.toggleTeamFilter = function() {
@@ -85,6 +91,7 @@ angular.module('zmon2App').directive('globalSearch', [ '$timeout', 'Communicatio
             scope.$watch('ls', function() {
                 localStorageService.set('globalSearch', scope.ls);
             }, true);
+
         }
     };
 }]);
