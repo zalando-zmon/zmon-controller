@@ -98,19 +98,29 @@ function (angular, _, sdk, dateMath, kbn) {
     });
   };
 
-  KairosDBDatasource.prototype._performMetricKeyLookup = function(metric, query) {
+  KairosDBDatasource.prototype._performMetricKeyLookup = function(metric, key, value) {
     if(!metric) { return this.q.when([]); }
+
+    var _metric = { name: metric };
+
+    if (key && value) {
+        _metric.tags = {};
+        _metric.tags[key] = [ value ];
+    }
 
     var options = {
       method: 'POST',
       url: this.url + '/api/v1/datapoints/query/tags',
       data: {
-        metrics: [{ name: metric }],
+        metrics: [ _metric ],
         cache_time: 0,
         start_absolute: 0,
-        value: query
       }
     };
+
+    if (key && value) {
+        options.data.metrics[0].tags[key] = value;
+    }
 
     return this.backendSrv.datasourceRequest(options).then(function(result) {
       if (!result.data) {
@@ -126,19 +136,25 @@ function (angular, _, sdk, dateMath, kbn) {
     });
   };
 
-  KairosDBDatasource.prototype._performMetricKeyValueLookup = function(metric, key, query) {
+  KairosDBDatasource.prototype._performMetricKeyValueLookup = function(metric, key, value) {
     if(!metric || !key) {
       return this.q.when([]);
+    }
+
+    var _metric = { name: metric };
+
+    if (key && value) {
+        _metric.tags = {};
+        _metric.tags[key] = [ value ];
     }
 
     var options = {
       method: 'POST',
       url: this.url + '/api/v1/datapoints/query/tags',
       data: {
-        metrics: [{ name: metric }],
+        metrics: [ _metric ],
         cache_time: 0,
-        start_absolute: 0,
-        value: query
+        start_absolute: 0
       }
     };
 
