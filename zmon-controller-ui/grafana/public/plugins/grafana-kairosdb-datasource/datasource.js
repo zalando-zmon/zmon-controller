@@ -98,7 +98,7 @@ function (angular, _, sdk, dateMath, kbn) {
     });
   };
 
-  KairosDBDatasource.prototype._performMetricKeyLookup = function(metric) {
+  KairosDBDatasource.prototype._performMetricKeyLookup = function(metric, query) {
     if(!metric) { return this.q.when([]); }
 
     var options = {
@@ -107,7 +107,8 @@ function (angular, _, sdk, dateMath, kbn) {
       data: {
         metrics: [{ name: metric }],
         cache_time: 0,
-        start_absolute: 0
+        start_absolute: 0,
+        value: query
       }
     };
 
@@ -125,7 +126,7 @@ function (angular, _, sdk, dateMath, kbn) {
     });
   };
 
-  KairosDBDatasource.prototype._performMetricKeyValueLookup = function(metric, key, str) {
+  KairosDBDatasource.prototype._performMetricKeyValueLookup = function(metric, key, query) {
     if(!metric || !key) {
       return this.q.when([]);
     }
@@ -137,7 +138,7 @@ function (angular, _, sdk, dateMath, kbn) {
         metrics: [{ name: metric }],
         cache_time: 0,
         start_absolute: 0,
-        value: str
+        value: query
       }
     };
 
@@ -188,7 +189,7 @@ function (angular, _, sdk, dateMath, kbn) {
     };
 
     var metrics_regex = /metrics\((.*)\)/;
-    var tag_names_regex = /tag_names\((.*)\)/;
+    var tag_names_regex = /tag_names\((.*),\s?(.*?)\)/;
     var tag_values_regex = /tag_values\((.*),\s?(.*?),\s?(.*?)\s?\)/;
 
     var metrics_query = interpolated.match(metrics_regex);
@@ -198,7 +199,7 @@ function (angular, _, sdk, dateMath, kbn) {
 
     var tag_names_query = interpolated.match(tag_names_regex);
     if (tag_names_query) {
-      return this._performMetricKeyLookup(tag_names_query[1]).then(responseTransform);
+      return this._performMetricKeyLookup(tag_names_query[1], tag_names_query[2]).then(responseTransform);
     }
 
     var tag_values_query = interpolated.match(tag_values_regex);
