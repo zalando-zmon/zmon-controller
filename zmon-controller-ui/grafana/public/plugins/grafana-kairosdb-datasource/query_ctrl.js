@@ -54,7 +54,7 @@ function (angular, _, sdk) {
     };
 
     KairosDBQueryCtrl.prototype.suggestTagValues = function(query, callback) {
-      self.datasource.metricFindQuery('tag_values(' + self.target.metric + ',' + self.target.currentTagKey + ')')
+      self.datasource.metricFindQuery('tag_values(' + self.target.metric + ',' + self.target.currentTagKey + ',' + query + ')')
         .then(self.getTextValues)
         .then(callback);
     };
