@@ -153,7 +153,7 @@ function (angular, _, sdk, dateMath, kbn) {
     if (tags) {
         var keys = _.keys(tags);
         _.each(keys, function(k) {
-            if (keys.indexOf() === -1) {
+            if (keys.indexOf(k) === -1) {
                 if (!_metric.tags[k]) {
                     _metric.tags[k] = [];
                 }
