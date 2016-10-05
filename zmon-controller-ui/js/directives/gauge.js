@@ -37,7 +37,7 @@ angular.module('zmon2App').directive('gauge', function() {
                         if (g === null) {
                             g = new JustGage({
                                 id: "gauge-" + gaugeId,
-                                value: scope.value.toFixed(1),
+                                value: scope.value,
                                 min: options.min,
                                 gaugeColor: '#7f7f7f',
                                 max: options.max === null ? scope.max.toFixed(1) : options.max,
@@ -55,7 +55,7 @@ angular.module('zmon2App').directive('gauge', function() {
                                 g.config.max = newMax;
                                 g.txtMax.attr('text', newMax);
                             }
-                            g.refresh(scope.value.toFixed(1));
+                            g.refresh(scope.value);
                         }
                     } catch (ex) {
                         console.error("ERROR Gauge:", ex);
