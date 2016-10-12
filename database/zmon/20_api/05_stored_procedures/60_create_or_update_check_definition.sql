@@ -10,16 +10,18 @@ CREATE OR REPLACE FUNCTION create_or_update_check_definition (
 $BODY$
 BEGIN
 
+    user_teams = lower(user_teams::text)::text[];
+
     IF check_definition_import.id IS NOT NULL AND NOT user_is_admin THEN
       IF NOT EXISTS (SELECT 1 FROM zzm_data.check_definition
                              WHERE cd_id = check_definition_import.id
-                               AND (cd_owning_team = ANY(user_teams) OR cd_created_by = user_name)
-                               AND (check_definition_import.owning_team = ANY(user_teams)) )
+                               AND (lower(cd_owning_team) = ANY(user_teams) OR cd_created_by = user_name)
+                               AND (lower(check_definition_import.owning_team) = ANY(user_teams)) )
       THEN
         permission_denied = true;
         RETURN;
       END IF;
-    ELSIF user_is_admin IS FALSE AND NOT check_definition_import.owning_team = ANY(user_teams) THEN
+    ELSIF user_is_admin IS FALSE AND NOT lower(check_definition_import.owning_team) = ANY(user_teams) THEN
       permission_denied = true;
       RETURN;
     END IF;
