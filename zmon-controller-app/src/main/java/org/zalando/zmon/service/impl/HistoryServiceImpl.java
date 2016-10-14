@@ -1,6 +1,9 @@
 package org.zalando.zmon.service.impl;
 
+import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.primitives.Longs;
 import org.apache.http.client.fluent.Executor;
@@ -13,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.zalando.zmon.config.EventLogProperties;
 import org.zalando.zmon.domain.*;
 import org.zalando.zmon.event.Event;
+import org.zalando.zmon.event.EventlogEvent;
 import org.zalando.zmon.event.ZMonEventType;
 import org.zalando.zmon.persistence.AlertDefinitionSProcService;
 import org.zalando.zmon.persistence.CheckDefinitionSProcService;
@@ -21,6 +25,7 @@ import org.zalando.zmon.util.HistoryUtils;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -44,6 +49,25 @@ public class HistoryServiceImpl implements HistoryService {
     private EventLogProperties eventLogProperties;
 
     private ObjectMapper mapper = new ObjectMapper();
+
+    public Event convert(EventlogEvent in) {
+        Event e = new Event();
+        e.setTypeName(in.getTypeName());
+        e.setTime(in.getTime());
+        e.setFlowId(in.getFlowId());
+        e.setTypeId(in.getTypeId());
+
+        for(Map.Entry<String, JsonNode> ie : in.getAttributes().entrySet()) {
+            try {
+                e.setAttribute(ie.getKey(), mapper.writeValueAsString(ie.getValue()));
+            }
+            catch(JsonProcessingException ex) {
+
+            }
+        }
+
+        return e;
+    }
 
     @Override
     public List<Activity> getHistory(final int alertDefinitionId, final Integer limit, final Long from, final Long to) {
@@ -79,8 +103,10 @@ public class HistoryServiceImpl implements HistoryService {
             try {
                 String query = baseQuery + "&types=212993,212994,212995,212996,212997,212998,213252,213253,213504,213505,213506,213514,213515,213520&key=alertId&value=" + alertDefinitionId;
                 final String r = executor.execute(Request.Get(eventLogService + query)).returnContent().asString();
-                eventsByAlertId = mapper.readValue(r, new TypeReference<List<Event>>() {
+                List<EventlogEvent> tempEvents = mapper.readValue(r, new TypeReference<List<EventlogEvent>>() {
                 });
+
+                eventsByAlertId = tempEvents.stream().map(x->convert(x)).collect(Collectors.toList());
             } catch (IOException e) {
                 LOG.error("Failed to load events by alertId from {}", eventLogService, e);
             }
