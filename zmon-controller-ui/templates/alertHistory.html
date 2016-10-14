@@ -22,7 +22,7 @@
             </td>
             <td>{{::entry.attributes.entity}}</td>
             <td>
-                <div alert-value-modal name="entry.attributes.entity" value="entry.attributes.value">{{entry.attributes.value}}</div>
+                <div alert-value-modal name="entry.attributes.entity" value="entry.attributes.value">{{ entry.attributes.value!=null ? entry.attributes.value : entry.attributes }}</div>
             </td>
         </tr>
     </tbody>

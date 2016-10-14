@@ -8,7 +8,6 @@ import org.zalando.zmon.domain.Activity;
 import org.zalando.zmon.domain.ActivityDiff;
 
 public interface HistoryService {
-
     List<Activity> getHistory(int alertDefinitionId, @Nullable Integer limit, @Nullable Long from, @Nullable Long to);
 
     List<ActivityDiff> getCheckDefinitionHistory(int checkDefinitionId, @Nullable Integer limit, @Nullable Long from,
