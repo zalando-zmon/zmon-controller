@@ -26,10 +26,6 @@ import java.util.*;
 @Transactional
 public class HistoryServiceImpl implements HistoryService {
 
-    private static final String ZMON_BY_CHECK_ID_USE_CASE = "ZMON_BY_CHECK_ID";
-
-    private static final String ZMON_BY_ALERT_ID_USE_CASE = "ZMON_BY_ALERT_ID";
-
     private static final int DEFAULT_HISTORY_LIMIT = 50;
 
     private final static List<Event> EMPTY_LIST = new ArrayList<>(0);
@@ -81,7 +77,7 @@ public class HistoryServiceImpl implements HistoryService {
             }
 
             try {
-                String query = baseQuery + "&types=212993,212994,212995,212996,212997,212998,213252,213253&key=alertId&value=" + alertDefinitionId;
+                String query = baseQuery + "&types=212993,212994,212995,212996,212997,212998,213252,213253,213504,213505,213506,213514,213515,213520&key=alertId&value=" + alertDefinitionId;
                 final String r = executor.execute(Request.Get(eventLogService + query)).returnContent().asString();
                 eventsByAlertId = mapper.readValue(r, new TypeReference<List<Event>>() {
                 });

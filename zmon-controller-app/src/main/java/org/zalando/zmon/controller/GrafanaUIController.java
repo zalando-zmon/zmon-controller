@@ -52,7 +52,7 @@ public class GrafanaUIController {
         return "grafana";
     }
 
-    @RequestMapping(value = "/grafana/dashboard/db/**")
+    @RequestMapping(value = {"/grafana/dashboard/db/**", "/grafana/dashboard-solo/db/**"})
     public String grafanaDeepLinks(Model model) {
         model.addAttribute(IndexController.STATIC_URL, controllerProperties.getStaticUrl());
         model.addAttribute(IndexController.KAIROSDB_SERVICES, kairosdbServices);

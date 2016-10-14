@@ -1,6 +1,5 @@
 package org.zalando.zauth.zmon.config;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
