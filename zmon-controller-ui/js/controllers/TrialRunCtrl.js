@@ -505,7 +505,7 @@ var TrialRunCtrl = function ($scope, $interval, $timeout, timespanFilter, localS
 
         var content = jsyaml.safeDump(alert);
         content += "command: |\n  " + $scope.alert.check_command.split('\n').join('\n  ');
-        content += "\nowning_team: " + UserInfoService.get().teams.split(',')[0];
+        content += "\nowning_team: " + $scope.alert.owning_team;
         content += "\n# OPTIONAL FIELDS\n#technical_details: Optional Technical Details\n#potential_analysis: Optional Potential analysis\n#potential_impact: Optional potential impact\n#potential_solution: Optional potential solution";
         return  content;
     };
@@ -544,6 +544,17 @@ var TrialRunCtrl = function ($scope, $interval, $timeout, timespanFilter, localS
     };
 
     trc.format = 'dd.MM.yyyy';
+
+    // Used by ui-select in view to return list of teams for Team field dropdown
+    // and allow inserting new values
+    $scope.getItems = function(prop, search) {
+        var teams = _.extend([], trc.teams);
+        var options = teams.indexOf(prop) === -1 ? teams.concat(prop) : teams;
+        if (search && options.indexOf(search) === -1) {
+            options.unshift(search);
+        }
+        return options.sort();
+    };
 };
 
 
