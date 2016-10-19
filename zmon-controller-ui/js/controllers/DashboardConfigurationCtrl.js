@@ -16,12 +16,18 @@ angular.module('zmon2App').controller('DashboardConfigurationCtrl', ['$scope', '
         $scope.allTags = [];
         $scope.widgets = [];
         $scope.widgetsJson = '[]';
-        $scope.widgetConfigFormVisible = false;
+        $scope.widgetConfigFormVisible = true;
 
         $scope.widgetTypes = [ {
             "type": "Check Chart"
         }, {
             "type": "Kairos Chart",
+        }, {
+            "type": "Gauge",
+        }, {
+            "type": "Value",
+        }, {
+            "type": "Trend",
         }];
 
         $scope.dashboard = {
