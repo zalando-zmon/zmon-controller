@@ -14,6 +14,11 @@ angular.module('zmon2App').controller('DashboardDefinitionCtrl', ['$scope', 'loc
 
         $scope.sortType = 'name';
         $scope.sortOrder = false;
+        $scope.limit = 100;
+
+        $scope.incLimit = function() {
+            $scope.limit += 35;
+        };
 
         this.fetchDashboardDefinitions = function() {
             CommunicationService.getAllDashboards().then(

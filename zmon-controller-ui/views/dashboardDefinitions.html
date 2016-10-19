@@ -59,35 +59,37 @@
                 </th>
             </tr>
         </thead>
-        <tr ng-repeat="def in dashboardDefinitions | orderBy:sortType:sortOrder | filter:dashboardFilter track by def.id" repeat-monitor last="$last">
-            <td class="text-center">
-                <a href="#/" ng-click="setDefaultDashboard(def.id)">
-                    <i ng-show="def.id == defaultDashboardId" uib-tooltip="it is default" tooltip-placement="right" class="fa fa-fw fa-star"></i>
-                    <i ng-hide="def.id == defaultDashboardId" uib-tooltip="set as default" tooltip-placement="right" class="fa fa-fw fa-star-o"></i>
-                </a>
-                <a ng-show="def.editable" href="#/dashboards/edit/{{def.id}}">
-                    <i class="fa fa-fw fa-edit" uib-tooltip="edit" tooltip-placement="right"></i>
-                </a>
-                <i ng-hide="def.editable" class="fa fa-fw fa-edit semi-transparent"></i>
+        <tbody infinite-scroll="incLimit()">
+            <tr ng-repeat="def in dashboardDefinitions | orderBy:sortType:sortOrder | limitTo: limit | filter:dashboardFilter track by def.id" repeat-monitor last="$last">
+                <td class="text-center">
+                    <a href="#/" ng-click="setDefaultDashboard(def.id)">
+                        <i ng-show="def.id == defaultDashboardId" uib-tooltip="it is default" tooltip-placement="right" class="fa fa-fw fa-star"></i>
+                        <i ng-hide="def.id == defaultDashboardId" uib-tooltip="set as default" tooltip-placement="right" class="fa fa-fw fa-star-o"></i>
+                    </a>
+                    <a ng-show="def.editable" href="#/dashboards/edit/{{def.id}}">
+                        <i class="fa fa-fw fa-edit" uib-tooltip="edit" tooltip-placement="right"></i>
+                    </a>
+                    <i ng-hide="def.editable" class="fa fa-fw fa-edit semi-transparent"></i>
 
-                <a ng-show="def.cloneable" href="#/dashboards/clone/{{def.id}}">
-                    <i class="fa fa-fw fa-copy" uib-tooltip="clone" tooltip-placement="right"></i>
-                </a>
-                <i ng-hide="def.cloneable" class="fa fa-fw fa-copy semi-transparent"></i>
+                    <a ng-show="def.cloneable" href="#/dashboards/clone/{{def.id}}">
+                        <i class="fa fa-fw fa-copy" uib-tooltip="clone" tooltip-placement="right"></i>
+                    </a>
+                    <i ng-hide="def.cloneable" class="fa fa-fw fa-copy semi-transparent"></i>
 
-                <a ng-show="def.editable" ng-click="deleteDashboard(def.id)" href="#">
-                    <i class="fa fa-fw fa-trash" uib-tooltip="delete" tooltip-placement="right"></i>
-                </a>
-                <i ng-hide="def.editable" class="fa fa-fw fa-trash semi-transparent"></i>
-            </td>
-            <td>
-                <a href="#/dashboards/view/{{def.id}}">{{def.name}}</a>
-            </td>
-            <td>{{def.created_by}}</td>
-            <td>{{def.last_modified_by}}</td>
-            <td>{{def.last_modified | date:'medium'}}</td>
-            <td>{{def.edit_option}}</td>
-            <td>{{def.alert_teams}}</td>
-        </tr>
+                    <a ng-show="def.editable" ng-click="deleteDashboard(def.id)" href="#">
+                        <i class="fa fa-fw fa-trash" uib-tooltip="delete" tooltip-placement="right"></i>
+                    </a>
+                    <i ng-hide="def.editable" class="fa fa-fw fa-trash semi-transparent"></i>
+                </td>
+                <td>
+                    <a href="#/dashboards/view/{{def.id}}">{{def.name}}</a>
+                </td>
+                <td>{{def.created_by}}</td>
+                <td>{{def.last_modified_by}}</td>
+                <td>{{def.last_modified | date:'medium'}}</td>
+                <td>{{def.edit_option}}</td>
+                <td>{{def.alert_teams}}</td>
+            </tr>
+        </tbody>
     </table>
 </div>
