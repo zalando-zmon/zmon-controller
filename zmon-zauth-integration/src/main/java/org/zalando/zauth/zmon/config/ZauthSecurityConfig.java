@@ -66,6 +66,9 @@ public class ZauthSecurityConfig extends WebSecurityConfigurerAdapter {
     private TeamService teamService;
 
     @Autowired
+    private ZauthProperties config;
+
+    @Autowired
     public void configureGlobal(final AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(userDetailsManager());
     }
@@ -147,7 +150,7 @@ public class ZauthSecurityConfig extends WebSecurityConfigurerAdapter {
 
         final List<ResourceServerTokenServices> chain = ImmutableList.of(
                 new PresharedTokensResourceServerTokenServices(authorityService, environment),
-                new TokenInfoResourceServerTokenServices(tokenInfoUri, new ZmonAuthenticationExtractor(teamService)));
+                new TokenInfoResourceServerTokenServices(tokenInfoUri, new ZmonAuthenticationExtractor(authorityService)));
 
         return new ZmonResourceServerConfigurer(new ChainedResourceServerTokenServices(chain));
     }
