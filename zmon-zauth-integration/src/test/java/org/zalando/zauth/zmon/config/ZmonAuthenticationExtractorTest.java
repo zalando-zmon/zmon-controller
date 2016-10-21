@@ -4,26 +4,30 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Lists;
 import org.assertj.core.api.Assertions;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.springframework.security.core.GrantedAuthority;
 import org.zalando.zauth.zmon.config.ZmonAuthenticationExtractor;
+import org.zalando.zauth.zmon.service.ZauthAuthorityService;
 import org.zalando.zmon.security.TeamService;
+import org.zalando.zmon.security.authority.ZMonAdminAuthority;
 import org.zalando.zmon.security.authority.ZMonUserAuthority;
 
 import com.google.common.collect.Sets;
 
 public class ZmonAuthenticationExtractorTest {
 
-    private TeamService teamService;
+    private ZauthAuthorityService userService;
     private ZmonAuthenticationExtractor zmonAuthenticationExtractor;
 
     @Before
     public void setUp() {
-        teamService = Mockito.mock(TeamService.class);
-        zmonAuthenticationExtractor = new ZmonAuthenticationExtractor(teamService);
+        userService = Mockito.mock(ZauthAuthorityService.class);
+        zmonAuthenticationExtractor = new ZmonAuthenticationExtractor(userService);
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -55,25 +59,10 @@ public class ZmonAuthenticationExtractorTest {
 
     @Test
     public void testExtractorUidAndTeams() {
-        Mockito.when(teamService.getTeams(Mockito.eq("klaus"))).thenReturn(Sets.newHashSet("one", "two"));
-        Map<String, Object> tokenInfoResponse = new HashMap<>();
-        tokenInfoResponse.put("uid", "klaus");
-        tokenInfoResponse.put("realm", "/employees");
-        List<GrantedAuthority> authorities = zmonAuthenticationExtractor.createAuthorityList(tokenInfoResponse);
-        assertAuthorityList(authorities);
-        ZMonUserAuthority cast = (ZMonUserAuthority) authorities.get(0);
-        Assertions.assertThat(cast.getTeams()).contains("one", "two");
     }
 
     @Test
     public void testExtractorUidAndNoTeams() {
-        Mockito.when(teamService.getTeams(Mockito.eq("klaus"))).thenReturn(Sets.newHashSet("one", "two"));
-        Map<String, Object> tokenInfoResponse = new HashMap<>();
-        tokenInfoResponse.put("uid", "klaus");
-        List<GrantedAuthority> authorities = zmonAuthenticationExtractor.createAuthorityList(tokenInfoResponse);
-        assertAuthorityList(authorities);
-        ZMonUserAuthority cast = (ZMonUserAuthority) authorities.get(0);
-        Assertions.assertThat(cast.getTeams()).isEmpty();
     }
 
     protected void assertAuthorityList(List<GrantedAuthority> authorities) {
