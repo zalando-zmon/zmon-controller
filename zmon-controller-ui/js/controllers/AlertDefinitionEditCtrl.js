@@ -118,7 +118,9 @@ angular.module('zmon2App').controller('AlertDefinitionEditCtrl', ['$scope', '$ro
         $scope.parentAlertDefinition = {};
 
         // Final merged version of alert definition: parentAlertDefiniton + alertDefinitionNode
-        $scope.alertDefinition = null;
+        $scope.alertDefinition = {
+            "status": "ACTIVE"
+        };
 
         $scope.focusedElement = null;
 
