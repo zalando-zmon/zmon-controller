@@ -5,10 +5,7 @@ angular.module('zmon2App').directive('widgetConfigGauge', ['$compile', '$log',
             scope: {
                 widget: '=',
             },
-            templateUrl: 'templates/widgetConfigGauge.html',
-            link: function (scope, element, attrs, controller) {
-                var options = scope.widget.options || {};
-            }
+            templateUrl: 'templates/widgetConfigGauge.html'
         };
     }
 ]);

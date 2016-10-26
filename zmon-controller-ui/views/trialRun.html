@@ -42,7 +42,12 @@
                     <div class="form-group" ng-class="{'has-error': trForm.submitted && trForm.owningTeam.$error.required}">
                         <label for="inp-owning-team" class="col-sm-2 control-label">Owner Team</label>
                         <div class="col-sm-10">
-                            <select class="form-control" id="inp-owning-team" name="owningTeam" ng-model="alert.owning_team" ng-focus="trForm.submitted && trForm.owningTeam.$error.required" ng-options="team as team for team in TrialRunCtrl.teams" ng-required="!onRun"></select>
+                            <ui-select name="owningTeam" ng-model="alert.owning_team" theme="select2" ng-focus="trForm.submitted && trForm.owningTeam.$error.required" required>
+                                <ui-select-match placeholder="Select or search a team in the list...">{{$select.selected}}</ui-select-match>
+                                <ui-select-choices repeat="item in getItems(alert.owning_team, $select.search) | filter: $select.search">
+                                    <div ng-bind="item"></div>
+                                </ui-select-choices>
+                            </ui-select>
                         </div>
                     </div>
 

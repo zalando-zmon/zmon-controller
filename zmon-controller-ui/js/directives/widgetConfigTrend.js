@@ -5,10 +5,7 @@ angular.module('zmon2App').directive('widgetConfigTrend', ['$compile', '$log',
             scope: {
                 widget: '=',
             },
-            templateUrl: 'templates/widgetConfigTrend.html',
-            link: function (scope, element, attrs, controller) {
-                var options = scope.widget.options || {};
-            }
+            templateUrl: 'templates/widgetConfigTrend.html'
         };
     }
 ]);

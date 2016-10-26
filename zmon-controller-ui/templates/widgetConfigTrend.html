@@ -19,9 +19,17 @@
                     <input type="text" class="form-control" id="inp-entityId" name="entityId" ng-model="widget.entityId" />
                 </div>
             </div>
+
+            <div class="row">
+                <label class="col-sm-2">JSONPath</label>
+                <div class="col-sm-3">
+                    <input type="text" id="jsonpath" class="form-control" name="jsonpath" ng-model="widget.jsonPath" placeholder='"."' />
+                </div>
+            </div>
+
         </div>
     </div>
-    <div class="col-sm-6 widget-config-chart-area">
+    <div class="col-sm-6 widget-config-chart-area zmon-widgets">
         <dashboard-widget config="widget"/>
     </div>
 </div>

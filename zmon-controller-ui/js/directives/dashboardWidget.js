@@ -190,6 +190,10 @@ angular.module('zmon2App').directive('dashboardWidget', ['CommunicationService',
                                     }
                                     $scope.lastValue = $scope.values[0];
                                     $scope.maxValue = _.max($scope.values);
+
+                                    if ($scope.config.options.format) {
+                                        $scope.lastValue = parseFloat($scope.config.options.format.format($scope.lastValue));
+                                    }
                                 }
                                 break;
                             case 'trend':
