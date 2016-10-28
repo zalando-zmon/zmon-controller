@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.xerial.snappy.Snappy;
 import org.zalando.zmon.api.domain.CheckChartResult;
+import org.zalando.zmon.config.ControllerProperties;
 import org.zalando.zmon.config.SchedulerProperties;
 import org.zalando.zmon.diff.CheckDefinitionsDiffFactory;
 import org.zalando.zmon.domain.*;
@@ -85,6 +86,9 @@ public class ZMonServiceImpl implements ZMonService {
     @Autowired
     private NoOpEventLog eventLog;
 
+    @Autowired
+    private ControllerProperties config;
+
     @Override
     public ExecutionStatus getStatus() {
 
@@ -99,8 +103,8 @@ public class ZMonServiceImpl implements ZMonService {
 
             final Pipeline p = jedis.pipelined();
 
-            for (final WorkerQueue queue : WorkerQueue.values()) {
-                queueSize.put(queue.getKey(), p.llen(queue.getKey()));
+            for (final String queue : config.getWorkerQueueKeys()) {
+                queueSize.put(queue, p.llen(queue));
             }
 
             for (final String worker : workerNames) {
