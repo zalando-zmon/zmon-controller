@@ -259,8 +259,19 @@
 
             // global search key bindings
             $scope.keypress = function(e) {
-                // toggle globalSearch on any key onlye when no element is focused
-                if (document.activeElement.nodeName === "BODY") {
+                // run only if no other element than <body> are selected
+                if (document.activeElement.nodeName !== "BODY") {
+                    return;
+                }
+
+                // exit if meta key is pressed
+                if (e.ctrlKey || e.altKey) {
+                    return;
+                }
+
+                // Catch only keys 0-9 and a-Z
+                var k = (typeof e.which == "number") ? e.which : e.keyCode;
+                if ((k >= 48 && k <= 57) || (k >= 65 && k <= 90) || (k >= 97 && k <= 122)) {
                     e.stopPropagation();
                     e.preventDefault();
                     $scope.globalSearchVisible = true;
