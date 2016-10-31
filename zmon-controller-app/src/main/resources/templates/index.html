@@ -144,11 +144,10 @@
     <global-search visible="globalSearchVisible"></global-search>
 
     <div class="main-wrapper" ng-class="{'globalSearchVisible':globalSearchVisible}">
+        <div id="message-manager-wrapper">
+            <span class="message"></span>
+        </div>
         <div id="main" ng-view></div>
-    </div>
-
-    <div id="message-manager-wrapper">
-        <span class="message"></span>
     </div>
 </body>
 
