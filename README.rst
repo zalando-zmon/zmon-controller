@@ -18,6 +18,10 @@ ZMON Controller
    :target: https://readthedocs.org/projects/zmon/?badge=latest
    :alt: Documentation Status
 
+.. image:: https://slack.zmon.io/badge.svg
+    :target: https://slack.zmon.io
+    :alt: ZMON Slack Signup
+
 ZMON Controller is the frontend UI and REST API for Zalando's open-source platform monitoring tool.
 
 Running Locally
@@ -73,4 +77,3 @@ Database API schema
 .. code-block:: bash
 
 	find . -name '*sql' | sort -V | xargs cat > schema_os.sql
-
