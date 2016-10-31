@@ -14,15 +14,15 @@
     </div>
     <ul class="list-unstyled">
         <li ng-if="query.length" ng-repeat="item in data | orderBy:['type', 'id', 'title']" ng-class="{'highlight': $index == focusIndex }">
-            <a href="/#/alert-details/{{item.id}}" ng-if="item.type === 'alerts'">
+            <a href="#/alert-details/{{item.id}}" ng-if="item.type === 'alerts'">
                 <span class="tag alert" title="Alert {{item.id}}">{{item.id}}</span>
                 <div class="title ellipsis">{{item.title}}</div>
             </a>
-            <a href="/#/check-definitions/view/{{item.id}}" ng-if="item.type === 'checks'">
+            <a href="#/check-definitions/view/{{item.id}}" ng-if="item.type === 'checks'">
                 <span class="tag check" title="Check {{item.id}}">{{item.id}}</span>
                 <div class="title ellipsis">{{item.title}}</div>
             </a>
-            <a href="/#/dashboards/view/{{item.id}}" ng-if="item.type === 'dashboards'">
+            <a href="#/dashboards/view/{{item.id}}" ng-if="item.type === 'dashboards'">
                 <span class="tag dashboard" title="Dashboard {{item.id}}">{{item.id}}</span>
                 <div class="title ellipsis">{{item.title}}</div>
             </a>

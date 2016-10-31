@@ -3,7 +3,7 @@
         <h1 ng-switch-when="edit">Edit Alert Definition</h1>
         <h1 ng-switch-when="add">Add Alert Definition</h1>
         <h1 ng-switch-when="clone">Clone Alert Definition</h1>
-        <h1 ng-switch-when="inherit">New Alert Inheriting from: <a href="/#/alert-details/{{parentAlertDefinition.id}}">{{ parentAlertDefinition.name }}</a></h1>
+        <h1 ng-switch-when="inherit">New Alert Inheriting from: <a href="#/alert-details/{{parentAlertDefinition.id}}">{{ parentAlertDefinition.name }}</a></h1>
     </div>
 </div>
 
@@ -19,7 +19,7 @@
     <div class="form-group" ng-show="alertDefinition.parent_id">
         <label class="col-sm-2 control-label">Inherits from</label>
         <div class="col-sm-10">
-            <p class="form-control-static"><a href="/#/alert-details/{{parentAlertDefinition.id}}">{{parentAlertDefinition.name || '(no name)'}}</a>, ID: <a href="/#/alert-details/{{parentAlertDefinition.id}}">{{ parentAlertDefinition.id}}</a></p>
+            <p class="form-control-static"><a href="#/alert-details/{{parentAlertDefinition.id}}">{{parentAlertDefinition.name || '(no name)'}}</a>, ID: <a href="#/alert-details/{{parentAlertDefinition.id}}">{{ parentAlertDefinition.id}}</a></p>
         </div>
     </div>
 
