@@ -137,27 +137,26 @@ function (angular, _, sdk, dateMath, kbn) {
   };
 
   KairosDBDatasource.prototype._performMetricKeyValueLookup = function(metric, key, value, tags) {
+
     if(!metric || !key) {
       return this.q.when([]);
     }
 
     var _metric = { name: metric, tags: {} };
 
-    // add new tag to metric
+    // add new tag
     if (key && value) {
-        _metric.tags = {};
-        _metric.tags[key] = [ value ];
+        _metric.tags[key] = [ '*' + value + '*' ];
     }
 
-    // ignore previously added tags if match new tag key
     if (tags) {
-        var keys = _.keys(tags);
-        _.each(keys, function(k) {
-            if (keys.indexOf(k) === -1) {
-                if (!_metric.tags[k]) {
-                    _metric.tags[k] = [];
+        _.each(tags, function(v, k) {
+            if (_metric.tags[k]) {
+                if (key !== k) {
+                    _metric.tags[k] = _metric.tags[k].concat(v);
                 }
-                _metric.tags[k] = _metric.tags[k].concat(tags[k]);
+            } else {
+                _metric.tags[k] = v;
             }
         });
     }

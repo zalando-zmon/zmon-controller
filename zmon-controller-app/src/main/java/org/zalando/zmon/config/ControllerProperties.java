@@ -2,6 +2,10 @@ package org.zalando.zmon.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * Created by jmussler on 26.02.16.
  */
@@ -20,6 +24,16 @@ public class ControllerProperties {
     public String emailLoginLink = "https://demo.zmon.io/tv";
     public int emailTokenLength = 15;
     public int emailPort = 465;
+
+    public List<String> workerQueueKeys = Arrays.asList("zmon:queue:default");
+
+    public List<String> getWorkerQueueKeys() {
+        return workerQueueKeys;
+    }
+
+    public void setWorkerQueueKeys(List<String> workerQueueKeys) {
+        this.workerQueueKeys = workerQueueKeys;
+    }
 
     public String getStaticUrl() {
         return staticUrl;

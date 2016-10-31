@@ -115,7 +115,7 @@
                 <td>{{ record.changed_attributes.cd_last_modified_by || record.changed_attributes.adt_last_modified_by || record.attributes.cd_last_modified_by || record.attributes.adt_last_modified_by}}</td>
                 <td class="no-wrap">{{record.time | epochToDate}}</td>
                 <td class="ellipsis" expand ng-bind-html="record.action == 'INSERT' ? HistoryCtrl.getChanges(record.attributes) : HistoryCtrl.getChanges(record.changed_attributes)"></td>
-                <td><a ng-show="record.type_name == 'ALERT_DEFINITION_UPDATED' && record.attributes.adt_id !== alert_definition_id" href="/#/alert-details/{{record.attributes.adt_parent_id}}"><i class="fa fa-sitemap"></i></a></td>
+                <td><a ng-show="record.type_name == 'ALERT_DEFINITION_UPDATED' && record.attributes.adt_id !== alert_definition_id" href="#/alert-details/{{record.attributes.adt_parent_id}}"><i class="fa fa-sitemap"></i></a></td>
             </tr>
         </tbody>
     </table>

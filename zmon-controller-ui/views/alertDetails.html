@@ -18,7 +18,7 @@
             <a ng-show="alert.deletable" href="" alert-delete alert="alert" title="Delete alert definition"><i class="fa fa-fw fa-trash-o"></i> Delete</a>
             <span ng-hide="alert.deletable"><i class="fa fa-fw fa-trash-o semi-transparent"></i> Delete</span>
             <a href="#/history?alert_definition_id={{alert.id}}"><i class="fa fa-clock-o"></i> History</a>
-            <a class="clickable" href="/#/trial-run?json={{alertJson}}"><i class="fa fa-play"></i> Trial Run</a>
+            <a class="clickable" href="#/trial-run?json={{alertJson}}"><i class="fa fa-play"></i> Trial Run</a>
             <a class="clickable" ng-if="userInfo['instantaneous-alert-evaluation']" ng-click="forceAlertEvaluation()"><i class="fa fa-play"></i> Evaluate</a>
             <a class="clickable" ng-if="userInfo['instantaneous-alert-evaluation']" ng-click="forceAlertCleanup()"><i class="fa fa-eraser"></i> Cleanup</a>
             <a class="clickable" ng-if="userInfo['add-comment']" comment-modal alert-id="alertId" count="commentsCount">
@@ -56,7 +56,7 @@
             <dt ng-if="check.technical_details">Technical Details</dt>
             <dd ng-if="check.technical_details" ng-bind-html="check.technical_details | markdown"></dd>
             <dt ng-if="alert.parent_id">Inherits from</dt>
-            <dd ng-if="alert.parent_id"><a href="/#/alert-details/{{alert.parent_id}}">{{parentAlertDefinition.name || "(no name)"}}</a>, ID: <a href="/#/alert-details/{{alert.parent_id}}">{{alert.parent_id}}</a></dd>
+            <dd ng-if="alert.parent_id"><a href="#/alert-details/{{alert.parent_id}}">{{parentAlertDefinition.name || "(no name)"}}</a>, ID: <a href="#/alert-details/{{alert.parent_id}}">{{alert.parent_id}}</a></dd>
             <dt>Check Name, ID, History</dt>
             <dd><a href="#/check-definitions/view/{{check.id}}">{{check.name}}</a>, ID: {{check.id}}, <a href="#/history?check_definition_id={{check.id}}">History</a></dd>
             <dt>Check Team</dt>
@@ -159,7 +159,7 @@
                                     <a target="_new" ng-if="entityInstance.entityMeta && entityInstance.entityMeta.type && entityInstance.entityMeta.type == 'elb'" href="https://{{entityInstance.entityMeta.region}}.console.aws.amazon.com/ec2/v2/home?region={{entityInstance.entityMeta.region}}#LoadBalancers:search={{entityInstance.entityMeta.name}}"><i class="fa fa-fw fa-cloud"></i></a>
                                     <input ng-if="userInfo['schedule-downtime']" class="set-downtime-checkbox" type="checkbox" ng-checked="downtimeEntities.indexOf(entityInstance.entity) !== -1" ng-click="toggleAlertForDowntime(entityInstance.entity)">
                                 </td>
-                                <td><a href="/#/entities?ef=id:{{entityInstance.entity}}" title="{{entityInstance.entity}}">{{entityInstance.entity | entityName}}</a></td>
+                                <td><a href="#/entities?ef=id:{{entityInstance.entity}}" title="{{entityInstance.entity}}">{{entityInstance.entity | entityName}}</a></td>
                                 <td><div title="{{entityInstance.result.td * 1000|timespan}} {{entityInstance.result.worker}}">
                                         <span ng-class="{'alert-is-too-old': timestampIsOld(entityInstance)}">{{entityInstance.result.ts|datetime}} ({{entityInstance.result.ts | timeago}} ago)</span></div></td>
                                 <td>
