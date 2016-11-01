@@ -118,9 +118,7 @@ angular.module('zmon2App').controller('AlertDefinitionEditCtrl', ['$scope', '$ro
         $scope.parentAlertDefinition = {};
 
         // Final merged version of alert definition: parentAlertDefiniton + alertDefinitionNode
-        $scope.alertDefinition = {
-            "status": "ACTIVE"
-        };
+        $scope.alertDefinition = null
 
         $scope.focusedElement = null;
 
@@ -250,6 +248,7 @@ angular.module('zmon2App').controller('AlertDefinitionEditCtrl', ['$scope', '$ro
                     $scope.checkDefinition = response;
                     if ($scope.alertDefinition === null) {
                         $scope.alertDefinition = {
+                            status: "ACTIVE",
                             check_definition_id: $scope.checkDefinition.id,
                             team: $scope.defaultTeam,
                             responsible_team: $scope.defaultRespTeam,
