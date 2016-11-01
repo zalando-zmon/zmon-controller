@@ -117,7 +117,8 @@ html, body
 
 #main
 {
-    margin: 15px 15px 0 15px;
+    margin: 0 15px 0 15px;
+    padding-top: 15px;
 }
 
 
@@ -301,10 +302,10 @@ div.popover
     font-size: 130%;
     margin: auto;
     padding-top: 10px;
-    position: fixed;
+    position: absolute;
     text-align: center;
-    top: 0;
     width: 100%;
+    z-index: 10;
 }
 
 #message-manager-wrapper.success
