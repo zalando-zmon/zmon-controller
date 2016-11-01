@@ -142,23 +142,16 @@ function (angular, _, sdk, dateMath, kbn) {
       return this.q.when([]);
     }
 
-    var _metric = { name: metric, tags: {} };
+    var _tags = _.extend({}, tags);
+    var _metric = { name: metric, tags: _tags };
+
+    if (_tags[key]) {
+        delete _tags[key];
+    }
 
     // add new tag
     if (key && value) {
-        _metric.tags[key] = [ '*' + value + '*' ];
-    }
-
-    if (tags) {
-        _.each(tags, function(v, k) {
-            if (_metric.tags[k]) {
-                if (key !== k) {
-                    _metric.tags[k] = _metric.tags[k].concat(v);
-                }
-            } else {
-                _metric.tags[k] = v;
-            }
-        });
+        _tags[key] = [ '*' + value + '*' ];
     }
 
     var options = {
