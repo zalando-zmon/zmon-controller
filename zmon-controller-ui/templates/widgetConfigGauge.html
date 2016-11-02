@@ -32,9 +32,32 @@
             </div>
 
             <div class="row">
+                <label class="col-sm-2">Min</label>
+                <div class="col-sm-3">
+                    <input type="number" id="min" class="form-control" name="min" ng-model="widget.options.min" placeholder="0" />
+                </div>
                 <label class="col-sm-2">Max</label>
                 <div class="col-sm-3">
                     <input type="number" id="max" class="form-control" name="max" ng-model="widget.options.max" placeholder="100" />
+                </div>
+            </div>
+
+            <div class="row">
+                <label class="col-sm-2">Alert Styles</label>
+                <div class="col-sm-10">
+                    <i class="fa fa-plus-circle clickable" style="font-size:20px; line-height:30px" ng-if="!alertStyles.length" ng-click="alertStyles.push({ type: '', value: []})"></i>
+                    <ul class="list-unstyled">
+                        <li ng-repeat="alertStyle in alertStyles" class="row">
+                            <select class="col-sm-2 col-sm-offset-1" style="margin-top:5px" ng-options="type for type in alertStyleTypes" ng-model="alertStyle.type"></select>
+                            <div class="col-sm-5" style="padding-right:0;">
+                                <input type="text" id="alertStyleValues" class="form-control" name="alertStyleValues" ng-model="alertStyle.value" placeholder="1, 2, 3..." ng-list></input>
+                            </div>
+                            <div class="col-sm-3">
+                                <i class="fa fa-times-circle clickable" style="font-size:20px;line-height:30px" ng-click="alertStyles.splice($index, 1)"></i>
+                                <i class="fa fa-plus-circle clickable" style="font-size:20px;line-height:30px" ng-if="$last" ng-click="alertStyles.push({ type: '', value: []})"></i>
+                            </div>
+                        </li>
+                    </ul>
                 </div>
             </div>
 

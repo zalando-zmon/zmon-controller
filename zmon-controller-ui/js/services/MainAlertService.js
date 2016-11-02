@@ -288,6 +288,13 @@ angular.module('zmon2App').factory('MainAlertService', ['$http', '$q', '$log', '
             this.serviceStatus.isDataRefreshing = false;
         };
 
+        service.removeDataRefreshById = function(uniqId) {
+            delete this.dataRefreshRates[uniqId];
+            delete this.dataRefreshCallbacks[uniqId];
+            $interval.cancel(this.dataRefreshIntervalPromises[uniqId]);
+            delete this.dataRefreshIntervalPromises[uniqId];
+        };
+
         return service;
     }
 ]);

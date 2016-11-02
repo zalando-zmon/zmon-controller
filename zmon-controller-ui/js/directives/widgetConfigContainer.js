@@ -17,6 +17,10 @@ angular.module('zmon2App').directive('widgetConfigContainer', ['$compile', '$log
                 scope.selectedWidgetType = scope.widgetTypes[0];
                 scope.emptyJson = scope.emptyJson || (scope.emptyJson = false);
 
+                scope.alertStyleTypes = [
+                  'blink', 'shake', 'red', 'orange', 'yellow', 'green', 'blue'
+                ];
+
                 // Add a new chart by inserting at the beginning of the widgets array an empty chart object.
                 var addChart = function() {
                     var chart = {
@@ -74,16 +78,16 @@ angular.module('zmon2App').directive('widgetConfigContainer', ['$compile', '$log
                     switch (scope.selectedWidgetType.type) {
                         case 'Kairos Chart':
                         case 'Check Chart':
-                            scope.widgets.push(addChart());
+                            scope.widgets = [addChart()].concat(scope.widgets);
                             break;
                         case 'Gauge':
-                            scope.widgets.push(addGauge());
+                            scope.widgets = [addGauge()].concat(scope.widgets);
                             break;
                         case 'Value':
-                            scope.widgets.push(addValue());
+                            scope.widgets = [addValue()].concat(scope.widgets);
                             break;
                         case 'Trend':
-                            scope.widgets.push(addTrend());
+                            scope.widgets = [addTrend()].concat(scope.widgets);
                             break;
                     };
                 };

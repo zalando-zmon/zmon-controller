@@ -66,6 +66,9 @@
                         <div class="col-sm-2">
                                 <select ng-model="aggregation.sampling.unit" ng-options="unit for unit in availableAggregatorUnits"></select>
                         </div>
+                        <div class="col-sm-1">
+                            <i class="fa fa-times-circle clickable" ng-click="removeAggregation()"></i>
+                        </div>
                     </div>
                     <div ng-if="!aggregators.length">
                         <label for="inp-metrics-aggregator" class="col-sm-2">Aggregation</label>

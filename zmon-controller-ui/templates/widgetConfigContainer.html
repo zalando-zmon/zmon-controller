@@ -13,7 +13,7 @@
                 <a class="clickable widget-config-remove-btn" ng-disabled="invalidJson" ng-click="removeWidget($index)"><i class="fa fa-times"></i></a>
             </div>
             <widget-config-chart ng-switch-when="chart" widget="widget" chart-data="chartData"></widget-config-chart>
-            <widget-config-gauge ng-switch-when="gauge" widget="widget"></widget-config-gauge>
+            <widget-config-gauge ng-switch-when="gauge" widget="widget" alert-style-types="alertStyleTypes"></widget-config-gauge>
             <widget-config-value ng-switch-when="value" widget="widget"/></widget-config-value>
             <widget-config-trend ng-switch-when="trend" widget="widget"/></widget-config-trend>
             <!--

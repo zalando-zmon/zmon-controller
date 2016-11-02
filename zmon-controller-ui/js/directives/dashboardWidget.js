@@ -8,9 +8,6 @@ angular.module('zmon2App').directive('dashboardWidget', ['CommunicationService',
                 config: '=config',
                 data: '=data'
             },
-            link: function(elem, attrs, scope) {
-
-            },
             controller: function($scope, $element, $attrs, $transclude, $timeout) {
                 if (!$scope.config.options) {
                     $scope.config.options = {};
@@ -266,7 +263,6 @@ angular.module('zmon2App').directive('dashboardWidget', ['CommunicationService',
                             }
                         );
                     }
-
                 };
 
                 // Watch for configuration changes on the widget and refetch data
@@ -275,6 +271,10 @@ angular.module('zmon2App').directive('dashboardWidget', ['CommunicationService',
                     entity = options.entityId;
                     refreshWidgetData();
                 }, true);
+
+                $element.on('$destroy', function() {
+                    MainAlertService.removeDataRefreshById($scope.uniqId);
+                });
 
                 this.startDataRefresh = function() {
                     try {
