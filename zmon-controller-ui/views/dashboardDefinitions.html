@@ -60,7 +60,7 @@
             </tr>
         </thead>
         <tbody infinite-scroll="incLimit()">
-            <tr ng-repeat="def in dashboardDefinitions | orderBy:sortType:sortOrder | limitTo: limit | filter:dashboardFilter track by def.id" repeat-monitor last="$last">
+            <tr ng-repeat="def in dashboardDefinitions | orderBy:sortType:sortOrder | filter:dashboardFilter | limitTo: limit track by def.id" repeat-monitor last="$last">
                 <td class="text-center">
                     <a href="#/" ng-click="setDefaultDashboard(def.id)">
                         <i ng-show="def.id == defaultDashboardId" uib-tooltip="it is default" tooltip-placement="right" class="fa fa-fw fa-star"></i>
