@@ -1,0 +1,41 @@
+<div class="text-left json-config-definition">
+    <div class="col-sm-6">
+        <div class="form-horizontal edit-definition">
+
+            <div class="row">
+                <label for="inp-title" class="col-sm-2">Src</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" id="inp-src" name="src" placeholder="http://..." ng-model="widget.src" required />
+                </div>
+            </div>
+
+            <div class="row">
+                <label for="inp-refresh" class="col-sm-2">Refresh</label>
+                <div class="col-sm-3">
+                    <input type="number" class="form-control" id="inp-refresh" name="refresh" ng-model="widget.refresh" />
+                </div>
+                <label for="inp-scale" class="col-sm-2">Scale</label>
+                <div class="col-sm-3">
+                    <input type="number" class="form-control" id="inp-scale" name="scale" ng-model="widget.scale" />
+                </div>
+
+            </div>
+
+            <div class="row">
+                <label for="inp-refresh" class="col-sm-2">Width</label>
+                <div class="col-sm-3">
+                    <input type="text" class="form-control" id="inp-width" name="width" ng-model="widget.style.width" />
+                </div>
+                <label for="inp-refresh" class="col-sm-2">Height</label>
+                <div class="col-sm-3">
+                    <input type="text" class="form-control" id="inp-height" name="height" ng-model="widget.style.height" />
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div class="col-sm-6 widget-config-chart-area zmon-widgets">
+        <dashboard-widget config="widget"/>
+    </div>
+</div>
+

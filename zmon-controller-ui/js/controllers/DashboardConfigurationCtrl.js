@@ -28,6 +28,8 @@ angular.module('zmon2App').controller('DashboardConfigurationCtrl', ['$scope', '
             "type": "Value",
         }, {
             "type": "Trend",
+        }, {
+            "type": "Iframe",
         }];
 
         $scope.dashboard = {

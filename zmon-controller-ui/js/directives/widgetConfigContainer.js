@@ -73,6 +73,12 @@ angular.module('zmon2App').directive('widgetConfigContainer', ['$compile', '$log
                     };
                 };
 
+                var addIframe = function() {
+                    return {
+                        type: 'iframe'
+                    };
+                };
+
                 // Add a new widget
                 scope.addWidget = function() {
                     switch (scope.selectedWidgetType.type) {
@@ -88,6 +94,9 @@ angular.module('zmon2App').directive('widgetConfigContainer', ['$compile', '$log
                             break;
                         case 'Trend':
                             scope.widgets = [addTrend()].concat(scope.widgets);
+                            break;
+                        case 'Iframe':
+                            scope.widgets = [addIframe()].concat(scope.widgets);
                             break;
                     };
                 };

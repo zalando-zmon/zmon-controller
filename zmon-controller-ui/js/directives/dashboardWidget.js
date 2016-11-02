@@ -17,7 +17,6 @@ angular.module('zmon2App').directive('dashboardWidget', ['CommunicationService',
                     $timeout(function() {
                         var iframe = document.getElementById('iframe-widget');
                         if (iframe && iframe.src) {
-                            iframe.src = iframe.src;
                             reloadIframe();
                         }
                     }, $scope.config.refresh);
@@ -25,7 +24,7 @@ angular.module('zmon2App').directive('dashboardWidget', ['CommunicationService',
 
                 // trust url as resource for iframes
                 if ($scope.config.type === 'iframe') {
-                    $scope.config.src = $sce.trustAsResourceUrl($scope.config.src);
+                    $scope.config.trustedSrc = $sce.trustAsResourceUrl($scope.config.src);
                     $scope.config.css = {
                         'width': $scope.config.style.width,
                         'height': $scope.config.style.height,
