@@ -27,41 +27,48 @@ angular.module('zmon2App').directive('gauge', function() {
             }
 
             var refreshGauge = function() {
-                    scope.value = parseFloat(scope.value);
+                scope.value = parseFloat(scope.value);
 
-                    // Till we iron out all error possibilities with stacktrace, let's use a try catch.
-                    try {
-                        if (g === null) {
-                            g = new JustGage({
-                                id: "gauge-" + gaugeId,
-                                value: scope.value,
-                                min: scope._options.min,
-                                gaugeColor: '#7f7f7f',
-                                max: scope._options.max === null ? scope.max.toFixed(1) : scope._options.max,
-                                title: " ",
-                                valueFontColor: '#fff',
-                                showInnerShadow: true,
-                                shadowOpacity: 0.8,
-                                shadowSize: 4,
-                                shadowVerticalOffset: 2,
-                                levelColors: colors
-                            });
+                // Till we iron out all error possibilities with stacktrace, let's use a try catch.
+                try {
+                    if (g === null) {
+                        g = new JustGage({
+                            id: "gauge-" + gaugeId,
+                            value: scope.options.format ? parseFloat(scope.options.format.format(scope.value)) : scope.value.toFixed(1),
+                            min: scope._options.min,
+                            gaugeColor: '#7f7f7f',
+                            max: scope._options.max === null ? scope.max.toFixed(1) : scope._options.max,
+                            title: " ",
+                            valueFontColor: '#fff',
+                            showInnerShadow: true,
+                            shadowOpacity: 0.8,
+                            shadowSize: 4,
+                            shadowVerticalOffset: 2,
+                            levelColors: colors
+                        });
+                    } else {
+                        if (scope._options.max === null) {
+                            var newMax = scope.max.toFixed(1);
+                            g.config.max = newMax;
+                            g.txtMax.attr('text', newMax);
                         } else {
-                            if (scope._options.max === null) {
-                                var newMax = scope.max.toFixed(1);
-                                g.config.max = newMax;
-                                g.txtMax.attr('text', newMax);
-                            } else {
-                                g.config.min = scope._options.min.toFixed(1);
-                                g.txtMin.attr('text', scope._options.min.toFixed(1));
-                                g.config.max = scope._options.max.toFixed(1);
-                                g.txtMax.attr('text', scope._options.max.toFixed(1));
-                            }
-                            g.refresh(scope.value);
+                            g.config.max = scope._options.max.toFixed(1);
+                            g.txtMax.attr('text', scope._options.max.toFixed(1));
                         }
-                    } catch (ex) {
-                        console.error("ERROR Gauge:", ex);
+                        if (scope._options.min === null) {
+                            var newMin = scope.min.toFixed(1);
+                            g.config.min = newMin;
+                            g.txtMin.attr('text', newMin);
+                        } else {
+                            g.config.min = scope._options.min.toFixed(1);
+                            g.txtMin.attr('text', scope._options.min.toFixed(1));
+                        }
+
+                        g.refresh(scope.options.format ? parseFloat(scope.options.format.format(scope.value)) : scope.value.toFixed(1));
                     }
+                } catch (ex) {
+                    console.error("ERROR Gauge:", ex);
+                }
             };
 
             scope.$watch('options', function(options) {

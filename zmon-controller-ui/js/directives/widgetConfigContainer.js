@@ -75,7 +75,13 @@ angular.module('zmon2App').directive('widgetConfigContainer', ['$compile', '$log
 
                 var addIframe = function() {
                     return {
-                        type: 'iframe'
+                        type: 'iframe',
+                        style: {
+                            width: '100%',
+                            height: '100%',
+                            scale: 1,
+                        },
+                        refresh: 60000,
                     };
                 };
 
