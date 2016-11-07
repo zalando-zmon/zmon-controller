@@ -157,7 +157,7 @@ angular.module('zmon2App').directive('dashboardWidget', ['CommunicationService',
                                 if ($scope.config.options.format) {
                                     $scope.maxValue = $scope.config.options.format.format($scope.maxValue);
                                 } else {
-                                    $scope.maxValue = $scope.maxValue.toFixed(0);
+                                    $scope.maxValue = ($scope.maxValue || 0).toFixed(0)/1;
                                 }
 
                                 if ($scope.config.options.fontSize) {

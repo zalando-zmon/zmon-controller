@@ -27,6 +27,7 @@ angular.module('zmon2App').directive('gauge', function() {
 
             var refreshGauge = function() {
                 scope.value = scope.value/1 || 0;
+                scope.max = scope.max/1 || 100;
 
                 // Till we iron out all error possibilities with stacktrace, let's use a try catch.
                 try {
@@ -47,7 +48,6 @@ angular.module('zmon2App').directive('gauge', function() {
                         });
                     } else {
                         if (scope._options.max === null) {
-                            console.log('no max');
                             var newMax = scope.max.toFixed(0)/1;
                             g.config.max = newMax;
                             g.txtMax.attr('text', newMax);
