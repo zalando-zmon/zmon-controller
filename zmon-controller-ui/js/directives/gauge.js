@@ -14,7 +14,6 @@ angular.module('zmon2App').directive('gauge', function() {
             elem.append('<div class="gauge-wrapper" id="gauge-' + gaugeId + '"></div>');
 
             var g = null;
-
             scope._options = {min: 0, max: null, reverse: false};
 
             if (typeof scope.options !== 'undefined') {
@@ -27,17 +26,17 @@ angular.module('zmon2App').directive('gauge', function() {
             }
 
             var refreshGauge = function() {
-                scope.value = parseFloat(scope.value);
+                scope.value = scope.value/1 || 0;
 
                 // Till we iron out all error possibilities with stacktrace, let's use a try catch.
                 try {
                     if (g === null) {
                         g = new JustGage({
                             id: "gauge-" + gaugeId,
-                            value: scope.options.format ? parseFloat(scope.options.format.format(scope.value)) : scope.value.toFixed(0),
-                            min: scope._options.min,
+                            value: scope.options.format ? scope.options.format.format(scope.value)/1 : scope.value.toFixed(0)/1,
+                            min: scope._options.min/1,
                             gaugeColor: '#7f7f7f',
-                            max: scope._options.max === null ? scope.max.toFixed(0) : scope._options.max,
+                            max: scope._options.max === null ? scope.max.toFixed(0)/1 : scope._options.max/1,
                             title: " ",
                             valueFontColor: '#fff',
                             showInnerShadow: true,
@@ -48,23 +47,24 @@ angular.module('zmon2App').directive('gauge', function() {
                         });
                     } else {
                         if (scope._options.max === null) {
-                            var newMax = scope.max.toFixed(0);
+                            console.log('no max');
+                            var newMax = scope.max.toFixed(0)/1;
                             g.config.max = newMax;
                             g.txtMax.attr('text', newMax);
                         } else {
-                            g.config.max = scope._options.max.toFixed(0);
+                            g.config.max = scope._options.max.toFixed(0)/1;
                             g.txtMax.attr('text', scope._options.max.toFixed(0));
                         }
                         if (scope._options.min === null) {
-                            var newMin = scope.min.toFixed(0);
+                            var newMin = scope.min.toFixed(0)/1;
                             g.config.min = newMin;
                             g.txtMin.attr('text', newMin);
                         } else {
-                            g.config.min = scope._options.min.toFixed(0);
+                            g.config.min = scope._options.min.toFixed(0)/1;
                             g.txtMin.attr('text', scope._options.min.toFixed(0));
                         }
 
-                        g.refresh(scope.options.format ? parseFloat(scope.options.format.format(scope.value)) : scope.value.toFixed(0));
+                        g.refresh(scope.options.format ? scope.options.format.format(scope.value)/1 : scope.value.toFixed(0)/1);
                     }
                 } catch (ex) {
                     console.error("ERROR Gauge:", ex);
