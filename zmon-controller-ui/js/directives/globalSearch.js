@@ -75,7 +75,9 @@ angular.module('zmon2App').directive('globalSearch', [ '$timeout', '$rootScope',
             scope.toggleTeamFilter = function() {
                 scope.filterByTeam = !scope.filterByTeam;
                 scope.ls.filterByTeam = scope.filterByTeam;
-                fetchData();
+                if (scope.query) {
+                    fetchData();
+                }
             };
 
             // focus input field on open
