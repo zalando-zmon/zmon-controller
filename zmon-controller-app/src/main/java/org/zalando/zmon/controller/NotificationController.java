@@ -1,12 +1,21 @@
 package org.zalando.zmon.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.client.RestTemplate;
+import org.zalando.zmon.config.NotificationServiceProperties;
 import org.zalando.zmon.security.permission.DefaultZMonPermissionService;
-import org.zalando.zmon.service.NotificationService;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 /**
  * Created by jmussler on 09.11.16.
@@ -20,32 +29,24 @@ public class NotificationController {
     private DefaultZMonPermissionService authorityService;
 
     @Autowired
-    NotificationService notificationService;
+    NotificationServiceProperties config;
 
-    public static class DeviceRequestBody {
-        public String registrationToken;
+    RestTemplate restTemplate;
+
+    public NotificationController() {
+        restTemplate = new RestTemplate();
     }
 
-    public static class SubscriptionRequestBody {
-        public int alertId;
-    }
+    @ResponseBody
+    @RequestMapping(path="/**")
+    public String mirrorRest(@RequestBody String body, HttpMethod method, HttpServletRequest request,
+                             HttpServletResponse response) throws URISyntaxException
+    {
 
-    @RequestMapping(path="/register", method= RequestMethod.POST)
-    public void registerDevice(@RequestBody DeviceRequestBody body) {
+        URI uri = new URI(config.getScheme(), null, config.getHost(), config.getPort(), request.getRequestURI(), request.getQueryString(), null);
 
-    }
+        ResponseEntity<String> responseEntity = restTemplate.exchange(uri, method, new HttpEntity<>(body), String.class);
 
-    @RequestMapping(path="/subscription", method=RequestMethod.POST)
-    public void subscribe(@RequestBody SubscriptionRequestBody body) {
-        notificationService.subscribe(authorityService.getUserName(), body.alertId);
-    }
-
-    @RequestMapping(value = "/subscription/{alert_id}", method = RequestMethod.DELETE)
-    public void unsubscribe() {
-
-    }
-
-    public void getAlertSubscriptions() {
-
+        return responseEntity.getBody();
     }
 }

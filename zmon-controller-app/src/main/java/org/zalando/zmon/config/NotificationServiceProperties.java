@@ -13,59 +13,31 @@ import java.net.URL;
 @ConfigurationProperties(prefix = "zmon.notificationservice")
 public class NotificationServiceProperties {
 
-    private URL url;
+    private String scheme = "https";
+    private String host = "zmon-notification-service";
+    private int port = 443;
 
-    private int connectTimeout = 1000; // 1 second
-    private int socketTimeout = 5000; // 5 seconds
-    private int maxConnectionsPerRoute = 100;
-    private int maxConnectionsTotal = 200;
-
-    public URL getUrl() {
-        return url;
+    public String getScheme() {
+        return scheme;
     }
 
-    public void setUrl(URL url) {
-        this.url = url;
+    public void setScheme(String scheme) {
+        this.scheme = scheme;
     }
 
-    public int getConnectTimeout() {
-        return connectTimeout;
+    public String getHost() {
+        return host;
     }
 
-    public void setConnectTimeout(int connectTimeout) {
-        this.connectTimeout = connectTimeout;
+    public void setHost(String host) {
+        this.host = host;
     }
 
-    public int getSocketTimeout() {
-        return socketTimeout;
+    public int getPort() {
+        return port;
     }
 
-    public void setSocketTimeout(int socketTimeout) {
-        this.socketTimeout = socketTimeout;
-    }
-
-    public int getMaxConnectionsPerRoute() {
-        return maxConnectionsPerRoute;
-    }
-
-    public void setMaxConnectionsPerRoute(int maxConnectionsPerRoute) {
-        this.maxConnectionsPerRoute = maxConnectionsPerRoute;
-    }
-
-    public int getMaxConnectionsTotal() {
-        return maxConnectionsTotal;
-    }
-
-    public void setMaxConnectionsTotal(int maxConnectionsTotal) {
-        this.maxConnectionsTotal = maxConnectionsTotal;
-    }
-
-    /**
-     * get HttpClient with appropriate timeouts
-     * @return
-     */
-    public CloseableHttpClient getHttpClient() {
-        RequestConfig config = RequestConfig.custom().setSocketTimeout(getSocketTimeout()).setConnectTimeout(getConnectTimeout()).build();
-        return HttpClients.custom().setMaxConnPerRoute(maxConnectionsPerRoute).setMaxConnTotal(maxConnectionsTotal).setDefaultRequestConfig(config).build();
+    public void setPort(int port) {
+        this.port = port;
     }
 }
