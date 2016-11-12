@@ -59,6 +59,13 @@
     <script th:src="${staticUrl} + '/lib/ngclipboard/ngclipboard.min.js?t=@buildTime@'" chartset="utf-8"></script>
     <script th:src="${staticUrl} + '/lib/angular-ui-select/select.min.js?t=@buildTime@'" chartset="utf-8"></script>
 
+    <script th:inline="javascript" th:if="${firebaseEnabled}" src="https://www.gstatic.com/firebasejs/3.6.0/firebase.js"></script>
+    <script th:inline="javascript" th:if="${firebaseEnabled}">
+        // Initialize Firebase
+        var config = /*[[${firebaseConfig}]]*/ { apiKey: "", authDomain: "", databaseURL: "", storageBucket: "", messagingSenderId: ""};
+        firebase.initializeApp(config);
+    </script>
+
 </head>
 <body ng-class="activePage" ng-keypress="keypress($event)" ng-keydown="keydown($event)">
     <div class="loading-indicator" ng-show="IndexCtrl.getLoadingIndicatorState()">

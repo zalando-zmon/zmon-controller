@@ -5,7 +5,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.zalando.zmon.config.ControllerProperties;
+import org.zalando.zmon.config.FirebaseProperties;
+import org.zalando.zmon.config.ManifestJsonConfig;
 import org.zalando.zmon.security.permission.DefaultZMonPermissionService;
 
 import com.google.common.base.Joiner;
@@ -39,6 +42,9 @@ public class IndexController {
     @Autowired
     private ControllerProperties controllerProperties;
 
+    @Autowired
+    private FirebaseProperties firebaseProperties;
+
     @Value("${zmon.cloud.checkid}")
     private int cloudCheckId;
 
@@ -64,7 +70,17 @@ public class IndexController {
                         authorityService.hasInstantaneousAlertEvaluationPermission());
 
         model.addAttribute("cloudCheckId", cloudCheckId);
+        model.addAttribute("firebaseConfig", firebaseProperties);
+        model.addAttribute("firebaseEnabled", controllerProperties.enableFirebase);
 
         return "index";
+    }
+
+    private static final ManifestJsonConfig manifest = new ManifestJsonConfig();
+
+    @RequestMapping(value = {"/manifest.json"})
+    @ResponseBody
+    public ManifestJsonConfig manifestJson() {
+        return manifest;
     }
 }
