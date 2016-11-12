@@ -7,6 +7,17 @@
     <meta charset="utf-8"></meta>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"></meta>
     <meta property="sessionExpiredUrl" content="logout?error=session_expired" ></meta>
+
+    <!-- Add to homescreen for Chrome on Android -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="ZMON">
+
+    <!-- Add to homescreen for Safari on iOS -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="ZMON">
+    <meta name="apple-mobile-web-app-status-bar-style" content="#303F9F">
+
     <title>ZMON</title>
 
     <link rel="stylesheet" type="text/css" th:href="${staticUrl} + '/asset/css/zalando-bootstrap.css?t=@buildTime@'" />
@@ -59,13 +70,14 @@
     <script th:src="${staticUrl} + '/lib/ngclipboard/ngclipboard.min.js?t=@buildTime@'" chartset="utf-8"></script>
     <script th:src="${staticUrl} + '/lib/angular-ui-select/select.min.js?t=@buildTime@'" chartset="utf-8"></script>
 
-    <script th:inline="javascript" th:if="${firebaseEnabled}" src="https://www.gstatic.com/firebasejs/3.6.0/firebase.js"></script>
+    <script th:inline="javascript" th:if="${firebaseEnabled}" src="https://www.gstatic.com/firebasejs/3.6.0/firebase-app.js"></script>
+    <script th:inline="javascript" th:if="${firebaseEnabled}" src="https://www.gstatic.com/firebasejs/3.5.2/firebase-messaging.js"></script>
     <script th:inline="javascript" th:if="${firebaseEnabled}">
         // Initialize Firebase
         var config = /*[[${firebaseConfig}]]*/ { apiKey: "", authDomain: "", databaseURL: "", storageBucket: "", messagingSenderId: ""};
         firebase.initializeApp(config);
     </script>
-
+    <link rel="manifest" href="/manifest.json">
 </head>
 <body ng-class="activePage" ng-keypress="keypress($event)" ng-keydown="keydown($event)">
     <div class="loading-indicator" ng-show="IndexCtrl.getLoadingIndicatorState()">
@@ -227,6 +239,18 @@
 <script th:src="${staticUrl} + '/js/controllers/EntityCtrl.js?t=@buildTime@'"></script>
 
 <script type="text/javascript">
+    const messaging = firebase.messaging();
+
+    messaging.requestPermission()
+            .then(function() {
+                console.log('Notification permission granted.');
+                // TODO(developer): Retrieve an Instance ID token for use with FCM.
+                // ...
+            })
+            .catch(function(err) {
+                console.log('Unable to get permission to notify.', err);
+            });
+
     angular.module('zmon2App').controller('IndexCtrl', ['$scope', '$location', '$rootScope', 'localStorageService', 'MainAlertService', '$interval', 'APP_CONST', 'LoadingIndicatorService', 'UserInfoService',
         function($scope, $location, $rootScope, localStorageService, MainAlertService, $interval, APP_CONST, LoadingIndicatorService, UserInfoService) {
             $scope.IndexCtrl = this;
