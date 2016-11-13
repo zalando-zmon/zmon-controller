@@ -43,6 +43,8 @@
                 <includes>
                     <include>favicon.ico</include>
                     <include>logo.png</include>
+                    <include>warning.png</include>
+                    <include>clean.png</include>
                 </includes>
                 <targetPath>${output-directory}</targetPath>
             </resource>

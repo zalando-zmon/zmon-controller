@@ -13,7 +13,7 @@ import java.net.URL;
 @ConfigurationProperties(prefix = "zmon.notificationservice")
 public class NotificationServiceProperties {
 
-    public String url;
+    public String url = "http://zmon-notification-service:8095";
 
     public String getUrl() {
         return url;

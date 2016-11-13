@@ -247,7 +247,14 @@
 
                 messaging.getToken().then(function(currentToken){
                    console.log('Token to register: ' + currentToken);
-                   jQuery.post("/rest/notifications/devices", JSON.stringify({device_token: currentToken}), null, "json");
+                    $.ajax({
+                        type: "POST",
+                        url: "/rest/notifications/devices",
+                        data:  JSON.stringify({device_token: currentToken}),
+                        success: null,
+                        dataType: "json",
+                        contentType: "application/json; charset=utf-8"
+                    });
                 });
 
                 messaging.onMessage(function(payload) {
