@@ -13,31 +13,13 @@ import java.net.URL;
 @ConfigurationProperties(prefix = "zmon.notificationservice")
 public class NotificationServiceProperties {
 
-    private String scheme = "https";
-    private String host = "zmon-notification-service";
-    private int port = 443;
+    public String url;
 
-    public String getScheme() {
-        return scheme;
+    public String getUrl() {
+        return url;
     }
 
-    public void setScheme(String scheme) {
-        this.scheme = scheme;
-    }
-
-    public String getHost() {
-        return host;
-    }
-
-    public void setHost(String host) {
-        this.host = host;
-    }
-
-    public int getPort() {
-        return port;
-    }
-
-    public void setPort(int port) {
-        this.port = port;
+    public void setUrl(String url) {
+        this.url = url;
     }
 }
