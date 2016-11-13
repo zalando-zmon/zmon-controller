@@ -44,7 +44,7 @@ public class NotificationController {
     }
 
     public static class DeviceRegistrationBody {
-        public String deviceToken;
+        public String registrationToken;
     }
 
     public static class TeamRegistrationBody {
@@ -54,7 +54,7 @@ public class NotificationController {
     @ResponseBody
     @RequestMapping(path="/devices", method=RequestMethod.POST)
     public void registerDevice(@RequestBody DeviceRegistrationBody body) throws IOException {
-        log.info("Registering device for user: deviceToken={} user={}", body.deviceToken, authorityService.getUserName());
+        log.info("Registering device for user: registrationToken={} user={}", body.registrationToken, authorityService.getUserName());
 
         final String url = config.getUrl() + "/api/v1/users/" + authorityService.getUserName() + "/devices";
         HttpEntity entity = new StringEntity(mapper.writeValueAsString(body), "UTF-8");
@@ -63,9 +63,9 @@ public class NotificationController {
     }
 
     @ResponseBody
-    @RequestMapping(path="/devices/{deviceId}", method=RequestMethod.DELETE)
-    public void unregisterDevice(@RequestParam(name="deviceId") String deviceId) throws IOException {
-        final String url = config.getUrl() + "/api/v1/device/" + deviceId;
+    @RequestMapping(path="/devices/{registrationToken}", method=RequestMethod.DELETE)
+    public void unregisterDevice(@RequestParam(name="registrationToken") String registrationToken) throws IOException {
+        final String url = config.getUrl() + "/api/v1/device/" + registrationToken;
         Request request = Request.Delete(url).addHeader("Authorization", "Bearer: " + accessTokens.get("notification-service")).addHeader("Content-Type", "application/json");
         Executor.newInstance().execute(request);
     }

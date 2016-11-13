@@ -250,7 +250,7 @@
                     $.ajax({
                         type: "POST",
                         url: "/rest/notifications/devices",
-                        data:  JSON.stringify({device_token: currentToken}),
+                        data:  JSON.stringify({registration_token: currentToken}),
                         success: null,
                         dataType: "json",
                         contentType: "application/json; charset=utf-8"
