@@ -244,8 +244,21 @@
     messaging.requestPermission()
             .then(function() {
                 console.log('Notification permission granted.');
-                // TODO(developer): Retrieve an Instance ID token for use with FCM.
-                // ...
+
+                messaging.getToken().then(function(currentToken){
+                   console.log('Token to register: ' + currentToken);
+                   jQuery.post("/rest/notifications/devices", JSON.stringify({device_token: currentToken}), "json");
+                });
+
+                messaging.onMessage(function(payload) {
+                    notification = new Notification(payload.notification.title,
+                                                    {icon: payload.notification.icon, body: payload.notification.body});
+                    notification.onclick = function(event) {
+                        event.preventDefault(); // prevent the browser from focusing the Notification's tab
+                        window.open(payload.notification.click_action, '_blank');
+                    }
+                });
+
             })
             .catch(function(err) {
                 console.log('Unable to get permission to notify.', err);
