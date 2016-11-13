@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.fluent.Executor;
 import org.apache.http.client.fluent.Request;
+import org.apache.http.client.fluent.Response;
 import org.apache.http.entity.StringEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,15 +59,15 @@ public class NotificationController {
 
         final String url = config.getUrl() + "/api/v1/users/" + authorityService.getUserName() + "/devices";
         HttpEntity entity = new StringEntity(mapper.writeValueAsString(body), "UTF-8");
-        Request request = Request.Post(url).body(entity).addHeader("Authorization", "Bearer: " + accessTokens.get("notification-service")).addHeader("Content-Type", "application/json");
-        Executor.newInstance().execute(request);
+        Request request = Request.Post(url).body(entity).addHeader("Authorization", "Bearer " + accessTokens.get("notification-service")).addHeader("Content-Type", "application/json");
+        Response r = Executor.newInstance().execute(request);
     }
 
     @ResponseBody
     @RequestMapping(path="/devices/{registrationToken}", method=RequestMethod.DELETE)
     public void unregisterDevice(@RequestParam(name="registrationToken") String registrationToken) throws IOException {
         final String url = config.getUrl() + "/api/v1/device/" + registrationToken;
-        Request request = Request.Delete(url).addHeader("Authorization", "Bearer: " + accessTokens.get("notification-service")).addHeader("Content-Type", "application/json");
+        Request request = Request.Delete(url).addHeader("Authorization", "Bearer " + accessTokens.get("notification-service")).addHeader("Content-Type", "application/json");
         Executor.newInstance().execute(request);
     }
 
@@ -75,7 +76,7 @@ public class NotificationController {
     public void subscribeToTeam(@RequestBody TeamRegistrationBody body) throws IOException {
         final String url = config.getUrl() + "/api/v1/users/" + authorityService.getUserName() + "/teams";
         HttpEntity entity = new StringEntity(mapper.writeValueAsString(body), "UTF-8");
-        Request request = Request.Post(url).body(entity).addHeader("Authorization", "Bearer: " + accessTokens.get("notification-service")).addHeader("Content-Type", "application/json");
+        Request request = Request.Post(url).body(entity).addHeader("Authorization", "Bearer " + accessTokens.get("notification-service")).addHeader("Content-Type", "application/json");
         Executor.newInstance().execute(request);
     }
 
@@ -83,7 +84,7 @@ public class NotificationController {
     @RequestMapping(path="/teams/{team}", method=RequestMethod.DELETE)
     public void unsubscribeTeam(@RequestParam(name="team") String team) throws IOException {
         final String url = config.getUrl() + "/api/v1/users/" + authorityService.getUserName() + "/teams/" + team;
-        Request request = Request.Delete(url).addHeader("Authorization", "Bearer: " + accessTokens.get("notification-service")).addHeader("Content-Type", "application/json");
+        Request request = Request.Delete(url).addHeader("Authorization", "Bearer " + accessTokens.get("notification-service")).addHeader("Content-Type", "application/json");
         Executor.newInstance().execute(request);
     }
 }
