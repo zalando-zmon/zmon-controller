@@ -8,9 +8,6 @@ angular.module('zmon2App').directive('dashboardWidget', ['CommunicationService',
                 config: '=config',
                 data: '=data'
             },
-            link: function(elem, attrs, scope) {
-
-            },
             controller: function($scope, $element, $attrs, $transclude, $timeout) {
                 if (!$scope.config.options) {
                     $scope.config.options = {};
@@ -20,15 +17,13 @@ angular.module('zmon2App').directive('dashboardWidget', ['CommunicationService',
                     $timeout(function() {
                         var iframe = document.getElementById('iframe-widget');
                         if (iframe && iframe.src) {
-                            iframe.src = iframe.src;
                             reloadIframe();
                         }
                     }, $scope.config.refresh);
                 };
 
-                // trust url as resource for iframes
-                if ($scope.config.type === 'iframe') {
-                    $scope.config.src = $sce.trustAsResourceUrl($scope.config.src);
+                var initIframe = function() {
+                    $scope.config.trustedSrc = $sce.trustAsResourceUrl($scope.config.src);
                     $scope.config.css = {
                         'width': $scope.config.style.width,
                         'height': $scope.config.style.height,
@@ -37,6 +32,11 @@ angular.module('zmon2App').directive('dashboardWidget', ['CommunicationService',
                         '-moz-transform': "scale("+ $scope.config.style.scale + ")",
                         '-ms-zoom': $scope.config.style.scale
                     };
+                }
+
+                // trust url as resource for iframes
+                if ($scope.config.type === 'iframe') {
+                    initIframe();
                     // reload iframe periodically
                     if ($scope.config.refresh) {
                         reloadIframe();
@@ -150,13 +150,26 @@ angular.module('zmon2App').directive('dashboardWidget', ['CommunicationService',
                                 $scope.lastValue = $scope.values[0];
                                 $scope.maxValue = valuesContainNumbers ? _.max($scope.values) : $scope.lastValue;
 
+                                if (!$scope.style) {
+                                    $scope.style = {};
+                                }
+
                                 if ($scope.config.options.format) {
                                     $scope.maxValue = $scope.config.options.format.format($scope.maxValue);
+                                } else {
+                                    $scope.maxValue = ($scope.maxValue || 0).toFixed(0)/1;
+                                }
 
-                                    $scope.style = {
-                                        "font-size": $scope.config.options.fontSize,
-                                        "color": $scope.config.options.color
-                                    };
+                                if ($scope.config.options.fontSize) {
+                                    $scope.style["font-size"]= $scope.config.options.fontSize;
+                                } else {
+                                    delete $scope.style["font-size"];
+                                }
+
+                                if ($scope.config.options.color) {
+                                    $scope.style["color"] = $scope.config.options.color;
+                                } else {
+                                    delete $scope.style["color"];
                                 }
                                 break;
                             case 'chart':
@@ -192,7 +205,7 @@ angular.module('zmon2App').directive('dashboardWidget', ['CommunicationService',
                                     $scope.maxValue = _.max($scope.values);
 
                                     if ($scope.config.options.format) {
-                                        $scope.lastValue = $scope.config.options.format.format($scope.lastValue);
+                                        $scope.lastValue = parseFloat($scope.config.options.format.format($scope.lastValue));
                                     }
                                 }
                                 break;
@@ -266,15 +279,27 @@ angular.module('zmon2App').directive('dashboardWidget', ['CommunicationService',
                             }
                         );
                     }
-
                 };
 
                 // Watch for configuration changes on the widget and refetch data
                 $scope.$watch('config', function(options) {
+
+                    if (options.type === 'iframe') {
+                        var urlValid = /(http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/;
+                        if (urlValid.test(options.src)) {
+                            return initIframe();
+                        }
+                        return;
+                    }
+
                     checkDefinitionId = options.checkDefinitionId;
                     entity = options.entityId;
                     refreshWidgetData();
                 }, true);
+
+                $element.on('$destroy', function() {
+                    MainAlertService.removeDataRefreshById($scope.uniqId);
+                });
 
                 this.startDataRefresh = function() {
                     try {

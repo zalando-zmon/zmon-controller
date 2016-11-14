@@ -198,6 +198,7 @@ below styles are active for a widget */
     text-align: right;
     padding: 8px;
     overflow: hidden;
+    line-height: 190px;
 }
 
 /* TREND WIDGET */
@@ -232,6 +233,12 @@ below styles are active for a widget */
 .dashboard-widget-trend .widget-contents .trend
 {
     margin-top: 4px;
+}
+
+.widget-chart-metrics .fa-times-circle
+{
+    font-size: 20px;
+    line-height: 30px;
 }
 
 /* COP WIDGET */

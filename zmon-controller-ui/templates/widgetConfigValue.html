@@ -1,0 +1,50 @@
+<div class="text-left json-config-definition">
+    <div class="col-sm-6">
+        <div class="form-horizontal edit-definition">
+
+            <div class="row">
+                <label for="inp-title" class="col-sm-2">Title</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" id="inp-title" name="title" placeholder="Value Title" ng-model="widget.title" required />
+                </div>
+            </div>
+
+            <div class="row">
+                <label for="inp-checkDefinitionId" class="col-sm-2">CheckId</label>
+                <div class="col-sm-3">
+                    <input type="number" class="form-control" id="inp-checkDefinitionId" name="checkDefinitionId" ng-model="widget.checkDefinitionId" />
+                </div>
+                <label for="inp-entityId" class="col-sm-2 ">Entity Id</label>
+                <div class="col-sm-5">
+                    <input type="text" class="form-control" id="inp-entityId" name="entityId" ng-model="widget.entityId" />
+                </div>
+            </div>
+
+            <div class="row">
+                <label class="col-sm-2">Font Size</label>
+                <div class="col-sm-3">
+                    <input type="text" id="size" class="form-control" name="size" ng-model="widget.options.fontSize" placeholder="120px" />
+                </div>
+                <label class="col-sm-2">Color</label>
+                <div class="col-sm-3">
+                    <input type="text" id="colors" class="form-control" name="colors" ng-model="widget.options.color" placeholder="#000000" />
+                </div>
+            </div>
+
+            <div class="row">
+                <label class="col-sm-2">Format</label>
+                <div class="col-sm-3">
+                  <input type="text" id="format" class="form-control" name="format" ng-model="widget.options.format" placeholder="{:.3f}" />
+                </div>
+                <label class="col-sm-2">JSONPath</label>
+                <div class="col-sm-3">
+                    <input type="text" id="colors" class="form-control" name="colors" ng-model="widget.jsonPath" placeholder='"."' />
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div class="col-sm-6 zmon-widgets">
+        <dashboard-widget config="widget"/>
+    </div>
+</div>

@@ -1,0 +1,35 @@
+<div class="text-left json-config-definition">
+    <div class="col-sm-6">
+        <div class="form-horizontal edit-definition">
+
+            <div class="row">
+                <label for="inp-title" class="col-sm-2">Title</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" id="inp-title" name="title" placeholder="Trend Title" ng-model="widget.title" required />
+                </div>
+            </div>
+
+            <div class="row">
+                <label for="inp-checkDefinitionId" class="col-sm-2">CheckId</label>
+                <div class="col-sm-3">
+                    <input type="number" class="form-control" id="inp-checkDefinitionId" name="checkDefinitionId" ng-model="widget.checkDefinitionId" />
+                </div>
+                <label for="inp-entityId" class="col-sm-2 ">Entity Id</label>
+                <div class="col-sm-5">
+                    <input type="text" class="form-control" id="inp-entityId" name="entityId" ng-model="widget.entityId" />
+                </div>
+            </div>
+
+            <div class="row">
+                <label class="col-sm-2">JSONPath</label>
+                <div class="col-sm-3">
+                    <input type="text" id="jsonpath" class="form-control" name="jsonpath" ng-model="widget.jsonPath" placeholder='"."' />
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div class="col-sm-6 widget-config-chart-area zmon-widgets">
+        <dashboard-widget config="widget"/>
+    </div>
+</div>
