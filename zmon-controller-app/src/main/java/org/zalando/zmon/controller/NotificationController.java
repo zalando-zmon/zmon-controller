@@ -88,7 +88,7 @@ public class NotificationController {
     @RequestMapping(path="/teams", method=RequestMethod.GET)
     public String getSubscribedTeams() throws IOException {
         final String url = config.getUrl() + "/api/v1/users/" + authorityService.getUserName() + "/teams";
-        Request request = Request.Get(url).addHeader("Authorization", "Bearer " + accessTokens.get("notification-service");
+        Request request = Request.Get(url).addHeader("Authorization", "Bearer " + accessTokens.get("notification-service"));
         Response r = Executor.newInstance().execute(request);
         return r.returnContent().asString();
     }
@@ -105,7 +105,7 @@ public class NotificationController {
     @RequestMapping(path="/alerts", method=RequestMethod.GET)
     public String getSubscribedAlerts() throws IOException {
         final String url = config.getUrl() + "/api/v1/users/" + authorityService.getUserName() + "/alerts";
-        Request request = Request.Get(url).addHeader("Authorization", "Bearer " + accessTokens.get("notification-service");
+        Request request = Request.Get(url).addHeader("Authorization", "Bearer " + accessTokens.get("notification-service"));
         Response r = Executor.newInstance().execute(request);
         return r.returnContent().asString();
     }
