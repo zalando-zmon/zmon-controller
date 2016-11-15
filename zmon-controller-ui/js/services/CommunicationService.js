@@ -582,6 +582,58 @@ angular.module('zmon2App').factory('CommunicationService', ['$http', '$q', '$log
             return doHttpCall("GET", "rest/search", params);
         };
 
+        service.getNotificationAlerts = function() {
+            return doHttpCall("GET", "/rest/notifications/alerts");
+        };
+
+        service.subscribeNotificationAlerts = function(alerts) {
+            PreconditionsService.isNotEmpty(alerts);
+            var params = {
+                alerts: alerts
+            };
+            return doHttpCall("POST", "/rest/notifications/alerts", params)
+        };
+
+        service.getNotificationTeams = function() {
+            return doHttpCall("GET", "/rest/notifications/teams");
+        };
+
+        service.subscribeNotificationTeams = function(teams) {
+            PreconditionsService.isNotEmpty(teams);
+            var params = {
+                teams: teams
+            };
+            return doHttpCall("POST", "/rest/notifications/teams", params);
+        };
+
+        service.removeNotificationTeam = function(team) {
+            PreconditionsService.isNotEmpty(team);
+            var params = {
+                team: team
+            };
+            return doHttpCall("DELETE", "/rest/notifications/teams/", params);
+        };
+
+        service.sendNotificationToken = function(token) {
+            PreconditionsService.isNotEmpty(token);
+            var params = {
+                registration_token: token
+            };
+            return doHttpCall("POST", "/rest/notifications/devices", params);
+        };
+
+        service.removeNotificationToken = function(token) {
+            PreconditionsService.isNotEmpty(token);
+            var params = {
+                registration_token: token
+            };
+            return doHttpCall("DELETE", "/rest/notifications/devices", params);
+        };
+
+        service.getSubscriptions = function() {
+            return doHttpCall("GET", "/rest/user/subscriptions");
+        };
+
         return service;
     }
 ]);

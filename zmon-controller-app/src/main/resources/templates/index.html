@@ -70,8 +70,8 @@
     <script th:src="${staticUrl} + '/lib/ngclipboard/ngclipboard.min.js?t=@buildTime@'" chartset="utf-8"></script>
     <script th:src="${staticUrl} + '/lib/angular-ui-select/select.min.js?t=@buildTime@'" chartset="utf-8"></script>
 
-    <script th:inline="javascript" th:if="${firebaseEnabled}" src="https://www.gstatic.com/firebasejs/3.6.0/firebase-app.js"></script>
-    <script th:inline="javascript" th:if="${firebaseEnabled}" src="https://www.gstatic.com/firebasejs/3.5.2/firebase-messaging.js"></script>
+    <script th:inline="javascript" th:if="${firebaseEnabled}" src="/lib/firebase/firebase-app.js"></script>
+    <script th:inline="javascript" th:if="${firebaseEnabled}" src="/lib/firebase/firebase-messaging.js"></script>
     <script th:inline="javascript" th:if="${firebaseEnabled}">
         // Initialize Firebase
         var config = /*[[${firebaseConfig}]]*/ { apiKey: "", authDomain: "", databaseURL: "", storageBucket: "", messagingSenderId: ""};
@@ -117,6 +117,9 @@
                     </span>
                     <span ng-show="!serviceStatus.isStatusRefreshing">
                         Initializing status...
+                    </span>
+                    <span class="app-status">
+                        <notifications></notifications>
                     </span>
                     <span class="app-status">
                         <a title="ZMON Documentation" target="docs" href="https://docs.zmon.io">
@@ -219,6 +222,7 @@
 <script th:src="${staticUrl} + '/js/directives/globalSearch.js?t=@buildTime@'"></script>
 <script th:src="${staticUrl} + '/js/directives/keytrap.js?t=@buildTime@'"></script>
 <script th:src="${staticUrl} + '/js/directives/caret.js?t=@buildTime@'"></script>
+<script th:src="${staticUrl} + '/js/directives/notifications.js?t=@buildTime@'"></script>
 <script th:src="${staticUrl} + '/js/services/MainAlertService.js?t=@buildTime@'"></script>
 <script th:src="${staticUrl} + '/js/services/CommunicationService.js?t=@buildTime@'"></script>
 <script th:src="${staticUrl} + '/js/services/FeedbackMessageService.js?t=@buildTime@'"></script>
@@ -243,38 +247,6 @@
 <script th:src="${staticUrl} + '/js/controllers/EntityCtrl.js?t=@buildTime@'"></script>
 
 <script type="text/javascript">
-    const messaging = firebase.messaging();
-
-    messaging.requestPermission()
-            .then(function() {
-                console.log('Notification permission granted.');
-
-                messaging.getToken().then(function(currentToken){
-                   console.log('Token to register: ' + currentToken);
-                    $.ajax({
-                        type: "POST",
-                        url: "/rest/notifications/devices",
-                        data:  JSON.stringify({registration_token: currentToken}),
-                        success: null,
-                        dataType: "json",
-                        contentType: "application/json; charset=utf-8"
-                    });
-                });
-
-                messaging.onMessage(function(payload) {
-                    notification = new Notification(payload.notification.title,
-                                                    {icon: payload.notification.icon, body: payload.notification.body});
-                    notification.onclick = function(event) {
-                        event.preventDefault(); // prevent the browser from focusing the Notification's tab
-                        window.open(payload.notification.click_action, '_blank');
-                    }
-                });
-
-            })
-            .catch(function(err) {
-                console.log('Unable to get permission to notify.', err);
-            });
-
     angular.module('zmon2App').controller('IndexCtrl', ['$scope', '$location', '$rootScope', 'localStorageService', 'MainAlertService', '$interval', 'APP_CONST', 'LoadingIndicatorService', 'UserInfoService',
         function($scope, $location, $rootScope, localStorageService, MainAlertService, $interval, APP_CONST, LoadingIndicatorService, UserInfoService) {
             $scope.IndexCtrl = this;

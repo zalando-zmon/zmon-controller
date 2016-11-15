@@ -1,0 +1,29 @@
+<div>
+    <form class="form-horizontal" role="form" name="nForm" novalidate style="min-width:350px">
+        <div class="form-group">
+            <label class="col-sm-3 control-label">Status</label>
+            <div class="btn-group col-sm-8 col-offset-1">
+                <label class="btn btn-primary" ng-model="subscribed" ng-click="updateStatus(true)" uib-btn-radio="true">On</label>
+                <label class="btn btn-primary" ng-model="subscribed" ng-click="updateStatus(false)" uib-btn-radio="false">Off</label>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">Alert IDs</label>
+            <div class="col-sm-8 col-offset-1">
+                <input type="text" class="form-control" id="alert-ids" name="alertIds" placeholder="1, 13, 100..." ng-model="subscriptions.alerts" ng-list ng-change="updateAlerts()" ng-model-options='{ debounce: 1000 }' ng-disabled="!subscribed"></input>
+            </div>
+        </div>
+
+        <div class="form-group inp-tags">
+            <label for="inp-tags" class="col-sm-3 control-label">Teams</label>
+            <div class="col-sm-8 col-offset-1">
+                <ui-select multiple tagging tagging-label="(custom 'new' tag)" ng-model="subscriptions.teams" theme="bootstrap" sortable="true" title="Teams" on-select="addTeams()" on-remove="removeTeam($item)" ng-disabled="!subscribed">
+                    <ui-select-match placeholder="Add team...">{{$item}}</ui-select-match>
+                    <ui-select-choices repeat="team in availableTeams | filter:$select.search">
+                        {{team}}
+                    </ui-select-choices>
+                </ui-select>
+            </div>
+        </div>
+    </form>
+</div>

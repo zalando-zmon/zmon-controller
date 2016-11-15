@@ -305,7 +305,7 @@ div.popover
     position: absolute;
     text-align: center;
     width: 100%;
-    z-index: 10;
+    z-index: 4;
 }
 
 #message-manager-wrapper.success
@@ -1320,4 +1320,10 @@ body.entities-page .type-col {
 .global-search .tag.grafana
 {
     color: #ff4000;
+}
+
+/* ui-select ng-disabled on empty input field shrinks heihgt, this fixes it */
+.ui-select-multiple.ui-select-bootstrap
+{
+    min-height: 31px;
 }
