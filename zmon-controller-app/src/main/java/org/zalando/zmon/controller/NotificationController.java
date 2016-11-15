@@ -52,6 +52,10 @@ public class NotificationController {
         public String team;
     }
 
+    public static class AlertRegistrationBody {
+        public String alertId;
+    }
+
     @ResponseBody
     @RequestMapping(path="/devices", method=RequestMethod.POST)
     public void registerDevice(@RequestBody DeviceRegistrationBody body) throws IOException {
@@ -81,10 +85,37 @@ public class NotificationController {
     }
 
     @ResponseBody
+    @RequestMapping(path="/teams", method=RequestMethod.GET)
+    public String getSubscribedTeams() throws IOException {
+        final String url = config.getUrl() + "/api/v1/users/" + authorityService.getUserName() + "/teams";
+        Request request = Request.Get(url).addHeader("Authorization", "Bearer " + accessTokens.get("notification-service");
+        Response r = Executor.newInstance().execute(request);
+        return r.returnContent().asString();
+    }
+
+    @ResponseBody
     @RequestMapping(path="/teams/{team}", method=RequestMethod.DELETE)
     public void unsubscribeTeam(@RequestParam(name="team") String team) throws IOException {
         final String url = config.getUrl() + "/api/v1/users/" + authorityService.getUserName() + "/teams/" + team;
         Request request = Request.Delete(url).addHeader("Authorization", "Bearer " + accessTokens.get("notification-service")).addHeader("Content-Type", "application/json");
+        Executor.newInstance().execute(request);
+    }
+
+    @ResponseBody
+    @RequestMapping(path="/alerts", method=RequestMethod.GET)
+    public String getSubscribedAlerts() throws IOException {
+        final String url = config.getUrl() + "/api/v1/users/" + authorityService.getUserName() + "/alerts";
+        Request request = Request.Get(url).addHeader("Authorization", "Bearer " + accessTokens.get("notification-service");
+        Response r = Executor.newInstance().execute(request);
+        return r.returnContent().asString();
+    }
+
+    @ResponseBody
+    @RequestMapping(path="/alerts", method=RequestMethod.POST)
+    public void subscribeToAlert(@RequestBody AlertRegistrationBody body) throws IOException {
+        final String url = config.getUrl() + "/api/v1/users/" + authorityService.getUserName() + "/alerts";
+        HttpEntity entity = new StringEntity(mapper.writeValueAsString(body), "UTF-8");
+        Request request = Request.Post(url).body(entity).addHeader("Authorization", "Bearer " + accessTokens.get("notification-service")).addHeader("Content-Type", "application/json");
         Executor.newInstance().execute(request);
     }
 }
