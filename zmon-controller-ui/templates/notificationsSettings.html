@@ -11,10 +11,10 @@
         <div class="form-group inp-teams">
             <label for="inp-alerts" class="col-sm-3 control-label">Alert IDs</label>
             <div class="col-sm-8 col-offset-1">
-                <ui-select multiple tagging="tagging" tagging-label="(custom 'new' ID)" ng-model="subscriptions.alerts" theme="bootstrap" sortable="true" title="Alerts" on-select="addAlert($item)" on-remove="removeAlert($item)" ng-disabled="!subscriptions.subscribed">
-                    <ui-select-match placeholder="Add alert...">{{$item.id}}</ui-select-match>
-                    <ui-select-choices repeat="alert.id as alert in availableAlerts | filter:$select.search">
-                      {{alert.id}} - {{alert.name}}
+                <ui-select multiple tagging tagging-label="(custom 'new' ID)" ng-model="subscriptions.alerts" theme="bootstrap" sortable="true" title="Alerts" on-select="addAlert($item)" on-remove="removeAlert($item)" ng-disabled="!subscriptions.subscribed">
+                    <ui-select-match placeholder="Add alert...">{{$item}}</ui-select-match>
+                    <ui-select-choices repeat="alert in availableAlerts | filter:$select.search">
+                        {{alert}}
                     </ui-select-choices>
                 </ui-select>
             </div>
@@ -23,7 +23,7 @@
         <div class="form-group">
             <label for="inp-teams" class="col-sm-3 control-label">Teams</label>
             <div class="col-sm-8 col-offset-1">
-                <ui-select multiple tagging tagging-label="(custom 'new' tag)" ng-model="subscriptions.teams" theme="bootstrap" sortable="true" title="Teams" on-select="addTeam($item)" on-remove="removeTeam($item)" ng-disabled="!subscriptions.subscribed">
+                <ui-select multiple tagging tagging-label="(custom 'new' team)" ng-model="subscriptions.teams" theme="bootstrap" sortable="true" title="Teams" on-select="addTeam($item)" on-remove="removeTeam($item)" ng-disabled="!subscriptions.subscribed">
                     <ui-select-match placeholder="Add team...">{{$item}}</ui-select-match>
                     <ui-select-choices repeat="team in availableTeams | filter:$select.search">
                         {{team}}

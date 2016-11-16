@@ -95,7 +95,7 @@ angular.module('zmon2App').factory('CommunicationService', ['$http', '$q', '$log
             PreconditionsService.isNotEmpty(alertId);
             PreconditionsService.isNumber(alertId);
             var params = {
-                "alert_id": alertId
+                "alertId": alertId
             };
             return doHttpCall("GET", "rest/alertDetails", params);
         };
@@ -620,6 +620,10 @@ angular.module('zmon2App').factory('CommunicationService', ['$http', '$q', '$log
                 team: id
             };
             return doHttpCall("DELETE", "/rest/notifications/teams", params);
+        };
+
+        service.getNotificationPriority = function() {
+            return doHttpCall("GET", "/rest/notifications/priority");
         };
 
         service.subscribeNotificationPriority = function(prio) {

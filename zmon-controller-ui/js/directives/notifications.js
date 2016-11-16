@@ -35,6 +35,7 @@ angular.module('zmon2App').directive('notifications', [ 'CommunicationService', 
                             scope.subscriptions.subscribed = true;
                             getNotificationAlerts();
                             getNotificationTeams();
+                            getNotificationPriority();
                         })
                         .catch(function() {
                             FeedbackMessageService.showErrorMessage('Push Notifications subscription failed');
@@ -78,9 +79,6 @@ angular.module('zmon2App').directive('notifications', [ 'CommunicationService', 
                 .then(function(alerts) {
                     scope.subscriptions.alerts = alerts;
                 })
-                .catch(function() {
-                    FeedbackMessageService.showErrorMessage('Failed to apply Notification changes');
-                });
             };
 
             var getNotificationTeams = function() {
@@ -88,9 +86,13 @@ angular.module('zmon2App').directive('notifications', [ 'CommunicationService', 
                 .then(function(teams) {
                     scope.subscriptions.teams = teams;
                 })
-                .catch(function() {
-                    FeedbackMessageService.showErrorMessage('Failed to apply Notification changes');
-                });
+            };
+
+            var getNotificationPriority = function() { 
+                CommunicationService.getNotificationPriority()
+                .then(function(prio) {
+                    scope.subscriptions.priority = prio;
+                })
             };
 
             var checkIfSupported = function() {
@@ -104,13 +106,6 @@ angular.module('zmon2App').directive('notifications', [ 'CommunicationService', 
                 CommunicationService.getAllTeams()
                 .then(function(teams) {
                     scope.availableTeams = teams;
-                });
-            };
-
-            var getAllAlerts = function() {
-                CommunicationService.getAlertDefinitions()
-                .then(function(alerts) {
-                    scope.availableAlerts = alerts;
                 });
             };
 
@@ -156,13 +151,8 @@ angular.module('zmon2App').directive('notifications', [ 'CommunicationService', 
                 disableNotifications();
             };
 
-            scope.tagging = function(obj) {
-                return obj.id;
-            };
-
             // initialize
             checkIfSupported();
-            getAllAlerts();
             getAllTeams();
             requestPermission();
         }
