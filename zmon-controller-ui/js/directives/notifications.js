@@ -109,15 +109,15 @@ angular.module('zmon2App').directive('notifications', [ 'CommunicationService', 
                 });
             };
 
-            scope.addAlert = function(alert) {
-                CommunicationService.subscribeNotificationAlert(alert.id)
+            scope.addAlert = function(id) {
+                CommunicationService.subscribeNotificationAlert(id)
                 .then(function() {
                     console.log('alert saved');
                 });
             };
 
-            scope.removeAlert = function(alert) {
-                CommunicationService.removeNotificationAlert(alert.id)
+            scope.removeAlert = function(id) {
+                CommunicationService.removeNotificationAlert(id)
                 .then(function() {
                     console.log('alert removed');
                 });
