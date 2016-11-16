@@ -1,5 +1,6 @@
 package org.zalando.zmon.controller;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.fluent.Executor;
@@ -87,11 +88,11 @@ public class NotificationController {
 
     @ResponseBody
     @RequestMapping(path="/teams", method=RequestMethod.GET)
-    public ResponseEntity<String> getSubscribedTeams() throws IOException {
+    public ResponseEntity<JsonNode> getSubscribedTeams() throws IOException {
         final String url = config.getUrl() + "/api/v1/users/" + authorityService.getUserName() + "/teams";
         Request request = Request.Get(url).addHeader("Authorization", "Bearer " + accessTokens.get("notification-service"));
         Response r = Executor.newInstance().execute(request);
-        return new ResponseEntity<>(r.returnContent().asString(), HttpStatus.OK);
+        return new ResponseEntity<>(mapper.readTree(r.returnContent().asString()), HttpStatus.OK);
     }
 
     @ResponseBody
@@ -104,11 +105,11 @@ public class NotificationController {
 
     @ResponseBody
     @RequestMapping(path="/alerts", method=RequestMethod.GET)
-    public ResponseEntity<String> getSubscribedAlerts() throws IOException {
+    public ResponseEntity<JsonNode> getSubscribedAlerts() throws IOException {
         final String url = config.getUrl() + "/api/v1/users/" + authorityService.getUserName() + "/alerts";
         Request request = Request.Get(url).addHeader("Authorization", "Bearer " + accessTokens.get("notification-service"));
         Response r = Executor.newInstance().execute(request);
-        return new ResponseEntity<>(r.returnContent().asString(), HttpStatus.OK);
+        return new ResponseEntity<>(mapper.readTree(r.returnContent().asString()), HttpStatus.OK);
     }
 
     @ResponseBody
@@ -117,6 +118,14 @@ public class NotificationController {
         final String url = config.getUrl() + "/api/v1/users/" + authorityService.getUserName() + "/alerts";
         HttpEntity entity = new StringEntity(mapper.writeValueAsString(body), "UTF-8");
         Request request = Request.Post(url).body(entity).addHeader("Authorization", "Bearer " + accessTokens.get("notification-service")).addHeader("Content-Type", "application/json");
+        Executor.newInstance().execute(request);
+    }
+
+    @ResponseBody
+    @RequestMapping(path="/alerts/{alertId}", method=RequestMethod.DELETE)
+    public void unsubscribeTeam(@RequestParam(name="alertId") int alertId) throws IOException {
+        final String url = config.getUrl() + "/api/v1/users/" + authorityService.getUserName() + "/alerts/" + alertId;
+        Request request = Request.Delete(url).addHeader("Authorization", "Bearer " + accessTokens.get("notification-service")).addHeader("Content-Type", "application/json");
         Executor.newInstance().execute(request);
     }
 }
