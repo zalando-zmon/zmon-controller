@@ -4,9 +4,9 @@ angular.module('zmon2App').directive('notifications', [ 'CommunicationService', 
         templateUrl: 'templates/notifications.html',
         link: function(scope, elem, attr) {
             scope.supported = false;
-            scope.subscribed = false;
             scope.denied = false;
             scope.subscriptions = {
+                subscribed: false,
                 alerts: [],
                 teams: []
             };
@@ -25,14 +25,20 @@ angular.module('zmon2App').directive('notifications', [ 'CommunicationService', 
                     messaging.getToken().then(function(currentToken) {
                         console.log('Token to register:', currentToken);
                         scope.token = currentToken;
-                        CommunicationService.sendNotificationToken(currentToken).then(function() {
+                        CommunicationService.sendNotificationToken(currentToken)
+                        .then(function() {
                             console.log('Token successfully sent to server');
-                            scope.subscribed = true;
+                            scope.subscriptions.subscribed = true;
                             getNotificationAlerts();
                             getNotificationTeams();
+                        })
+                        .catch(function() {
+                            FeedbackMessageService.showErrorMessage('Push Notifications subscription failed');
+                            scope.subscriptions.subscribed = false;
                         });
                     }).catch(function() {
                         FeedbackMessageService.showErrorMessage('Push Notifications subscription failed');
+                        scope.subscriptions.subscribed = false;
                     });
 
                     messaging.onMessage(function(payload) {
@@ -55,10 +61,11 @@ angular.module('zmon2App').directive('notifications', [ 'CommunicationService', 
                 messaging.deleteToken(scope.token).then(function() {
                     CommunicationService.removeNotificationToken(scope.token).then(function() {
                         console.log('Push Notifications successfully disabled');
-                        scope.subscribed = false;
+                        scope.subscriptions.subscribed = false;
                     });
                 }).catch(function() {
                     FeedbackMessageService.showErrorMessage('Failed to disable Push Notifications');
+                    scope.subscriptions.subscribed = false;
                 });
             };
 
@@ -119,10 +126,9 @@ angular.module('zmon2App').directive('notifications', [ 'CommunicationService', 
 
             scope.updateStatus = function(status) {
                 if (status) {
-                    requestPermission();
-                } else {
-                    disableNotifications();
+                    return requestPermission();
                 }
+                disableNotifications();
             };
 
             checkIfSupported();
