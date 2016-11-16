@@ -100,7 +100,7 @@ public class NotificationController {
     }
 
     @ResponseBody
-    @RequestMapping(path="/teams/{team}", method=RequestMethod.DELETE)
+    @RequestMapping(path="/teams", method=RequestMethod.DELETE)
     public void unsubscribeTeam(@RequestParam(name="team") String team) throws IOException {
         final String url = config.getUrl() + "/api/v1/users/" + authorityService.getUserName() + "/teams/" + team;
         Request request = Request.Delete(url).addHeader("Authorization", "Bearer " + accessTokens.get("notification-service")).addHeader("Content-Type", "application/json");
@@ -144,7 +144,7 @@ public class NotificationController {
     }
 
     @ResponseBody
-    @RequestMapping(path="/alerts/{alertId}", method=RequestMethod.DELETE)
+    @RequestMapping(path="/alerts", method=RequestMethod.DELETE)
     public void unsubscribeTeam(@RequestParam(name="alertId") int alertId) throws IOException {
         final String url = config.getUrl() + "/api/v1/users/" + authorityService.getUserName() + "/alerts/" + alertId;
         Request request = Request.Delete(url).addHeader("Authorization", "Bearer " + accessTokens.get("notification-service")).addHeader("Content-Type", "application/json");
