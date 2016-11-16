@@ -597,7 +597,7 @@ angular.module('zmon2App').factory('CommunicationService', ['$http', '$q', '$log
         service.removeNotificationAlert = function(id) {
             PreconditionsService.isNotEmpty(id);
             var params = {
-                alert_id: id
+                alertId: id
             };
             return doHttpCall("DELETE", "/rest/notifications/alerts", params);
         };
