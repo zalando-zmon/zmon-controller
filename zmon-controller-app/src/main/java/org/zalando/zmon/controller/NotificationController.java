@@ -6,6 +6,7 @@ import org.apache.http.HttpEntity;
 import org.apache.http.client.fluent.Executor;
 import org.apache.http.client.fluent.Request;
 import org.apache.http.client.fluent.Response;
+import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.StringEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +20,8 @@ import org.zalando.zmon.config.NotificationServiceProperties;
 import org.zalando.zmon.security.permission.DefaultZMonPermissionService;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 /**
  * Created by jmussler on 09.11.16.
@@ -101,9 +104,10 @@ public class NotificationController {
 
     @ResponseBody
     @RequestMapping(path="/teams", method=RequestMethod.DELETE)
-    public void unsubscribeTeam(@RequestParam(name="team") String team) throws IOException {
-        final String url = config.getUrl() + "/api/v1/users/" + authorityService.getUserName() + "/teams/" + team;
-        Request request = Request.Delete(url).addHeader("Authorization", "Bearer " + accessTokens.get("notification-service")).addHeader("Content-Type", "application/json");
+    public void unsubscribeTeam(@RequestParam(name="team") String team) throws IOException, URISyntaxException {
+        final String url = config.getUrl() + "/api/v1/users/" + authorityService.getUserName() + "/teams";
+        URI uri = new URIBuilder(url).addParameter("team", team).build();
+        Request request = Request.Delete(uri).addHeader("Authorization", "Bearer " + accessTokens.get("notification-service")).addHeader("Content-Type", "application/json");
         Executor.newInstance().execute(request);
     }
 
@@ -145,9 +149,10 @@ public class NotificationController {
 
     @ResponseBody
     @RequestMapping(path="/alerts", method=RequestMethod.DELETE)
-    public void unsubscribeTeam(@RequestParam(name="alertId") int alertId) throws IOException {
-        final String url = config.getUrl() + "/api/v1/users/" + authorityService.getUserName() + "/alerts/" + alertId;
-        Request request = Request.Delete(url).addHeader("Authorization", "Bearer " + accessTokens.get("notification-service")).addHeader("Content-Type", "application/json");
+    public void unsubscribeTeam(@RequestParam(name="alertId") int alertId) throws IOException, URISyntaxException {
+        final String url = config.getUrl() + "/api/v1/users/" + authorityService.getUserName() + "/alerts";
+        URI uri = new URIBuilder(url).addParameter("alertId", "" + alertId).build();
+        Request request = Request.Delete(uri).addHeader("Authorization", "Bearer " + accessTokens.get("notification-service")).addHeader("Content-Type", "application/json");
         Executor.newInstance().execute(request);
     }
 }
