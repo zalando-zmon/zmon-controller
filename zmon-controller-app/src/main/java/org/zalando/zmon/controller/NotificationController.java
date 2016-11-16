@@ -1,6 +1,5 @@
 package org.zalando.zmon.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.fluent.Executor;
@@ -10,6 +9,8 @@ import org.apache.http.entity.StringEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.zalando.stups.tokens.AccessTokens;
@@ -86,11 +87,11 @@ public class NotificationController {
 
     @ResponseBody
     @RequestMapping(path="/teams", method=RequestMethod.GET)
-    public String getSubscribedTeams() throws IOException {
+    public ResponseEntity<String> getSubscribedTeams() throws IOException {
         final String url = config.getUrl() + "/api/v1/users/" + authorityService.getUserName() + "/teams";
         Request request = Request.Get(url).addHeader("Authorization", "Bearer " + accessTokens.get("notification-service"));
         Response r = Executor.newInstance().execute(request);
-        return r.returnContent().asString();
+        return new ResponseEntity<>(r.returnContent().asString(), HttpStatus.OK);
     }
 
     @ResponseBody
@@ -103,11 +104,11 @@ public class NotificationController {
 
     @ResponseBody
     @RequestMapping(path="/alerts", method=RequestMethod.GET)
-    public String getSubscribedAlerts() throws IOException {
+    public ResponseEntity<String> getSubscribedAlerts() throws IOException {
         final String url = config.getUrl() + "/api/v1/users/" + authorityService.getUserName() + "/alerts";
         Request request = Request.Get(url).addHeader("Authorization", "Bearer " + accessTokens.get("notification-service"));
         Response r = Executor.newInstance().execute(request);
-        return r.returnContent().asString();
+        return new ResponseEntity<>(r.returnContent().asString(), HttpStatus.OK);
     }
 
     @ResponseBody
