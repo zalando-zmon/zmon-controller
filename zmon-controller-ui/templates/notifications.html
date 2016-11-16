@@ -1,4 +1,6 @@
-<div ng-if="supported">
-    <i class="fa fa-fw clickable" ng-class="{'fa-bell':subscribed, 'fa-bell-o': !subscribed }" ng-click="toggle()" ng-if="!denied" title="Turn Notifications Off" uib-popover-template="templateUrl" popover-title="Notification Settings" popover-placement="bottom"></i>
-    <i class="fa fa-fw fa-bell-slash-o" ng-if="denied" title="Notifications are disabled"></i>
-</div>
+<span ng-if="supported" class="app-status">
+    <a>
+        <i class="fa fa-fw clickable fa-bell" ng-class="{'active':subscriptions.subscribed }" ng-click="toggle()" ng-if="!denied" title="Turn Notifications Off" uib-popover-template="templateUrl" popover-title="Notification Settings" popover-placement="bottom"></i>
+        <i class="fa fa-fw fa-bell-slash-o" ng-if="denied" title="Notifications are disabled"></i>
+    </a>
+</span>

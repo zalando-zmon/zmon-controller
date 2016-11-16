@@ -586,32 +586,48 @@ angular.module('zmon2App').factory('CommunicationService', ['$http', '$q', '$log
             return doHttpCall("GET", "/rest/notifications/alerts");
         };
 
-        service.subscribeNotificationAlerts = function(alerts) {
-            PreconditionsService.isNotEmpty(alerts);
+        service.subscribeNotificationAlert = function(id) {
+            PreconditionsService.isNotEmpty(id);
             var params = {
-                alerts: alerts
+                alert_id: id
             };
             return doHttpCall("POST", "/rest/notifications/alerts", params)
+        };
+
+        service.removeNotificationAlert = function(id) {
+            PreconditionsService.isNotEmpty(id);
+            var params = {
+                alert_id: id
+            };
+            return doHttpCall("DELETE", "/rest/notifications/alerts", params);
         };
 
         service.getNotificationTeams = function() {
             return doHttpCall("GET", "/rest/notifications/teams");
         };
 
-        service.subscribeNotificationTeams = function(teams) {
-            PreconditionsService.isNotEmpty(teams);
+        service.subscribeNotificationTeam = function(id) {
+            PreconditionsService.isNotEmpty(id);
             var params = {
-                teams: teams
+                team: id
             };
             return doHttpCall("POST", "/rest/notifications/teams", params);
         };
 
-        service.removeNotificationTeam = function(team) {
-            PreconditionsService.isNotEmpty(team);
+        service.removeNotificationTeam = function(id) {
+            PreconditionsService.isNotEmpty(id);
             var params = {
-                team: team
+                team: id
             };
-            return doHttpCall("DELETE", "/rest/notifications/teams/", params);
+            return doHttpCall("DELETE", "/rest/notifications/teams", params);
+        };
+
+        service.subscribeNotificationPriority = function(prio) {
+            PreconditionsService.isNotEmpty(prio);
+            var params = {
+                priority: prio
+            };
+            return doHttpCall("POST", "/rest/notifications/priority", params);
         };
 
         service.sendNotificationToken = function(token) {

@@ -8,9 +8,13 @@ angular.module('zmon2App').directive('notifications', [ 'CommunicationService', 
             scope.subscriptions = {
                 subscribed: false,
                 alerts: [],
-                teams: []
+                teams: [],
+                priority: 2
             };
 
+            scope.availableAlerts = [];
+            scope.availableTeams = [];
+            scope.availablePriorities = [1, 2, 3];
             // template used by uib-popover
             scope.templateUrl = 'templates/notificationsSettings.html';
 
@@ -98,22 +102,36 @@ angular.module('zmon2App').directive('notifications', [ 'CommunicationService', 
 
             var getAllTeams = function() {
                 CommunicationService.getAllTeams()
-                .then(function(data) {
-                    scope.availableTeams = data;
+                .then(function(teams) {
+                    scope.availableTeams = teams;
                 });
             };
 
-            scope.updateAlerts = function() {
-                CommunicationService.subscribeNotificationAlerts(scope.subscriptions.alerts)
-                .then(function() {
-                    console.log('alerts saved');
+            var getAllAlerts = function() {
+                CommunicationService.getAlertDefinitions()
+                .then(function(alerts) {
+                    scope.availableAlerts = alerts;
                 });
             };
 
-            scope.addTeams = function() {
-                CommunicationService.subscribeNotificationTeams(scope.subscriptions.teams)
+            scope.addAlert = function(alert) {
+                CommunicationService.subscribeNotificationAlert(alert.id)
                 .then(function() {
-                    console.log('teams added');
+                    console.log('alert saved');
+                });
+            };
+
+            scope.removeAlert = function(alert) {
+                CommunicationService.removeNotificationAlert(alert.id)
+                .then(function() {
+                    console.log('alert removed');
+                });
+            };
+
+            scope.addTeam = function(team) {
+                CommunicationService.subscribeNotificationTeam(team)
+                .then(function() {
+                    console.log('team added');
                 });
             };
 
@@ -124,6 +142,13 @@ angular.module('zmon2App').directive('notifications', [ 'CommunicationService', 
                 });
             };
 
+            scope.setPriority = function(prio) {
+                CommunicationService.subscribeNotificationPriority(prio)
+                .then(function() {
+                    console.log('priority set');
+                });
+            };
+
             scope.updateStatus = function(status) {
                 if (status) {
                     return requestPermission();
@@ -131,7 +156,13 @@ angular.module('zmon2App').directive('notifications', [ 'CommunicationService', 
                 disableNotifications();
             };
 
+            scope.tagging = function(obj) {
+                return obj.id;
+            };
+
+            // initialize
             checkIfSupported();
+            getAllAlerts();
             getAllTeams();
             requestPermission();
         }

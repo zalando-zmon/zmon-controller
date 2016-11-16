@@ -26,7 +26,7 @@ html, body
     margin-bottom: 0;
 }
 
-.navbar a:hover
+.navbar a:hover i
 {
     color: #f08533 !important;
 }
@@ -41,6 +41,7 @@ html, body
     width: 100%;
 }
 
+.navbar i.fa-bell.active,
 .navbar i.fa-search.active
 {
     color: #fff;

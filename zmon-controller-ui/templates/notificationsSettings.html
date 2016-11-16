@@ -7,20 +7,38 @@
                 <label class="btn btn-primary" ng-model="subscriptions.subscribed" ng-click="updateStatus(false)" uib-btn-radio="false">Off</label>
             </div>
         </div>
-        <div class="form-group">
-            <label class="col-sm-3 control-label">Alert IDs</label>
+
+        <div class="form-group inp-teams">
+            <label for="inp-alerts" class="col-sm-3 control-label">Alert IDs</label>
             <div class="col-sm-8 col-offset-1">
-                <input type="text" class="form-control" id="alert-ids" name="alertIds" placeholder="1, 13, 100..." ng-model="subscriptions.alerts" ng-list ng-change="updateAlerts()" ng-model-options='{ debounce: 1000 }' ng-disabled="!subscriptions.subscribed"></input>
+                <ui-select multiple tagging="tagging" tagging-label="(custom 'new' ID)" ng-model="subscriptions.alerts" theme="bootstrap" sortable="true" title="Alerts" on-select="addAlert($item)" on-remove="removeAlert($item)" ng-disabled="!subscriptions.subscribed">
+                    <ui-select-match placeholder="Add alert...">{{$item.id}}</ui-select-match>
+                    <ui-select-choices repeat="alert.id as alert in availableAlerts | filter:$select.search">
+                      {{alert.id}} - {{alert.name}}
+                    </ui-select-choices>
+                </ui-select>
             </div>
         </div>
 
-        <div class="form-group inp-tags">
-            <label for="inp-tags" class="col-sm-3 control-label">Teams</label>
+        <div class="form-group">
+            <label for="inp-teams" class="col-sm-3 control-label">Teams</label>
             <div class="col-sm-8 col-offset-1">
-                <ui-select multiple tagging tagging-label="(custom 'new' tag)" ng-model="subscriptions.teams" theme="bootstrap" sortable="true" title="Teams" on-select="addTeams()" on-remove="removeTeam($item)" ng-disabled="!subscriptions.subscribed">
+                <ui-select multiple tagging tagging-label="(custom 'new' tag)" ng-model="subscriptions.teams" theme="bootstrap" sortable="true" title="Teams" on-select="addTeam($item)" on-remove="removeTeam($item)" ng-disabled="!subscriptions.subscribed">
                     <ui-select-match placeholder="Add team...">{{$item}}</ui-select-match>
                     <ui-select-choices repeat="team in availableTeams | filter:$select.search">
                         {{team}}
+                    </ui-select-choices>
+                </ui-select>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="inp-priority" class="col-sm-3 control-label">Priority</label>
+            <div class="col-sm-8 col-offset-1">
+                <ui-select name="priority" ng-model="subscriptions.priority" theme="select2" on-select="setPriority($item)">
+                    <ui-select-match placeholder="Select or search a priority in the list...">{{$select.selected}}</ui-select-match>
+                    <ui-select-choices repeat="item in availablePriorities | filter: $select.search">
+                      <div ng-bind="item"></div>
                     </ui-select-choices>
                 </ui-select>
             </div>
