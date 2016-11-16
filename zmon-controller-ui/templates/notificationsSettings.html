@@ -35,7 +35,7 @@
         <div class="form-group">
             <label for="inp-priority" class="col-sm-3 control-label">Priority</label>
             <div class="col-sm-8 col-offset-1">
-                <ui-select name="priority" ng-model="subscriptions.priority" theme="select2" on-select="setPriority($item)">
+                <ui-select name="priority" ng-model="subscriptions.priority" theme="select2" on-select="setPriority($item)" ng-disabled="!subscriptions.subscribed">
                     <ui-select-match placeholder="Select or search a priority in the list...">{{$select.selected}}</ui-select-match>
                     <ui-select-choices repeat="item in availablePriorities | filter: $select.search">
                       <div ng-bind="item"></div>
