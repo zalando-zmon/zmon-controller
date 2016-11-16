@@ -70,7 +70,7 @@ public class NotificationController {
     }
 
     @ResponseBody
-    @RequestMapping(path="/devices/{registrationToken}", method=RequestMethod.DELETE)
+    @RequestMapping(path="/devices", method=RequestMethod.DELETE)
     public void unregisterDevice(@RequestParam(name="registrationToken") String registrationToken) throws IOException {
         final String url = config.getUrl() + "/api/v1/device/" + registrationToken;
         Request request = Request.Delete(url).addHeader("Authorization", "Bearer " + accessTokens.get("notification-service")).addHeader("Content-Type", "application/json");
