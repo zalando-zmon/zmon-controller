@@ -95,7 +95,7 @@ angular.module('zmon2App').factory('CommunicationService', ['$http', '$q', '$log
             PreconditionsService.isNotEmpty(alertId);
             PreconditionsService.isNumber(alertId);
             var params = {
-                "alertId": alertId
+                "alert_id": alertId
             };
             return doHttpCall("GET", "rest/alertDetails", params);
         };
@@ -589,7 +589,7 @@ angular.module('zmon2App').factory('CommunicationService', ['$http', '$q', '$log
         service.subscribeNotificationAlert = function(id) {
             PreconditionsService.isNotEmpty(id);
             var params = {
-                alert_id: id
+                alertId: id
             };
             return doHttpCall("POST", "/rest/notifications/alerts", params)
         };
