@@ -58,6 +58,10 @@ public class NotificationController {
         public String alertId;
     }
 
+    public static class PriorityBody {
+        public int priority;
+    }
+
     @ResponseBody
     @RequestMapping(path="/devices", method=RequestMethod.POST)
     public void registerDevice(@RequestBody DeviceRegistrationBody body) throws IOException {
@@ -110,6 +114,24 @@ public class NotificationController {
         Request request = Request.Get(url).addHeader("Authorization", "Bearer " + accessTokens.get("notification-service"));
         Response r = Executor.newInstance().execute(request);
         return new ResponseEntity<>(mapper.readTree(r.returnContent().asString()), HttpStatus.OK);
+    }
+
+    @ResponseBody
+    @RequestMapping(path="/priority", method=RequestMethod.GET)
+    public ResponseEntity<JsonNode> getPriority() throws IOException {
+        final String url = config.getUrl() + "/api/v1/users/" + authorityService.getUserName() + "/priority";
+        Request request = Request.Get(url).addHeader("Authorization", "Bearer " + accessTokens.get("notification-service"));
+        Response r = Executor.newInstance().execute(request);
+        return new ResponseEntity<>(mapper.readTree(r.returnContent().asString()), HttpStatus.OK);
+    }
+
+    @ResponseBody
+    @RequestMapping(path="/priority", method=RequestMethod.POST)
+    public void setPriority(@RequestBody PriorityBody body) throws IOException {
+        final String url = config.getUrl() + "/api/v1/users/" + authorityService.getUserName() + "/priority";
+        HttpEntity entity = new StringEntity(mapper.writeValueAsString(body), "UTF-8");
+        Request request = Request.Post(url).body(entity).addHeader("Authorization", "Bearer " + accessTokens.get("notification-service")).addHeader("Content-Type", "application/json");
+        Executor.newInstance().execute(request);
     }
 
     @ResponseBody
