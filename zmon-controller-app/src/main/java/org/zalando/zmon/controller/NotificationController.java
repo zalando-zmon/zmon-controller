@@ -78,7 +78,7 @@ public class NotificationController {
 
     @ResponseBody
     @RequestMapping(path="/devices", method=RequestMethod.DELETE)
-    public void unregisterDevice(@RequestParam(name="registrationToken") String registrationToken) throws IOException {
+    public void unregisterDevice(@RequestParam(name="registration_token") String registrationToken) throws IOException {
         final String url = config.getUrl() + "/api/v1/device/" + registrationToken;
         Request request = Request.Delete(url).addHeader("Authorization", "Bearer " + accessTokens.get("notification-service")).addHeader("Content-Type", "application/json");
         Executor.newInstance().execute(request);
@@ -142,14 +142,16 @@ public class NotificationController {
     @RequestMapping(path="/alerts", method=RequestMethod.POST)
     public void subscribeToAlert(@RequestBody AlertRegistrationBody body) throws IOException {
         final String url = config.getUrl() + "/api/v1/users/" + authorityService.getUserName() + "/alerts";
-        HttpEntity entity = new StringEntity(mapper.writeValueAsString(body), "UTF-8");
+        final String alertBody = mapper.writeValueAsString(body);
+        log.info("Alert subscription request: {}", alertBody);
+        HttpEntity entity = new StringEntity(alertBody, "UTF-8");
         Request request = Request.Post(url).body(entity).addHeader("Authorization", "Bearer " + accessTokens.get("notification-service")).addHeader("Content-Type", "application/json");
         Executor.newInstance().execute(request);
     }
 
     @ResponseBody
     @RequestMapping(path="/alerts", method=RequestMethod.DELETE)
-    public void unsubscribeTeam(@RequestParam(name="alertId") int alertId) throws IOException, URISyntaxException {
+    public void unsubscribeTeam(@RequestParam(name="alert_id") int alertId) throws IOException, URISyntaxException {
         final String url = config.getUrl() + "/api/v1/users/" + authorityService.getUserName() + "/alerts";
         URI uri = new URIBuilder(url).addParameter("alertId", "" + alertId).build();
         Request request = Request.Delete(uri).addHeader("Authorization", "Bearer " + accessTokens.get("notification-service")).addHeader("Content-Type", "application/json");
