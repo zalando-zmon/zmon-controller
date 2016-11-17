@@ -77,7 +77,7 @@ angular.module('zmon2App').directive('notifications', [ 'CommunicationService', 
             var getNotificationAlerts = function() {
                 CommunicationService.getNotificationAlerts()
                 .then(function(alerts) {
-                    scope.subscriptions.alerts = alerts;
+                    scope.subscriptions.alerts = alerts.map(String);
                 })
             };
 
