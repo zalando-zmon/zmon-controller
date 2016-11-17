@@ -68,7 +68,7 @@ public class NotificationController {
     @ResponseBody
     @RequestMapping(path="/devices", method=RequestMethod.POST)
     public void registerDevice(@RequestBody DeviceRegistrationBody body) throws IOException {
-        log.info("Registering device for user: registrationToken={} user={}", body.registrationToken, authorityService.getUserName());
+        log.info("Registering device for user: registrationToken={} user={}", body.registrationToken.substring(0, 5), authorityService.getUserName());
 
         final String url = config.getUrl() + "/api/v1/users/" + authorityService.getUserName() + "/devices";
         HttpEntity entity = new StringEntity(mapper.writeValueAsString(body), "UTF-8");
@@ -143,7 +143,6 @@ public class NotificationController {
     public void subscribeToAlert(@RequestBody AlertRegistrationBody body) throws IOException {
         final String url = config.getUrl() + "/api/v1/users/" + authorityService.getUserName() + "/alerts";
         final String alertBody = mapper.writeValueAsString(body);
-        log.info("Alert subscription request: {}", alertBody);
         HttpEntity entity = new StringEntity(alertBody, "UTF-8");
         Request request = Request.Post(url).body(entity).addHeader("Authorization", "Bearer " + accessTokens.get("notification-service")).addHeader("Content-Type", "application/json");
         Executor.newInstance().execute(request);
