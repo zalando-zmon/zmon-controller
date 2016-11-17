@@ -16,7 +16,7 @@ body.dashboard
     color: #222222;
 }
 
-.dashboard input
+.dashboard .main-wrapper input
 {
     background: #464646;
     border: 1px solid #080808;
@@ -24,7 +24,7 @@ body.dashboard
     height: 35px;
 }
 
-.dashboard input:focus
+.dashboard .main-wrapper input:focus
 {
     border: 1px solid #080808;
 }

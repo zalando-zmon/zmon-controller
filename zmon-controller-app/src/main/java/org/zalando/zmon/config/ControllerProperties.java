@@ -25,10 +25,20 @@ public class ControllerProperties {
     public int emailTokenLength = 15;
     public int emailPort = 465;
 
+    public boolean enableFirebase = false;
+
     public List<String> workerQueueKeys = Arrays.asList("zmon:queue:default");
 
     public List<String> getWorkerQueueKeys() {
         return workerQueueKeys;
+    }
+
+    public boolean isEnableFirebase() {
+        return enableFirebase;
+    }
+
+    public void setEnableFirebase(boolean enableFirebase) {
+        this.enableFirebase = enableFirebase;
     }
 
     public void setWorkerQueueKeys(List<String> workerQueueKeys) {

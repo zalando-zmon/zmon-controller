@@ -37,6 +37,14 @@ Make sure the provided Vagrant-Box is up and all services are running.
 
 Now point your browser to https://localhost:8444/
 
+To test service worker code locally in Chrome:
+
+.. code-block:: bash
+
+	/opt/google/chrome/chrome --unsafety-treat-insecure-origin-as-secure --ignore-certificate-errors
+
+
+
 Running Unit and Database Tests
 ===============================
 

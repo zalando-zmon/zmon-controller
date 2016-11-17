@@ -25,6 +25,6 @@ zmon-controller-it/somepath/credentials/client.json
 zmon-controller-ui/node_modules
 
 .factorypath
-
+run-dev-firebase.sh
 client.json
 user.json

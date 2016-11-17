@@ -16,3 +16,5 @@ tokens:
       scopes: uid
     - token-id: user-service
       scopes: uid
+    - token-id: notification-service
+      scopes: uid

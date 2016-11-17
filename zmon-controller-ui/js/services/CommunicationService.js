@@ -582,6 +582,78 @@ angular.module('zmon2App').factory('CommunicationService', ['$http', '$q', '$log
             return doHttpCall("GET", "rest/search", params);
         };
 
+        service.getNotificationAlerts = function() {
+            return doHttpCall("GET", "/rest/notifications/alerts");
+        };
+
+        service.subscribeNotificationAlert = function(id) {
+            PreconditionsService.isNotEmpty(id);
+            var params = {
+                alert_id: id
+            };
+            return doHttpCall("POST", "/rest/notifications/alerts", params)
+        };
+
+        service.removeNotificationAlert = function(id) {
+            PreconditionsService.isNotEmpty(id);
+            var params = {
+                alert_id: id
+            };
+            return doHttpCall("DELETE", "/rest/notifications/alerts", params);
+        };
+
+        service.getNotificationTeams = function() {
+            return doHttpCall("GET", "/rest/notifications/teams");
+        };
+
+        service.subscribeNotificationTeam = function(id) {
+            PreconditionsService.isNotEmpty(id);
+            var params = {
+                team: id
+            };
+            return doHttpCall("POST", "/rest/notifications/teams", params);
+        };
+
+        service.removeNotificationTeam = function(id) {
+            PreconditionsService.isNotEmpty(id);
+            var params = {
+                team: id
+            };
+            return doHttpCall("DELETE", "/rest/notifications/teams", params);
+        };
+
+        service.getNotificationPriority = function() {
+            return doHttpCall("GET", "/rest/notifications/priority");
+        };
+
+        service.subscribeNotificationPriority = function(prio) {
+            PreconditionsService.isNotEmpty(prio);
+            var params = {
+                priority: prio
+            };
+            return doHttpCall("POST", "/rest/notifications/priority", params);
+        };
+
+        service.sendNotificationToken = function(token) {
+            PreconditionsService.isNotEmpty(token);
+            var params = {
+                registration_token: token
+            };
+            return doHttpCall("POST", "/rest/notifications/devices", params);
+        };
+
+        service.removeNotificationToken = function(token) {
+            PreconditionsService.isNotEmpty(token);
+            var params = {
+                registration_token: token
+            };
+            return doHttpCall("DELETE", "/rest/notifications/devices", params);
+        };
+
+        service.getSubscriptions = function() {
+            return doHttpCall("GET", "/rest/user/subscriptions");
+        };
+
         return service;
     }
 ]);

@@ -2,13 +2,23 @@ package org.zalando.zmon.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.zalando.zmon.config.ControllerProperties;
+import org.zalando.zmon.config.FirebaseProperties;
+import org.zalando.zmon.config.ManifestJsonConfig;
 import org.zalando.zmon.security.permission.DefaultZMonPermissionService;
 
 import com.google.common.base.Joiner;
+
+import javax.servlet.http.HttpServletResponse;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * @author jbellmann
@@ -39,6 +49,9 @@ public class IndexController {
     @Autowired
     private ControllerProperties controllerProperties;
 
+    @Autowired
+    private FirebaseProperties firebaseProperties;
+
     @Value("${zmon.cloud.checkid}")
     private int cloudCheckId;
 
@@ -64,7 +77,32 @@ public class IndexController {
                         authorityService.hasInstantaneousAlertEvaluationPermission());
 
         model.addAttribute("cloudCheckId", cloudCheckId);
+        model.addAttribute("firebaseConfig", firebaseProperties);
+        model.addAttribute("firebaseEnabled", controllerProperties.enableFirebase);
 
         return "index";
+    }
+
+    private static final ManifestJsonConfig manifest = new ManifestJsonConfig();
+
+    @RequestMapping(value = {"/manifest.json"})
+    @ResponseBody
+    public ManifestJsonConfig manifestJson() {
+        return manifest;
+    }
+
+    @RequestMapping(value = {"/firebase-messaging-sw.js"}, produces = "application/javascript")
+    @ResponseBody
+    public String firebaseMessagingWorker() throws IOException {
+        InputStream inputStream = IndexController.class.getResourceAsStream("/templates/firebase-messaging-sw.js");
+
+        ByteArrayOutputStream result = new ByteArrayOutputStream();
+        byte[] buffer = new byte[1024];
+        int length;
+        while ((length = inputStream.read(buffer)) != -1) {
+            result.write(buffer, 0, length);
+        }
+        String s =  result.toString("UTF-8");
+        return s.replace("[[${firebaseSenderId}]]", firebaseProperties.getMessagingSenderId());
     }
 }
