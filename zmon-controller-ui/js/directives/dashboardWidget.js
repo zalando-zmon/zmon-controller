@@ -154,12 +154,6 @@ angular.module('zmon2App').directive('dashboardWidget', ['CommunicationService',
                                     $scope.style = {};
                                 }
 
-                                if ($scope.config.options.format) {
-                                    $scope.maxValue = $scope.config.options.format.format($scope.maxValue);
-                                } else {
-                                    $scope.maxValue = ($scope.maxValue || 0).toFixed(0)/1;
-                                }
-
                                 if ($scope.config.options.fontSize) {
                                     $scope.style["font-size"]= $scope.config.options.fontSize;
                                 } else {
@@ -171,6 +165,15 @@ angular.module('zmon2App').directive('dashboardWidget', ['CommunicationService',
                                 } else {
                                     delete $scope.style["color"];
                                 }
+
+                                if ($scope.config.options.format) {
+                                    $scope.maxValue = $scope.config.options.format.format($scope.maxValue);
+                                } else {
+                                    if(_.isNumber($scope.maxValue)) {
+                                        $scope.maxValue = ($scope.maxValue || 0).toFixed(0) / 1
+                                    }
+                                }
+
                                 break;
                             case 'chart':
                                 var chartData = MainAlertService.transformResultsToChartData(response);
