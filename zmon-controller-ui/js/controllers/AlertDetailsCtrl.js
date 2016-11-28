@@ -177,12 +177,12 @@ angular.module('zmon2App').controller('AlertDetailsCtrl', [ '$location', '$route
 
     var refresh = function() {
         fetchData(function() {
-            setLinkToTrialRun();
             $scope.entitiesFilter = getEntities($scope.alert.entities, $scope.check.entities);
             $scope.entitiesExcludeFilter = getEntities($scope.alert.entities_exclude, $scope.check.entities_exclude);
             setAlertStates();
             $scope.allAlerts = getSelectedAlerts();
             $scope.downtimeEntities = getSelectedDowntimeEntities();
+            setLinkToTrialRun();
         });
     };
 
