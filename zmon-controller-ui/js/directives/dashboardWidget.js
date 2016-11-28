@@ -168,10 +168,8 @@ angular.module('zmon2App').directive('dashboardWidget', ['CommunicationService',
 
                                 if ($scope.config.options.format) {
                                     $scope.maxValue = $scope.config.options.format.format($scope.maxValue);
-                                } else {
-                                    if(_.isNumber($scope.maxValue)) {
-                                        $scope.maxValue = ($scope.maxValue || 0).toFixed(0) / 1
-                                    }
+                                } else if(_.isNumber($scope.maxValue)) {
+                                    $scope.maxValue = ($scope.maxValue || 0).toFixed(0) / 1
                                 }
 
                                 break;
