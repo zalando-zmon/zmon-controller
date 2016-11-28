@@ -36,7 +36,7 @@
             <dt>Description</dt>
             <dd class="form-control" ng-bind-html="alert.description | markdown"></dd>
             <dt>Condition</dt>
-            <dd><pre class="z-code">{{alert.condition}}</pre></dd>
+            <dd><div hljs hljs-source="alert.condition" hljs-language="python"></div></dd>
             <dt>Responsible Team</dt>
             <dd>{{alert.responsible_team}}</dd>
         </dl>
@@ -62,7 +62,7 @@
             <dt>Check Team</dt>
             <dd>{{check.owning_team}}</dd>
             <dt>Check Command</dt>
-            <dd><pre class="z-code">{{check.command}}</pre></dd>
+            <dd><div hljs hljs-source="check.command" hljs-language="python"></div></dd>
             <dt>Check Interval</dt>
             <dd>{{check.interval|timespan:'s'}}</dd>
             <dt>Check Entities</dt>
