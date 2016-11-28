@@ -7,7 +7,7 @@
             <dt>Description</dt>
             <dd class="form-control" ng-bind-html="HistoryCtrl.definition.description | markdown"></dd>
             <dt>Condition</dt>
-            <dd><pre class="z-code">{{HistoryCtrl.definition.condition}}</pre></dd>
+            <dd><div hljs hljs-source="HistoryCtrl.definition.condition" hljs-language="python"></div></dd>
             <dt>Responsible Team</dt>
             <dd>{{HistoryCtrl.definition.responsible_team}}</dd>
         </dl>
@@ -16,7 +16,7 @@
             <dt ng-if="HistoryCtrl.definition.description">Description</dt>
             <dd ng-if="HistoryCtrl.definition.description">{{HistoryCtrl.definition.description}}</dd>
             <dt ng-if="HistoryCtrl.definition.command">Command</dt>
-            <dd ng-if="HistoryCtrl.definition.command"><pre class="z-code">{{HistoryCtrl.definition.command}}</pre]></dd>
+            <dd ng-if="HistoryCtrl.definition.command"><div hljs hljs-source="HistoryCtrl.definition.command" hljs-language="python"></div></dd>
             <dt ng-if="HistoryCtrl.definition.interval">Interval</dt>
             <dd ng-if="HistoryCtrl.definition.interval">{{HistoryCtrl.definition.interval|timespan:'s'}}</dd>
             <dt ng-if="HistoryCtrl.definition.entities">Entities</dt>
@@ -36,7 +36,7 @@
             <dt>Check Team</dt>
             <dd>{{HistoryCtrl.definition.responsible_team}}</dd>
             <dt>Check Command</dt>
-            <dd><code>{{HistoryCtrl.definition.check_definition.command}}</code></dd>
+            <dd><div hljs hljs-source="HistoryCtrl.definition.check_definition.command" hljs-language="python"></div></dd>
             <dt>Check Interval</dt>
             <dd>{{HistoryCtrl.definition.check_definition.interval|timespan:'s'}}</dd>
             <dt>Check Entities</dt>

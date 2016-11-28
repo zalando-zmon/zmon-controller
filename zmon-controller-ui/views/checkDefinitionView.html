@@ -24,7 +24,7 @@
             <dt>Description</dt>
             <dd class="form-control" ng-bind-html="checkDefinition.description | markdown"></dd>
             <dt>Command</dt>
-            <dd><pre class="z-code">{{checkDefinition.command}}</pre]></dd>
+            <dd><div hljs hljs-source="checkDefinition.command" hljs-language="python"></div></dd>
             <dt>Interval</dt>
             <dd>{{checkDefinition.interval|timespan:'s'}}</dd>
             <dt>Entities</dt>

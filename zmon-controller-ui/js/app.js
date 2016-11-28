@@ -8,7 +8,8 @@ angular.module('zmon2App', [
     'angulartics',
     'infinite-scroll',
     'ngclipboard',
-    'ui.select'
+    'ui.select',
+    'hljs'
 ])
     .config(['$routeProvider', '$compileProvider',
         function($routeProvider, $compileProvider) {
