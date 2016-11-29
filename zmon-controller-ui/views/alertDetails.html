@@ -154,14 +154,18 @@
                         <tbody infinite-scroll="incLimit()">
                             <tr ng-repeat="entityInstance in allAlerts | filter:alertDetailsSearch.str | orderBy:sortType:sortOrder | limitTo: limit track by entityInstance.entity" ng-class="{'danger': entityInstance.isActiveAlert == true, 'active-downtime': entityInstance.isAlertInDowntime == true, 'success': entityInstance.isCheckResult == true}">
                                 <td>
-                                    <a href="/grafana/dashboard/db/zmon-check-{{check.id}}-{{ entityInstance.entity }}"><i class="fa fa-fw fa-bar-chart-o"></i></a>
-                                    <a target="_new" ng-if="entityInstance.entityMeta && entityInstance.entityMeta.type && entityInstance.entityMeta.type == 'instance'" href="https://{{entityInstance.entityMeta.region}}.console.aws.amazon.com/ec2/v2/home?region={{entityInstance.entityMeta.region}}#Instances:search={{entityInstance.entityMeta.aws_id}};sort=Name" title="ip: {{entityInstance.entityMeta.ip}}"><i class="fa fa-fw fa-cloud"></i></a>
-                                    <a target="_new" ng-if="entityInstance.entityMeta && entityInstance.entityMeta.type && entityInstance.entityMeta.type == 'elb'" href="https://{{entityInstance.entityMeta.region}}.console.aws.amazon.com/ec2/v2/home?region={{entityInstance.entityMeta.region}}#LoadBalancers:search={{entityInstance.entityMeta.name}}"><i class="fa fa-fw fa-cloud"></i></a>
+                                    <a href="/grafana/dashboard/db/zmon-check-{{::check.id}}-{{ ::entityInstance.entity }}"><i class="fa fa-fw fa-bar-chart-o"></i></a>
+                                    <a target="_new" ng-if="entityInstance.entityMeta && entityInstance.entityMeta.type && entityInstance.entityMeta.type == 'instance'" href="https://{{::entityInstance.entityMeta.region}}.console.aws.amazon.com/ec2/v2/home?region={{::entityInstance.entityMeta.region}}#Instances:search={{::entityInstance.entityMeta.aws_id}};sort=Name" title="ip: {{::entityInstance.entityMeta.ip}}"><i class="fa fa-fw fa-cloud"></i></a>
+                                    <a target="_new" ng-if="entityInstance.entityMeta && entityInstance.entityMeta.type && entityInstance.entityMeta.type == 'elb'" href="https://{{::entityInstance.entityMeta.region}}.console.aws.amazon.com/ec2/v2/home?region={{::entityInstance.entityMeta.region}}#LoadBalancers:search={{::entityInstance.entityMeta.name}}"><i class="fa fa-fw fa-cloud"></i></a>
                                     <input ng-if="userInfo['schedule-downtime']" class="set-downtime-checkbox" type="checkbox" ng-checked="downtimeEntities.indexOf(entityInstance.entity) !== -1" ng-click="toggleAlertForDowntime(entityInstance.entity)">
                                 </td>
-                                <td><a href="#/entities?ef=id:{{entityInstance.entity}}" title="{{entityInstance.entity}}">{{entityInstance.entity | entityName}}</a></td>
-                                <td><div title="{{entityInstance.result.td * 1000|timespan}} {{entityInstance.result.worker}}">
-                                        <span>{{entityInstance.result.ts}} ({{entityInstance.result.ts}} ago)</span></div></td>
+                                <td>
+                                    <a href="#/entities?ef=id:{{::entityInstance.entity}}" title="{{::entityInstance.entity}}">{{::entityInstance.entity | entityName}}</a></td>
+                                <td>
+                                    <div title="{{entityInstance.result.td * 1000|timespan}} {{entityInstance.result.worker}}">
+                                        <span ng-class="{'alert-is-too-old': timestampIsOld(entityInstance)}">{{entityInstance.result.ts|datetime}} ({{entityInstance.result.ts | timeago}} ago)</span>
+                                    </div>
+                                </td>
                                 <td>
                                     <div ng-if="entityInstance.result.start_time">
                                         {{entityInstance.result.start_time | datetime}}
@@ -230,13 +234,13 @@
                     </thead>
                     <tbody>
                         <tr ng-repeat="def in alert.children | orderBy:sortTypeChildren:sortOrderChildren" repeat-monitor last="$last">
-                            <td><a uib-tooltip-html-unsafe="{{def.description | markdown}}" tooltip-placement="right" href="#/alert-details/{{def.id}}">{{def.name || '(no name)'}}</a></td>
-                            <td class="ellipsis" expand>{{def.condition}}</td>
+                            <td><a uib-tooltip-html-unsafe="{{::def.description | markdown}}" tooltip-placement="right" href="#/alert-details/{{::def.id}}">{{::def.name || '(no name)'}}</a></td>
+                            <td class="ellipsis" expand>{{::def.condition}}</td>
                             <td><dd ng-repeat="(name, parameter) in def.parameters">{{name}} = {{parameter.value}}</dd></td>
                             <td><span class="text-muted" ng-show="def.entities.length === 0">(no entity filter)</span><div ng-bind-html="def.entities | entities"></div></td>
-                            <td><a href="#/check-definitions/view/{{def.check_definition_id}}">{{def.check_definition_id}}</a></td>
-                            <td>{{def.team}}</td>
-                            <td>{{def.responsible_team}}</td>
+                            <td><a href="#/check-definitions/view/{{::def.check_definition_id}}">{{::def.check_definition_id}}</a></td>
+                            <td>{{::def.team}}</td>
+                            <td>{{::def.responsible_team}}</td>
                             <td class="text-center"><priority prio="def.priority"></priority></td>
                             <td>
                                 <status status="def.status"></status><i id="star" class='fa fa-star' ng-show="def.star" title="new alert"></i>
@@ -249,9 +253,9 @@
     </div>
 
     <div ng-if="alert.status === 'INACTIVE'" class="alert alert-info">
-        This alert definition has status {{ alert.status }}. Change the status to ACTIVE to enable alerting and see alert entities.
+        This alert definition has status {{ ::alert.status }}. Change the status to ACTIVE to enable alerting and see alert entities.
     </div>
 
     <div ng-if="alert.status === 'DELETED'" class="alert alert-info">
-        This alert definition has status {{ alert.status }}. To finalize alert deletion please <a ng-show="alert.deletable" href=""ng-click="showDeleteAlertDefinitionModal()" title="Delete alert definition"><em>click here</em> <i class="fa fa-fw fa-trash-o"></i></a> and confirm your choice.
+        This alert definition has status {{ ::alert.status }}. To finalize alert deletion please <a ng-show="alert.deletable" href=""ng-click="showDeleteAlertDefinitionModal()" title="Delete alert definition"><em>click here</em> <i class="fa fa-fw fa-trash-o"></i></a> and confirm your choice.
     </div>

@@ -31,7 +31,6 @@ angular.module('zmon2App').controller('AlertDetailsCtrl', [ '$location', '$route
     $scope.limit = 100;
 
     $scope.incLimit = function() {
-        console.log('inc limit');
         $scope.limit += 35;
     };
 
