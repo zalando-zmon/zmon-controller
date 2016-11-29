@@ -126,7 +126,7 @@ angular.module('zmon2App').directive('dashboardWidget', ['CommunicationService',
 
                     // Make sure repsonse is valid, and if not log to console.
                     if (_.isEmpty(response)) {
-                        console.warn("Response for widget " + $scope.uniqId + " is empty!");
+                        // console.warn("Response for widget " + $scope.uniqId + " is empty!");
                         return;
                     }
 

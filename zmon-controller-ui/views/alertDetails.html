@@ -151,8 +151,8 @@
                                 </th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr ng-repeat="entityInstance in allAlerts | filter:alertDetailsSearch.str | orderBy:sortType:sortOrder track by entityInstance.entity" ng-class="{'danger': entityInstance.isActiveAlert == true, 'active-downtime': entityInstance.isAlertInDowntime == true, 'success': entityInstance.isCheckResult == true}">
+                        <tbody infinite-scroll="incLimit()">
+                            <tr ng-repeat="entityInstance in allAlerts | filter:alertDetailsSearch.str | orderBy:sortType:sortOrder | limitTo: limit track by entityInstance.entity" ng-class="{'danger': entityInstance.isActiveAlert == true, 'active-downtime': entityInstance.isAlertInDowntime == true, 'success': entityInstance.isCheckResult == true}">
                                 <td>
                                     <a href="/grafana/dashboard/db/zmon-check-{{check.id}}-{{ entityInstance.entity }}"><i class="fa fa-fw fa-bar-chart-o"></i></a>
                                     <a target="_new" ng-if="entityInstance.entityMeta && entityInstance.entityMeta.type && entityInstance.entityMeta.type == 'instance'" href="https://{{entityInstance.entityMeta.region}}.console.aws.amazon.com/ec2/v2/home?region={{entityInstance.entityMeta.region}}#Instances:search={{entityInstance.entityMeta.aws_id}};sort=Name" title="ip: {{entityInstance.entityMeta.ip}}"><i class="fa fa-fw fa-cloud"></i></a>
@@ -161,7 +161,7 @@
                                 </td>
                                 <td><a href="#/entities?ef=id:{{entityInstance.entity}}" title="{{entityInstance.entity}}">{{entityInstance.entity | entityName}}</a></td>
                                 <td><div title="{{entityInstance.result.td * 1000|timespan}} {{entityInstance.result.worker}}">
-                                        <span ng-class="{'alert-is-too-old': timestampIsOld(entityInstance)}">{{entityInstance.result.ts|datetime}} ({{entityInstance.result.ts | timeago}} ago)</span></div></td>
+                                        <span>{{entityInstance.result.ts}} ({{entityInstance.result.ts}} ago)</span></div></td>
                                 <td>
                                     <div ng-if="entityInstance.result.start_time">
                                         {{entityInstance.result.start_time | datetime}}
