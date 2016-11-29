@@ -36,6 +36,7 @@ angular.module('zmon2App').controller('AlertDetailsCtrl', [ '$location', '$route
         var params = {
             name: $scope.alert.name,
             description: $scope.alert.description,
+            owning_team: $scope.check.owning_team,
             check_command: $scope.check.command,
             alert_condition: $scope.alert.condition,
             entities: $scope.entitiesFilter,
