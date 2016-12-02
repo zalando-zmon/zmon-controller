@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import org.zalando.zmon.persistence.EntitySProcService;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -28,14 +27,14 @@ public class DynamicTeamService {
     private String lastModified = null;
 
     private static class TeamConfiguration {
-        Map<String, List<String>> membership = null;
-        Map<String, List<String>> teamExtension = null;
+        public Map<String, List<String>> membership = null;
+        public Map<String, List<String>> teamExtension = null;
     }
 
     private static class ConfigContainer {
-        TeamConfiguration data = null;
-        String lastModified;
-        String lastModifiedBy;
+        public TeamConfiguration data = null;
+        public String lastModified;
+        public String lastModifiedBy;
     }
 
     @Autowired
@@ -66,7 +65,7 @@ public class DynamicTeamService {
         return Optional.of(config.teamExtension);
     }
 
-    @Scheduled(fixedRate = 60000)
+    @Scheduled(fixedRate = 300_000)
     public void refreshTeamConfig() {
         try {
             doRefersh();
