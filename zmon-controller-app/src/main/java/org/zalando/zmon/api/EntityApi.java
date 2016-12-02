@@ -56,7 +56,7 @@ public class EntityApi {
     @ResponseBody
     @RequestMapping(value = {"/", ""}, method = {RequestMethod.PUT, RequestMethod.POST})
     public void addEntity(@RequestBody JsonNode entity) {
-        if ("zmon_config".equals(entity.get("type").textValue())) {
+        if (entity.has("type") && "zmon_config".equals(entity.get("type").textValue())) {
             if (!authService.hasAdminAuthority()) {
                 throw new AccessDeniedException("No ADMIN privileges present to update configuration.");
             }
