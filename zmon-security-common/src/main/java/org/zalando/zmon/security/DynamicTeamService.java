@@ -68,7 +68,7 @@ public class DynamicTeamService {
     }
 
     public void doRefersh() throws IOException {
-        List<String> entities = entityService.getEntities("{\"type\":\"zmon_config\", \"id\":\"zmon-team-config\"}");
+        List<String> entities = entityService.getEntities("[{\"type\":\"zmon_config\", \"id\":\"zmon-team-config\"}]");
         if (entities.size() != 1) {
             return;
         }
