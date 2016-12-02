@@ -26,5 +26,4 @@ public class SimpleTeamServiceConfiguration {
 	public SimpleTeamService simpleTeamService(){
 		return new SimpleTeamService(teamProperties);
 	}
-
 }
