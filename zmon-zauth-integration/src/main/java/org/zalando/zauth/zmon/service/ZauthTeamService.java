@@ -14,12 +14,10 @@ import org.zalando.stups.oauth2.spring.client.StupsTokensAccessTokenProvider;
 import org.zalando.stups.tokens.AccessTokens;
 import org.zalando.zauth.zmon.config.ZauthProperties;
 import org.zalando.zauth.zmon.domain.Team;
+import org.zalando.zmon.security.DynamicTeamService;
 import org.zalando.zmon.security.TeamService;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -34,12 +32,14 @@ public class ZauthTeamService implements TeamService {
 
     private ZauthProperties zauthProperties;
     private RestTemplate restTemplate;
+    private DynamicTeamService dynamicTeamService;
 
-    public ZauthTeamService(ZauthProperties zauthProperties, AccessTokens accessTokens) {
+    public ZauthTeamService(ZauthProperties zauthProperties, AccessTokens accessTokens, DynamicTeamService dynamicTeamService) {
         Preconditions.checkNotNull(zauthProperties.getTeamServiceUrl(), "Team Service URL must be set");
         Preconditions.checkNotNull(accessTokens, "accessTokens cannot be null");
 
         this.zauthProperties = zauthProperties;
+        this.dynamicTeamService = dynamicTeamService;
 
         restTemplate = new StupsOAuth2RestTemplate(new StupsTokensAccessTokenProvider("team-service", accessTokens));
         log.info("Configured Team Service with URL {}", zauthProperties.getTeamServiceUrl());
@@ -59,15 +59,30 @@ public class ZauthTeamService implements TeamService {
             log.error("Failed to call team service, no teams for now!", ex);
         }
 
-        if (zauthProperties.getTeamOverlay().containsKey(username)) {
-            List<String> teams = zauthProperties.getTeamOverlay().get(username);
-            log.info("Adding teams from overlay to {}: {}", username, teams);
-            result.addAll(teams);
+        Optional<List<String>> dynamicTeams = dynamicTeamService.getTeams(username);
+        if (dynamicTeams.isPresent()) {
+            result.addAll(dynamicTeams.get());
+        }
+        else {
+            if (zauthProperties.getTeamOverlay().containsKey(username)) {
+                List<String> teams = zauthProperties.getTeamOverlay().get(username);
+                log.info("Adding teams from overlay to {}: {}", username, teams);
+                result.addAll(teams);
+            }
+        }
+
+        Map<String, List<String>> teamExtension;
+        Optional<Map<String, List<String>>> dynTeamExtension = dynamicTeamService.getTeamExension();
+        if (dynTeamExtension.isPresent()) {
+            teamExtension = dynTeamExtension.get();
+        }
+        else {
+            teamExtension = zauthProperties.getTeamExtension();
         }
 
         final Set<String> addByExtension = new TreeSet<>();
         for (String teamId : result) {
-            addByExtension.addAll(zauthProperties.getTeamExtension().getOrDefault(teamId, Collections.emptyList()));
+            addByExtension.addAll(teamExtension.getOrDefault(teamId, Collections.emptyList()));
         }
 
         result.addAll(addByExtension);
