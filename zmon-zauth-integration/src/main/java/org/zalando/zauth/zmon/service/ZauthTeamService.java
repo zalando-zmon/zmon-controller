@@ -71,9 +71,18 @@ public class ZauthTeamService implements TeamService {
             }
         }
 
+        Map<String, List<String>> teamExtension;
+        Optional<Map<String, List<String>>> dynTeamExtension = dynamicTeamService.getTeamExension();
+        if (dynTeamExtension.isPresent()) {
+            teamExtension = dynTeamExtension.get();
+        }
+        else {
+            teamExtension = zauthProperties.getTeamExtension();
+        }
+
         final Set<String> addByExtension = new TreeSet<>();
         for (String teamId : result) {
-            addByExtension.addAll(zauthProperties.getTeamExtension().getOrDefault(teamId, Collections.emptyList()));
+            addByExtension.addAll(teamExtension.getOrDefault(teamId, Collections.emptyList()));
         }
 
         result.addAll(addByExtension);

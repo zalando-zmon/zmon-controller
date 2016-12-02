@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.zalando.zmon.persistence.EntitySProcService;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -55,6 +56,14 @@ public class DynamicTeamService {
 
 
         return Optional.of(teams);
+    }
+
+    public Optional<Map<String, List<String>>> getTeamExension() {
+        if (null == config ) {
+            return Optional.empty();
+        }
+
+        return Optional.of(config.teamExtension);
     }
 
     @Scheduled(fixedRate = 60000)
