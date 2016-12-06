@@ -10,7 +10,9 @@ import org.zalando.stups.tokens.AccessTokens;
 import org.zalando.zauth.zmon.service.ZauthAuthorityService;
 import org.zalando.zauth.zmon.service.ZauthTeamService;
 import org.zalando.zmon.config.ZmonOAuth2Properties;
+import org.zalando.zmon.persistence.EntitySProcService;
 import org.zalando.zmon.security.AuthorityService;
+import org.zalando.zmon.security.DynamicTeamService;
 import org.zalando.zmon.security.SigninController;
 import org.zalando.zmon.security.TeamService;
 
@@ -26,6 +28,9 @@ public class ZauthAutoConfiguration {
     @Autowired
     private ZauthProperties zauthProperties;
 
+    @Autowired
+    private DynamicTeamService dynamicTeamService;
+
     @Bean
     public SigninController signinController() {
         return new SigninController();
@@ -33,7 +38,7 @@ public class ZauthAutoConfiguration {
 
     @Bean
     public TeamService teamService(AccessTokens accessTokens) {
-        return new ZauthTeamService(zauthProperties, accessTokens);
+        return new ZauthTeamService(zauthProperties, accessTokens, dynamicTeamService);
     }
 
     @Bean
