@@ -70,7 +70,7 @@
                 <span ng-if="$index != 0">, </span>
                 <span uib-popover="value for {{entityInstance.entity | entityName}}: {{entityInstance.result.value}}" popover-placement="right" popover-class="entityPopover"> {{entityInstance.entity | entityName }} ({{entityInstance.result.captures.dashboard ? entityInstance.result.captures.dashboard : entityInstance.result.value | prettify}}) </span>
             </span>
-            <span ng-show="!compact" ng-if="nonDowntimeEntitiesAreTruncated(alertInstance.entities)">
+            <span ng-show="!compact" ng-if="alertInstance.nonDowntimeEntitiesAreTruncated">
                 <a ng-click="alertInstance.expanded = true" ng-if="!alertInstance.expanded" class="non-href-anchor">More...</a>
                 <a ng-click="alertInstance.expanded = false" ng-if="alertInstance.expanded" class="non-href-anchor">Hide...</a>
                 <div class="display: inline-block" ng-show="alertInstance.expanded">
