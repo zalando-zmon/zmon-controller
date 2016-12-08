@@ -7,8 +7,13 @@ angular.module('zmon2App').directive('alertDowntimes', [ 'CommunicationService',
             downtimes: '='
         },
         link: function(scope, elem, attrs) {
+            scope.limit = 100;
             scope.downtimesSelected = [];
             scope.userInfo = UserInfoService.get();
+
+            scope.incLimit = function() {
+                scope.limit += 35;
+            }
 
             scope.areAllDowntimesSelected = function() {
                 return scope.downtimes.length && scope.downtimesSelected.length === scope.downtimes.length;

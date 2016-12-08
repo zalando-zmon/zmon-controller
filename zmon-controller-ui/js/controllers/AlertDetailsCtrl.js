@@ -27,6 +27,13 @@ angular.module('zmon2App').controller('AlertDetailsCtrl', [ '$location', '$route
 
     $scope.userInfo = UserInfoService.get();
 
+    // infinite-scroll initial limit
+    $scope.limit = 100;
+
+    $scope.incLimit = function() {
+        $scope.limit += 35;
+    };
+
     // Entity Filter. Defined as object to $watch by reference on 'str' since input field is inside ui-bootstrap's tabset.
     $scope.alertDetailsSearch = {
         str: localStorageService.get('alertDetailsSearchStr') || ''

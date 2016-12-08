@@ -57,7 +57,7 @@ angular.module('zmon2App').factory('MainAlertService', ['$http', '$q', '$log', '
             var returnVal = _.reduce(checkResults, function(memo, curr) {
 
                 if (typeof curr.results === 'undefined') {
-                    console.error(new Date(), 'ERROR No results in current check object for', curr);
+                    //console.error(new Date(), 'ERROR No results in current check object for', curr);
                     return memo;
                 }
 

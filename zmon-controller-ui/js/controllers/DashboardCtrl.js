@@ -228,6 +228,22 @@ angular.module('zmon2App').controller('DashboardCtrl', ['$scope', '$log', '$rout
             });
         };
 
+        /**
+         * Filters and returns only entities which are not in downtime right now
+         */
+        var getNonDowntimeEntities = function(entitiesArray) {
+            return _.filter(entitiesArray, function(nextEntity) {
+                return nextEntity.result.downtimes.length === 0;
+            });
+        };
+
+        /*
+         * Returns true/false, depending on whether an alert's non-downtime entities list had to be truncated
+         */
+        var nonDowntimeEntitiesAreTruncated = function(entitiesArray) {
+            return getNonDowntimeEntities(entitiesArray).length > APP_CONST.MAX_ENTITIES_DISPLAYED;
+        };
+
         $scope.showAllDashboardAlerts = function(filter) {
             CommunicationService.getAllAlerts(filter).then(
                 function(data) {
@@ -252,6 +268,11 @@ angular.module('zmon2App').controller('DashboardCtrl', ['$scope', '$log', '$rout
                         loadCheckResults(alert);
                     });
 
+                    // Determine if all entities of alert are in downtime
+                    _.each(data, function(alert) {
+                        alert.nonDowntimeEntitiesAreTruncated = nonDowntimeEntitiesAreTruncated(alert.entities);
+                    })
+
                     $scope.alertsLoaded = true;
 
                     // Update lastUpdate timestamp but only if parent is available.
@@ -262,34 +283,18 @@ angular.module('zmon2App').controller('DashboardCtrl', ['$scope', '$log', '$rout
             );
         };
 
-        /**
-         * Filters and returns only entities which are not in downtime right now
-         */
-        $scope.getNonDowntimeEntities = function(entitiesArray) {
-            return _.filter(entitiesArray, function(nextEntity) {
-                return nextEntity.result.downtimes.length === 0;
-            });
-        };
-
         /*
          * Returns truncated list of non-downtime entities; limit is MAX_ENTITIES_DISPLAYED entities
          */
         $scope.truncateNonDowntimeEntities = function(entitiesArray) {
-            return $scope.getNonDowntimeEntities(entitiesArray).slice(0, APP_CONST.MAX_ENTITIES_DISPLAYED);
-        };
-
-        /*
-         * Returns true/false, depending on whether an alert's non-downtime entities list had to be truncated
-         */
-        $scope.nonDowntimeEntitiesAreTruncated = function(entitiesArray) {
-            return $scope.getNonDowntimeEntities(entitiesArray).length > APP_CONST.MAX_ENTITIES_DISPLAYED;
+            return getNonDowntimeEntities(entitiesArray).slice(0, APP_CONST.MAX_ENTITIES_DISPLAYED);
         };
 
         /**
          * Returns the rest of an alert's non-downtime entities that where left out due to the MAX_ENTITIES_DISPLAYED limit
          */
         $scope.restOfNonDowntimeEntities = function(entitiesArray) {
-            return $scope.getNonDowntimeEntities(entitiesArray).slice(APP_CONST.MAX_ENTITIES_DISPLAYED);
+            return getNonDowntimeEntities(entitiesArray).slice(APP_CONST.MAX_ENTITIES_DISPLAYED);
         };
 
         /**
