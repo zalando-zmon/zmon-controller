@@ -1,4 +1,4 @@
-var TrialRunCtrl = function ($scope, $interval, $timeout, timespanFilter, localStorageService, CommunicationService, MainAlertService, FeedbackMessageService, UserInfoService, $window, $location) {
+var TrialRunCtrl = function ($scope, $interval, $timeout, timespanFilter, CommunicationService, MainAlertService, FeedbackMessageService, UserInfoService, $window, $location) {
 
     $scope.$parent.activePage = 'trial-run';
     MainAlertService.removeDataRefresh();
@@ -279,23 +279,16 @@ var TrialRunCtrl = function ($scope, $interval, $timeout, timespanFilter, localS
         }
     }, true);
 
-   $scope.$watch('TrialRunCtrl.parameters', function() {
-       $scope.alert.parameters = formParametersObject($scope.TrialRunCtrl.parameters);
-   }, true);
+    $scope.alert = _.extend($scope.alert || {}, {
+        entities: [],
+        entities_exclude: [],
+        parameters: [],
+        interval: 120
+    });
 
-    // Default state of trial run page
-    var lastTrialRun = localStorageService.get('lastTrialRun');
-    if (lastTrialRun) {
-        $scope.alert = lastTrialRun;
-    }
-    else {
-        $scope.alert = _.extend($scope.alert || {}, {
-            entities: [],
-            entities_exclude: [],
-            parameters: [],
-            interval: 120
-        });
-    }
+    $scope.$watch('TrialRunCtrl.parameters', function() {
+       $scope.alert.parameters = formParametersObject($scope.TrialRunCtrl.parameters);
+    }, true);
 
     // Load values from querystrings.
     if ($location.search().json) {
@@ -303,10 +296,6 @@ var TrialRunCtrl = function ($scope, $interval, $timeout, timespanFilter, localS
         if ($scope.alert.owning_team && trc.teams.indexOf($scope.alert.owning_team) === -1) {
             trc.teams.push($scope.alert.owning_team);
         }
-    } else if (lastTrialRun) {
-        _.each(_.keys(lastTrialRun.parameters).sort(), function(name) {
-            trc.parameters.push(_.extend({'name': name}, lastTrialRun.parameters[name]));
-        });
     }
 
     // One-time set of the entityFilter.formEntityFilters and entityFilter.textEntityFilters now that we have alert definition
@@ -413,8 +402,6 @@ var TrialRunCtrl = function ($scope, $interval, $timeout, timespanFilter, localS
             // Get the latest entities filter content before saving to local storage
             $scope.alert.entities = JSON.parse(trc.entityFilter.textEntityFilters);
             $scope.alert.entities_exclude = JSON.parse(trc.entityExcludeFilter.textEntityFilters);
-            // Store this run's data in local storage for next time
-            localStorageService.set('lastTrialRun', $scope.alert);
 
             $scope.trForm.submitted = false;
             $scope.onRun = false;
@@ -558,4 +545,4 @@ var TrialRunCtrl = function ($scope, $interval, $timeout, timespanFilter, localS
 };
 
 
-angular.module('zmon2App').controller('TrialRunCtrl', ['$scope', '$interval', '$timeout', 'timespanFilter', 'localStorageService', 'CommunicationService', 'MainAlertService', 'FeedbackMessageService', 'UserInfoService', '$window', '$location', TrialRunCtrl]);
+angular.module('zmon2App').controller('TrialRunCtrl', ['$scope', '$interval', '$timeout', 'timespanFilter', 'CommunicationService', 'MainAlertService', 'FeedbackMessageService', 'UserInfoService', '$window', '$location', TrialRunCtrl]);
