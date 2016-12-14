@@ -4,7 +4,7 @@ angular.module('zmon2App').controller('EntityCtrl', ['$scope', '$window', '$rout
         $scope.initialLoading = true;
 
         $scope.$parent.activePage = 'entities-page'; // NOTE "entities" would destroy CSS
-        $scope.entities = []
+        $scope.entities = [];
         $scope.teamFilter = null;
         $scope.sortType = 'id';
         $scope.sortOrder = false;
@@ -17,6 +17,53 @@ angular.module('zmon2App').controller('EntityCtrl', ['$scope', '$window', '$rout
             var timeIntervalSinceLastUpdate = MainAlertService.millisecondsApart(epochPastTs, MainAlertService.getLastUpdate());
             return timespanFilter(timeIntervalSinceLastUpdate);
         };
+
+        $scope.numberNiceFormat = function(v) {
+            var ndx = Math.floor( Math.log(v) / Math.log(1000) );
+            var suffix = ["", "K", "M", "G", "T", "P"];
+            return  (v / Math.pow(1000, ndx)).toFixed(1) + suffix[ndx];
+        };
+
+        $scope.getDisplayValue = function(r) {
+            if (!r.result) return (r.status == 'inactive' ? 'OK' : '?');
+            var v = null;
+            if (Object.keys(r.result.captures).length == 1) {
+                v = r.result.captures[Object.keys(r.result.captures)[0]];
+                if (typeof v == "number") {
+                    if (v < 0) {
+                        return (v * 100).toFixed(0) + "%";
+                    }
+                    else {
+                        return $scope.numberNiceFormat(v)
+                    }
+                }
+            }
+
+            if (typeof r.result.value == "number") {
+                v = r.result.value;
+                if (v < 0) {
+                    return (v * 100).toFixed(0) + "%";
+                }
+                else {
+                    return $scope.numberNiceFormat(v);
+                }
+            }
+
+            if (Object.keys(r.result.value).length == 1) {
+                v = r.result.value[Object.keys(r.result.value)[0]];
+                if (typeof v == "number") {
+                    if (v < 0) {
+                        return (v * 100).toFixed(0) + "%";
+                    }
+                    else {
+                        return $scope.numberNiceFormat(v);
+                    }
+                }
+            }
+
+            return r.result ? $scope.timeAgo(r.result.start_time) : (r.status == 'inactive' ? 'OK' : '?')
+        };
+
         $scope.formatResult = function(result) {
             if (!_.isEmpty(result.captures)) {
                 var s = '';
