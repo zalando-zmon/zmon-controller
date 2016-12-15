@@ -548,7 +548,7 @@ angular.module('zmon2App').factory('CommunicationService', ['$http', '$q', '$log
         /*
          * Fetches check or alert definition history of changes
          */
-        service.getHistoryChanges = function(params) {
+        service.getAllChanges = function(params) {
             PreconditionsService.isNotEmpty(params.alert_definition_id);
             PreconditionsService.isNumber(params.alert_definition_id);
             PreconditionsService.isNotEmpty(params.limit);
