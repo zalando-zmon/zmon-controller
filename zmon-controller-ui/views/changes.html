@@ -1,0 +1,122 @@
+<h1>{{mode.charAt(0).toUpperCase() + mode.slice(1)}} Definition Changes</h1>
+<div class="panel panel-default">
+
+    <div class="panel-body">
+
+        <dl class="dl-horizontal" ng-if="mode == 'alert'">
+            <dt>Description</dt>
+            <dd class="form-control" ng-bind-html="definition.description | markdown"></dd>
+            <dt>Condition</dt>
+            <dd><div hljs hljs-source="definition.condition" hljs-language="python"></div></dd>
+            <dt>Responsible Team</dt>
+            <dd>{{definition.responsible_team}}</dd>
+        </dl>
+
+        <dl class="dl-horizontal" ng-if="mode == 'check'">
+            <dt ng-if="definition.description">Description</dt>
+            <dd ng-if="definition.description">{{definition.description}}</dd>
+            <dt ng-if="definition.command">Command</dt>
+            <dd ng-if="definition.command"><div hljs hljs-source="definition.command" hljs-language="python"></div></dd>
+            <dt ng-if="definition.interval">Interval</dt>
+            <dd ng-if="definition.interval">{{definition.interval|timespan:'s'}}</dd>
+            <dt ng-if="definition.entities">Entities</dt>
+            <dd ng-if="definition.entities" ng-bind-html="definition.entities | entities"></dd>
+        </dl>
+
+    </div>
+</div>
+
+<div class="panel panel-default" ng-class="{'panel-collapsed': !showDetails}">
+    <div class="panel-heading panel-toggle" ng-click="showDetails = !showDetails"><i class="fa fa-fw fa-toggle-{{ showDetails ? 'up' : 'down' }}"></i> Details</div>
+    <div class="panel-body">
+
+        <dl class="dl-horizontal" ng-if="mode == 'alert'">
+            <dt>Check Name, ID</dt>
+            <dd><a href="#/check-definitions/view/{{definition.check_definition.id}}">{{definition.check_definition.name}}</a>, ID: {{definition.check_definition.id}}</dd>
+            <dt>Check Team</dt>
+            <dd>{{definition.responsible_team}}</dd>
+            <dt>Check Command</dt>
+            <dd><div hljs hljs-source="definition.check_definition.command" hljs-language="python"></div></dd>
+            <dt>Check Interval</dt>
+            <dd>{{definition.check_definition.interval|timespan:'s'}}</dd>
+            <dt>Check Entities</dt>
+            <dd ng-bind-html="definition.check_definition.entities | entities"></dd>
+            <dt>Alert Entity Filter</dt>
+            <dd>
+                <span class="text-muted" ng-show="definition.entities.length === 0">(no entity filter)</span>
+                <div ng-bind-html="definition.entities | entities"></div>
+            </dd>
+            <dt>Notifications</dt>
+            <dd>
+                <span class="text-muted" ng-show="definition.notifications.length === 0">(no notifications defined)</span>
+                <code ng-repeat="notification in definition.notifications">{{notification}}</code>
+            </dd>
+            <dt>Time Period</dt>
+            <dd><span class="text-muted" ng-show="!definition.period">(no time periods defined)</span>{{definition.period}}</dd>
+        </dl>
+
+        <dl class="dl-horizontal" ng-if="mode == 'check'">
+            <dt ng-if="definition.technical_details">Technical Details</dt>
+            <dd ng-if="definition.technical_details">{{definition.technical_details}}</dd>
+            <dt ng-if="definition.potential_impact">Potential Impact</dt>
+            <dd ng-if="definition.potential_impact">{{definition.potential_impact}}</dd>
+            <dt ng-if="definition.potential_analysis">Potential Analysis</dt>
+            <dd ng-if="definition.potential_analysis">{{definition.potential_analysis}}</dd>
+            <dt ng-if="definition.potential_solution">Potential Solution</dt>
+            <dd ng-if="definition.potential_solution">{{definition.potential_solution}}</dd>
+            <dt ng-if="definition.last_modified_by">Last Modified by</dt>
+            <dd ng-if="definition.last_modified_by">{{definition.last_modified_by}}</dd>
+            <dt ng-if="definition.source_url">Source</dt>
+            <dd ng-if="definition.source_url">{{definition.source_url}}</dd>
+        </dl>
+
+    </div>
+</div>
+
+<div class="zmon-controls row">
+    <div class="col-md-8 text-left">
+        <button class="btn" ng-class="{'active-page': activeChangesButton == 1}" ng-click="fetchChanges(1)">Last day</button>
+        <button class="btn" ng-class="{'active-page': activeChangesButton == 7}" ng-click="fetchChanges(7)">Last 7 days</button>
+        <button class="btn" ng-class="{'active-page': activeChangesButton == 30}" ng-click="fetchChanges(30)">Last Month</button>
+        <button class="btn" ng-class="{'active-page': activeChangesButton == 91}" ng-click="fetchChanges(91)">Last 3 Months</button>
+        <button class="btn" ng-class="{'active-page': activeChangesButton == 182}" ng-click="fetchChanges(182)">Last 6 Months</button>
+        <button class="btn" ng-class="{'active-page': activeChangesButton == 365}" ng-click="fetchChanges(365)">Last Year</button>
+    </div>
+    <div class="col-md-4 text-left">
+        <form id="searchbar" class="form-inline">
+            <div class="form-group">
+                <div class="input-group">
+                    <span class="input-group-btn">
+                        <button class="btn btn-primary"><i class="fa fa-fw fa-search"></i></button>
+                    </span>
+                    <input class="form-control" placeholder="Filter definitions"  type="text" ng-model="search" autofocus />
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="col-md-4 text-right">
+    </div>
+</div>
+
+<div class="table-responsive">
+    <table class="zmon-data-table table table-striped table-bordered table-hover table-condensed">
+        <thead>
+            <tr>
+                <th class="event-name-col">Event Name</th>
+                <th class="modified-by-col">Modified by</th>
+                <th class="timestamp-col">Time</th>
+                <th>Changes</th>
+                <th class="link-icon-col">Changed in Parent</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="record in history| filter:search | limitTo:limit">
+                <td><span class="history-tag" style="background-color: {{hslFromEventType(record.type_id)}}">{{record.action}}</span></td>
+                <td>{{ record.changed_attributes.cd_last_modified_by || record.changed_attributes.adt_last_modified_by || record.attributes.cd_last_modified_by || record.attributes.adt_last_modified_by}}</td>
+                <td class="no-wrap">{{record.time | epochToDate}}</td>
+                <td class="ellipsis" expand ng-bind-html="record.action == 'INSERT' ? getChanges(record.attributes) : getChanges(record.changed_attributes)"></td>
+                <td><a ng-show="record.type_name == 'ALERT_DEFINITION_UPDATED' && record.attributes.adt_id !== alert_definition_id" href="#/alert-details/{{record.attributes.adt_parent_id}}"><i class="fa fa-sitemap"></i></a></td>
+            </tr>
+        </tbody>
+    </table>
+</div>

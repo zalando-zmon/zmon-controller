@@ -91,9 +91,9 @@ angular.module('zmon2App', [
                     controller: 'TrialRunCtrl',
                     reloadOnSearch: false
                 })
-                .when('/history', {
-                    templateUrl: 'views/history.html',
-                    controller: 'HistoryCtrl'
+                .when('/changes', {
+                    templateUrl: 'views/changes.html',
+                    controller: 'ChangesCtrl'
                 })
                 .when('/cloud', {
                     templateUrl: 'views/cloud.html',

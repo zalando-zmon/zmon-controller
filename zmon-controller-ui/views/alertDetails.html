@@ -17,7 +17,7 @@
             <span ng-hide="alert.cloneable || alert.status == 'DELETED'"><i class="fa fa-fw fa-sitemap semi-transparent"></i> Inherit</span>
             <a ng-show="alert.deletable" href="" alert-delete alert="alert" title="Delete alert definition"><i class="fa fa-fw fa-trash-o"></i> Delete</a>
             <span ng-hide="alert.deletable"><i class="fa fa-fw fa-trash-o semi-transparent"></i> Delete</span>
-            <a href="#/history?alert_definition_id={{alert.id}}"><i class="fa fa-clock-o"></i> History</a>
+            <a href="#/changes?alert_definition_id={{alert.id}}"><i class="fa fa-clock-o"></i> Changes</a>
             <a class="clickable" href="#/trial-run?json={{alertJson}}"><i class="fa fa-play"></i> Trial Run</a>
             <a class="clickable" ng-if="userInfo['instantaneous-alert-evaluation']" ng-click="forceAlertEvaluation()"><i class="fa fa-play"></i> Evaluate</a>
             <a class="clickable" ng-if="userInfo['instantaneous-alert-evaluation']" ng-click="forceAlertCleanup()"><i class="fa fa-eraser"></i> Cleanup</a>
@@ -57,8 +57,8 @@
             <dd ng-if="check.technical_details" ng-bind-html="check.technical_details | markdown"></dd>
             <dt ng-if="alert.parent_id">Inherits from</dt>
             <dd ng-if="alert.parent_id"><a href="#/alert-details/{{alert.parent_id}}">{{parentAlertDefinition.name || "(no name)"}}</a>, ID: <a href="#/alert-details/{{alert.parent_id}}">{{alert.parent_id}}</a></dd>
-            <dt>Check Name, ID, History</dt>
-            <dd><a href="#/check-definitions/view/{{check.id}}">{{check.name}}</a>, ID: {{check.id}}, <a href="#/history?check_definition_id={{check.id}}">History</a></dd>
+            <dt>Check Name, ID, Changes</dt>
+            <dd><a href="#/check-definitions/view/{{check.id}}">{{check.name}}</a>, ID: {{check.id}}, <a href="#/changes?check_definition_id={{check.id}}">Changes</a></dd>
             <dt>Check Team</dt>
             <dd>{{check.owning_team}}</dd>
             <dt>Check Command</dt>
