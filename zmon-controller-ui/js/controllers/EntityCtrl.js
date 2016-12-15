@@ -20,7 +20,7 @@ angular.module('zmon2App').controller('EntityCtrl', ['$scope', '$window', '$rout
 
         $scope.numberNiceFormat = function(v) {
             var ndx = Math.floor( Math.log(v) / Math.log(1000) );
-            var suffix = ["", "K", "M", "G", "T", "P"];
+            var suffix = ["", "k", "M", "G", "T", "P"];
             return  (v / Math.pow(1000, ndx)).toFixed(1) + suffix[ndx];
         };
 
