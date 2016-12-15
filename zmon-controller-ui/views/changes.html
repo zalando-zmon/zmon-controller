@@ -110,7 +110,7 @@
             </tr>
         </thead>
         <tbody>
-            <tr ng-repeat="record in history| filter:search | limitTo:limit">
+            <tr ng-repeat="record in changes| filter:search | limitTo:limit">
                 <td><span class="history-tag" style="background-color: {{hslFromEventType(record.type_id)}}">{{record.action}}</span></td>
                 <td>{{ record.changed_attributes.cd_last_modified_by || record.changed_attributes.adt_last_modified_by || record.attributes.cd_last_modified_by || record.attributes.adt_last_modified_by}}</td>
                 <td class="no-wrap">{{record.time | epochToDate}}</td>
