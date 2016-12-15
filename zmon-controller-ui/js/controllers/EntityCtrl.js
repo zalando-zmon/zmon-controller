@@ -28,20 +28,22 @@ angular.module('zmon2App').controller('EntityCtrl', ['$scope', '$window', '$rout
             if (!r.result) return (r.status == 'inactive' ? 'OK' : '?');
             var v = null;
             if (Object.keys(r.result.captures).length == 1) {
-                v = r.result.captures[Object.keys(r.result.captures)[0]];
-                if (typeof v == "number") {
-                    if (v < 0) {
-                        return (v * 100).toFixed(0) + "%";
-                    }
-                    else {
-                        return $scope.numberNiceFormat(v)
-                    }
+                var t = r.result.captures[Object.keys(r.result.captures)[0]];
+                if (typeof t == "number") {
+                    v = t;
                 }
             }
 
-            if (typeof r.result.value == "number") {
+            if(null == v && typeof r.result.value == "number") {
                 v = r.result.value;
-                if (v < 0) {
+            }
+
+            if (null == v && Object.keys(r.result.value).length == 1) {
+                v = r.result.value[Object.keys(r.result.value)[0]];
+            }
+
+            if (null != v && typeof v == "number") {
+                if (Math.abs(v) <= 1) {
                     return (v * 100).toFixed(0) + "%";
                 }
                 else {
@@ -49,19 +51,7 @@ angular.module('zmon2App').controller('EntityCtrl', ['$scope', '$window', '$rout
                 }
             }
 
-            if (Object.keys(r.result.value).length == 1) {
-                v = r.result.value[Object.keys(r.result.value)[0]];
-                if (typeof v == "number") {
-                    if (v < 0) {
-                        return (v * 100).toFixed(0) + "%";
-                    }
-                    else {
-                        return $scope.numberNiceFormat(v);
-                    }
-                }
-            }
-
-            return r.result ? $scope.timeAgo(r.result.start_time) : (r.status == 'inactive' ? 'OK' : '?')
+            return $scope.timeAgo(r.result.start_time);
         };
 
         $scope.formatResult = function(result) {
