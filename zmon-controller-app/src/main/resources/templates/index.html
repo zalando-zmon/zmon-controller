@@ -114,7 +114,7 @@
                     </span>
                     <span class="app-status" ng-show="serviceStatus.isStatusRefreshing" uib-tooltip-html="statusTooltip" tooltip-placement="bottom" tooltip-trigger="mouseenter">
                         <strong ng-class="serviceStatus.queueSize > 1000 ? 'warning' : 'ok'">{{serviceStatus.queueSize}}</strong> in queue,
-                        <strong ng-class="serviceStatus.workersActive < serviceStatus.workersTotal ? 'warning' : 'ok'">{{ serviceStatus.workersActive}}/{{ serviceStatus.workersTotal}}</strong> active workers,
+                        <strong ng-class="serviceStatus.workersActive < serviceStatus.workersTotal ? 'warning' : 'ok'">{{ serviceStatus.workersActive}}/{{ serviceStatus.workersTotal}}</strong> active,
                         <strong>{{ checksPerSecond | number:2 }}</strong>/s
                         <strong class="app-last-update" ng-class="{warning:alertsOutdated}" ng-show="activePage === 'dashboard'">{{alertsLastUpdate | time}}</strong>
                     </span>
