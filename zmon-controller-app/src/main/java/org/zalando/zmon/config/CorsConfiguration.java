@@ -18,11 +18,14 @@ public class CorsConfiguration {
     @Value("${endpoints.cors.allowed-origins:*}")
     private String corsAllowedOrigins;
 
+    @Value("${endpoints.cors.enable-credentials:false}")
+    private boolean enableCredentials;
+
     //@formatter:off
     @Bean
     public WebMvcConfigurer corsConfigurer() {
 
-        log.info("Configure 'corsMapping' for allowedOrigins : {}", corsAllowedOrigins);
+        log.info("Configure CORS: allowedOrigins={} enableCredentials={}", corsAllowedOrigins, enableCredentials);
 
         return new WebMvcConfigurerAdapter() {
 
@@ -31,7 +34,7 @@ public class CorsConfiguration {
                 registry.addMapping("/**")
                         .allowedOrigins(StringUtils.commaDelimitedListToStringArray(corsAllowedOrigins))
                         .allowedMethods("PUT", "DELETE", "GET", "POST", "OPTIONS")
-                        .allowCredentials(false)
+                        .allowCredentials(enableCredentials)
                         .maxAge(3600);
             }
 
