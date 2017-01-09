@@ -8,6 +8,7 @@ angular.module('zmon2App').controller('CheckDefinitionEditCtrl', ['$scope', '$ro
         $scope.allTags = [];
         $scope.defaultEntitiesFilter = [];
         $scope.entityFilterInputMethod = 'text';
+        $scope.matchedEntities = null;
 
         var user = UserInfoService.get();
         $scope.teams = user.teams !== "" ? user.teams.split(',') : [];
@@ -87,7 +88,7 @@ angular.module('zmon2App').controller('CheckDefinitionEditCtrl', ['$scope', '$ro
         // and allow inserting new values
         $scope.getItems = function(prop, search) {
             var teams = _.extend([], $scope.teams);
-            var options = teams.indexOf(prop) === -1 ? teams.concat(prop) : teams; 
+            var options = teams.indexOf(prop) === -1 ? teams.concat(prop) : teams;
             if (search && options.indexOf(search) === -1) {
                 options.unshift(search);
             }
@@ -108,6 +109,21 @@ angular.module('zmon2App').controller('CheckDefinitionEditCtrl', ['$scope', '$ro
                     $scope.entityFilter.textEntityFilters = JSON.stringify(response.entities, null, $scope.INDENT) || '[]';
                 }
             );
+        };
+
+        var getMatchedEntities = function(filter) {
+
+            if (filter.length == 0) {
+                return $scope.matchedEntities = null;
+            }
+
+            var filters = {
+                "includeFilters": filter
+            };
+
+            CommunicationService.getMatchedEntities(filters).then(function(match) {
+                $scope.matchedEntities = match;
+            })
         };
 
         if ($scope.checkId) {
@@ -148,6 +164,7 @@ angular.module('zmon2App').controller('CheckDefinitionEditCtrl', ['$scope', '$ro
                 }
                 $scope.entityFilter.textEntityFilters = JSON.stringify(formEntityFiltersClone, null, $scope.INDENT);
                 $scope.check.entities = angular.copy(formEntityFiltersClone);
+                getMatchedEntities($scope.check.entities);
             }
         }, true);
 
@@ -158,6 +175,7 @@ angular.module('zmon2App').controller('CheckDefinitionEditCtrl', ['$scope', '$ro
                     $scope.check.entities = JSON.parse($scope.entityFilter.textEntityFilters);
                     $scope.entityFilter.formEntityFilters = JSON.parse($scope.entityFilter.textEntityFilters);
                     $scope.invalidFormat = false;
+                    getMatchedEntities($scope.check.entities);
                 } catch (ex) {
                     $scope.invalidFormat = true;
                 }

@@ -13,6 +13,8 @@ angular.module('zmon2App').controller('AlertDefinitionEditCtrl', ['$scope', '$ro
         $scope.defaultEntitiesFilter = [];
         $scope.defaultEntitiesExcludeFilter = [];
         $scope.defaultNotifications = [];
+        $scope.matchedEntities = null;
+
         var user = UserInfoService.get();
         $scope.teams = user.teams !== "" ? user.teams.split(',') : [];
 
@@ -122,6 +124,12 @@ angular.module('zmon2App').controller('AlertDefinitionEditCtrl', ['$scope', '$ro
 
         $scope.focusedElement = null;
 
+        // Filter object for Matched Entities
+        $scope.filter = {
+            "includeFilters": [],
+            "excludeFilters": []
+        };
+
         // Add all overwritten properties from current alert to array
         var markAllAsOverwritten = function() {
             _.each($scope.alertDefinition, function(value, property) {
@@ -145,6 +153,26 @@ angular.module('zmon2App').controller('AlertDefinitionEditCtrl', ['$scope', '$ro
             }
             return n;
         };
+
+        var getMatchedEntities = function(includeFilters, excludeFilters) {
+
+            if (includeFilters && includeFilters.length) {
+                $scope.filter.includeFilters = includeFilters;
+            }
+
+            if (excludeFilters && excludeFilters.length) {
+                $scope.filter.excludeFilters = excludeFilters;
+            }
+
+            if ($scope.filter.includeFilters.length === 0 && $scope.filter.excludeFilters === 0) {
+                return $scope.matchedEntities = null;
+            }
+
+            CommunicationService.getMatchedEntities($scope.filter).then(function(match) {
+                $scope.matchedEntities = match;
+            })
+        };
+
 
         $scope.save = function() {
             if ($scope.adForm.$valid) {
@@ -498,7 +526,7 @@ angular.module('zmon2App').controller('AlertDefinitionEditCtrl', ['$scope', '$ro
         // and allow inserting new values
         $scope.getItems = function(prop, search) {
             var teams = _.extend([], $scope.teams);
-            var options = teams.indexOf(prop) === -1 ? teams.concat(prop) : teams; 
+            var options = teams.indexOf(prop) === -1 ? teams.concat(prop) : teams;
             if (search && options.indexOf(search) === -1) {
                 options.unshift(search);
             }
@@ -538,6 +566,7 @@ angular.module('zmon2App').controller('AlertDefinitionEditCtrl', ['$scope', '$ro
                     }
                 }
                 $scope.entityFilter.textEntityFilters = JSON.stringify(formEntityFiltersClone, null, $scope.INDENT);
+                getMatchedEntities($scope.alertDefinition.entities);
             }
         }, true);
 
@@ -551,6 +580,7 @@ angular.module('zmon2App').controller('AlertDefinitionEditCtrl', ['$scope', '$ro
                     }
                 }
                 $scope.entityExcludeFilter.textEntityFilters = JSON.stringify(formEntityFiltersClone, null, $scope.INDENT);
+                getMatchedEntities(null, $scope.alertDefinition.entities_exclude);
             }
         }, true);
 
@@ -561,6 +591,7 @@ angular.module('zmon2App').controller('AlertDefinitionEditCtrl', ['$scope', '$ro
                     var parsedJson = JSON.parse($scope.entityFilter.textEntityFilters);
                     $scope.entityFilter.formEntityFilters = parsedJson;
                     $scope.invalidFormat = false;
+                    getMatchedEntities($scope.alertDefinition.entities);
                 } catch (ex) {
                     $scope.invalidFormat = true;
                 }
@@ -574,6 +605,7 @@ angular.module('zmon2App').controller('AlertDefinitionEditCtrl', ['$scope', '$ro
                     var parsedJson = JSON.parse($scope.entityExcludeFilter.textEntityFilters);
                     $scope.entityExcludeFilter.formEntityFilters = parsedJson;
                     $scope.invalidFormat = false;
+                    getMatchedEntities(null, $scope.alertDefinition.entities_exclude);
                 } catch (ex) {
                     $scope.invalidFormat = true;
                 }

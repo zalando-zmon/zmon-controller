@@ -352,6 +352,14 @@ angular.module('zmon2App').factory('CommunicationService', ['$http', '$q', '$log
             return deferred.promise;
         };
 
+        service.getMatchedEntities = function(filter) {
+            PreconditionsService.isNotEmpty(filter);
+            var headers = {
+                'Content-Type': 'application/json'
+            };
+            return doHttpCall("POST", "rest/entities", filter, headers);
+        }
+
 
         service.getStatus = function() {
             return doHttpCall("GET", "rest/status");
