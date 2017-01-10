@@ -357,7 +357,7 @@ angular.module('zmon2App').factory('CommunicationService', ['$http', '$q', '$log
             var headers = {
                 'Content-Type': 'application/json'
             };
-            return doHttpCall("POST", "rest/entities", filter, headers);
+            return doHttpCall("POST", "rest/entity-filters", filter, headers);
         }
 
 
