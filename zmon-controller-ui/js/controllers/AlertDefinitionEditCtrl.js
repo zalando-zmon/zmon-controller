@@ -126,9 +126,9 @@ angular.module('zmon2App').controller('AlertDefinitionEditCtrl', ['$scope', '$ro
 
         // Filter object for Matched Entities
         $scope.filter = {
-            "include_filters": [],
-            "exclude_filters": []
-        };
+            "include_filters": [[],[]],
+            "exclude_filters": [[]]
+        }
 
         // Add all overwritten properties from current alert to array
         var markAllAsOverwritten = function() {
@@ -157,19 +157,20 @@ angular.module('zmon2App').controller('AlertDefinitionEditCtrl', ['$scope', '$ro
         var getMatchedEntities = function(includeFilters, excludeFilters) {
 
             if (includeFilters && includeFilters.length) {
-                $scope.filter.includeFilters = includeFilters;
+                $scope.filter.include_filters = includeFilters;
             }
 
             if (excludeFilters && excludeFilters.length) {
-                $scope.filter.excludeFilters = excludeFilters;
+                $scope.filter.exclude_filters = excludeFilters;
             }
 
-            if ($scope.filter.includeFilters.length === 0 && $scope.filter.excludeFilters === 0) {
-                return $scope.matchedEntities = null;
+            if ($scope.filter.include_filters.length && $scope.filter.include_filters[0].length === 0
+                && $scope.filter.exclude_filters.length && $scope.filter.exclude_filters[0].length === 0) {
+                    return trc.matchedEntities = null;
             }
 
             CommunicationService.getMatchedEntities($scope.filter).then(function(match) {
-                $scope.matchedEntities = match;
+                trc.matchedEntities = match;
             })
         };
 
@@ -286,6 +287,7 @@ angular.module('zmon2App').controller('AlertDefinitionEditCtrl', ['$scope', '$ro
                             template: false
                         };
                     }
+                    getMatchedEntities([$scope.checkDefinition.entities]);
                 }
             );
         };
@@ -566,7 +568,7 @@ angular.module('zmon2App').controller('AlertDefinitionEditCtrl', ['$scope', '$ro
                     }
                 }
                 $scope.entityFilter.textEntityFilters = JSON.stringify(formEntityFiltersClone, null, $scope.INDENT);
-                getMatchedEntities($scope.checkDefinition.entities.concat($scope.alertDefinition.entities));
+                getMatchedEntities([$scope.checkDefinition.entities, $scope.alertDefinition.entities]);
             }
         }, true);
 
@@ -580,7 +582,7 @@ angular.module('zmon2App').controller('AlertDefinitionEditCtrl', ['$scope', '$ro
                     }
                 }
                 $scope.entityExcludeFilter.textEntityFilters = JSON.stringify(formEntityFiltersClone, null, $scope.INDENT);
-                getMatchedEntities(null, $scope.alertDefinition.entities_exclude);
+                getMatchedEntities(null, [$scope.alertDefinition.entities_exclude]);
             }
         }, true);
 
@@ -591,7 +593,7 @@ angular.module('zmon2App').controller('AlertDefinitionEditCtrl', ['$scope', '$ro
                     var parsedJson = JSON.parse($scope.entityFilter.textEntityFilters);
                     $scope.entityFilter.formEntityFilters = parsedJson;
                     $scope.invalidFormat = false;
-                    getMatchedEntities($scope.checkDefinition.entities.concat($scope.alertDefinition.entities));
+                    getMatchedEntities([$scope.checkDefinition.entities, $scope.alertDefinition.entities]);
                 } catch (ex) {
                     $scope.invalidFormat = true;
                 }
@@ -605,7 +607,7 @@ angular.module('zmon2App').controller('AlertDefinitionEditCtrl', ['$scope', '$ro
                     var parsedJson = JSON.parse($scope.entityExcludeFilter.textEntityFilters);
                     $scope.entityExcludeFilter.formEntityFilters = parsedJson;
                     $scope.invalidFormat = false;
-                    getMatchedEntities(null, $scope.alertDefinition.entities_exclude);
+                    getMatchedEntities(null, [ $scope.alertDefinition.entities_exclude ]);
                 } catch (ex) {
                     $scope.invalidFormat = true;
                 }

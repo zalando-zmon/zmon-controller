@@ -111,22 +111,22 @@ var TrialRunCtrl = function ($scope, $interval, $timeout, timespanFilter, localS
     var getMatchedEntities = function(includeFilters, excludeFilters) {
 
         if (includeFilters && includeFilters.length) {
-            $scope.filter.includeFilters = includeFilters;
+            $scope.filter.include_filters = includeFilters;
         }
 
         if (excludeFilters && excludeFilters.length) {
-            $scope.filter.excludeFilters = excludeFilters;
+            $scope.filter.exclude_filters = excludeFilters;
         }
 
-        if ($scope.filter.includeFilters.length === 0 && $scope.filter.excludeFilters === 0) {
-            return trc.matchedEntities = null;
+        if ($scope.filter.include_filters.length && $scope.filter.include_filters[0].length === 0
+            && $scope.filter.exclude_filters.length && $scope.filter.exclude_filters[0].length === 0) {
+                return trc.matchedEntities = null;
         }
 
         CommunicationService.getMatchedEntities($scope.filter).then(function(match) {
             trc.matchedEntities = match;
         })
     };
-
 
     var user = UserInfoService.get();
     trc.teams = user.teams !== "" ? user.teams.split(',') : [];
@@ -209,8 +209,8 @@ var TrialRunCtrl = function ($scope, $interval, $timeout, timespanFilter, localS
 
     // Filter object for Matched Entities
     $scope.filter = {
-        "include_filters": [],
-        "exclude_filters": []
+        "include_filters": [[],[]],
+        "exclude_filters": [[]]
     }
 
 
@@ -263,7 +263,7 @@ var TrialRunCtrl = function ($scope, $interval, $timeout, timespanFilter, localS
             }
             trc.entityFilter.textEntityFilters = JSON.stringify(formEntityFiltersClone, null, trc.INDENT);
             $scope.alert.entities = angular.copy(formEntityFiltersClone);
-            getMatchedEntities($scope.alert.entities);
+            getMatchedEntities([$scope.alert.entities]);
         }
     }, true);
 
@@ -279,7 +279,7 @@ var TrialRunCtrl = function ($scope, $interval, $timeout, timespanFilter, localS
             }
             trc.entityExcludeFilter.textEntityFilters = JSON.stringify(formEntityFiltersClone, null, trc.INDENT);
             $scope.alert.entities_exclude = angular.copy(formEntityFiltersClone);
-            getMatchedEntities(null, $scope.alert.entities_exclude);
+            getMatchedEntities(null, [$scope.alert.entities_exclude]);
         }
     }, true);
 
@@ -290,7 +290,7 @@ var TrialRunCtrl = function ($scope, $interval, $timeout, timespanFilter, localS
                 $scope.alert.entities = JSON.parse(trc.entityFilter.textEntityFilters);
                 trc.entityFilter.formEntityFilters = JSON.parse(trc.entityFilter.textEntityFilters);
                 trc.invalidFormat = false;
-                getMatchedEntities($scope.alert.entities);
+                getMatchedEntities([$scope.alert.entities]);
             } catch (ex) {
                 trc.invalidFormat = true;
             }
@@ -304,7 +304,7 @@ var TrialRunCtrl = function ($scope, $interval, $timeout, timespanFilter, localS
                 $scope.alert.entities_exclude = JSON.parse(trc.entityExcludeFilter.textEntityFilters);
                 trc.entityExcludeFilter.formEntityFilters = JSON.parse(trc.entityExcludeFilter.textEntityFilters);
                 trc.invalidFormat = false;
-                getMatchedEntities(null, $scope.alert.entities_exclude);
+                getMatchedEntities(null, [$scope.alert.entities_exclude]);
             } catch (ex) {
                 trc.invalidFormat = true;
             }
