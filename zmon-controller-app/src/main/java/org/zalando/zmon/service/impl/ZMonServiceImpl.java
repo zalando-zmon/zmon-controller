@@ -9,6 +9,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.SetMultimap;
+import org.apache.http.HttpResponse;
 import org.apache.http.client.fluent.Executor;
 import org.apache.http.client.fluent.Request;
 import org.apache.http.client.utils.URIBuilder;
@@ -530,8 +531,8 @@ public class ZMonServiceImpl implements ZMonService {
                     .addParameter("exclude_filters", mapper.writeValueAsString(request.excludeFilters))
                     .addParameter("local", "" + request.local).build();
 
-            final String r = executor.execute(Request.Head(schedulerUrl)).returnContent().asString();
-            int count = Integer.parseInt(r);
+            HttpResponse r = executor.execute(Request.Head(schedulerUrl)).returnResponse();
+            int count = Integer.parseInt(r.getHeaders("entity-count")[0].getValue());
 
             if(count <= 25) {
                 EntityFilterResponse response = new EntityFilterResponse(count);
