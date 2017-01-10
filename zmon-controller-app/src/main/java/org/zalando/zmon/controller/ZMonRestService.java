@@ -15,6 +15,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.zalando.stups.tokens.AccessTokens;
 import org.zalando.zmon.api.SearchAPI;
+import org.zalando.zmon.api.domain.EntityFilterRequest;
+import org.zalando.zmon.api.domain.EntityFilterResponse;
 import org.zalando.zmon.config.MetricCacheProperties;
 import org.zalando.zmon.domain.CheckDefinition;
 import org.zalando.zmon.domain.CheckDefinitionImport;
@@ -183,6 +185,17 @@ public class ZMonRestService extends AbstractZMonController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return new ResponseEntity<>(node, HttpStatus.OK);
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    @RequestMapping(value = "entity-filters", method = RequestMethod.POST)
+    public ResponseEntity<EntityFilterResponse> getMatchingEntities(@RequestBody EntityFilterRequest filter) {
+        EntityFilterResponse response = service.getEntitiesMatchingFilters(filter);
+        if (null == response) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @RequestMapping(value="/search", method = RequestMethod.GET)
