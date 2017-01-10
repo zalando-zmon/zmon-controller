@@ -4,6 +4,8 @@ import java.util.*;
 
 import javax.annotation.Nullable;
 
+import org.zalando.zmon.api.domain.EntityFilterRequest;
+import org.zalando.zmon.api.domain.EntityFilterResponse;
 import org.zalando.zmon.domain.CheckDefinition;
 import org.zalando.zmon.domain.CheckDefinitionImport;
 import org.zalando.zmon.domain.CheckDefinitions;
@@ -54,6 +56,8 @@ public interface ZMonService {
     CheckChartResult getFilteredLastResults(String checkId, String filter, int limit);
 
     JsonNode getAlertCoverage(JsonNode filter);
+
+    EntityFilterResponse getEntitiesMatchingFilters(EntityFilterRequest request);
 
     Date getMaxCheckDefinitionLastModified();
 }
