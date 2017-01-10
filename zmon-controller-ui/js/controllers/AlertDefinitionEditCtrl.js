@@ -126,8 +126,8 @@ angular.module('zmon2App').controller('AlertDefinitionEditCtrl', ['$scope', '$ro
 
         // Filter object for Matched Entities
         $scope.filter = {
-            "includeFilters": [],
-            "excludeFilters": []
+            "include_filters": [],
+            "exclude_filters": []
         };
 
         // Add all overwritten properties from current alert to array
@@ -566,7 +566,7 @@ angular.module('zmon2App').controller('AlertDefinitionEditCtrl', ['$scope', '$ro
                     }
                 }
                 $scope.entityFilter.textEntityFilters = JSON.stringify(formEntityFiltersClone, null, $scope.INDENT);
-                getMatchedEntities($scope.alertDefinition.entities);
+                getMatchedEntities($scope.checkDefinition.entities.concat($scope.alertDefinition.entities));
             }
         }, true);
 
@@ -591,7 +591,7 @@ angular.module('zmon2App').controller('AlertDefinitionEditCtrl', ['$scope', '$ro
                     var parsedJson = JSON.parse($scope.entityFilter.textEntityFilters);
                     $scope.entityFilter.formEntityFilters = parsedJson;
                     $scope.invalidFormat = false;
-                    getMatchedEntities($scope.alertDefinition.entities);
+                    getMatchedEntities($scope.checkDefinition.entities.concat($scope.alertDefinition.entities));
                 } catch (ex) {
                     $scope.invalidFormat = true;
                 }

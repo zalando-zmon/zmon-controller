@@ -209,8 +209,8 @@ var TrialRunCtrl = function ($scope, $interval, $timeout, timespanFilter, localS
 
     // Filter object for Matched Entities
     $scope.filter = {
-        "includeFilters": [],
-        "excludeFilters": []
+        "include_filters": [],
+        "exclude_filters": []
     }
 
 

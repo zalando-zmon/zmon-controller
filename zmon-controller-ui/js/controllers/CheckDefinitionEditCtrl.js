@@ -118,7 +118,7 @@ angular.module('zmon2App').controller('CheckDefinitionEditCtrl', ['$scope', '$ro
             }
 
             var filters = {
-                "includeFilters": filter
+                "include_filters": filter
             };
 
             CommunicationService.getMatchedEntities(filters).then(function(match) {
