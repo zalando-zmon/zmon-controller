@@ -17,8 +17,6 @@ var TrialRunCtrl = function ($scope, $interval, $timeout, timespanFilter, localS
         var self = this;
         this.uid = null;
         this.config = {};
-        this.matchedEntitiesCount = null;
-        this.matchedEntities = [];
 
         this.init = function (config) {
             self.config = self.convert(config);
@@ -111,11 +109,11 @@ var TrialRunCtrl = function ($scope, $interval, $timeout, timespanFilter, localS
 
     var getMatchedEntities = function(includeFilters, excludeFilters) {
 
-        if (includeFilters && includeFilters.length) {
+        if (includeFilters) {
             $scope.filter.include_filters = [[], includeFilters];
         }
 
-        if (excludeFilters && excludeFilters.length) {
+        if (excludeFilters) {
             $scope.filter.exclude_filters = [excludeFilters];
         }
 
@@ -217,6 +215,10 @@ var TrialRunCtrl = function ($scope, $interval, $timeout, timespanFilter, localS
         "exclude_filters": [[]]
     }
 
+    $scope.matchedEntitiesCount = null;
+    $scope.matchedEntities = [];
+
+
 
     /** The getEntityProperties() returns an object with the data to populate the directives that represent the entity filter forms
      * We transform it to be an array of objects, one object per entity filter type with keys: "type" + keys that correspond to each filter type
@@ -294,6 +296,7 @@ var TrialRunCtrl = function ($scope, $interval, $timeout, timespanFilter, localS
                 $scope.alert.entities = JSON.parse(trc.entityFilter.textEntityFilters);
                 trc.entityFilter.formEntityFilters = JSON.parse(trc.entityFilter.textEntityFilters);
                 trc.invalidFormat = false;
+
                 getMatchedEntities($scope.alert.entities);
             } catch (ex) {
                 trc.invalidFormat = true;
