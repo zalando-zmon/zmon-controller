@@ -13,7 +13,8 @@ angular.module('zmon2App').controller('AlertDefinitionEditCtrl', ['$scope', '$ro
         $scope.defaultEntitiesFilter = [];
         $scope.defaultEntitiesExcludeFilter = [];
         $scope.defaultNotifications = [];
-        $scope.matchedEntities = null;
+        $scope.matchedEntitiesCount = null;
+        $scope.matchedEntities = [];
 
         var user = UserInfoService.get();
         $scope.teams = user.teams !== "" ? user.teams.split(',') : [];
@@ -161,16 +162,19 @@ angular.module('zmon2App').controller('AlertDefinitionEditCtrl', ['$scope', '$ro
             }
 
             if (excludeFilters && excludeFilters.length) {
-                $scope.filter.exclude_filters = excludeFilters;
+                $scope.filter.exclude_filters = [excludeFilters];
             }
 
-            if ($scope.filter.include_filters.length && $scope.filter.include_filters[0].length === 0
+            if ($scope.filter.include_filters.length && $scope.filter.include_filters[0].length === 0 && $scope.filter.include_filters[1].length === 1
                 && $scope.filter.exclude_filters.length && $scope.filter.exclude_filters[0].length === 0) {
-                    return trc.matchedEntities = null;
+                    $scope.matchedEntitiesCount = null;
+                    $scope.matchedEntities = [];
+                    return;
             }
 
-            CommunicationService.getMatchedEntities($scope.filter).then(function(match) {
-                trc.matchedEntities = match;
+            CommunicationService.getMatchedEntities($scope.filter).then(function(response) {
+                $scope.matchedEntitiesCount = response.count;
+                $scope.matchedEntities = response.entities;
             })
         };
 
@@ -287,7 +291,7 @@ angular.module('zmon2App').controller('AlertDefinitionEditCtrl', ['$scope', '$ro
                             template: false
                         };
                     }
-                    getMatchedEntities([$scope.checkDefinition.entities]);
+                    getMatchedEntities([$scope.checkDefinition.entities, []]);
                 }
             );
         };
@@ -582,7 +586,7 @@ angular.module('zmon2App').controller('AlertDefinitionEditCtrl', ['$scope', '$ro
                     }
                 }
                 $scope.entityExcludeFilter.textEntityFilters = JSON.stringify(formEntityFiltersClone, null, $scope.INDENT);
-                getMatchedEntities(null, [$scope.alertDefinition.entities_exclude]);
+                getMatchedEntities(null, $scope.alertDefinition.entities_exclude);
             }
         }, true);
 
@@ -607,7 +611,7 @@ angular.module('zmon2App').controller('AlertDefinitionEditCtrl', ['$scope', '$ro
                     var parsedJson = JSON.parse($scope.entityExcludeFilter.textEntityFilters);
                     $scope.entityExcludeFilter.formEntityFilters = parsedJson;
                     $scope.invalidFormat = false;
-                    getMatchedEntities(null, [ $scope.alertDefinition.entities_exclude ]);
+                    getMatchedEntities(null, $scope.alertDefinition.entities_exclude);
                 } catch (ex) {
                     $scope.invalidFormat = true;
                 }

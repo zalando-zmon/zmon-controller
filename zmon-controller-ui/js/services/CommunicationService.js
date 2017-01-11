@@ -354,6 +354,15 @@ angular.module('zmon2App').factory('CommunicationService', ['$http', '$q', '$log
 
         service.getMatchedEntities = function(filter) {
             PreconditionsService.isNotEmpty(filter);
+
+            if (!filter.include_filters || filter.include_filters.length !== 2) {
+                filter.include_filters = [[],[]];
+            }
+
+            if (!filter.exclude_filters || filter.exclude_filters.length !== 1) {
+                filter.exclude_filters = [[]];
+            }
+
             var headers = {
                 'Content-Type': 'application/json'
             };
