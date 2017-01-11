@@ -531,15 +531,16 @@ public class ZMonServiceImpl implements ZMonService {
                     .addParameter("exclude_filters", mapper.writeValueAsString(request.excludeFilters))
                     .addParameter("local", "" + request.local).build();
 
-            HttpResponse r = executor.execute(Request.Head(schedulerUrl)).returnResponse();
+            HttpResponse r = executor.execute(Request.Head(uri)).returnResponse();
             int count = Integer.parseInt(r.getHeaders("entity-count")[0].getValue());
 
             if(count <= 25) {
                 EntityFilterResponse response = new EntityFilterResponse(count);
                 final String entitiesString = executor.execute(Request.Get(uri)).returnContent().asString();
                 final JsonNode node = mapper.readTree(entitiesString);
+                final ArrayNode arrayNode = (ArrayNode) node;
 
-                for(JsonNode entity : (ArrayNode)node.elements()) {
+                for(JsonNode entity : arrayNode) {
                     if(entity.has("id")) {
                         EntityFilterResponse.SimpleEntity simple = new EntityFilterResponse.SimpleEntity();
                         simple.id = entity.get("id").textValue();
