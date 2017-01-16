@@ -1336,6 +1336,13 @@ body.entities-page .type-col {
     padding: 15px;
     color: #999;
     margin-top: 10px;
-    max-height: 75px;
     overflow: hidden;
+}
+
+.matched-entities .entities-list
+{
+    max-height: 70px;
+    margin-bottom: 10px;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
