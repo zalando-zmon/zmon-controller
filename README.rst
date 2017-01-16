@@ -85,3 +85,8 @@ Database API schema
 .. code-block:: bash
 
 	find . -name '*sql' | sort -V | xargs cat > schema_os.sql
+
+Iconsets
+========
+
+https://www.iconfinder.com/iconsets/CrystalClear by Everaldo Coelho
