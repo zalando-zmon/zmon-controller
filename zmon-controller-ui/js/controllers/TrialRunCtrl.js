@@ -117,16 +117,9 @@ var TrialRunCtrl = function ($scope, $interval, $timeout, timespanFilter, localS
             $scope.filter.exclude_filters = [excludeFilters];
         }
 
-        if ($scope.filter.include_filters.length && $scope.filter.include_filters[1].length === 0
-            && $scope.filter.exclude_filters.length && $scope.filter.exclude_filters[0].length === 0) {
-                $scope.matchedEntitiesCount = null;
-                $scope.matchedEntities = [];
-                return;
-        }
-
         CommunicationService.getMatchedEntities($scope.filter).then(function(response) {
             $scope.matchedEntitiesCount = response.count;
-            $scope.matchedEntities = response.entities;
+            $scope.matchedEntities = _.map(response.entities, 'id');
         })
     };
 

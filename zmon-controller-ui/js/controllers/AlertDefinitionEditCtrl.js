@@ -165,16 +165,9 @@ angular.module('zmon2App').controller('AlertDefinitionEditCtrl', ['$scope', '$ro
                 $scope.filter.exclude_filters = [excludeFilters];
             }
 
-            if ($scope.filter.include_filters.length && $scope.filter.include_filters[0].length === 0 && $scope.filter.include_filters[1].length === 1
-                && $scope.filter.exclude_filters.length && $scope.filter.exclude_filters[0].length === 0) {
-                    $scope.matchedEntitiesCount = null;
-                    $scope.matchedEntities = [];
-                    return;
-            }
-
             CommunicationService.getMatchedEntities($scope.filter).then(function(response) {
                 $scope.matchedEntitiesCount = response.count;
-                $scope.matchedEntities = response.entities;
+                $scope.matchedEntities = _.map(response.entities, 'id');
             })
         };
 
@@ -591,14 +584,27 @@ angular.module('zmon2App').controller('AlertDefinitionEditCtrl', ['$scope', '$ro
         }, true);
 
         // If entity filter input method is 'text', reflect changes of entityFilter.textEntityFilters on entityFilter.formEntityFilters
-        $scope.$watch('entityFilter.textEntityFilters', function() {
+        $scope.$watch('entityFilter.textEntityFilters', function(textEntities) {
             if ($scope.entityFilterInputMethod === 'text') {
                 try {
                     var parsedJson = JSON.parse($scope.entityFilter.textEntityFilters);
                     $scope.entityFilter.formEntityFilters = parsedJson;
                     $scope.invalidFormat = false;
-                    getMatchedEntities([$scope.checkDefinition.entities, $scope.alertDefinition.entities]);
-                } catch (ex) {
+
+                    var filter = [];
+                    if ($scope.checkDefinition && $scope.checkDefinition.entities) {
+                        filter.push($scope.checkDefinition.entities);
+                    }
+
+                    if (textEntities) {
+                        filter.push(JSON.parse(textEntities));
+                    } else {
+                        filter.push([]);
+                    }
+
+                    getMatchedEntities(filter);
+                } catch (err) {
+                    console.log('Failed to parse include entities filter:', err);
                     $scope.invalidFormat = true;
                 }
             }

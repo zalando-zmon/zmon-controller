@@ -65,9 +65,13 @@
             </div>
         </div>
         <div class="col-sm-10 col-sm-offset-2" ng-if="matchedEntitiesCount !== null">
-            <div class="col-sm-2">Matched Entities:</div>
-            <div class="col-sm-1">{{ matchedEntitiesCount }}</div>
-            <div class="col-sm-8">{{ matchedEntities }}</div>
+            <div class="col-sm-12 matched-entities">
+                <div class="col-sm-3">
+                    <span ng-if="matchedEntitiesCount">{{ matchedEntitiesCount }}</span>
+                    <span ng-if="matchedEntitiesCount === 0">No</span> entities matched
+                </div>
+                <div class="col-sm-9">{{ matchedEntities.join(', ') }}</div>
+            </div>
         </div>
     </div>
 
