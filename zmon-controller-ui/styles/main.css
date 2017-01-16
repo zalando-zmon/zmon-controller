@@ -1345,6 +1345,11 @@ body.entities-page .type-col {
 
 }
 
+.matched-entities .entities-count span
+{
+    font-weight: bold;
+}
+
 .matched-entities .entities-list
 {
     max-height: 70px;
