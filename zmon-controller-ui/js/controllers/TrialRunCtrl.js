@@ -109,6 +109,7 @@ var TrialRunCtrl = function ($scope, $interval, $timeout, timespanFilter, localS
 
        var getMatchedEntities = function() {
 
+           console.log($scope.filter)
             if ($scope.filter.include_filters[0].length === 0
               && $scope.filter.include_filters[1].length === 0
               && $scope.filter.exclude_filters[0].length === 0) {
@@ -294,7 +295,7 @@ var TrialRunCtrl = function ($scope, $interval, $timeout, timespanFilter, localS
                 trc.entityFilter.formEntityFilters = JSON.parse(trc.entityFilter.textEntityFilters);
                 trc.invalidFormat = false;
 
-                $scope.filter.include_filters = $scope.alert.entities;
+                $scope.filter.include_filters[1] = $scope.alert.entities;
                 getMatchedEntities();
             } catch (ex) {
                 trc.invalidFormat = true;
