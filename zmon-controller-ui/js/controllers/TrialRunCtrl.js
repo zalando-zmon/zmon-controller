@@ -281,7 +281,7 @@ var TrialRunCtrl = function ($scope, $interval, $timeout, timespanFilter, localS
             trc.entityExcludeFilter.textEntityFilters = JSON.stringify(formEntityFiltersClone, null, trc.INDENT);
             $scope.alert.entities_exclude = angular.copy(formEntityFiltersClone);
 
-            $scope.filter.exclude_filters = $scope.alert.entities_exclude;
+            $scope.filter.exclude_filters[0] = $scope.alert.entities_exclude;
             getMatchedEntities();
         }
     }, true);
@@ -310,7 +310,7 @@ var TrialRunCtrl = function ($scope, $interval, $timeout, timespanFilter, localS
                 trc.entityExcludeFilter.formEntityFilters = JSON.parse(trc.entityExcludeFilter.textEntityFilters);
                 trc.invalidFormat = false;
 
-                $scope.filter.exclude_filters = $scope.alert.entities_exclude;
+                $scope.filter.exclude_filters[0] = $scope.alert.entities_exclude;
                 getMatchedEntities();
             } catch (ex) {
                 trc.invalidFormat = true;

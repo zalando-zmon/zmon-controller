@@ -584,7 +584,7 @@ angular.module('zmon2App').controller('AlertDefinitionEditCtrl', ['$scope', '$ro
                 }
                 $scope.entityExcludeFilter.textEntityFilters = JSON.stringify(formEntityFiltersClone, null, $scope.INDENT);
 
-                $scope.filter.exclude_filters = formEntityFiltersClone;
+                $scope.filter.exclude_filters[0] = formEntityFiltersClone;
                 getMatchedEntities();
             }
         }, true);
@@ -617,7 +617,7 @@ angular.module('zmon2App').controller('AlertDefinitionEditCtrl', ['$scope', '$ro
                     $scope.invalidFormat = false;
 
                     if (textEntities) {
-                        $scope.filter.exclude_filters[1] = JSON.parse(textEntities);
+                        $scope.filter.exclude_filters[0] = JSON.parse(textEntities);
                     }
                     getMatchedEntities();
                 } catch (ex) {
