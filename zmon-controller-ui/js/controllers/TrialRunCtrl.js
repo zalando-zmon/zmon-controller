@@ -107,21 +107,21 @@ var TrialRunCtrl = function ($scope, $interval, $timeout, timespanFilter, localS
         $location.search('json', JSON.stringify($scope.alert));
     };
 
-    var getMatchedEntities = function(includeFilters, excludeFilters) {
+       var getMatchedEntities = function() {
 
-        if (includeFilters) {
-            $scope.filter.include_filters = [[], includeFilters];
-        }
+            if ($scope.filter.include_filters[0].length === 0
+              && $scope.filter.include_filters[1].length === 0
+              && $scope.filter.exclude_filters[0].length === 0) {
+                $scope.matchedEntitiesCount = null;
+                $scope.matchedEntities = [];
+                return;
+            }
 
-        if (excludeFilters) {
-            $scope.filter.exclude_filters = [excludeFilters];
-        }
-
-        CommunicationService.getMatchedEntities($scope.filter).then(function(response) {
-            $scope.matchedEntitiesCount = response.count;
-            $scope.matchedEntities = _.map(response.entities, 'id');
-        })
-    };
+            CommunicationService.getMatchedEntities($scope.filter).then(function(response) {
+                $scope.matchedEntitiesCount = response.count;
+                $scope.matchedEntities = _.map(response.entities, 'id');
+            })
+        };
 
     var user = UserInfoService.get();
     trc.teams = user.teams !== "" ? user.teams.split(',') : [];
@@ -262,7 +262,9 @@ var TrialRunCtrl = function ($scope, $interval, $timeout, timespanFilter, localS
             }
             trc.entityFilter.textEntityFilters = JSON.stringify(formEntityFiltersClone, null, trc.INDENT);
             $scope.alert.entities = angular.copy(formEntityFiltersClone);
-            getMatchedEntities($scope.alert.entities);
+
+            $scope.filter.include_filters[1] = $scope.alert.entities;
+            getMatchedEntities();
         }
     }, true);
 
@@ -278,7 +280,9 @@ var TrialRunCtrl = function ($scope, $interval, $timeout, timespanFilter, localS
             }
             trc.entityExcludeFilter.textEntityFilters = JSON.stringify(formEntityFiltersClone, null, trc.INDENT);
             $scope.alert.entities_exclude = angular.copy(formEntityFiltersClone);
-            getMatchedEntities(null, $scope.alert.entities_exclude);
+
+            $scope.filter.exclude_filters = $scope.alert.entities_exclude;
+            getMatchedEntities();
         }
     }, true);
 
@@ -290,7 +294,8 @@ var TrialRunCtrl = function ($scope, $interval, $timeout, timespanFilter, localS
                 trc.entityFilter.formEntityFilters = JSON.parse(trc.entityFilter.textEntityFilters);
                 trc.invalidFormat = false;
 
-                getMatchedEntities($scope.alert.entities);
+                $scope.filter.include_filters = $scope.alert.entities;
+                getMatchedEntities();
             } catch (ex) {
                 trc.invalidFormat = true;
             }
@@ -304,7 +309,9 @@ var TrialRunCtrl = function ($scope, $interval, $timeout, timespanFilter, localS
                 $scope.alert.entities_exclude = JSON.parse(trc.entityExcludeFilter.textEntityFilters);
                 trc.entityExcludeFilter.formEntityFilters = JSON.parse(trc.entityExcludeFilter.textEntityFilters);
                 trc.invalidFormat = false;
-                getMatchedEntities(null, $scope.alert.entities_exclude);
+
+                $scope.filter.exclude_filters = $scope.alert.entities_exclude;
+                getMatchedEntities();
             } catch (ex) {
                 trc.invalidFormat = true;
             }

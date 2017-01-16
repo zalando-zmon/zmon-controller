@@ -11,6 +11,12 @@ angular.module('zmon2App').controller('CheckDefinitionEditCtrl', ['$scope', '$ro
         $scope.matchedEntitiesCount = null;
         $scope.matchedEntities = [];
 
+        // Filter object for Matched Entities
+        $scope.filter = {
+            "include_filters": [[],[]],
+            "exclude_filters": [[]]
+        }
+
         var user = UserInfoService.get();
         $scope.teams = user.teams !== "" ? user.teams.split(',') : [];
 
@@ -112,19 +118,15 @@ angular.module('zmon2App').controller('CheckDefinitionEditCtrl', ['$scope', '$ro
             );
         };
 
-        var getMatchedEntities = function(filter) {
+        var getMatchedEntities = function() {
 
-            if (filter.length === 0 || filter[0].length === 0) {
+            if ($scope.filter.include_filters[0].length === 0) {
                 $scope.matchedEntitiesCount = null;
                 $scope.matchedEntities = [];
                 return;
             }
 
-            var filters = {
-                "include_filters": [filter, []]
-            };
-
-            CommunicationService.getMatchedEntities(filters).then(function(response) {
+            CommunicationService.getMatchedEntities($scope.filter).then(function(response) {
                 $scope.matchedEntitiesCount = response.count;
                 $scope.matchedEntities = response.entities;
             })
@@ -168,7 +170,9 @@ angular.module('zmon2App').controller('CheckDefinitionEditCtrl', ['$scope', '$ro
                 }
                 $scope.entityFilter.textEntityFilters = JSON.stringify(formEntityFiltersClone, null, $scope.INDENT);
                 $scope.check.entities = angular.copy(formEntityFiltersClone);
-                getMatchedEntities($scope.check.entities);
+
+                $scope.filter.include_filters[0] = $scope.check.entities;
+                getMatchedEntities();
             }
         }, true);
 
@@ -179,7 +183,9 @@ angular.module('zmon2App').controller('CheckDefinitionEditCtrl', ['$scope', '$ro
                     $scope.check.entities = JSON.parse($scope.entityFilter.textEntityFilters);
                     $scope.entityFilter.formEntityFilters = JSON.parse($scope.entityFilter.textEntityFilters);
                     $scope.invalidFormat = false;
-                    getMatchedEntities($scope.check.entities);
+
+                    $scope.filter.include_filters[0] = $scope.check.entities;
+                    getMatchedEntities();
                 } catch (ex) {
                     $scope.invalidFormat = true;
                 }
