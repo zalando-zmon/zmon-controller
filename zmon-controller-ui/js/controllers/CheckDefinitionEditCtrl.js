@@ -128,7 +128,7 @@ angular.module('zmon2App').controller('CheckDefinitionEditCtrl', ['$scope', '$ro
 
             CommunicationService.getMatchedEntities($scope.filter).then(function(response) {
                 $scope.matchedEntitiesCount = response.count;
-                $scope.matchedEntities = response.entities;
+                $scope.matchedEntities = _.map(response.entities, 'id');
             })
         };
 
