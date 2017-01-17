@@ -9,8 +9,10 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.SetMultimap;
+import org.apache.http.HttpResponse;
 import org.apache.http.client.fluent.Executor;
 import org.apache.http.client.fluent.Request;
+import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.ContentType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +21,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.xerial.snappy.Snappy;
 import org.zalando.zmon.api.domain.CheckChartResult;
+import org.zalando.zmon.api.domain.EntityFilterRequest;
+import org.zalando.zmon.api.domain.EntityFilterResponse;
 import org.zalando.zmon.config.ControllerProperties;
 import org.zalando.zmon.config.SchedulerProperties;
 import org.zalando.zmon.diff.CheckDefinitionsDiffFactory;
@@ -40,6 +44,8 @@ import redis.clients.jedis.Response;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -510,6 +516,46 @@ public class ZMonServiceImpl implements ZMonService {
             final JsonNode node = mapper.readTree(r);
             return node;
         } catch (IOException ex) {
+            log.error("Getting overlap failed", ex);
+            return null;
+        }
+    }
+
+    @Override
+    public EntityFilterResponse getEntitiesMatchingFilters(EntityFilterRequest request) {
+        final Executor executor = Executor.newInstance(schedulerProperties.getHttpClient());
+        final String schedulerUrl = schedulerProperties.getUrl() + "/api/v2/entities";
+
+        try {
+            URI uri = new URIBuilder(schedulerUrl).addParameter("include_filters", mapper.writeValueAsString(request.includeFilters))
+                    .addParameter("exclude_filters", mapper.writeValueAsString(request.excludeFilters))
+                    .addParameter("local", "" + request.local).build();
+
+            HttpResponse r = executor.execute(Request.Head(uri)).returnResponse();
+            int count = Integer.parseInt(r.getHeaders("entity-count")[0].getValue());
+
+            if(count <= 25) {
+                EntityFilterResponse response = new EntityFilterResponse(count);
+                final String entitiesString = executor.execute(Request.Get(uri)).returnContent().asString();
+                final JsonNode node = mapper.readTree(entitiesString);
+                final ArrayNode arrayNode = (ArrayNode) node;
+
+                for(JsonNode entity : arrayNode) {
+                    if(entity.has("id")) {
+                        EntityFilterResponse.SimpleEntity simple = new EntityFilterResponse.SimpleEntity();
+                        simple.id = entity.get("id").textValue();
+                        simple.type = entity.get("type").textValue();
+                        response.entities.add(simple);
+                    }
+                }
+
+                return response;
+            }
+            else {
+                return new EntityFilterResponse(count);
+            }
+
+        } catch (IOException | URISyntaxException ex) {
             log.error("Getting overlap failed", ex);
             return null;
         }

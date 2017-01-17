@@ -1328,3 +1328,33 @@ body.entities-page .type-col {
 {
     min-height: 31px;
 }
+
+.matched-entities
+{
+    background: #e6f3ff;
+    overflow: hidden;
+    padding: 15px;
+    color: #999;
+    margin-top: 10px;
+    overflow: hidden;
+}
+
+.matched-entities .entities-count
+{
+    font-size: 1.3em;
+
+}
+
+.matched-entities .entities-count span
+{
+    font-weight: bold;
+}
+
+.matched-entities .entities-list
+{
+    max-height: 70px;
+    margin-bottom: 10px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-top: 5px;
+}

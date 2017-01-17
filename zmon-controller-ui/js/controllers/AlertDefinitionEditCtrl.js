@@ -13,6 +13,9 @@ angular.module('zmon2App').controller('AlertDefinitionEditCtrl', ['$scope', '$ro
         $scope.defaultEntitiesFilter = [];
         $scope.defaultEntitiesExcludeFilter = [];
         $scope.defaultNotifications = [];
+        $scope.matchedEntitiesCount = null;
+        $scope.matchedEntities = [];
+
         var user = UserInfoService.get();
         $scope.teams = user.teams !== "" ? user.teams.split(',') : [];
 
@@ -122,6 +125,12 @@ angular.module('zmon2App').controller('AlertDefinitionEditCtrl', ['$scope', '$ro
 
         $scope.focusedElement = null;
 
+        // Filter object for Matched Entities
+        $scope.filter = {
+            "include_filters": [[],[]],
+            "exclude_filters": [[]]
+        }
+
         // Add all overwritten properties from current alert to array
         var markAllAsOverwritten = function() {
             _.each($scope.alertDefinition, function(value, property) {
@@ -145,6 +154,23 @@ angular.module('zmon2App').controller('AlertDefinitionEditCtrl', ['$scope', '$ro
             }
             return n;
         };
+
+        var getMatchedEntities = function() {
+
+            if ($scope.filter.include_filters[0].length === 0
+              && $scope.filter.include_filters[1].length === 0
+              && $scope.filter.exclude_filters[0].length === 0) {
+                $scope.matchedEntitiesCount = null;
+                $scope.matchedEntities = [];
+                return;
+            }
+
+            CommunicationService.getMatchedEntities($scope.filter).then(function(response) {
+                $scope.matchedEntitiesCount = response.count;
+                $scope.matchedEntities = _.map(response.entities, 'id');
+            })
+        };
+
 
         $scope.save = function() {
             if ($scope.adForm.$valid) {
@@ -258,6 +284,9 @@ angular.module('zmon2App').controller('AlertDefinitionEditCtrl', ['$scope', '$ro
                             template: false
                         };
                     }
+
+                    $scope.filter.include_filters[0] = $scope.checkDefinition.entities;
+                    getMatchedEntities();
                 }
             );
         };
@@ -498,7 +527,7 @@ angular.module('zmon2App').controller('AlertDefinitionEditCtrl', ['$scope', '$ro
         // and allow inserting new values
         $scope.getItems = function(prop, search) {
             var teams = _.extend([], $scope.teams);
-            var options = teams.indexOf(prop) === -1 ? teams.concat(prop) : teams; 
+            var options = teams.indexOf(prop) === -1 ? teams.concat(prop) : teams;
             if (search && options.indexOf(search) === -1) {
                 options.unshift(search);
             }
@@ -538,6 +567,9 @@ angular.module('zmon2App').controller('AlertDefinitionEditCtrl', ['$scope', '$ro
                     }
                 }
                 $scope.entityFilter.textEntityFilters = JSON.stringify(formEntityFiltersClone, null, $scope.INDENT);
+
+                $scope.filter.include_filters[1] = formEntityFiltersClone;
+                getMatchedEntities();
             }
         }, true);
 
@@ -551,29 +583,43 @@ angular.module('zmon2App').controller('AlertDefinitionEditCtrl', ['$scope', '$ro
                     }
                 }
                 $scope.entityExcludeFilter.textEntityFilters = JSON.stringify(formEntityFiltersClone, null, $scope.INDENT);
+
+                $scope.filter.exclude_filters[0] = formEntityFiltersClone;
+                getMatchedEntities();
             }
         }, true);
 
         // If entity filter input method is 'text', reflect changes of entityFilter.textEntityFilters on entityFilter.formEntityFilters
-        $scope.$watch('entityFilter.textEntityFilters', function() {
+        $scope.$watch('entityFilter.textEntityFilters', function(textEntities) {
             if ($scope.entityFilterInputMethod === 'text') {
                 try {
                     var parsedJson = JSON.parse($scope.entityFilter.textEntityFilters);
                     $scope.entityFilter.formEntityFilters = parsedJson;
                     $scope.invalidFormat = false;
-                } catch (ex) {
+
+                    if (textEntities) {
+                        $scope.filter.include_filters[1] = JSON.parse(textEntities);
+                    }
+                    getMatchedEntities();
+                } catch (err) {
+                    console.log('Failed to parse include entities filter:', err);
                     $scope.invalidFormat = true;
                 }
             }
         }, true);
 
         // Same as above, for excluded entities.
-        $scope.$watch('entityExcludeFilter.textEntityFilters', function() {
+        $scope.$watch('entityExcludeFilter.textEntityFilters', function(textEntities) {
             if ($scope.entityExcludeFilterInputMethod === 'text') {
                 try {
                     var parsedJson = JSON.parse($scope.entityExcludeFilter.textEntityFilters);
                     $scope.entityExcludeFilter.formEntityFilters = parsedJson;
                     $scope.invalidFormat = false;
+
+                    if (textEntities) {
+                        $scope.filter.exclude_filters[0] = JSON.parse(textEntities);
+                    }
+                    getMatchedEntities();
                 } catch (ex) {
                     $scope.invalidFormat = true;
                 }

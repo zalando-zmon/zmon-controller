@@ -8,6 +8,14 @@ angular.module('zmon2App').controller('CheckDefinitionEditCtrl', ['$scope', '$ro
         $scope.allTags = [];
         $scope.defaultEntitiesFilter = [];
         $scope.entityFilterInputMethod = 'text';
+        $scope.matchedEntitiesCount = null;
+        $scope.matchedEntities = [];
+
+        // Filter object for Matched Entities
+        $scope.filter = {
+            "include_filters": [[],[]],
+            "exclude_filters": [[]]
+        }
 
         var user = UserInfoService.get();
         $scope.teams = user.teams !== "" ? user.teams.split(',') : [];
@@ -87,7 +95,7 @@ angular.module('zmon2App').controller('CheckDefinitionEditCtrl', ['$scope', '$ro
         // and allow inserting new values
         $scope.getItems = function(prop, search) {
             var teams = _.extend([], $scope.teams);
-            var options = teams.indexOf(prop) === -1 ? teams.concat(prop) : teams; 
+            var options = teams.indexOf(prop) === -1 ? teams.concat(prop) : teams;
             if (search && options.indexOf(search) === -1) {
                 options.unshift(search);
             }
@@ -108,6 +116,20 @@ angular.module('zmon2App').controller('CheckDefinitionEditCtrl', ['$scope', '$ro
                     $scope.entityFilter.textEntityFilters = JSON.stringify(response.entities, null, $scope.INDENT) || '[]';
                 }
             );
+        };
+
+        var getMatchedEntities = function() {
+
+            if ($scope.filter.include_filters[0].length === 0) {
+                $scope.matchedEntitiesCount = null;
+                $scope.matchedEntities = [];
+                return;
+            }
+
+            CommunicationService.getMatchedEntities($scope.filter).then(function(response) {
+                $scope.matchedEntitiesCount = response.count;
+                $scope.matchedEntities = response.entities;
+            })
         };
 
         if ($scope.checkId) {
@@ -148,6 +170,9 @@ angular.module('zmon2App').controller('CheckDefinitionEditCtrl', ['$scope', '$ro
                 }
                 $scope.entityFilter.textEntityFilters = JSON.stringify(formEntityFiltersClone, null, $scope.INDENT);
                 $scope.check.entities = angular.copy(formEntityFiltersClone);
+
+                $scope.filter.include_filters[0] = $scope.check.entities;
+                getMatchedEntities();
             }
         }, true);
 
@@ -158,6 +183,9 @@ angular.module('zmon2App').controller('CheckDefinitionEditCtrl', ['$scope', '$ro
                     $scope.check.entities = JSON.parse($scope.entityFilter.textEntityFilters);
                     $scope.entityFilter.formEntityFilters = JSON.parse($scope.entityFilter.textEntityFilters);
                     $scope.invalidFormat = false;
+
+                    $scope.filter.include_filters[0] = $scope.check.entities;
+                    getMatchedEntities();
                 } catch (ex) {
                     $scope.invalidFormat = true;
                 }
