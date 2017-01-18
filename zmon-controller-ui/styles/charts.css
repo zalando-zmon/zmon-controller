@@ -35,6 +35,8 @@ span.select-boxes
     margin-right: 10px;
 }
 
+
+// override flot color on vertical label when "yaxis" property defined
 .chart-widget-container chart .flot-text .flot-y-axis
 {
     color: #fff !important;
