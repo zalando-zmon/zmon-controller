@@ -71,6 +71,11 @@ body.dashboard
     padding: 0;
 }
 
+.dashboard-widget .flot-text
+{
+    color: #fff !important;
+}
+
 .dashboard-widget .widget-bg
 {
     position: absolute;
