@@ -47,8 +47,23 @@
 
 .zmon-data-table th.actions-col
 {
-    width: 8%;
+    width: 10%;
+    text-align: justify;
 }
+
+.zmon-data-table td.actions-col div
+{
+    display: inline-block;
+    padding-left: 3px;
+}
+
+.zmon-data-table td.actions-col:after
+{
+    content: '';
+    width: '100%';
+    display: inline-block;
+}
+
 
 .zmon-data-table th.event-name-col
 {

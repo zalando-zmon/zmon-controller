@@ -153,12 +153,20 @@
                         </thead>
                         <tbody infinite-scroll="incLimit()">
                             <tr ng-repeat="entityInstance in allAlerts | filter:alertDetailsSearch.str | orderBy:sortType:sortOrder | limitTo: limit track by entityInstance.entity" ng-class="{'danger': entityInstance.isActiveAlert == true, 'active-downtime': entityInstance.isAlertInDowntime == true, 'success': entityInstance.isCheckResult == true}">
-                                <td>
-                                    <a href="/grafana/dashboard/db/zmon-check-{{::check.id}}-{{ ::entityInstance.entity }}"><i class="fa fa-fw fa-bar-chart-o"></i></a>
-                                    <a target="_new" ng-if="entityInstance.entityMeta && entityInstance.entityMeta.type && entityInstance.entityMeta.type == 'instance'" href="https://{{::entityInstance.entityMeta.region}}.console.aws.amazon.com/ec2/v2/home?region={{::entityInstance.entityMeta.region}}#Instances:search={{::entityInstance.entityMeta.aws_id}};sort=Name" title="ip: {{::entityInstance.entityMeta.ip}}"><i class="fa fa-fw fa-cloud"></i></a>
-                                    <a target="_new" ng-if="entityInstance.entityMeta && entityInstance.entityMeta.type && entityInstance.entityMeta.type == 'elb'" href="https://{{::entityInstance.entityMeta.region}}.console.aws.amazon.com/ec2/v2/home?region={{::entityInstance.entityMeta.region}}#LoadBalancers:search={{::entityInstance.entityMeta.name}}"><i class="fa fa-fw fa-cloud"></i></a>
-                                    <i class="fa fa-clipboard clickable" ngclipboard data-clipboard-text={{entityInstance.entityMeta.ip}} ng-if="entityInstance.entityMeta.ip" title="Copy IP to Clipboard"></i>
+                                <td class="actions-col">
                                     <input ng-if="userInfo['schedule-downtime']" class="set-downtime-checkbox" type="checkbox" ng-checked="downtimeEntities.indexOf(entityInstance.entity) !== -1" ng-click="toggleAlertForDowntime(entityInstance.entity)">
+                                    <div>
+                                    <a href="/grafana/dashboard/db/zmon-check-{{::check.id}}-{{ ::entityInstance.entity }}"><i class="fa fa-fw fa-bar-chart-o"></i></a>
+                                    </div>
+                                    <div>
+                                    <a target="_new" ng-if="entityInstance.entityMeta && entityInstance.entityMeta.type && entityInstance.entityMeta.type == 'instance'" href="https://{{::entityInstance.entityMeta.region}}.console.aws.amazon.com/ec2/v2/home?region={{::entityInstance.entityMeta.region}}#Instances:search={{::entityInstance.entityMeta.aws_id}};sort=Name" title="ip: {{::entityInstance.entityMeta.ip}}"><i class="fa fa-fw fa-cloud"></i></a>
+                                    </div>
+                                    <div>
+                                    <a target="_new" ng-if="entityInstance.entityMeta && entityInstance.entityMeta.type && entityInstance.entityMeta.type == 'elb'" href="https://{{::entityInstance.entityMeta.region}}.console.aws.amazon.com/ec2/v2/home?region={{::entityInstance.entityMeta.region}}#LoadBalancers:search={{::entityInstance.entityMeta.name}}"><i class="fa fa-fw fa-cloud"></i></a>
+                                    </div>
+                                    <div>
+                                    <i class="fa fa-clipboard clickable" ngclipboard data-clipboard-text={{entityInstance.entityMeta.ip}} ng-click="copyToClipboard(entityInstance.entityMeta.ip)" ng-if="entityInstance.entityMeta.ip" title="Copy IP to Clipboard"></i>
+                                    </div>
                                 </td>
                                 <td>
                                     <a href="#/entities?ef=id:{{::entityInstance.entity}}" title="{{::entityInstance.entity}}">{{::entityInstance.entity | entityName}}</a></td>
