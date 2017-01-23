@@ -34,6 +34,11 @@ angular.module('zmon2App').controller('AlertDetailsCtrl', [ '$location', '$route
         $scope.limit += 35;
     };
 
+    // Notify user when ip has been successfully copied to Clipboard.
+    $scope.copyToClipboard = function(ip) {
+        FeedbackMessageService.showSuccessMessage('IP Address ' + ip + ' copied to Clipboard');
+    };
+
     // Entity Filter. Defined as object to $watch by reference on 'str' since input field is inside ui-bootstrap's tabset.
     $scope.alertDetailsSearch = {
         str: localStorageService.get('alertDetailsSearchStr') || ''
