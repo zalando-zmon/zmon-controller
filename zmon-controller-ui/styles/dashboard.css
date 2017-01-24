@@ -47,6 +47,7 @@ body.dashboard
 {
     margin-left: -100%;
     margin-right: 100%;
+    height: 0;
 }
 
 .zmon-widgets .widget-time
@@ -840,21 +841,6 @@ below styles are active for a widget */
     background-color: #707070 !important;
     border-color: #8F8F8F !important;
     color: #D7D7D7 !important;
-}
-
-#zmon-alerts-container.noWidgets
-{
-    position: absolute;
-    top: 65px;
-    background: #323232;
-    left: 0;
-    right: 0;
-}
-
-#zmon-alerts-container.noWidgets .row
-{
-    margin-left: 0;
-    margin-right: 0;
 }
 
 /* COMPACT VIEW */
