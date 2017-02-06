@@ -107,6 +107,6 @@ public abstract class AbstractZMonController {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ResponseBody
     public void handleRuntimeException(final Exception e) {
-        LOG.error("Technical problem occurred", e);
+        LOG.error("Technical problem occurred: {}", e.getMessage());
     }
 }
