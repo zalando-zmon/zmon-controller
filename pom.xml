@@ -19,7 +19,7 @@
 		<buildTime>${maven.build.timestamp}</buildTime>
 		<!-- remove this line once metrics are stable -->
 		<!-- <codemetrics.version>1.0.2</codemetrics.version> -->
-		<spring-boot.version>1.3.8.RELEASE</spring-boot.version>
+		<spring-boot.version>1.4.4.RELEASE</spring-boot.version>
         <postgresql-driver.version>9.3-1102-jdbc41</postgresql-driver.version>
 	</properties>
 

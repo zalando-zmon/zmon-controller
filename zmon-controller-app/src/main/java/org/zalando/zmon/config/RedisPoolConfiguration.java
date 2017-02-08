@@ -23,10 +23,11 @@ import redis.clients.jedis.JedisPoolConfig;
 public class RedisPoolConfiguration {
 
     @Autowired
+//    @Qualifier("spring.redis-org.springframework.boot.autoconfigure.data.redis.RedisProperties")
     private RedisProperties redisProperties;
 
     @Autowired
-    @RedisWrite
+//    @RedisWrite
     private WriteRedisProperties writeRedisProperties;
 
     // TODO, use this to fetch mission properties
@@ -82,9 +83,9 @@ public class RedisPoolConfiguration {
     @Bean
     public JedisPoolConfig writeJedisPoolConfig() {
         JedisPoolConfig poolConfig = new JedisPoolConfig();
-        if (writeRedisProperties.getPool() == null) {
-            writeRedisProperties.setPool(new RedisProperties.Pool());
-        }
+//        if (writeRedisProperties.getPool() == null) {
+//            writeRedisProperties.setPool(new RedisProperties.Pool());
+//        }
 
         poolConfig.setMaxIdle(writeRedisProperties.getPool().getMaxIdle());
         poolConfig.setMinIdle(writeRedisProperties.getPool().getMinIdle());
