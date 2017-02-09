@@ -17,6 +17,9 @@ spring:
     mode: LEGACYHTML5
 
 server:
+    compression:
+        enabled: true
+        mime-types: "application/json,application/xml,text/html,text/xml,text/plain,text/css,application/javascript"
     port: 8443
     ssl:
         key-store: classpath:keystore.p12
