@@ -17,6 +17,7 @@ import org.zalando.stups.tokens.AccessTokens;
 import org.zalando.zmon.api.SearchAPI;
 import org.zalando.zmon.api.domain.EntityFilterRequest;
 import org.zalando.zmon.api.domain.EntityFilterResponse;
+import org.zalando.zmon.api.domain.EntityObject;
 import org.zalando.zmon.config.MetricCacheProperties;
 import org.zalando.zmon.domain.CheckDefinition;
 import org.zalando.zmon.domain.CheckDefinitionImport;
@@ -139,16 +140,14 @@ public class ZMonRestService extends AbstractZMonController {
 
     @ResponseBody
     @RequestMapping(value = "/entities")
-    public void getEntities(@RequestParam(value = "query", defaultValue = "{}") String data, final Writer writer,
-                            final HttpServletResponse response) {
-        entityApi.getEntities(data, writer, response);
+    public List<EntityObject> getEntities(@RequestParam(value = "query", defaultValue = "{}") String data) throws IOException {
+        return entityApi.getEntities(data);
     }
 
     @ResponseBody
     @RequestMapping(value = "/entities", method = RequestMethod.POST)
-    public void getEntitiesPost(@RequestBody JsonNode node, final Writer writer,
-                                final HttpServletResponse response) throws JsonProcessingException {
-        entityApi.getEntities(mapper.writeValueAsString(node), writer, response);
+    public List<EntityObject> getEntitiesPost(@RequestBody JsonNode node) throws IOException {
+        return entityApi.getEntities(mapper.writeValueAsString(node));
     }
 
 

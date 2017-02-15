@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.zalando.zmon.api.domain.EntityObject;
 import org.zalando.zmon.api.domain.ResourceNotFoundException;
 import org.zalando.zmon.persistence.EntitySProcService;
 import org.zalando.zmon.security.permission.DefaultZMonPermissionService;
@@ -20,6 +21,7 @@ import org.zalando.zmon.security.permission.DefaultZMonPermissionService;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.Writer;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -76,30 +78,18 @@ public class EntityApi {
 
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    @RequestMapping(value = {"/", ""}, method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
-    public void getEntities(@RequestParam(value = "query", defaultValue = "[{}]") String data, final Writer writer,
-                            final HttpServletResponse response) {
-        if (data.startsWith("{")) {
-            data = "[" + data + "]";
-        }
-        List<String> entities = entitySprocs.getEntities(data);
+    @RequestMapping(value = {"/", ""}, method = RequestMethod.GET)
+    public List<EntityObject> getEntities(@RequestParam(value = "query", defaultValue = "[{}]") String data) throws IOException {
 
-        response.setContentType("application/json");
-        response.setCharacterEncoding("UTF-8");
-        try {
-            writer.write("[");
-            boolean first = true;
-            for (String s : entities) {
-                if (!first) {
-                    writer.write(",");
-                }
-                first = false;
-                writer.write(s);
-            }
-            writer.write("]");
-        } catch (IOException ex) {
-            log.error("", ex);
+        List<String> entitiesString = entitySprocs.getEntities(data);
+        List<EntityObject> list = new ArrayList<>(entitiesString.size());
+
+        for(String e : entitiesString) {
+            EntityObject o = mapper.readValue(e, EntityObject.class);
+            list.add(o);
         }
+
+        return list;
     }
 
     @ResponseStatus(HttpStatus.OK)
