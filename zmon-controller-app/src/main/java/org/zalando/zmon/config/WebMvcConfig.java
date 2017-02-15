@@ -1,12 +1,15 @@
 package org.zalando.zmon.config;
 
+import java.nio.charset.Charset;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
@@ -65,7 +68,9 @@ public class WebMvcConfig {
                 // we only want to support our "lower_case" JSON properties..
                 converters.clear();
                 converters.add(new MappingJackson2HttpMessageConverter(objectMapper));
-                converters.add(new StringHttpMessageConverter());
+                StringHttpMessageConverter converter = new StringHttpMessageConverter();
+                converter.setSupportedMediaTypes(Arrays.asList(new MediaType("text", "plain", Charset.forName("UTF-8"))));
+                converters.add(converter);
             }
         };
     }
