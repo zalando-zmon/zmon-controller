@@ -43,7 +43,7 @@ public class TvTokenControllerTest {
                                  .alwaysDo(MockMvcResultHandlers.print()).build();
     }
 
-    // @Test
+    @Test
     public void happyCase() throws Exception {
         when(onetimeTokensSProcService.bindOnetimeToken(eq("1234567"), eq("192.168.23.12"),
                 eq("987654321"))).thenReturn(singletonList(new OnetimeTokenInfo()));
@@ -61,7 +61,7 @@ public class TvTokenControllerTest {
                 eq("192.168.23.12"), eq("987654321"));
     }
 
-    // @Test
+    @Test
     public void invalidEmails() throws Exception {
         mockMvc.perform(post("/tv/by-email")
                 .header("X-FORWARDED-FOR", "192.168.23.12")
@@ -76,7 +76,7 @@ public class TvTokenControllerTest {
                 .andExpect(status().is(400));
     }
 
-    // @Test
+    @Test
     public void validEmail() throws Exception {
         mockMvc.perform(post("/tv/by-email")
                 .header("X-FORWARDED-FOR", "192.168.23.12")

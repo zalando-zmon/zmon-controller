@@ -26,7 +26,7 @@ $$
    WHERE oat_token = token
      AND (oat_bound_ip is NULL OR oat_bound_ip = bind_ip)
      AND (oat_bound_session_id is NULL or oat_bound_session_id = session_id)
-     AND oat_bound_expires IS NULL OR oat_bound_expires > NOW()
+     AND (oat_bound_expires IS NULL OR oat_bound_expires > NOW())
     RETURNING oat_token, oat_created, oat_bound_at, oat_bound_ip, oat_bound_expires;
 $$
 LANGUAGE 'sql' VOLATILE SECURITY DEFINER;

@@ -96,7 +96,7 @@ public class TvTokenController {
         return new ResponseEntity<>("SEND_FAILED", HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    // @RequestMapping("/tv/{token}")
+    @RequestMapping("/tv/{token}")
     public String handleToken(@PathVariable String token,
                               @RequestHeader(name = X_FORWARDED_FOR, required = false) String bindIp,
                               HttpServletRequest request,
