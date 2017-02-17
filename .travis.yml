@@ -3,6 +3,10 @@ jdk:
     - oraclejdk8
 node_js: "0.10"
 
+cache:
+  directories:
+    - $HOME/.m2
+
 before_script:
   - pip install --user codecov
   - psql -c 'ALTER ROLE postgres WITH PASSWORD 'postgres';' -U postgres
