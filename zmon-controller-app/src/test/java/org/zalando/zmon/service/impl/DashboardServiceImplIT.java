@@ -1,27 +1,28 @@
 package org.zalando.zmon.service.impl;
 
-// TODO: refactor tests using hamcrest
 import java.util.List;
 
 import org.assertj.core.api.Assertions;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
-import org.zalando.test.ServiceTestConfiguration;
 import org.zalando.zmon.domain.Dashboard;
 import org.zalando.zmon.domain.DashboardIsEqual;
 import org.zalando.zmon.generator.DashboardGenerator;
 import org.zalando.zmon.generator.DataGenerator;
 import org.zalando.zmon.service.DashboardService;
 
-@ContextConfiguration(classes = ServiceTestConfiguration.class)
+@RunWith(SpringRunner.class)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @Transactional
 @DirtiesContext
-public class DashboardServiceImplIT extends AbstractServiceIntegrationTest {
+public class DashboardServiceImplIT {
 
 
     @Autowired

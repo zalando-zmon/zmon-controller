@@ -7,11 +7,12 @@ import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
-import org.zalando.test.ServiceTestConfiguration;
 import org.zalando.zmon.domain.ActivityDiff;
 import org.zalando.zmon.domain.AlertDefinition;
 import org.zalando.zmon.domain.CheckDefinition;
@@ -23,10 +24,11 @@ import org.zalando.zmon.service.AlertService;
 import org.zalando.zmon.service.HistoryService;
 import org.zalando.zmon.service.ZMonService;
 
-@ContextConfiguration(classes = ServiceTestConfiguration.class)
+@RunWith(SpringRunner.class)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @Transactional
 @DirtiesContext
-public class HistoryServiceImplIT extends AbstractServiceIntegrationTest {
+public class HistoryServiceImplIT {
 
     @Autowired
     private HistoryService historyService;

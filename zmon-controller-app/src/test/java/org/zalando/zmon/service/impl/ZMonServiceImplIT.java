@@ -11,11 +11,12 @@ import org.hamcrest.core.IsNull;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
-import org.zalando.test.ServiceTestConfiguration;
 import org.zalando.zmon.domain.AlertDefinition;
 import org.zalando.zmon.domain.AlertDefinitionIsEqual;
 import org.zalando.zmon.domain.AlertDefinitionsDiff;
@@ -35,10 +36,11 @@ import org.zalando.zmon.service.ZMonService;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
-@ContextConfiguration(classes = ServiceTestConfiguration.class)
+@RunWith(SpringRunner.class)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @Transactional
 @DirtiesContext
-public class ZMonServiceImplIT extends AbstractServiceIntegrationTest {
+public class ZMonServiceImplIT {
 
     @Autowired
     private ZMonService service;
