@@ -5,6 +5,7 @@ node_js: "0.10"
 
 before_script:
   - pip install --user codecov
+  - psql -c 'ALTER ROLE postgres WITH PASSWORD 'postgres';' -U postgres
 
 script:
   - ./mvnw clean verify -Pintegration-test
