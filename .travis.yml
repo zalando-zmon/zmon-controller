@@ -8,7 +8,8 @@ before_script:
 
 script:
   - ./mvnw clean verify -Pintegration-test
-  - ./ui-test.sh
+
+#  - ./ui-test.sh
 
 after_success:
   - codecov
