@@ -19,5 +19,6 @@ script:
 after_success:
   - codecov
 
-addons:
-  postgresql: "9.6"
+services:
+  - postgresql
+  
