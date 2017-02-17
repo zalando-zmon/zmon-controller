@@ -23,11 +23,9 @@ import redis.clients.jedis.JedisPoolConfig;
 public class RedisPoolConfiguration {
 
     @Autowired
-//    @Qualifier("spring.redis-org.springframework.boot.autoconfigure.data.redis.RedisProperties")
     private RedisProperties redisProperties;
 
     @Autowired
-//    @RedisWrite
     private WriteRedisProperties writeRedisProperties;
 
     // TODO, use this to fetch mission properties

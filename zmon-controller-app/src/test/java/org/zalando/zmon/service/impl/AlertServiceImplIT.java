@@ -10,11 +10,12 @@ import org.hamcrest.core.IsNull;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
-import org.zalando.test.ServiceTestConfiguration;
 import org.zalando.zmon.domain.AlertComment;
 import org.zalando.zmon.domain.AlertCommentIsEqual;
 import org.zalando.zmon.domain.AlertDefinition;
@@ -39,10 +40,12 @@ import com.google.common.collect.Lists;
 
 // TODO remove duplicate code in diff tests
 // TODO test dst
-@ContextConfiguration(classes = ServiceTestConfiguration.class)
+
+@RunWith(SpringRunner.class)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @Transactional
 @DirtiesContext
-public class AlertServiceImplIT extends AbstractServiceIntegrationTest {
+public class AlertServiceImplIT {
 
     @Autowired
     private ZMonService service;

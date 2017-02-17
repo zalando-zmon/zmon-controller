@@ -373,12 +373,14 @@
                                     <goal>execute</goal>
                                 </goals>
                                 <configuration>
+                                    <autocommit>true</autocommit>
                                     <driver>org.postgresql.Driver</driver>
+                                    <url>jdbc:postgresql://${test.db.host}:${test.db.port}/local_zmon_db</url>
                                     <sqlCommand>
                                         DROP EXTENSION IF EXISTS hstore CASCADE;
-                                        CREATE EXTENSION hstore;
                                         DROP SCHEMA IF EXISTS zzm_api CASCADE;
                                         DROP SCHEMA IF EXISTS zzm_data CASCADE;
+                                        CREATE EXTENSION hstore;
                                     </sqlCommand>
                                     <onError>continue</onError>
                                 </configuration>
