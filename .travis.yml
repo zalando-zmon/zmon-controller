@@ -3,6 +3,8 @@ jdk:
     - oraclejdk8
 node_js: "0.10"
 
+sudo: required
+
 cache:
   directories:
     - $HOME/.m2
@@ -19,6 +21,5 @@ script:
 after_success:
   - codecov
 
-services:
-  - postgresql
-  
+addons:
+  postgresql: "9.6"
