@@ -11,4 +11,3 @@ CREATE TYPE dashboard AS (
     shared_teams            text[],
     tags                    text[]
 );
-

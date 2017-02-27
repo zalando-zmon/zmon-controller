@@ -226,6 +226,11 @@
             <optional>true</optional>
         </dependency>
         <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-core</artifactId>
+            <version>4.1.1</version>
+        </dependency>
+        <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
             <version>3.1.0</version>
@@ -385,6 +390,7 @@
                                     <onError>continue</onError>
                                 </configuration>
                             </execution>
+                            <!--
                             <execution>
                                 <id>create-data</id>
                                 <phase>process-test-resources</phase>
@@ -407,6 +413,7 @@
                                     </fileset>
                                 </configuration>
                             </execution>
+                            -->
                         </executions>
                     </plugin>
                 </plugins>

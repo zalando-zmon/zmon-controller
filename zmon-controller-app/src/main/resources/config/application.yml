@@ -72,3 +72,10 @@ zmon:
 #
 tokens:
   enableMock: true
+
+flyway:
+  baseline-on-migrate: true
+  baseline-version: 2
+  schemas:
+    - "zzm_data"
+    - "zzm_api"
