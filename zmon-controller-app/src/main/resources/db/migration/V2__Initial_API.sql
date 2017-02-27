@@ -204,14 +204,17 @@ BEGIN
   RETURN _id;
 END;
 $$ LANGUAGE PLPGSQL VOLATILE SECURITY DEFINER;
+
 CREATE OR REPLACE FUNCTION get_entity_by_id(id text) RETURNS SETOF jsonb AS
 $$
   SELECT e_data FROM zzm_data.entity WHERE (e_data->'id')::text = '"'||id||'"';
 $$ LANGUAGE SQL VOLATILE SECURITY DEFINER;
+
 CREATE OR REPLACE FUNCTION get_entities(filter text) RETURNS SETOF jsonb AS
 $$
  SELECT e_data || ('{"last_modified": "' || e_last_modified::text || '"}')::jsonb  FROM zzm_data.entity WHERE e_data @> ANY ( ARRAY( SELECT jsonb_array_elements(filter::jsonb) ) )
 $$ LANGUAGE 'sql' VOLATILE SECURITY DEFINER;
+
 CREATE OR REPLACE FUNCTION delete_entity(id text, teams text[], user_name text) RETURNS SETOF text AS
 $$
  DELETE FROM zzm_data.entity
@@ -223,6 +226,7 @@ $$
     )
   RETURNING (((e_data -> 'id'::text)::text));
 $$ LANGUAGE 'sql' VOLATILE SECURITY DEFINER;
+
 CREATE OR REPLACE FUNCTION get_alert_ids_by_check_id (
     IN p_check_definition_id int
 ) RETURNS SETOF int AS
@@ -249,6 +253,7 @@ $BODY$
 $BODY$
 LANGUAGE SQL VOLATILE SECURITY DEFINER
 COST 100;
+
 CREATE OR REPLACE FUNCTION get_alert_ids_by_status (
     IN status zzm_data.definition_status
 ) RETURNS SETOF int AS
@@ -259,7 +264,9 @@ $BODY$
        AND adt_template = 'f';
 $BODY$
 LANGUAGE SQL VOLATILE SECURITY DEFINER
-COST 100;CREATE OR REPLACE FUNCTION get_all_check_definitions(
+COST 100;
+
+CREATE OR REPLACE FUNCTION get_all_check_definitions(
      IN status              zzm_data.definition_status,
     OUT snapshot_id         text,
     OUT check_definitions   check_definition_type[]
@@ -329,6 +336,7 @@ END
 $BODY$
 LANGUAGE 'plpgsql' VOLATILE SECURITY DEFINER
 COST 100;
+
 CREATE OR REPLACE FUNCTION get_all_tags (
 ) RETURNS SETOF text AS
 $BODY$
@@ -338,6 +346,7 @@ $BODY$
 $BODY$
 LANGUAGE SQL VOLATILE SECURITY DEFINER
 COST 100;
+
 CREATE OR REPLACE FUNCTION get_all_teams (
 ) RETURNS SETOF text AS
 $BODY$
@@ -355,6 +364,7 @@ $BODY$
 $BODY$
 LANGUAGE SQL VOLATILE SECURITY DEFINER
 COST 100;
+
 CREATE OR REPLACE FUNCTION get_check_definitions(
      IN status              zzm_data.definition_status,
      IN p_ids               int[]
@@ -399,14 +409,17 @@ END
 $BODY$
 LANGUAGE 'plpgsql' VOLATILE SECURITY DEFINER
 COST 100;
+
 CREATE OR REPLACE FUNCTION get_alert_last_modified_max() RETURNS timestamptz AS
 $$
  select coalesce(max(adt_last_modified), '2000-01-01'::timestamp) from zzm_data.alert_definition_tree;
 $$ LANGUAGE 'sql' VOLATILE SECURITY DEFINER;
+
 CREATE OR REPLACE FUNCTION get_check_last_modified_max() RETURNS timestamptz AS
 $$
  select coalesce(max(cd_last_modified), '2000-01-01'::timestamp) from zzm_data.check_definition;
 $$ LANGUAGE 'sql' VOLATILE SECURITY DEFINER;
+
 CREATE OR REPLACE FUNCTION get_alert_definitions(
      IN status              zzm_data.definition_status,
      IN alert_ids           int[]
@@ -454,7 +467,9 @@ BEGIN
 END
 $BODY$
 LANGUAGE 'plpgsql' VOLATILE SECURITY DEFINER
-COST 100;CREATE OR REPLACE FUNCTION get_alert_definitions_by_team(
+COST 100;
+
+CREATE OR REPLACE FUNCTION get_alert_definitions_by_team(
      IN status              zzm_data.definition_status,
      IN teams               text[]
 ) RETURNS SETOF alert_definition_type AS
@@ -506,6 +521,7 @@ END
 $BODY$
 LANGUAGE 'plpgsql' VOLATILE SECURITY DEFINER
 COST 100;
+
 CREATE OR REPLACE FUNCTION get_alert_definitions_by_team_and_tag(
      IN status              zzm_data.definition_status,
      IN teams               text[],
@@ -550,6 +566,7 @@ END
 $BODY$
 LANGUAGE 'plpgsql' VOLATILE SECURITY DEFINER
 COST 100;
+
 CREATE OR REPLACE FUNCTION get_alert_definition_children (
      IN alert_definition_id int
 ) RETURNS SETOF alert_definition_type AS
@@ -580,7 +597,9 @@ BEGIN
 END
 $BODY$
 LANGUAGE 'plpgsql' VOLATILE SECURITY DEFINER
-COST 100;CREATE OR REPLACE FUNCTION get_alert_definition_node (
+COST 100;
+
+CREATE OR REPLACE FUNCTION get_alert_definition_node (
      IN alert_definition_id int
 ) RETURNS alert_definition_type AS
 $BODY$
@@ -608,6 +627,7 @@ $BODY$
 $BODY$
 LANGUAGE SQL VOLATILE SECURITY DEFINER
 COST 100;
+
 CREATE OR REPLACE FUNCTION get_all_alert_definitions(
 ) RETURNS SETOF alert_definition_type AS
 $BODY$
@@ -680,7 +700,9 @@ BEGIN
 END
 $BODY$
 LANGUAGE 'plpgsql' VOLATILE SECURITY DEFINER
-COST 100;CREATE OR REPLACE FUNCTION get_check_definitions_diff(
+COST 100;
+
+CREATE OR REPLACE FUNCTION get_check_definitions_diff(
      IN last_snapshot_id    bigint,
     OUT snapshot_id         bigint,
     OUT check_definitions   check_definition_type[]
@@ -719,6 +741,7 @@ END
 $BODY$
 LANGUAGE 'plpgsql' VOLATILE SECURITY DEFINER
 COST 100;
+
 CREATE OR REPLACE FUNCTION get_active_alert_definitions_diff(
     OUT snapshot_id         bigint,
     OUT alert_definitions   alert_definition_type[]
@@ -757,6 +780,7 @@ END
 $BODY$
 LANGUAGE 'plpgsql' VOLATILE SECURITY DEFINER
 COST 100;
+
 CREATE OR REPLACE FUNCTION get_alert_definitions_diff(
      IN last_snapshot_id    bigint,
     OUT snapshot_id         bigint,
@@ -832,6 +856,7 @@ END
 $BODY$
 LANGUAGE 'plpgsql' VOLATILE SECURITY DEFINER
 COST 100;
+
 CREATE OR REPLACE FUNCTION create_or_update_grafana_dashboard(id text, title text, dashboard text, user_name text, version text) RETURNS void AS
 $$
 BEGIN
@@ -905,7 +930,9 @@ update zzm_data.grafana_dashboard
  where gd_id = id
    and user_name =ANY(gd_starred_by)
  returning gd_id;
-$$ LANGUAGE SQL VOLATILE SECURITY DEFINER;CREATE OR REPLACE FUNCTION create_or_update_alert_definition_tree (
+$$ LANGUAGE SQL VOLATILE SECURITY DEFINER;
+
+CREATE OR REPLACE FUNCTION create_or_update_alert_definition_tree (
      IN  p_alert_definition     alert_definition_type,
      OUT status                 operation_status,
      OUT error_message          text,
@@ -1097,6 +1124,7 @@ END
 $BODY$
 LANGUAGE 'plpgsql' VOLATILE SECURITY DEFINER
 COST 100;
+
 CREATE OR REPLACE FUNCTION create_or_update_check_definition (
      IN check_definition_import check_definition_import,
      IN user_name text,
@@ -1205,6 +1233,7 @@ END
 $BODY$
 LANGUAGE 'plpgsql' VOLATILE SECURITY DEFINER
 COST 100;
+
 CREATE OR REPLACE FUNCTION create_onetime_token(IN "user_name" TEXT, IN "ip" TEXT, IN "token" TEXT, IN "expires_in" INT DEFAULT 365) RETURNS INTEGER AS
 $$
   WITH i AS (
@@ -1358,6 +1387,7 @@ END
 $BODY$
 LANGUAGE 'plpgsql' VOLATILE SECURITY DEFINER
 COST 100;
+
 CREATE OR REPLACE FUNCTION delete_dashboard(
      IN dashboard_id    int
 ) RETURNS VOID AS
@@ -1368,7 +1398,9 @@ BEGIN
 END
 $BODY$
 LANGUAGE 'plpgsql' VOLATILE SECURITY DEFINER
-COST 100;CREATE OR REPLACE FUNCTION get_all_dashboards()
+COST 100;
+
+CREATE OR REPLACE FUNCTION get_all_dashboards()
  RETURNS SETOF dashboard AS
 $BODY$
 BEGIN
@@ -1390,6 +1422,7 @@ END
 $BODY$
 LANGUAGE 'plpgsql' VOLATILE SECURITY DEFINER
 COST 100;
+
 CREATE OR REPLACE FUNCTION get_dashboards(
      IN dashboard_ids    int[]
 ) RETURNS SETOF dashboard AS
@@ -1412,7 +1445,9 @@ BEGIN
 END
 $BODY$
 LANGUAGE 'plpgsql' VOLATILE SECURITY DEFINER
-COST 100;CREATE OR REPLACE FUNCTION quick_search_alerts(IN search TEXT, IN teams TEXT[], IN maxRows INT, OUT id TEXT, OUT title TEXT, OUT team TEXT) RETURNS SETOF record
+COST 100;
+
+CREATE OR REPLACE FUNCTION quick_search_alerts(IN search TEXT, IN teams TEXT[], IN maxRows INT, OUT id TEXT, OUT title TEXT, OUT team TEXT) RETURNS SETOF record
 AS $$
  SELECT ad_id::text AS "id", ad_name AS "title", ad_team AS "team"
    FROM zzm_data.alert_definition
@@ -1496,6 +1531,7 @@ END;
 $BODY$
 LANGUAGE 'plpgsql' VOLATILE SECURITY DEFINER
 COST 100;
+
 CREATE OR REPLACE FUNCTION delete_alert_comment (
      IN comment_id    int
 ) RETURNS alert_comment AS
@@ -1527,6 +1563,7 @@ END
 $BODY$
 LANGUAGE 'plpgsql' VOLATILE SECURITY DEFINER
 COST 100;
+
 CREATE OR REPLACE FUNCTION delete_alert_definition (
      IN p_alert_definition_id  int,
     OUT status                 operation_status,
@@ -1596,6 +1633,7 @@ END
 $BODY$
 LANGUAGE 'plpgsql' VOLATILE SECURITY DEFINER
 COST 100;
+
 CREATE OR REPLACE FUNCTION delete_check_definition (
      IN p_user_name   text,
      IN p_name        text,
@@ -1663,6 +1701,7 @@ DELETE FROM zzm_data.check_definition
  RETURNING cd_id;
 $$
 LANGUAGE 'sql' VOLATILE SECURITY DEFINER;
+
 CREATE OR REPLACE FUNCTION delete_detached_check_definitions (
 ) RETURNS SETOF check_definition_type AS
 $BODY$
@@ -1693,6 +1732,7 @@ END;
 $BODY$
 LANGUAGE 'plpgsql' VOLATILE SECURITY DEFINER
 COST 100;
+
 CREATE OR REPLACE FUNCTION get_alert_comments (
      IN p_alert_definition_id int,
      IN p_limit               int,
@@ -1714,7 +1754,9 @@ $BODY$
     OFFSET p_offset;
 $BODY$
 LANGUAGE SQL VOLATILE SECURITY DEFINER
-COST 100;CREATE OR REPLACE FUNCTION get_alert_comment_by_id (
+COST 100;
+
+CREATE OR REPLACE FUNCTION get_alert_comment_by_id (
      IN comment_id int
 ) RETURNS alert_comment AS
 $BODY$
@@ -1730,7 +1772,9 @@ $BODY$
      WHERE ac_id = comment_id;
 $BODY$
 LANGUAGE SQL VOLATILE SECURITY DEFINER
-COST 100;CREATE OR REPLACE FUNCTION get_alert_definition_history (
+COST 100;
+
+CREATE OR REPLACE FUNCTION get_alert_definition_history (
      IN p_alert_definition_id int,
      IN p_limit               int,
      IN p_from                timestamptz,
@@ -1766,6 +1810,7 @@ $BODY$
 $BODY$
 LANGUAGE SQL VOLATILE SECURITY DEFINER
 COST 100;
+
 CREATE OR REPLACE FUNCTION get_check_definition_history (
      IN p_check_definition_id int,
      IN p_limit               int,

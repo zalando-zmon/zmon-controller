@@ -52,6 +52,7 @@ CREATE TABLE zzm_data.check_definition (
 
 CREATE UNIQUE INDEX ON zzm_data.check_definition (lower(cd_name), lower(cd_owning_team));
 CREATE UNIQUE INDEX ON zzm_data.check_definition (lower(cd_source_url));
+
 CREATE TABLE zzm_data.entity (
     e_data jsonb not null,
     e_created timestamp default now() not null,
@@ -64,6 +65,7 @@ CREATE TABLE zzm_data.entity (
 
 CREATE UNIQUE INDEX ON zzm_data.entity (CAST((e_data->'id') AS text));
 CREATE INDEX ON zzm_data.entity USING gin (e_data);
+
 CREATE TABLE zzm_data.alert_definition_tree   (
     adt_id                          serial                       NOT NULL    PRIMARY KEY,
     adt_created                     timestamptz                  NOT NULL    DEFAULT now(),
@@ -142,7 +144,9 @@ CREATE TABLE zzm_data.grafana_dashboard
   gd_last_modified_by text,
   gd_last_modified timestamp default now(),
   primary key ( gd_id )
-);CREATE TABLE zzm_data.alert_comment (
+);
+
+CREATE TABLE zzm_data.alert_comment (
     ac_id                          serial          NOT NULL    PRIMARY KEY,
     ac_created                     timestamptz     NOT NULL    DEFAULT now(),
     ac_created_by                  text            NOT NULL,
@@ -152,7 +156,9 @@ CREATE TABLE zzm_data.grafana_dashboard
     ac_alert_definition_id         int             NOT NULL,
     ac_entity_id                   text            NULL        CHECK (ac_entity_id ~'^[a-zA-Z0-9:_-]+$') ,
     FOREIGN KEY (ac_alert_definition_id) REFERENCES zzm_data.alert_definition_tree (adt_id)
-);CREATE TABLE zzm_data.onetime_access_token (
+);
+
+CREATE TABLE zzm_data.onetime_access_token (
   oat_id serial not null,
   oat_token text not null,
   oat_valid_until timestamp not null default now() + '1 hours'::interval, -- until when token can be used to sign in
@@ -164,7 +170,9 @@ CREATE TABLE zzm_data.grafana_dashboard
   oat_created_by text not null, -- USER requesting a token
   oat_created timestamp not null default now(),
   PRIMARY KEY(oat_id)
-);CREATE OR REPLACE FUNCTION zzm_data.create_check_definition_history_trigger() RETURNS trigger AS
+);
+
+CREATE OR REPLACE FUNCTION zzm_data.create_check_definition_history_trigger() RETURNS trigger AS
 $BODY$
 DECLARE
     l_check_definition_id   int;
@@ -210,6 +218,7 @@ END
 $BODY$
 LANGUAGE 'plpgsql' VOLATILE SECURITY DEFINER
 COST 100;
+
 CREATE OR REPLACE FUNCTION zzm_data.create_alert_definition_tree_history_trigger() RETURNS trigger AS
 $BODY$
 DECLARE
@@ -259,9 +268,13 @@ COST 100;
 
 CREATE TRIGGER check_definition_history_trigger
 AFTER INSERT OR UPDATE OR DELETE ON zzm_data.check_definition
-    FOR EACH ROW EXECUTE PROCEDURE zzm_data.create_check_definition_history_trigger();CREATE TRIGGER alert_definition_tree_history_trigger
+    FOR EACH ROW EXECUTE PROCEDURE zzm_data.create_check_definition_history_trigger();
+
+CREATE TRIGGER alert_definition_tree_history_trigger
 AFTER INSERT OR UPDATE OR DELETE ON zzm_data.alert_definition_tree
-    FOR EACH ROW EXECUTE PROCEDURE zzm_data.create_alert_definition_tree_history_trigger();CREATE OR REPLACE RECURSIVE VIEW zzm_data.alert_definition (
+    FOR EACH ROW EXECUTE PROCEDURE zzm_data.create_alert_definition_tree_history_trigger();
+
+CREATE OR REPLACE RECURSIVE VIEW zzm_data.alert_definition (
     ad_id,
     ad_created,
     ad_created_by,
