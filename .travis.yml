@@ -12,7 +12,7 @@ cache:
 
 before_script:
   - pip install --user codecov
-  - psql -c 'ALTER ROLE postgres WITH PASSWORD 'postgres';' -U postgres
+  - psql -c "ALTER ROLE postgres WITH PASSWORD 'postgres';" -U postgres
 
 script:
   - ./mvnw clean verify -Pintegration-test
