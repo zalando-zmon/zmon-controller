@@ -1,6 +1,6 @@
-CREATE SCHEMA IF NOT EXISTS zzm_api_os;
+CREATE SCHEMA IF NOT EXISTS zzm_api;
 
-SET search_path TO zzm_api_os, public;
+SET search_path TO zzm_api, public;
 
 CREATE TYPE history_type AS ENUM
 (

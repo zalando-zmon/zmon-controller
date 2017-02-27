@@ -390,6 +390,7 @@
                                     <onError>continue</onError>
                                 </configuration>
                             </execution>
+                            <!--
                             <execution>
                                 <id>create-data</id>
                                 <phase>process-test-resources</phase>
@@ -412,6 +413,7 @@
                                     </fileset>
                                 </configuration>
                             </execution>
+                            -->
                         </executions>
                     </plugin>
                 </plugins>

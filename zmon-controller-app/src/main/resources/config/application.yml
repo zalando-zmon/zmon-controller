@@ -76,4 +76,4 @@ tokens:
 flyway:
   schemas:
     - "zzm_data"
-    - "zzm_api_os"
+    - "zzm_api"
