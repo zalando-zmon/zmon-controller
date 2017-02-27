@@ -1,4 +1,4 @@
-CREATE SCHEMA zzm_data IF NOT EXISTS;
+CREATE SCHEMA IF NOT EXISTS zzm_data;
 
 SET search_path TO zzm_data, public;
 

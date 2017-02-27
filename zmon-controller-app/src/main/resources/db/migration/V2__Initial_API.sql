@@ -1,4 +1,4 @@
-CREATE SCHEMA zzm_api_os;
+CREATE SCHEMA IF NOT EXISTS zzm_api_os;
 
 SET search_path TO zzm_api_os, public;
 
