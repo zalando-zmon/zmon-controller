@@ -1,3 +1,5 @@
+-- update to fix return of null if there are no checks at all.
+
 CREATE OR REPLACE FUNCTION get_all_check_definitions(
      IN status              zzm_data.definition_status,
     OUT snapshot_id         text,
