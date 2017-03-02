@@ -1,3 +1,7 @@
+-- fix nulls return if no alerts are found
+
+SET search_path TO zzm_api, public;
+
 CREATE OR REPLACE FUNCTION get_active_alert_definitions_diff(
     OUT snapshot_id         bigint,
     OUT alert_definitions   alert_definition_type[]
