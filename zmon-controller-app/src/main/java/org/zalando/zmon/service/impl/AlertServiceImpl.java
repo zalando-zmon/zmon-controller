@@ -1,5 +1,7 @@
 package org.zalando.zmon.service.impl;
 
+import com.codahale.metrics.*;
+import com.codahale.metrics.Timer;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Preconditions;
@@ -36,7 +38,6 @@ import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
-// TODO diffs should never return null collections. They should be empty instead
 @Service
 @Transactional
 public class AlertServiceImpl implements AlertService {
@@ -57,6 +58,9 @@ public class AlertServiceImpl implements AlertService {
 
     @Autowired
     protected DefaultZMonPermissionService authorityService;
+
+    @Autowired
+    protected MetricRegistry metricRegistry;
 
     @Autowired
     private JedisPool redisPool;
@@ -386,8 +390,16 @@ public class AlertServiceImpl implements AlertService {
             tagList = new ArrayList<>(tags);
         }
 
-        // get alert definitions filtered by team from the database
-        return alertDefinintionSProc.getAlertDefinitionsByTeamAndTag(DefinitionStatus.ACTIVE, teamList, tagList);
+        final Timer t = metricRegistry.timer("alert-service.get-alerts-by-team-and-tag");
+        final Timer.Context c = t.time();
+
+        try {
+            // get alert definitions filtered by team from the database
+            return alertDefinintionSProc.getAlertDefinitionsByTeamAndTag(DefinitionStatus.ACTIVE, teamList, tagList);
+        }
+        finally {
+            c.stop();
+        }
     }
 
     protected void getAlertEntityData(Integer alertId, Set<String> entities, List<ResponseHolder<String, String>> results) {
