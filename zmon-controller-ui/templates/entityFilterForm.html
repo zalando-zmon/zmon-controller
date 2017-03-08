@@ -204,23 +204,26 @@
     <div ng-switch-default>
         <div class="entity-filter-definition">
             <div class="row">
-            <div class="col-md-6">
-                <div ng-repeat="(key, value) in config" ng-if="key !== 'type' && $odd">
-                    <label class="col-md-3">{{key}}</label>
-                    <div class="col-md-7">
-                        <input type="text" placeholder="Type to autocomplete" class="form-control" name="{{key}}" ng-model="definition[key]" uib-typeahead="s for s in sortItems(config[key]) | filter:$viewValue | limitTo:10">
+                <div class="col-md-6">
+                    <div class="row" ng-repeat="(key, value) in config" ng-if="key !== 'type' && $odd">
+                        <label class="col-md-3" title="{{key}}">{{key}}</label>
+                        <div class="col-md-7">
+                            <input type="text" placeholder="Type to autocomplete" class="form-control" name="{{key}}" ng-model="definition[key]" uib-typeahead="s for s in sortItems(config[key]) | filter:$viewValue | limitTo:10">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="row" ng-repeat="(key, value) in config" ng-if="key !== 'type' && $even">
+                        <label class="col-md-3">{{key}}</label><div class="col-md-7"><input type="text" placeholder="Type to autocomplete" class="form-control" name="{{key}}" ng-model="definition[key]" uib-typeahead="s for s in sortItems(config[key]) | filter:$viewValue | limitTo:10"></div>
                     </div>
                 </div>
             </div>
-            <div class="col-md-6">
-                <div ng-repeat="(key, value) in config" ng-if="key !== 'type' && $even">
-                    <label class="col-md-3">{{key}}</label><div class="col-md-7"><input type="text" placeholder="Type to autocomplete" class="form-control" name="{{key}}" ng-model="definition[key]" uib-typeahead="s for s in sortItems(config[key]) | filter:$viewValue | limitTo:10"></div>
+            <div class="row">
+                <div class="col-md-12 text-right">
+                    <button class="btn btn-primary" id="submit-definition" ng-click="save()">Save</button>
+                    <button class="btn btn-primary" id="cancel-definition-edit" ng-click="cancel()">Cancel</button>
                 </div>
             </div>
-        </div>
-        <div class="row col-md-12 text-right">
-            <button class="btn btn-primary" id="submit-definition" ng-click="save()">Save</button>
-            <button class="btn btn-primary" id="cancel-definition-edit" ng-click="cancel()">Cancel</button>
         </div>
     </div>
 </div>
