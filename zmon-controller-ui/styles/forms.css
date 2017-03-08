@@ -179,6 +179,9 @@
 {
     font-size: small;
     margin-top: 5px;
+    padding-right: 10px;
+    overflow: hidden;
+    word-wrap: break-word;
 }
 
 .parameter
