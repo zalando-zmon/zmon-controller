@@ -85,6 +85,8 @@ describe('AlertDefinitionEditCtrl', function() {
                 "source_url":"somewhere.yaml",
                 "last_modified_by":"userZ"
             });
+
+            httpBackend.when('POST', 'rest/entity-filters').respond({"count":1411,"entities":[]});
         });
     });
 
@@ -95,8 +97,8 @@ describe('AlertDefinitionEditCtrl', function() {
 
 
     it('should initialize with two entity filter types and eight tags', function() {
-        httpBackend.expectGET('rest/entityProperties?');
-        httpBackend.expectGET('rest/allTags?');
+        //httpBackend.expectGET('rest/entityProperties?');
+        //httpBackend.expectGET('rest/allTags?');
         httpBackend.flush();
         expect(scope.entityFilter.types.length).toBe(2);
         expect(scope.allTags.length).toBe(8);
