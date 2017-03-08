@@ -97,8 +97,8 @@ describe('AlertDefinitionEditCtrl', function() {
 
 
     it('should initialize with two entity filter types and eight tags', function() {
-        //httpBackend.expectGET('rest/entityProperties?');
-        //httpBackend.expectGET('rest/allTags?');
+        httpBackend.expectGET('rest/entityProperties?');
+        httpBackend.expectGET('rest/allTags?');
         httpBackend.flush();
         expect(scope.entityFilter.types.length).toBe(2);
         expect(scope.allTags.length).toBe(8);
