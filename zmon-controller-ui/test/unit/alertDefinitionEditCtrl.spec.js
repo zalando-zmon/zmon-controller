@@ -85,6 +85,8 @@ describe('AlertDefinitionEditCtrl', function() {
                 "source_url":"somewhere.yaml",
                 "last_modified_by":"userZ"
             });
+
+            httpBackend.when('POST', 'rest/entity-filters').respond({"count":1411,"entities":[]});
         });
     });
 

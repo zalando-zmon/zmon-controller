@@ -31,6 +31,8 @@ module.exports = function(config) {
         '../lib/clipboard/clipboard.min.js',
         '../lib/ngclipboard/ngclipboard.min.js',
         '../lib/angular-ui-select/select.min.js',
+        '../lib/highlightjs/highlight.pack.min.js',
+        '../lib/angular-highlightjs/angular-highlightjs.min.js',
         '../js/app.js',
         '../js/filters/*.js',
         '../js/services/*.js',

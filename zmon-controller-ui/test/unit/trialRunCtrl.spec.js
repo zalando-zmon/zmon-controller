@@ -6,7 +6,7 @@ status: ACTIVE\n\
 interval: 120\n\
 command: |\n\
   sql().execute("""select 1 as a, now() as b""").results()\n\
-owning_team: STUPS\n\
+owning_team: undefined\n\
 # OPTIONAL FIELDS\n\
 #technical_details: Optional Technical Details\n\
 #potential_analysis: Optional Potential analysis\n\
