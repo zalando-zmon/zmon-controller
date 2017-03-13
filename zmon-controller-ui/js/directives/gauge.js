@@ -26,6 +26,10 @@ angular.module('zmon2App').directive('gauge', function() {
             }
 
             var getFormatedValue = function(format, value) {
+                if (!_.isNumber(value)) {
+                    return value;
+                }
+
                 // extract format value if in {:} enclosing
                 var match = format.match(/\{\:(\.[0-9]f)\}/);
 
