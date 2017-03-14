@@ -1,5 +1,5 @@
 var GAUGE_LAST_ID = 0;
-angular.module('zmon2App').directive('gauge', function() {
+angular.module('zmon2App').directive('gauge', ['FormatService', function(FormatService) {
     return {
         restrict: 'E',
         scope: {
@@ -25,21 +25,6 @@ angular.module('zmon2App').directive('gauge', function() {
                 colors.reverse();
             }
 
-            var getFormatedValue = function(format, value) {
-                if (!_.isNumber(value)) {
-                    return value;
-                }
-
-                // extract format value if in {:} enclosing
-                var match = format.match(/\{\:(\.[0-9]f)\}/);
-
-                if (match && match.length) {
-                    format = match[1];
-                }
-
-                return d3.format(format)(value);
-            }
-
             var refreshGauge = function() {
                 scope.value = scope.value/1 || 0;
                 scope.max = scope.max/1 || 100;
@@ -49,7 +34,7 @@ angular.module('zmon2App').directive('gauge', function() {
                     if (g === null) {
                         g = new JustGage({
                             id: "gauge-" + gaugeId,
-                            value: scope.options.format ? getFormatedValue(scope.options.format, scope.value)/1 : scope.value.toFixed(0)/1,
+                            value: FormatService.formatNumber(scope.options.format, scope.value),
                             min: scope._options.min/1,
                             gaugeColor: '#7f7f7f',
                             max: scope._options.max === null ? scope.max.toFixed(0)/1 : scope._options.max/1,
@@ -79,7 +64,7 @@ angular.module('zmon2App').directive('gauge', function() {
                             g.txtMin.attr('text', scope._options.min.toFixed(0));
                         }
 
-                        g.refresh(scope.options.format ? getFormatedValue(scope.options.format,scope.value)/1 : scope.value.toFixed(0)/1);
+                        g.refresh(FormatService.formatNumber(scope.options.format,scope.value));
                     }
                 } catch (ex) {
                     console.error("ERROR Gauge:", ex);
@@ -105,4 +90,4 @@ angular.module('zmon2App').directive('gauge', function() {
             });
         }
     };
-});
+}]);

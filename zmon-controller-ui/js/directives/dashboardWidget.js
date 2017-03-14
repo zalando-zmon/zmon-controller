@@ -1,5 +1,5 @@
-angular.module('zmon2App').directive('dashboardWidget', ['CommunicationService', 'MainAlertService', 'FeedbackMessageService', 'DowntimesService', '$sce', '$timeout', 'APP_CONST',
-    function(CommunicationService, MainAlertService, FeedbackMessageService, DowntimesService, $sce, $timeout, APP_CONST) {
+angular.module('zmon2App').directive('dashboardWidget', ['CommunicationService', 'MainAlertService', 'FeedbackMessageService', 'DowntimesService', 'FormatService', '$sce', '$timeout', 'APP_CONST',
+    function(CommunicationService, MainAlertService, FeedbackMessageService, DowntimesService, FormatService, $sce, $timeout, APP_CONST) {
         return {
             restrict: 'E',
             templateUrl: 'templates/dashboardWidget.html',
@@ -122,21 +122,6 @@ angular.module('zmon2App').directive('dashboardWidget', ['CommunicationService',
                     return r;
                 };
 
-                var getFormatedValue = function(format, value) {
-                    if (!_.isNumber(value)) {
-                        return value;
-                    }
-
-                    // extract format value if in {:} enclosing
-                    var match = format.match(/\{\:(\.[0-9]f)\}/);
-
-                    if (match && match.length) {
-                        format = match[1];
-                    }
-
-                    return d3.format(format)(value);
-                }
-
                 var setWidgetData = function(response) {
 
                     // Make sure repsonse is valid, and if not log to console.
@@ -182,7 +167,7 @@ angular.module('zmon2App').directive('dashboardWidget', ['CommunicationService',
                                 }
 
                                 if ($scope.config.options.format) {
-                                    $scope.maxValue = getFormatedValue($scope.config.options.format, $scope.maxValue);
+                                    $scope.maxValue = FormatService.formatNumber($scope.config.options.format, $scope.maxValue);
                                 } else if(_.isNumber($scope.maxValue)) {
                                     $scope.maxValue = ($scope.maxValue || 0).toFixed(0) / 1
                                 }
@@ -221,7 +206,7 @@ angular.module('zmon2App').directive('dashboardWidget', ['CommunicationService',
                                     $scope.maxValue = _.max($scope.values);
 
                                     if ($scope.config.options.format) {
-                                        $scope.lastValue = parseFloat(getFormatedValue($scope.config.options.format, $scope.lastValue));
+                                        $scope.lastValue = FormatService.formatNumber($scope.config.options.format, $scope.lastValue);
                                     }
                                 }
                                 break;
