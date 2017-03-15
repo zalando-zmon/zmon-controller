@@ -18,8 +18,6 @@ angular.module('zmon2App').factory('FormatService', [ function() {
             option = match[1];
         }
 
-        console.log('=>', option, value, d3.format(option)(value));
-
         return d3.format(option)(value);
     }
 
