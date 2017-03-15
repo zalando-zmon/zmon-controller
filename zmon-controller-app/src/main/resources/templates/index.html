@@ -234,6 +234,7 @@
 <script th:src="${staticUrl} + '/js/services/DowntimesService.js?t=@buildTime@'"></script>
 <script th:src="${staticUrl} + '/js/services/PreconditionsService.js?t=@buildTime@'"></script>
 <script th:src="${staticUrl} + '/js/services/LoadingIndicatorService.js?t=@buildTime@'"></script>
+<script th:src="${staticUrl} + '/js/services/FormatService.js?t=@buildTime@'"></script>
 <script th:src="${staticUrl} + '/js/controllers/DashboardCtrl.js?t=@buildTime@'"></script>
 <script th:src="${staticUrl} + '/js/controllers/CloudCtrl.js?t=@buildTime@'"></script>
 <script th:src="${staticUrl} + '/js/controllers/CloudEndpointsCtrl.js?t=@buildTime@'"></script>
@@ -400,24 +401,6 @@
             // Start refreshing workers / queue status.
             $interval(refreshStatus, 15000);
             refreshStatus();
-
-            String.prototype.format = function() {
-                var args = arguments;
-                var i = 0;
-                return this.replace(/\{(\w*)?:?(\.\d*f)?\}/g, function(match, key, format) {
-                    var value = '';
-                    key = (typeof key === 'undefined' || key === '') ? 0 : key;
-                    value = typeof args[i] === 'object' ? args[i][key] : args[key];
-
-                    if (format) {
-                        var fp = format.match(/\.(\d*)f/)[1];
-                        value = parseFloat(value).toFixed(fp);
-                    }
-
-                    i++;
-                    return value;
-                });
-            };
 
             // redirect to end url after successful authentication
             var signinRedirTo = localStorageService.get('signinRedirTo');

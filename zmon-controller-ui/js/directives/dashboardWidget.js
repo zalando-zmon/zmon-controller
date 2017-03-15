@@ -1,5 +1,5 @@
-angular.module('zmon2App').directive('dashboardWidget', ['CommunicationService', 'MainAlertService', 'FeedbackMessageService', 'DowntimesService', '$sce', '$timeout', 'APP_CONST',
-    function(CommunicationService, MainAlertService, FeedbackMessageService, DowntimesService, $sce, $timeout, APP_CONST) {
+angular.module('zmon2App').directive('dashboardWidget', ['CommunicationService', 'MainAlertService', 'FeedbackMessageService', 'DowntimesService', 'FormatService', '$sce', '$timeout', 'APP_CONST',
+    function(CommunicationService, MainAlertService, FeedbackMessageService, DowntimesService, FormatService, $sce, $timeout, APP_CONST) {
         return {
             restrict: 'E',
             templateUrl: 'templates/dashboardWidget.html',
@@ -167,7 +167,7 @@ angular.module('zmon2App').directive('dashboardWidget', ['CommunicationService',
                                 }
 
                                 if ($scope.config.options.format) {
-                                    $scope.maxValue = $scope.config.options.format.format($scope.maxValue);
+                                    $scope.maxValue = FormatService.formatNumber($scope.config.options.format, $scope.maxValue);
                                 } else if(_.isNumber($scope.maxValue)) {
                                     $scope.maxValue = ($scope.maxValue || 0).toFixed(0) / 1
                                 }
@@ -206,7 +206,7 @@ angular.module('zmon2App').directive('dashboardWidget', ['CommunicationService',
                                     $scope.maxValue = _.max($scope.values);
 
                                     if ($scope.config.options.format) {
-                                        $scope.lastValue = parseFloat($scope.config.options.format.format($scope.lastValue));
+                                        $scope.lastValue = FormatService.formatNumber($scope.config.options.format, $scope.lastValue);
                                     }
                                 }
                                 break;
