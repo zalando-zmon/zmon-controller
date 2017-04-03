@@ -53,5 +53,5 @@ $BODY$
     )
   RETURNING (((e_data -> 'id'::text)::text));
 $BODY$
-LANGUAGE 'plpgsql' VOLATILE SECURITY DEFINER;
+LANGUAGE 'plpgsql' VOLATILE SECURITY DEFINER
 COST 100;
