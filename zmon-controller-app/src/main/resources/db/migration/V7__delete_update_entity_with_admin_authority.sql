@@ -1,9 +1,9 @@
 -- update to fix return of null if there are no checks at all.
 
-DROP FUNCTION IF EXISTS zzm_data.create_or_update_entity(entity_data text, teams text[], user_name text);
-DROP FUNCTION IF EXISTS zzm_data.delete_entity(id text, teams text[], user_name text);
-
 SET search_path TO zzm_api, public;
+
+DROP FUNCTION IF EXISTS create_or_update_entity(entity_data text, teams text[], user_name text);
+DROP FUNCTION IF EXISTS delete_entity(id text, teams text[], user_name text);
 
 CREATE OR REPLACE FUNCTION create_or_update_entity(entity_data text, teams text[], user_name text, user_is_admin boolean) RETURNS text AS
 $BODY$

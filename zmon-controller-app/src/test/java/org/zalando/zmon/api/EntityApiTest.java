@@ -37,7 +37,7 @@ public class EntityApiTest {
     @Test
     public void testAddEntity() throws Exception {
         List<String> teams = ImmutableList.of();
-        when(entitySProcService.createOrUpdateEntity("{}", teams, "anonymousUser")).thenReturn("myid");
+        when(entitySProcService.createOrUpdateEntity("{}", teams, "anonymousUser", false)).thenReturn("myid");
         MvcResult result = mockMvc.perform(post("/api/v1/entities").header("Content-Type", "application/json").content("{}")).andReturn();
         assertThat(result.getResponse().getStatus()).isEqualTo(200);
     }
@@ -45,7 +45,8 @@ public class EntityApiTest {
     @Test
     public void testAddEntityConstraintViolation() throws Exception {
         List<String> teams = ImmutableList.of();
-        when(entitySProcService.createOrUpdateEntity("{}", teams, "anonymousUser")).thenThrow(new DataIntegrityViolationException("violates check constraint", new PSQLException("", PSQLState.UNKNOWN_STATE)));
+        when(entitySProcService.createOrUpdateEntity("{}", teams, "anonymousUser", false)).thenThrow(
+            new DataIntegrityViolationException("violates check constraint", new PSQLException("", PSQLState.UNKNOWN_STATE)));
         MvcResult result = mockMvc.perform(post("/api/v1/entities").header("Content-Type", "application/json").content("{}")).andReturn();
         assertThat(result.getResponse().getStatus()).isEqualTo(400);
         assertThat(result.getResponse().getContentAsString()).isEqualTo("Check constraint violated");
