@@ -58,8 +58,10 @@ public class EntityApi {
     @ResponseBody
     @RequestMapping(value = {"/", ""}, method = {RequestMethod.PUT, RequestMethod.POST})
     public void addEntity(@RequestBody JsonNode entity) {
+        boolean isAdmin = authService.hasAdminAuthority();
+
         if (entity.has("type") && "zmon_config".equals(entity.get("type").textValue())) {
-            if (!authService.hasAdminAuthority()) {
+            if (!isAdmin) {
                 throw new AccessDeniedException("No ADMIN privileges present to update configuration.");
             }
             log.info("Modifying config entity: id={} user={}", entity.get("id"), authService.getUserName());
@@ -67,7 +69,8 @@ public class EntityApi {
 
         try {
             String data = mapper.writeValueAsString(entity);
-            String id = entitySprocs.createOrUpdateEntity(data, Lists.newArrayList(authService.getTeams()), authService.getUserName());
+            String id = entitySprocs.createOrUpdateEntity(
+                data, Lists.newArrayList(authService.getTeams()), authService.getUserName(), isAdmin);
             if (id == null) {
                 throw new AccessDeniedException("Access denied: entity was not updated");
             }
@@ -118,8 +121,12 @@ public class EntityApi {
     @RequestMapping(value = {"/{id}/", "/{id}"}, method = RequestMethod.DELETE)
     public int deleteEntity(@PathVariable(value = "id") String id) {
         List<String> teams = Lists.newArrayList(authService.getTeams());
+
+        boolean isAdmin = authService.hasAdminAuthority();
+
         log.info("Deleting entity {} from user {} with teams {}", id, authService.getUserName(), teams);
-        List<String> ids = entitySprocs.deleteEntity(id, teams, authService.getUserName());
+
+        List<String> ids = entitySprocs.deleteEntity(id, teams, authService.getUserName(), isAdmin);
         return ids.size();
     }
 
