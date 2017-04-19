@@ -18,6 +18,7 @@ angular.module('zmon2App').controller('CheckDefinitionCtrl', ['$scope', '$routeP
         var setLinkToTrialRun = function () {
             if (typeof $scope.checkDefinition === 'undefined') return;
             var params = {
+                checkId: $scope.checkDefinition.id,
                 name: $scope.checkDefinition.name,
                 description: $scope.checkDefinition.description,
                 owning_team: $scope.checkDefinition.owning_team,
