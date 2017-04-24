@@ -307,8 +307,13 @@ public class GrafanaController extends AbstractZMonController {
         if (node.get("dashboard").get("templating").get("list").size() > 0) {
             ArrayNode templates = (ArrayNode) node.get("dashboard").get("templating").get("list");
             for(JsonNode n : templates) {
-                if (n.get("name").equals("entity")) {
+                if (n.get("name").textValue().equals("entity")) {
+                    LOG.info("Setting 'query' to {}", entityIds);
                     ((ObjectNode)n).put("query", entityIds);
+
+                    // this is not set for custom and needs to be set
+                    ((ObjectNode)n).remove("options");
+                    ((ObjectNode)n).put("refresh", 1);
 
                     if (entityId.isPresent()) {
                         // select the right entity in the Grafana templating dropdown
@@ -318,6 +323,7 @@ public class GrafanaController extends AbstractZMonController {
                 }
             }
         }
+
         return new ResponseEntity<>(node, HttpStatus.OK);
     }
 
