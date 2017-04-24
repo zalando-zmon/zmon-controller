@@ -15,6 +15,7 @@ import org.zalando.zmon.config.ControllerProperties;
 import org.zalando.zmon.domain.CheckDefinition;
 import org.zalando.zmon.domain.CheckResults;
 import org.zalando.zmon.exception.ZMonException;
+import org.zalando.zmon.persistence.EntitySProcService;
 import org.zalando.zmon.persistence.GrafanaDashboardSprocService;
 import org.zalando.zmon.security.permission.DefaultZMonPermissionService;
 import org.zalando.zmon.service.ZMonService;
@@ -277,14 +278,52 @@ public class GrafanaController extends AbstractZMonController {
                 .map(GrafanaController::sanitizeEntityId)
                 .collect(Collectors.joining(","));
 
-        JsonNode node = mapper.readTree(GrafanaController.class.getResourceAsStream("/grafana/dynamic-dashboard.json"));
-        replaceVariables(node, checkDefinition, entityId);
-        ((ObjectNode) node.get("dashboard").get("templating").get("list").get(0)).put("query", entityIds);
-        if (entityId.isPresent()) {
-            // select the right entity in the Grafana templating dropdown
-            final String sanitizedEntityId = sanitizeEntityId(entityId.get());
-            ((ObjectNode) node.get("dashboard").get("templating").get("list").get(0)).putObject("current").put("text", sanitizedEntityId).put("value", sanitizedEntityId);
+        /* allow to create custom dashboards to overwrite generic one */
+        List<GrafanaDashboardSprocService.GrafanaDashboard> dashboards = grafanaService.getGrafanaDashboard("dynamic-zmon-check-" + checkId, "");
+        ObjectNode node;
+
+        if(null != dashboards && dashboards.size() == 1) {
+            node = mapper.createObjectNode();
+            ObjectNode meta = node.putObject("meta");
+            meta.put("type", "db");
+            meta.put("canEdit", true);
+            meta.put("canSave", true);
+            meta.put("canStar", true);
+            meta.put("created", "0001-01-01T00:00:00Z");
+            meta.put("expires", "2999-01-01T00:00:00Z");
+            meta.put("updated", "0001-01-01T00:00:00Z");
+            meta.put("isHome", false);
+            meta.put("slug", id);
+            meta.put("isStarred", false);
+
+            node.set("dashboard", mapper.readTree(dashboards.get(0).dashboard));
         }
+        else {
+            node = (ObjectNode) mapper.readTree(GrafanaController.class.getResourceAsStream("/grafana/dynamic-dashboard.json"));
+        }
+
+        replaceVariables(node, checkDefinition, entityId);
+
+        if (node.get("dashboard").get("templating").get("list").size() > 0) {
+            ArrayNode templates = (ArrayNode) node.get("dashboard").get("templating").get("list");
+            for(JsonNode n : templates) {
+                if (n.get("name").textValue().equals("entity")) {
+                    LOG.info("Setting 'query' to {}", entityIds);
+                    ((ObjectNode)n).put("query", entityIds);
+
+                    // this is not set for custom and needs to be set
+                    ((ObjectNode)n).remove("options");
+                    ((ObjectNode)n).put("refresh", 1);
+
+                    if (entityId.isPresent()) {
+                        // select the right entity in the Grafana templating dropdown
+                        final String sanitizedEntityId = sanitizeEntityId(entityId.get());
+                        ((ObjectNode)n).putObject("current").put("text", sanitizedEntityId).put("value", sanitizedEntityId);
+                    }
+                }
+            }
+        }
+
         return new ResponseEntity<>(node, HttpStatus.OK);
     }
 

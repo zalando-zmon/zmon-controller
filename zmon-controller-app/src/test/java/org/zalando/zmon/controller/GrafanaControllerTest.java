@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.zalando.zmon.domain.CheckDefinition;
 import org.zalando.zmon.domain.CheckResults;
+import org.zalando.zmon.persistence.GrafanaDashboardSprocService;
 import org.zalando.zmon.service.ZMonService;
 
 import java.io.IOException;
@@ -26,7 +27,9 @@ public class GrafanaControllerTest {
         checkDef.setId(123);
         Mockito.when(zMonService.getCheckDefinitionById(123)).thenReturn(Optional.of(checkDef));
         Mockito.when(zMonService.getCheckResults(123, null, 1)).thenReturn(Lists.newArrayList(checkResults));
-        GrafanaController controller = new GrafanaController(zMonService, null, null, mapper, null);
+
+        GrafanaDashboardSprocService grafanaSprocService = Mockito.mock(GrafanaDashboardSprocService.class);
+        GrafanaController controller = new GrafanaController(zMonService, grafanaSprocService, null, mapper, null);
         ResponseEntity<JsonNode> response = controller.serveDynamicDashboard("zmon-check-123");
         Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         Assertions.assertThat(response.getBody().get("dashboard").get("links").get(0).get("url").textValue()).isEqualTo("/#/check-definitions/view/123");
