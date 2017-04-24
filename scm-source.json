@@ -1,1 +1,0 @@
-{"author": "jmussler", "url": "git:git@github.com:zalando/zmon-controller.git", "status": "M zmon-controller-app/src/main/java/org/zalando/zmon/controller/GrafanaController.java\n M zmon-controller-app/src/test/java/org/zalando/zmon/controller/GrafanaControllerTest.java", "revision": "27ebc9094fb7ee075474ea58349314dc42a6ba6a (locally modified)"}
