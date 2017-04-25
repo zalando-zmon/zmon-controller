@@ -308,7 +308,6 @@ public class GrafanaController extends AbstractZMonController {
             ArrayNode templates = (ArrayNode) node.get("dashboard").get("templating").get("list");
             for(JsonNode n : templates) {
                 if (n.get("name").textValue().equals("entity")) {
-                    LOG.info("Setting 'query' to {}", entityIds);
                     ((ObjectNode)n).put("query", entityIds);
 
                     // this is not set for custom and needs to be set
