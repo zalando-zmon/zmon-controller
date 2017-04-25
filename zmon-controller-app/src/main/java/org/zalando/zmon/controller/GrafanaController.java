@@ -287,13 +287,13 @@ public class GrafanaController extends AbstractZMonController {
             ObjectNode meta = node.putObject("meta");
             meta.put("type", "db");
             meta.put("canEdit", true);
-            meta.put("canSave", true);
-            meta.put("canStar", true);
+            meta.put("canSave", false);
+            meta.put("canStar", false);
             meta.put("created", "0001-01-01T00:00:00Z");
             meta.put("expires", "2999-01-01T00:00:00Z");
             meta.put("updated", "0001-01-01T00:00:00Z");
             meta.put("isHome", false);
-            meta.put("slug", id);
+            meta.put("slug", "zmon-check-" + checkId);
             meta.put("isStarred", false);
 
             node.set("dashboard", mapper.readTree(dashboards.get(0).dashboard));
