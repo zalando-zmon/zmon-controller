@@ -151,7 +151,7 @@ function (angular, _, sdk, dateMath, kbn) {
 
     // replace tags with template values
     _.forOwn(_tags, function(value, key) {
-        _tags[key] = _.map(value, function(tag) { return '*' + self.templateSrv.replace(tag) + '*'; });
+        _tags[key] = _.map(value, function(tag) { return self.templateSrv.replace(tag); });
     })
 
     // add new tag
