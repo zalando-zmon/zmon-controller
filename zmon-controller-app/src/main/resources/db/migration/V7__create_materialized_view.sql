@@ -21,6 +21,6 @@ AS SELECT
     ad_parameters,
     ad_tags,
     ad_entities_exclude
-) FROM zzm_data.alert_definition;
+FROM zzm_data.alert_definition;
 
 CREATE INDEX ON zzm_data.materialized_alert_definitions(ad_team varchar_pattern_ops);
