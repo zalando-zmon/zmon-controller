@@ -149,6 +149,11 @@ function (angular, _, sdk, dateMath, kbn) {
         delete _tags[key];
     }
 
+    // replace tags with template values
+    _.forOwn(_tags, function(value, key) {
+        _tags[key] = _.map(value, function(tag) { return self.templateSrv.replace(tag); });
+    })
+
     // add new tag
     if (key && value) {
         _tags[key] = [ '*' + value + '*' ];
