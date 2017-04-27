@@ -33,7 +33,7 @@ BEGIN
                ad_parent_id,
                ad_parameters,
                ad_tags
-          FROM zzm_data.alert_definition
+          FROM zzm_data.materialized_alert_definitions
          WHERE (status IS NULL OR ad_status = status)
            AND (teams IS NULL OR ad_team ILIKE ANY (teams))
            AND (array[]::text[] = include_tags OR include_tags && ad_tags)
