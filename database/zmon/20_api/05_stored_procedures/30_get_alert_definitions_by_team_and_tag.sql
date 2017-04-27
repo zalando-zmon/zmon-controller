@@ -10,6 +10,7 @@ DECLARE
 BEGIN
     include_tags := ARRAY(SELECT t FROM unnest(tags) t(t) WHERE t not like '!%');
     exclude_tags := ARRAY(SELECT substring(t from 2) FROM unnest(tags) t(t) WHERE t like '!%');
+    teams := ARRAY(SELECT lower(t) FROM unnest(teams) t(t));
 
     -- RAISE WARNING 'include: % % exclude: % %', include_tags, include_tags = array[]::text[], exclude_tags, exclude_tags = array[]::text[];
 
@@ -33,9 +34,9 @@ BEGIN
                ad_parent_id,
                ad_parameters,
                ad_tags
-          FROM zzm_data.alert_definition
+          FROM zzm_data.materialized_alert_definitions
          WHERE (status IS NULL OR ad_status = status)
-           AND (teams IS NULL OR ad_team ILIKE ANY (teams))
+           AND (teams IS NULL OR lower(ad_team) LIKE ANY (teams))
            AND (array[]::text[] = include_tags OR include_tags && ad_tags)
            AND (exclude_tags && ad_tags) IS DISTINCT FROM TRUE;
 END
