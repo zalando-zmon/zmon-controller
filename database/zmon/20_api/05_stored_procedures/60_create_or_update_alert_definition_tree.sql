@@ -187,7 +187,7 @@ BEGIN
 
     status := 'SUCCESS';
 
-    REFRESH MATERIALIZED VIEW CONCURRENTLY zzm_data.materialized_alert_defintions;
+    REFRESH MATERIALIZED VIEW CONCURRENTLY zzm_data.materialized_alert_definitions;
 END
 $BODY$
 LANGUAGE 'plpgsql' VOLATILE SECURITY DEFINER
