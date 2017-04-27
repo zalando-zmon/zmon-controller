@@ -24,4 +24,4 @@ AS SELECT
 FROM zzm_data.alert_definition;
 
 CREATE UNIQUE INDEX ON zzm_data.materialized_alert_definitions(ad_id);
-CREATE INDEX ON zzm_data.materialized_alert_definitions(ad_team varchar_pattern_ops);
+CREATE INDEX ON zzm_data.materialized_alert_definitions(lower(ad_team) varchar_pattern_ops);
