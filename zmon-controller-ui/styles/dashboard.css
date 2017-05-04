@@ -3,7 +3,7 @@ body.dashboard
     background: #323232;
 }
 
-.dashboard button.btn, .auth button.auth-user
+.dashboard .zmon-controls button.btn, .auth button.auth-user
 {
     background: #222222;
     border: 1px solid #080808;
@@ -890,4 +890,12 @@ below styles are active for a widget */
 .dashboard-tags .tag-placeholder
 {
     padding-left: 10px;
+}
+
+.zmon-alert .alert-notification-checked
+{
+    position: absolute;
+    left: 26px;
+    top: 2px;
+    font-size: 30px;
 }
