@@ -1,0 +1,27 @@
+<div class="alert-notification-modal">
+    <div class="modal-header">
+        <div class="row">
+            <div class="col-md-12">
+                <h3>Notifications for "{{alert.alert_definition.name}}"</h3>
+            </div>
+        </div>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="row" ng-repeat="notification in alert.alert_definition.notifications">
+                    <label for="inp-type" class="col-sm-1 col-sm-offset-1"><i class="fa fa-fw fa-bell-o"></i></label>
+                    <div class="col-sm-10">
+                        <p>{{notification}}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" ng-click="close()">Close</button>
+        <button type="button" class="btn btn-primary" ng-click="markAsAcknowledged()">
+            <i class="fa fa-check"></i> Mark as Acknowledged
+        </button>
+    </div>
+</div>
