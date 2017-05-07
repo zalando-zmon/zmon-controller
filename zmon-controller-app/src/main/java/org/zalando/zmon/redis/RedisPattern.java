@@ -22,7 +22,6 @@ public final class RedisPattern {
 
     private static final String REDIS_ALERT_PREFIX = "zmon:alerts";
 
-
     private static final String REDIS_CHECK_PREFIX = "zmon:checks";
 
     private static final String REDIS_METRICS = "zmon:metrics";
