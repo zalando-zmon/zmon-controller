@@ -138,6 +138,13 @@ public class AlertController extends AbstractZMonController {
                 HttpStatus.OK);
     }
 
+    @RequestMapping(value = "/alertNotificationsAck", method = RequestMethod.PUT)
+    public ResponseEntity<Void> ackAlertNotification(
+            @RequestParam(value = "alert_id") final int alertId) {
+        service.acknowledgeAlert(alertId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
     @ResponseBody
     @RequestMapping(value = "/deleteAlertDefinition", method = RequestMethod.DELETE)
     public void deleteAlertDefinition(@RequestParam(value = "id", required = true) final int id) throws ZMonException {
