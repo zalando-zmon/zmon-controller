@@ -4,7 +4,7 @@ import com.google.common.base.Preconditions;
 
 public final class RedisPattern {
 
-    public static final String REDIS_ALERT_ACKS_PREFIX = "zmon:alert_acks";
+    public static final String REDIS_ALERT_ACKS_PREFIX = "zmon:alert-acks";
 
     private static final String KEY_SEPARATOR = ":";
 
