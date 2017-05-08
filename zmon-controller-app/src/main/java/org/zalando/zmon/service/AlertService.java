@@ -53,6 +53,8 @@ public interface AlertService {
 
     void cleanAlertState(int alertDefinitionId);
 
+    void acknowledgeAlert(int alertId);
+
     List<String> getAllTags();
 
     Date getMaxLastModified();

@@ -7,6 +7,7 @@ public class Alert {
     private AlertDefinitionAuth alertDefinition;
     private List<LastCheckResult> entities;
     private String message;
+    private boolean notificationsAck;
 
     public AlertDefinition getAlertDefinition() {
         return alertDefinition;
@@ -32,6 +33,15 @@ public class Alert {
         this.message = message;
     }
 
+
+    public boolean isNotificationsAck() {
+        return notificationsAck;
+    }
+
+    public void setNotificationsAck(boolean notificationsAck) {
+        this.notificationsAck = notificationsAck;
+    }
+
     @Override
     public String toString() {
         final StringBuilder builder = new StringBuilder();
@@ -44,5 +54,4 @@ public class Alert {
         builder.append("]");
         return builder.toString();
     }
-
 }

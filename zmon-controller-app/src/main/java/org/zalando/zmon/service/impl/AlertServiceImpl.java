@@ -4,7 +4,9 @@ import com.codahale.metrics.*;
 import com.codahale.metrics.Timer;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import org.apache.http.client.fluent.Executor;
@@ -38,6 +40,10 @@ import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.toCollection;
+import static org.zalando.zmon.event.ZMonEventType.ALERT_ACKNOWLEDGED;
+import static org.zalando.zmon.redis.RedisPattern.REDIS_ALERT_ACKS_PREFIX;
+
 @Service
 @Transactional
 public class AlertServiceImpl implements AlertService {
@@ -54,7 +60,7 @@ public class AlertServiceImpl implements AlertService {
     private NoOpEventLog eventLog;
 
     @Autowired
-    protected AlertDefinitionSProcService alertDefinintionSProc;
+    protected AlertDefinitionSProcService alertDefinitionSProc;
 
     @Autowired
     protected DefaultZMonPermissionService authorityService;
@@ -79,7 +85,7 @@ public class AlertServiceImpl implements AlertService {
     public AlertDefinition createOrUpdateAlertDefinition(final AlertDefinition alertDefinition) throws ZMonException {
         Preconditions.checkNotNull(alertDefinition);
 
-        final AlertDefinitionOperationResult operationResult = alertDefinintionSProc.createOrUpdateAlertDefinitionTree(
+        final AlertDefinitionOperationResult operationResult = alertDefinitionSProc.createOrUpdateAlertDefinitionTree(
                 alertDefinition).throwExceptionOnFailure();
         final AlertDefinition result = operationResult.getEntity();
 
@@ -95,7 +101,7 @@ public class AlertServiceImpl implements AlertService {
     public AlertDefinition deleteAlertDefinition(final int id) throws ZMonException {
         log.info("Deleting alert definition with id '{}'", id);
 
-        final AlertDefinitionOperationResult operationResult = alertDefinintionSProc.deleteAlertDefinition(id)
+        final AlertDefinitionOperationResult operationResult = alertDefinitionSProc.deleteAlertDefinition(id)
                 .throwExceptionOnFailure();
         final AlertDefinition alertDefinition = operationResult.getEntity();
 
@@ -109,17 +115,17 @@ public class AlertServiceImpl implements AlertService {
 
     @Override
     public List<AlertDefinition> getAllAlertDefinitions() {
-        return alertDefinintionSProc.getAllAlertDefinitions();
+        return alertDefinitionSProc.getAllAlertDefinitions();
     }
 
     @Override
     public AlertDefinitions getActiveAlertDefinitionsDiff() {
-        return alertDefinintionSProc.getActiveAlertDefinitionsDiff();
+        return alertDefinitionSProc.getActiveAlertDefinitionsDiff();
     }
 
     @Override
     public AlertDefinitionsDiff getAlertDefinitionsDiff(final Long snapshotId) {
-        return AlertDefinitionsDiffFactory.create(alertDefinintionSProc.getAlertDefinitionsDiff(snapshotId));
+        return AlertDefinitionsDiffFactory.create(alertDefinitionSProc.getAlertDefinitionsDiff(snapshotId));
     }
 
     @Override
@@ -127,7 +133,7 @@ public class AlertServiceImpl implements AlertService {
                                                      final List<Integer> alertDefinitionIds) {
         Preconditions.checkNotNull(alertDefinitionIds, "alertDefinitionIds");
 
-        return alertDefinintionSProc.getAlertDefinitions(status, alertDefinitionIds);
+        return alertDefinitionSProc.getAlertDefinitions(status, alertDefinitionIds);
     }
 
     @Override
@@ -137,7 +143,7 @@ public class AlertServiceImpl implements AlertService {
         // SP doesn't support sets
         final List<String> teamList = teams.stream().map(DBUtil::prefix).collect(Collectors.toList());
 
-        return alertDefinintionSProc.getAlertDefinitionsByTeam(status, teamList);
+        return alertDefinitionSProc.getAlertDefinitionsByTeam(status, teamList);
     }
 
     @Override
@@ -192,7 +198,8 @@ public class AlertServiceImpl implements AlertService {
         }
     }
 
-    private List<Alert> fetchAlertsById(final Set<Integer> ids) {
+    @VisibleForTesting
+    List<Alert> fetchAlertsById(final Set<Integer> ids) {
         Preconditions.checkNotNull(ids, "ids");
 
         final List<Alert> alerts = new LinkedList<>();
@@ -207,19 +214,21 @@ public class AlertServiceImpl implements AlertService {
             if (!alertIds.isEmpty()) {
 
                 // get alert definitions from database
-                final List<AlertDefinition> definitions = alertDefinintionSProc.getAlertDefinitions(
+                final List<AlertDefinition> definitions = alertDefinitionSProc.getAlertDefinitions(
                         DefinitionStatus.ACTIVE, alertIds);
                 if (!definitions.isEmpty()) {
 
                     // index all definitions
                     final Map<Integer, AlertDefinition> mappedAlerts = Maps.uniqueIndex(definitions,
                             AlertDefinition::getId);
-
+                    final Set<Integer> ackedAlertIds = getAcknowledgedAlerts();
                     // process alerts
                     for (final ResponseHolder<Integer, Set<String>> entry : results) {
                         final AlertDefinition def = mappedAlerts.get(entry.getKey());
                         if (def != null) {
-                            alerts.add(buildAlert(entry.getKey(), entry.getResponse().get(), def));
+                            final Alert alert = buildAlert(entry.getKey(), entry.getResponse().get(), def);
+                            alert.setNotificationsAck(ackedAlertIds.contains(alert.getAlertDefinition().getId()));
+                            alerts.add(alert);
                         }
                     }
                 }
@@ -264,14 +273,16 @@ public class AlertServiceImpl implements AlertService {
                 // index all definitions
                 final Map<Integer, AlertDefinition> mappedAlerts = Maps.uniqueIndex(definitions,
                         AlertDefinition::getId);
-
+                final Set<Integer> ackedAlertIds = getAcknowledgedAlerts();
                 // process alerts
                 for (final ResponseHolder<Integer, Set<String>> entry : results) {
                     final AlertDefinition def = mappedAlerts.get(entry.getKey());
 
                     final Set<String> entities = entry.getResponse().get();
                     if (!entities.isEmpty()) {
-                        alerts.add(buildAlert(entry.getKey(), entities, def));
+                        final Alert alert = buildAlert(entry.getKey(), entities, def);
+                        alert.setNotificationsAck(ackedAlertIds.contains(alert.getAlertDefinition().getId()));
+                        alerts.add(alert);
                     }
                 }
             }
@@ -280,11 +291,22 @@ public class AlertServiceImpl implements AlertService {
         return alerts;
     }
 
+    @VisibleForTesting
+    Set<Integer> getAcknowledgedAlerts() {
+        try (Jedis jedis = redisPool.getResource()) {
+            final Set<String> ackedAlertIds = jedis.smembers(REDIS_ALERT_ACKS_PREFIX);
+            return ackedAlertIds.stream().map(Integer::parseInt).collect(toCollection(HashSet::new));
+        } catch (Exception ex) {
+            log.error("Failed to load acknowledged alert ids", ex);
+        }
+        return ImmutableSet.of();
+    }
+
     @Override
     public Alert getAlert(final int alertId) {
 
         // get alert definitions from database
-        final List<AlertDefinition> definitions = alertDefinintionSProc.getAlertDefinitions(DefinitionStatus.ACTIVE,
+        final List<AlertDefinition> definitions = alertDefinitionSProc.getAlertDefinitions(DefinitionStatus.ACTIVE,
                 Collections.singletonList(alertId));
 
         Alert alertResult = null;
@@ -307,7 +329,7 @@ public class AlertServiceImpl implements AlertService {
         Preconditions.checkNotNull(comment, "comment");
         log.info("Adding new comment to alert definition '{}'", comment.getAlertDefinitionId());
 
-        final AlertComment result = this.alertDefinintionSProc.addAlertComment(comment).getEntity();
+        final AlertComment result = this.alertDefinitionSProc.addAlertComment(comment).getEntity();
 
         eventLog.log(ZMonEventType.ALERT_COMMENT_CREATED, result.getId(), result.getComment(),
                 result.getAlertDefinitionId(), result.getEntityId(), result.getCreatedBy());
@@ -317,14 +339,14 @@ public class AlertServiceImpl implements AlertService {
 
     @Override
     public List<AlertComment> getComments(final int alertDefinitionId, final int limit, final int offset) {
-        return alertDefinintionSProc.getAlertComments(alertDefinitionId, limit, offset);
+        return alertDefinitionSProc.getAlertComments(alertDefinitionId, limit, offset);
     }
 
     @Override
     public void deleteAlertComment(final int id) {
         log.info("Deleting comment with id '{}'", id);
 
-        final AlertComment comment = alertDefinintionSProc.deleteAlertComment(id);
+        final AlertComment comment = alertDefinitionSProc.deleteAlertComment(id);
 
         if (comment != null) {
             eventLog.log(ZMonEventType.ALERT_COMMENT_REMOVED, comment.getId(), comment.getComment(),
@@ -334,12 +356,12 @@ public class AlertServiceImpl implements AlertService {
 
     @Override
     public AlertDefinition getAlertDefinitionNode(final int alertDefinitionId) {
-        return alertDefinintionSProc.getAlertDefinitionNode(alertDefinitionId);
+        return alertDefinitionSProc.getAlertDefinitionNode(alertDefinitionId);
     }
 
     @Override
     public List<AlertDefinition> getAlertDefinitionChildren(final int alertDefinitionId) {
-        return alertDefinintionSProc.getAlertDefinitionChildren(alertDefinitionId);
+        return alertDefinitionSProc.getAlertDefinitionChildren(alertDefinitionId);
     }
 
     @Override
@@ -362,12 +384,21 @@ public class AlertServiceImpl implements AlertService {
         try (Jedis jedis = writeRedisPool.getResource()) {
             jedis.del(RedisPattern.alertEntities(alertDefinitionId));
             jedis.del(RedisPattern.alertFilterEntities(alertDefinitionId));
+            jedis.srem(REDIS_ALERT_ACKS_PREFIX, Integer.toString(alertDefinitionId));
+        }
+    }
+
+    @Override
+    public void acknowledgeAlert(int alertId) {
+        try (Jedis jedis = writeRedisPool.getResource()) {
+            jedis.sadd(REDIS_ALERT_ACKS_PREFIX, Integer.toString(alertId));
+            eventLog.log(ALERT_ACKNOWLEDGED, alertId, authorityService.getUserName());
         }
     }
 
     @Override
     public List<String> getAllTags() {
-        return alertDefinintionSProc.getAllTags();
+        return alertDefinitionSProc.getAllTags();
     }
 
     private List<AlertDefinition> getActiveAlertDefinitionByTeamAndTag(final Set<String> teams,
@@ -395,7 +426,7 @@ public class AlertServiceImpl implements AlertService {
 
         try {
             // get alert definitions filtered by team from the database
-            return alertDefinintionSProc.getAlertDefinitionsByTeamAndTag(DefinitionStatus.ACTIVE, teamList, tagList);
+            return alertDefinitionSProc.getAlertDefinitionsByTeamAndTag(DefinitionStatus.ACTIVE, teamList, tagList);
         }
         finally {
             c.stop();
@@ -491,6 +522,6 @@ public class AlertServiceImpl implements AlertService {
 
     @Override
     public Date getMaxLastModified() {
-        return alertDefinintionSProc.getAlertLastModifiedMax();
+        return alertDefinitionSProc.getAlertLastModifiedMax();
     }
 }

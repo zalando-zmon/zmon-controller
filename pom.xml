@@ -129,8 +129,8 @@
 	</dependencyManagement>
 
 	<scm>
-		<connection>scm:git:https://github.com/zalando/zmon.git</connection>
-		<developerConnection>scm:git:https://github.com/zalando/zmon.git</developerConnection>
+		<connection>scm:git:https://github.com/zalando-zmon/zmon-controller.git</connection>
+		<developerConnection>scm:git:https://github.com/zalando-zmon/zmon-controller.git</developerConnection>
 	</scm>
 
 	<modules>

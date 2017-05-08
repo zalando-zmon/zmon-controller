@@ -43,7 +43,7 @@ public class DowntimeServiceImpl implements DowntimeService {
 
     private final JedisPool redisPool;
     private final JedisPool writeRedisPool;
-    private final AlertDefinitionSProcService alertDefinintionSProc;
+    private final AlertDefinitionSProcService alertDefinitionSProc;
     private final NoOpEventLog eventLog;
     private final ObjectMapper mapper;
 
@@ -56,11 +56,11 @@ public class DowntimeServiceImpl implements DowntimeService {
     @Autowired
     public DowntimeServiceImpl(final JedisPool redisPool, @RedisWrite JedisPool writeRedisPool,
                                final ObjectMapper mapper,
-                               final AlertDefinitionSProcService alertDefinintionSProc, NoOpEventLog eventLog) {
+                               final AlertDefinitionSProcService alertDefinitionSProc, NoOpEventLog eventLog) {
         this.redisPool = Preconditions.checkNotNull(redisPool, "redisPool");
         this.writeRedisPool = Preconditions.checkNotNull(writeRedisPool, "writeRedisPool");
         this.mapper = Preconditions.checkNotNull(mapper, "mapper");
-        this.alertDefinintionSProc = Preconditions.checkNotNull(alertDefinintionSProc, "alertDefinintionSProc");
+        this.alertDefinitionSProc = Preconditions.checkNotNull(alertDefinitionSProc, "alertDefinitionSProc");
         this.eventLog = eventLog;
     }
 
@@ -70,7 +70,7 @@ public class DowntimeServiceImpl implements DowntimeService {
 
         // load all active alert ids
         final Set<Integer> ids = group.getAlertDefinitions() == null
-                ? ImmutableSet.copyOf(alertDefinintionSProc.getAlertIdsByStatus(DefinitionStatus.ACTIVE))
+                ? ImmutableSet.copyOf(alertDefinitionSProc.getAlertIdsByStatus(DefinitionStatus.ACTIVE))
                 : group.getAlertDefinitions();
 
         final Map<Integer, Response<Set<String>>> results = resolveEntities(ids);
