@@ -24,7 +24,8 @@ angular.module('zmon2App', [
                 })
                 .when('/alert-details/:alertId', {
                     templateUrl: 'views/alertDetails.html',
-                    controller: 'AlertDetailsCtrl'
+                    controller: 'AlertDetailsCtrl',
+                    reloadOnSearch: false
                 })
                 .when('/alert-definitions/add/:checkDefinitionId', {
                     templateUrl: 'views/alertDefinitionEditForm.html',
