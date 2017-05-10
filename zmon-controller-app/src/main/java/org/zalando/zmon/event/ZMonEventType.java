@@ -13,6 +13,7 @@ public enum ZMonEventType /*implements EventType*/ {
     ALERT_ENTITY_ENDED(0x34004, "checkId", "alertId", "value", "entity"),
     DOWNTIME_STARTED(0x34005, "alertId", "entity", "startTime", "endTime", "userName", "comment"),
     DOWNTIME_ENDED(0x34006, "alertId", "entity", "startTime", "endTime", "userName", "comment"),
+    ALERT_ACKNOWLEDGED(0x34007, "alertId", "entity", "startTime", "endTime", "userName", "comment"),
 
     // controller events
     DOWNTIME_SCHEDULED(0x34101, "alertId", "entity", "startTime", "endTime", "userName", "comment"),
@@ -31,7 +32,16 @@ public enum ZMonEventType /*implements EventType*/ {
     DASHBOARD_UPDATED(0x3410d, "dashboardId", "name", "widgetConfiguration", "alertTeams", "viewMode", "editOption",
         "sharedTeams", "userName"),
     INSTANTANEOUS_ALERT_EVALUATION_SCHEDULED(0x3410e, "alertId", "userName"),
-    GROUP_MODIFIED(0x3410f, "userName", "action","group","member","phone");
+    GROUP_MODIFIED(0x3410f, "userName", "action","group","member","phone"),
+
+    // Twilio Call Events
+    CALL_TRIGGERED(0x34200, "alertId", "entityId", "phone", "level"),
+    CALL_AGGR_TRIGGERED(0x34201, "alertId", "entityIds", "phone", "level"),
+    CALL_ANSWERED(0x34202, "alertId", "entityIds", "phone"),
+    CALL_ALERT_ACK_RECEIVED(0x3420A, "alertId", "phone", "incidentId"),
+    CALL_ENTITY_ACK_RECEIVED(0x3420B, "alertId", "phone", "entityIds", "incidentId"),
+    CALL_ALERT_RESOLVED(0x34210, "alertId", "incidentId");
+
 
     private final int id;
     private final List<String> fieldNames;

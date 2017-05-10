@@ -73,6 +73,7 @@ angular.module('zmon2App').factory('CommunicationService', ['$http', '$q', '$log
             if (filter.tags) {
                 params.tags = filter.tags;
             }
+
             return doHttpCall("GET", "rest/allAlerts", params, null, timeout);
         };
 
@@ -282,6 +283,14 @@ angular.module('zmon2App').factory('CommunicationService', ['$http', '$q', '$log
             return doHttpCall("GET", "rest/allTags", null, null, null, postSuccessProcessing);
         };
 
+        service.alertNotificationsAck = function(id) {
+            PreconditionsService.isNotEmpty(id);
+            var params = {
+                "alert_id": id
+            };
+            return doHttpCall("PUT", "rest/alertNotificationsAck/", params)
+        }
+
         service.getDashboard = function(id) {
             PreconditionsService.isNotEmpty(id);
             PreconditionsService.isNumber(id);
@@ -359,7 +368,6 @@ angular.module('zmon2App').factory('CommunicationService', ['$http', '$q', '$log
             };
             return doHttpCall("POST", "rest/entity-filters", filter, headers);
         }
-
 
         service.getStatus = function() {
             return doHttpCall("GET", "rest/status");
