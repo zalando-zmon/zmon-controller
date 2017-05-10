@@ -14,8 +14,8 @@ angular.module('zmon2App').controller('AlertDetailsCtrl', [ '$location', '$route
 
     $scope.selection = {
         activeAlerts: true,
-        alertsInDowntime: !!$location.search().downtimes,
-        checkResults: false,
+        alertsInDowntime: !!$location.search().downtimes || !!$location.search().showAlertsInDowntime,
+        checkResults: !!$location.search().showOk || false,
     };
 
     $scope.sortType = 'result.start_time'; // sort list of alerts by alert start timestamp
@@ -41,7 +41,7 @@ angular.module('zmon2App').controller('AlertDetailsCtrl', [ '$location', '$route
 
     // Entity Filter. Defined as object to $watch by reference on 'str' since input field is inside ui-bootstrap's tabset.
     $scope.alertDetailsSearch = {
-        str: localStorageService.get('alertDetailsSearchStr') || ''
+        str: $location.search().filter || localStorageService.get('alertDetailsSearchStr') || ''
     };
 
     var setLinkToTrialRun = function () {
@@ -241,6 +241,7 @@ angular.module('zmon2App').controller('AlertDetailsCtrl', [ '$location', '$route
     }, true);
 
     $scope.$watch('alertDetailsSearch.str', function(str) {
+        $location.search('filter', str);
         localStorageService.set('alertDetailsSearchStr', str);
     });
 
