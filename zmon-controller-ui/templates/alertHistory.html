@@ -1,5 +1,5 @@
 <div class="zmon-controls">
-    Events from <em>{{::historyFromInEpochSeconds * 1000 | date:'medium'}}</em> till now
+    Events from <em>{{historyFromInEpochSeconds * 1000 | date:'medium'}}</em> till now
     <button class="btn" ng-class="{'active-page': activeHistoryButton['1']}" ng-click="fetchHistoryLastNDays(1)">Last day</button>
     <button class="btn" ng-class="{'active-page': activeHistoryButton['7']}" ng-click="fetchHistoryLastNDays(7)">Last 7 days</button>
     <button class="btn" ng-class="{'active-page': activeHistoryButton['14']}" ng-click="fetchHistoryLastNDays(14)">Last 14 days</button>
@@ -27,4 +27,3 @@
         </tr>
     </tbody>
 </table>
-
