@@ -75,7 +75,7 @@
 
     <!-- AppDynamics JS Agent -->
     <script charset='UTF-8' th:inline="javascript" th:if="${appdynamicsEnabled}" >
-        var appDynamicsConfig = /*[[${firebaseConfig}]]*/ { apiKey: "", adrumExtUrlHttp: "", adrumExtUrlHttps: "", beaconUrlHttp: "", beaconUrlHttps: "", xd: ""}
+        var appDynamicsConfig = /*[[${firebaseConfig}]]*/ { apiKey: "", adrumExtUrlHttp: "", adrumExtUrlHttps: "", beaconUrlHttp: "", beaconUrlHttps: "", xd: { enable: false } }
         console.log('AppDynamics Agent is Enabled', appDynamicsConfig)
         window['adrum-start-time'] = new Date().getTime();
         (function(config){
