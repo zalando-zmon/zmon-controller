@@ -105,7 +105,6 @@
     <script th:inline="javascript" th:if="${firebaseEnabled}">
         // Initialize Firebase
         var config = /*[[${firebaseConfig}]]*/ { apiKey: "", authDomain: "", databaseURL: "", storageBucket: "", messagingSenderId: ""};
-        console.log('Firabase is Enabled', config)
         firebase.initializeApp(config);
     </script>
     <link rel="manifest" href="/manifest.json">
