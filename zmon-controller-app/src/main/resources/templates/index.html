@@ -73,6 +73,33 @@
     <script th:src="${staticUrl} + '/lib/highlightjs/highlight.pack.min.js?t=@buildTime@'" chartset="utf-8"></script>
     <script th:src="${staticUrl} + '/lib/angular-highlightjs/angular-highlightjs.min.js?t=@buildTime@'" chartset="utf-8"></script>
 
+    <!-- AppDynamics JS Agent -->
+    <script charset='UTF-8' th:inline="javascript" th:if="${appdynamicsEnabled}" >
+        var appDynamicsConfig = /*[[${firebaseConfig}]]*/ { apiKey: "", adrumExtUrlHttp: "", adrumExtUrlHttps: "", beaconUrlHttp: "", beaconUrlHttps: "", xd: ""}
+        console.log('AppDynamics Agent is Enabled', appDynamicsConfig)
+        window['adrum-start-time'] = new Date().getTime();
+        (function(config){
+            config.appKey = "${appdynamicsAppKey}";
+            config.adrumExtUrlHttp = '${appdynamicsAdrumExtUrlHttp}';
+            config.adrumExtUrlHttps = '${appdynamicsAdrumExtUrlHttps}';
+            config.beaconUrlHttp = '${appdynamicsBeaconUrlHttp}';
+            config.beaconUrlHttps = '${appdynamicsBeaconUrlHttps}';
+            config.xd = {enable : false};
+        })(window['adrum-config'] || (window['adrum-config'] = {}));
+        if ('https:' === document.location.protocol) {
+            document.write(unescape('%3Cscript')
+         + " src='https://cdn.appdynamics.com/adrum/adrum.js' "
+         + " type='text/javascript' charset='UTF-8'"
+         + unescape('%3E%3C/script%3E'));
+        } else {
+            document.write(unescape('%3Cscript')
+         + " src='http://cdn.appdynamics.com/adrum/adrum.js' "
+         + " type='text/javascript' charset='UTF-8'"
+         + unescape('%3E%3C/script%3E'));
+        }
+    </script>
+
+    <!-- Firebase -->
     <script th:inline="javascript" th:if="${firebaseEnabled}" src="/lib/firebase/firebase-app.js"></script>
     <script th:inline="javascript" th:if="${firebaseEnabled}" src="/lib/firebase/firebase-messaging.js"></script>
     <script th:inline="javascript" th:if="${firebaseEnabled}">
@@ -82,6 +109,7 @@
     </script>
     <link rel="manifest" href="/manifest.json">
 </head>
+
 <body ng-class="activePage" ng-keypress="keypress($event)" ng-keydown="keydown($event)">
     <div class="loading-indicator" ng-show="IndexCtrl.getLoadingIndicatorState()">
         Loading...

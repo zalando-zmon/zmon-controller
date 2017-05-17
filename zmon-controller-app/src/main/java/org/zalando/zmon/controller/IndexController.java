@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.zalando.zmon.config.ControllerProperties;
 import org.zalando.zmon.config.FirebaseProperties;
+import org.zalando.zmon.config.AppdynamicsProperties;
 import org.zalando.zmon.config.ManifestJsonConfig;
 import org.zalando.zmon.security.permission.DefaultZMonPermissionService;
 
@@ -52,6 +53,9 @@ public class IndexController {
     @Autowired
     private FirebaseProperties firebaseProperties;
 
+    @Autowired
+    private AppdynamicsProperties appdynamicsProperties;
+
     @Value("${zmon.cloud.checkid}")
     private int cloudCheckId;
 
@@ -79,6 +83,8 @@ public class IndexController {
         model.addAttribute("cloudCheckId", cloudCheckId);
         model.addAttribute("firebaseConfig", firebaseProperties);
         model.addAttribute("firebaseEnabled", controllerProperties.enableFirebase);
+        model.addAttribute("appdynamicsConfig", appdynamicsProperties);
+        model.addAttribute("appdynamicsEnabled", controllerProperties.enableAppdynamics);
 
         return "index";
     }

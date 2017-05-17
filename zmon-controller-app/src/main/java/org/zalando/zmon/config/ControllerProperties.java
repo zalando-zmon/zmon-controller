@@ -27,6 +27,8 @@ public class ControllerProperties {
 
     public boolean enableFirebase = false;
 
+    public boolean enableAppdynamics = false;
+
     public List<String> workerQueueKeys = Arrays.asList("zmon:queue:default");
 
     public List<String> getWorkerQueueKeys() {
@@ -39,6 +41,14 @@ public class ControllerProperties {
 
     public void setEnableFirebase(boolean enableFirebase) {
         this.enableFirebase = enableFirebase;
+    }
+
+    public boolean isEnableAppdynamics() {
+        return enableAppdynamics;
+    }
+
+    public void setEnableAppdynamics(boolean enableAppdynamics) {
+        this.enableAppdynamics = enableAppdynamics;
     }
 
     public void setWorkerQueueKeys(List<String> workerQueueKeys) {
