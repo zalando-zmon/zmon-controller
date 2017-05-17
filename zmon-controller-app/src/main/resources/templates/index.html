@@ -75,16 +75,16 @@
 
     <!-- AppDynamics JS Agent -->
     <script charset='UTF-8' th:inline="javascript" th:if="${appdynamicsEnabled}" >
-        var appDynamicsConfig = /*[[${firebaseConfig}]]*/ { apiKey: "", adrumExtUrlHttp: "", adrumExtUrlHttps: "", beaconUrlHttp: "", beaconUrlHttps: "", xd: { enable: false } }
-        console.log('AppDynamics Agent is Enabled', appDynamicsConfig)
+        var appdynamicsConfig = /*[[${appdynamicsConfig}]]*/ { apiKey: "", adrumExtUrlHttp: "", adrumExtUrlHttps: "", beaconUrlHttp: "", beaconUrlHttps: "", xd: false}
+        console.log('AppDynamics Agent is Enabled', appdynamicsConfig)
         window['adrum-start-time'] = new Date().getTime();
         (function(config){
-            config.appKey = "${appdynamicsAppKey}";
-            config.adrumExtUrlHttp = '${appdynamicsAdrumExtUrlHttp}';
-            config.adrumExtUrlHttps = '${appdynamicsAdrumExtUrlHttps}';
-            config.beaconUrlHttp = '${appdynamicsBeaconUrlHttp}';
-            config.beaconUrlHttps = '${appdynamicsBeaconUrlHttps}';
-            config.xd = {enable : false};
+            config.appKey = appdynamicsConfig.apiKey;
+            config.adrumExtUrlHttp = appdynamicsConfig.adrumExtUrlHttp;
+            config.adrumExtUrlHttps = appdynamicsConfig.adrumExtUrlHttps;
+            config.beaconUrlHttp = appdynamicsConfig.beaconUrlHttp;
+            config.beaconUrlHttps = appdynamicsConfig.beaconUrlHttps;
+            config.xd = { enable: appdynamicsConfig.xd.enable };
         })(window['adrum-config'] || (window['adrum-config'] = {}));
         if ('https:' === document.location.protocol) {
             document.write(unescape('%3Cscript')
@@ -105,6 +105,7 @@
     <script th:inline="javascript" th:if="${firebaseEnabled}">
         // Initialize Firebase
         var config = /*[[${firebaseConfig}]]*/ { apiKey: "", authDomain: "", databaseURL: "", storageBucket: "", messagingSenderId: ""};
+        console.log('Firabase is Enabled', config)
         firebase.initializeApp(config);
     </script>
     <link rel="manifest" href="/manifest.json">
