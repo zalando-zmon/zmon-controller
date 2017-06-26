@@ -52,7 +52,7 @@ public class PresharedTokensResourceServerTokenServices implements ResourceServe
 
         Collection<? extends GrantedAuthority> authorities;
 
-        // allow overwritting the authority of the preshared token UID
+        // allow overwriting the authority of the preshared token UID
         final String authority = environment.getProperty(String.format("preshared_tokens.%s.authority", accessToken));
 
         if (authority != null) {

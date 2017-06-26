@@ -1,20 +1,22 @@
 package org.zalando.zmon.service.impl;
 
-import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Ordering;
 import com.google.common.primitives.Longs;
-import org.apache.http.client.fluent.Executor;
-import org.apache.http.client.fluent.Request;
+import org.apache.http.client.utils.URIBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestOperations;
 import org.zalando.zmon.config.EventLogProperties;
-import org.zalando.zmon.domain.*;
+import org.zalando.zmon.domain.Activity;
+import org.zalando.zmon.domain.ActivityDiff;
+import org.zalando.zmon.domain.AlertDefinition;
+import org.zalando.zmon.domain.HistoryAction;
+import org.zalando.zmon.domain.HistoryEntry;
+import org.zalando.zmon.domain.HistoryType;
 import org.zalando.zmon.event.Event;
 import org.zalando.zmon.event.EventlogEvent;
 import org.zalando.zmon.event.ZMonEventType;
@@ -23,50 +25,42 @@ import org.zalando.zmon.persistence.CheckDefinitionSProcService;
 import org.zalando.zmon.service.HistoryService;
 import org.zalando.zmon.util.HistoryUtils;
 
-import java.io.IOException;
-import java.util.*;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
-@Service
-@Transactional
+
 public class HistoryServiceImpl implements HistoryService {
 
     private static final int DEFAULT_HISTORY_LIMIT = 50;
-
-    private final static List<Event> EMPTY_LIST = new ArrayList<>(0);
-
-    private static final Comparator<Activity> ACTIVITY_TIME_COMPARATOR = (o1, o2) -> Longs.compare(o2.getTime(), o1.getTime());
-
     private final static Logger LOG = LoggerFactory.getLogger(HistoryServiceImpl.class);
+    private static final Comparator<Activity> ACTIVITY_TIME_COMPARATOR = Comparator.comparing(Activity::getTime);
 
-    @Autowired
-    private CheckDefinitionSProcService checkDefinitionSProc;
+    private final RestOperations restOperations;
 
-    @Autowired
-    private AlertDefinitionSProcService alertDefinitionSProc;
+    private final CheckDefinitionSProcService checkDefinitionSProc;
 
-    @Autowired
-    private EventLogProperties eventLogProperties;
+    private final AlertDefinitionSProcService alertDefinitionSProc;
+
+    private final EventLogProperties eventLogProperties;
 
     private ObjectMapper mapper = new ObjectMapper();
 
-    public Event convert(EventlogEvent in) {
-        Event e = new Event();
-        e.setTypeName(in.getTypeName());
-        e.setTime(in.getTime());
-        e.setFlowId(in.getFlowId());
-        e.setTypeId(in.getTypeId());
-
-        for(Map.Entry<String, JsonNode> ie : in.getAttributes().entrySet()) {
-            try {
-                e.setAttribute(ie.getKey(), mapper.writeValueAsString(ie.getValue()));
-            }
-            catch(JsonProcessingException ex) {
-
-            }
-        }
-
-        return e;
+    public HistoryServiceImpl(final RestOperations restOperations,
+                              final CheckDefinitionSProcService checkDefinitionSProc,
+                              final AlertDefinitionSProcService alertDefinitionSProc,
+                              final EventLogProperties eventLogProperties) {
+        this.restOperations = restOperations;
+        this.checkDefinitionSProc = checkDefinitionSProc;
+        this.alertDefinitionSProc = alertDefinitionSProc;
+        this.eventLogProperties = eventLogProperties;
     }
 
     @Override
@@ -76,54 +70,110 @@ public class HistoryServiceImpl implements HistoryService {
         final Long fromMillis = from == null ? null : from * 1000;
         final Long toMillis = to == null ? null : to * 1000;
 
-        List<Activity> history = Collections.emptyList();
-
         final List<AlertDefinition> definitions = alertDefinitionSProc.getAlertDefinitions(null,
-                Collections.singletonList(alertDefinitionId));
+                ImmutableList.of(alertDefinitionId));
 
         if (!definitions.isEmpty()) {
-            final Executor executor = Executor.newInstance();
-
-            final String eventLogService = eventLogProperties.getUrl().toString();
-
-            List<Event> eventsByAlertId = EMPTY_LIST;
-            List<Event> eventsByCheckId = EMPTY_LIST;
-
-            String baseQuery = "?";
-            if (limit != null) {
-                baseQuery += "&limit=" + realLimit;
+            final Optional<URI> baseQuery = getBaseQueryUri(limit, realLimit, fromMillis, toMillis);
+            if (baseQuery.isPresent()) {
+                final URI uri = baseQuery.get();
+                List<Event> eventsByAlertId = getAlertEvents(uri, alertDefinitionId);
+                List<Event> eventsByCheckId = getCheckEvents(uri, definitions.get(0).getCheckDefinitionId());
+                return mergeEvents(realLimit, eventsByCheckId, eventsByAlertId);
             }
-            if (fromMillis != null) {
-                baseQuery += "&from=" + fromMillis;
-            }
-            if (toMillis != null) {
-                baseQuery += "&to=" + toMillis;
-            }
-
-            try {
-                String query = baseQuery + "&types=212993,212994,212995,212996,212997,212998,213252,213253,213504,213505,213506,213514,213515,213520&key=alertId&value=" + alertDefinitionId;
-                final String r = executor.execute(Request.Get(eventLogService + query)).returnContent().asString();
-                List<EventlogEvent> tempEvents = mapper.readValue(r, new TypeReference<List<EventlogEvent>>() {
-                });
-
-                eventsByAlertId = tempEvents.stream().map(x->convert(x)).collect(Collectors.toList());
-            } catch (IOException e) {
-                LOG.error("Failed to load events by alertId from {}", eventLogService, e);
-            }
-
-            try {
-                String query = baseQuery + "&types=213254,213255,213256,213257&key=checkId&value=" + definitions.get(0).getCheckDefinitionId();
-                final String r = executor.execute(Request.Get(eventLogService + query)).returnContent().asString();
-                eventsByCheckId = mapper.readValue(r, new TypeReference<List<Event>>() {
-                });
-            } catch (IOException e) {
-                LOG.error("Failed to load events by checkId {}", eventLogService, e);
-            }
-
-            history = mergeEvents(realLimit, eventsByCheckId, eventsByAlertId);
         }
 
-        return history;
+        return ImmutableList.of();
+    }
+
+    private Optional<URI> getBaseQueryUri(final Integer limit, final Integer realLimit, final Long fromMillis, final Long toMillis) {
+        final URIBuilder baseQueryBuilder;
+        try {
+            baseQueryBuilder = new URIBuilder(eventLogProperties.getUrl().toString());
+        } catch (URISyntaxException e) {
+            LOG.error("Invalid event log URI", e);
+            return Optional.empty();
+        }
+
+        if (limit != null) {
+            baseQueryBuilder.addParameter("limit", realLimit.toString());
+        }
+        if (fromMillis != null) {
+            baseQueryBuilder.addParameter("from", fromMillis.toString());
+        }
+        if (toMillis != null) {
+            baseQueryBuilder.addParameter("to", toMillis.toString());
+        }
+
+        try {
+            return Optional.of(baseQueryBuilder.build());
+        } catch (URISyntaxException e) {
+            LOG.error("Failed to build base query", e);
+        }
+        return Optional.empty();
+    }
+
+    private List<Event> getAlertEvents(final URI baseQuery, final int alertDefinitionId) {
+        final String typesFilter = eventLogProperties.getAlertHistoryEventsFilter().stream()
+                .map(Object::toString)
+                .collect(Collectors.joining(","));
+
+        final URIBuilder alertsQueryBuilder = new URIBuilder(baseQuery)
+            .addParameter("types", typesFilter)
+            .addParameter("key", "alertId")
+            .addParameter("value", String.valueOf(alertDefinitionId));
+        try {
+            final URI query = alertsQueryBuilder.build();
+            final AlertEventsResponse tempEvents = restOperations.getForObject(query, AlertEventsResponse.class);
+            return tempEvents.stream().map(this::convert).collect(Collectors.toList());
+        } catch (URISyntaxException e) {
+            LOG.error("Failed to create query URI", e);
+        }
+        return ImmutableList.of();
+    }
+
+    private static class AlertEventsResponse extends LinkedList<EventlogEvent> {}
+
+    private List<Event> getCheckEvents(final URI baseQuery, final int checkDefinitionId) {
+        final String typesFilter = eventLogProperties.getCheckHistoryEventsFilter().stream()
+                .map(Object::toString)
+                .collect(Collectors.joining(","));
+
+        final URIBuilder alertsQueryBuilder = new URIBuilder(baseQuery)
+            .addParameter("types", typesFilter)
+            .addParameter("key", "checkId")
+            .addParameter("value", String.valueOf(checkDefinitionId));
+        try {
+            final URI query = alertsQueryBuilder.build();
+            return restOperations.getForObject(query, CheckEventsResponse.class);
+        } catch (URISyntaxException e) {
+            LOG.error("Failed to create query URI", e);
+        }
+        return ImmutableList.of();
+    }
+
+    private static class CheckEventsResponse extends LinkedList<Event> {}
+
+    private Event convert(EventlogEvent in) {
+        final String typeName = in.getTypeName();
+        final String flowId = in.getFlowId();
+
+        final Event e = new Event();
+        e.setTypeName(typeName);
+        e.setTime(in.getTime());
+        e.setFlowId(flowId);
+        e.setTypeId(in.getTypeId());
+
+        for(Map.Entry<String, JsonNode> ie : in.getAttributes().entrySet()) {
+            try {
+                e.setAttribute(ie.getKey(), mapper.writeValueAsString(ie.getValue()));
+            }
+            catch(JsonProcessingException ex) {
+                LOG.error("Failed to convert event {} of type {}", flowId, typeName, ex);
+            }
+        }
+
+        return e;
     }
 
     private Activity createActivity(final Event event) {
@@ -137,8 +187,6 @@ public class HistoryServiceImpl implements HistoryService {
 
     private List<Activity> mergeEvents(final Integer limit, final List<Event> eventsByCheckId,
                                        final List<Event> eventsByAlertId) {
-
-        List<Activity> history = Collections.emptyList();
 
         final int size = (eventsByCheckId == null ? 0 : eventsByCheckId.size())
                 + (eventsByAlertId == null ? 0 : eventsByAlertId.size());
@@ -157,11 +205,11 @@ public class HistoryServiceImpl implements HistoryService {
                 }
             }
 
-            Collections.sort(activities, ACTIVITY_TIME_COMPARATOR);
-            history = limit == null ? activities : activities.subList(0, limit);
+            final List<Activity> sorted = Ordering.from(ACTIVITY_TIME_COMPARATOR).immutableSortedCopy(activities);
+            return limit == null ? sorted : sorted.subList(0, limit);
         }
 
-        return history;
+        return ImmutableList.of();
     }
 
     @Override
