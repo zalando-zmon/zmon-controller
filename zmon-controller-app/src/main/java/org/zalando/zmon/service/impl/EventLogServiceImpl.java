@@ -19,7 +19,6 @@ import javax.annotation.Nullable;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -147,11 +146,5 @@ public class EventLogServiceImpl implements EventLogService {
         }
 
         return e;
-    }
-
-    private static class AlertEventsResponse extends LinkedList<EventlogEvent> {
-    }
-
-    private static class CheckEventsResponse extends LinkedList<Event> {
     }
 }
