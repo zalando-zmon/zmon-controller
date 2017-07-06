@@ -2,7 +2,6 @@ package org.zalando.zmon.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
