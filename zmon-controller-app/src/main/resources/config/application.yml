@@ -50,6 +50,12 @@ zmon:
       checkid: 9
     eventlog:
         url: http://localhost:8081/
+        connectTimeout: 5000
+        requestConnectTimeout: 5000
+        socketTimeout: 30000
+        alertHistoryEventsFilter: [212993,212994,212995,212996,212997,212998,213252,213253,213504,213505,213506,213514,213515,213520]
+        checkHistoryEventsFilter: [213254,213255,213256,213257]
+
     kairosdb:
         enabled: true
         kairosdbs:
