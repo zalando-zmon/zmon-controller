@@ -1,7 +1,7 @@
 CREATE OR REPLACE FUNCTION create_or_update_grafana_dashboard(id text, title text, dashboard text, user_name text, version text) RETURNS void AS
 $$
 BEGIN
-  RAISE WARNING 'dashboard: % title: %', dashboard, title;
+  -- RAISE WARNING 'dashboard: % title: %', dashboard, title;
 
   BEGIN
 
