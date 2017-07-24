@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.zalando.zmon.config.AppdynamicsProperties;
 import org.zalando.zmon.config.ControllerProperties;
 import org.zalando.zmon.config.KairosDBProperties;
 
@@ -14,6 +15,7 @@ import java.util.List;
 @Controller
 public class GrafanaUIController {
 
+    private AppdynamicsProperties appdynamicsProperties;
     private ControllerProperties controllerProperties;
 
     public static class KairosDBEntry {
@@ -37,8 +39,11 @@ public class GrafanaUIController {
     private final List<KairosDBEntry> kairosdbServices = new ArrayList<>();
 
     @Autowired
-    public GrafanaUIController(KairosDBProperties kairosdbProperties, ControllerProperties controllerProperties) {
+    public GrafanaUIController(KairosDBProperties kairosdbProperties,
+                               ControllerProperties controllerProperties,
+                               AppdynamicsProperties appdynamicsProperties) {
         this.controllerProperties = controllerProperties;
+        this.appdynamicsProperties = appdynamicsProperties;
 
         for (KairosDBProperties.KairosDBServiceConfig c : kairosdbProperties.getKairosdbs()) {
             kairosdbServices.add(new KairosDBEntry(c.getName(), "/rest/kairosdbs/" + c.getName()));
@@ -49,6 +54,9 @@ public class GrafanaUIController {
     public String grafana(Model model) {
         model.addAttribute(IndexController.STATIC_URL, controllerProperties.getStaticUrl());
         model.addAttribute(IndexController.KAIROSDB_SERVICES, kairosdbServices);
+        model.addAttribute(IndexController.APPDYNAMICS_CONFIG, appdynamicsProperties);
+        model.addAttribute(IndexController.APPDYNAMICS_ENABLED, controllerProperties.enableAppdynamics);
+
         return "grafana";
     }
 
@@ -56,6 +64,9 @@ public class GrafanaUIController {
     public String grafanaDeepLinks(Model model) {
         model.addAttribute(IndexController.STATIC_URL, controllerProperties.getStaticUrl());
         model.addAttribute(IndexController.KAIROSDB_SERVICES, kairosdbServices);
+        model.addAttribute(IndexController.APPDYNAMICS_CONFIG, appdynamicsProperties);
+        model.addAttribute(IndexController.APPDYNAMICS_ENABLED, controllerProperties.enableAppdynamics);
+
         return "grafana";
     }
 

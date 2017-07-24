@@ -32,6 +32,8 @@ public class IndexController {
     // parameters
     public static final String STATIC_URL = "staticUrl";
     public static final String KAIROSDB_SERVICES = "KairosDBServices";
+    public static final String APPDYNAMICS_ENABLED = "appdynamicsEnabled";
+    public static final String APPDYNAMICS_CONFIG = "appdynamicsConfig";
     private static final String HAS_SCHEDULE_DOWNTIME_PERMISSION = "hasScheduleDowntimePermission";
     private static final String HAS_DELETE_DOWNTIME_PERMISSION = "hasDeleteDowntimePermission";
     private static final String HAS_TRIAL_RUN_PERMISSION = "hasTrialRunPermission";
@@ -83,8 +85,8 @@ public class IndexController {
         model.addAttribute("cloudCheckId", cloudCheckId);
         model.addAttribute("firebaseConfig", firebaseProperties);
         model.addAttribute("firebaseEnabled", controllerProperties.enableFirebase);
-        model.addAttribute("appdynamicsConfig", appdynamicsProperties);
-        model.addAttribute("appdynamicsEnabled", controllerProperties.enableAppdynamics);
+        model.addAttribute(APPDYNAMICS_CONFIG, appdynamicsProperties);
+        model.addAttribute(APPDYNAMICS_ENABLED, controllerProperties.enableAppdynamics);
 
         return "index";
     }
