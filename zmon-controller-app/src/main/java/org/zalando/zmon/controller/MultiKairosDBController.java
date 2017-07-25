@@ -60,7 +60,7 @@ public class MultiKairosDBController extends AbstractZMonController {
 
         for (KairosDBProperties.KairosDBServiceConfig c : kairosDBProperties.getKairosdbs()) {
             kairosdbServices.put(c.getName(), c);
-            log.info("Registering: name={} url={} oauth={}", c.getName(), c.getUrl(), c.isOauth2());
+            log.info("Registering: name={} url={} oauth={} timewindow={}", c.getName(), c.getUrl(), c.isOauth2(), c.getMaxWindowLength());
         }
     }
 
