@@ -75,8 +75,13 @@ public class MultiKairosDBController extends AbstractZMonController {
             return null;
         }
 
+        KairosDBProperties.KairosDBServiceConfig kairosProperties = kairosdbServices.get(kairosDB);
+
+
         final String checkId = node.get("metrics").get(0).get("name").textValue().replace("zmon.check.", "");
         Timer.Context timer = metricRegistry.timer("kairosdb.check.query." + checkId).time();
+
+        final int queryWindow = kairosProperties.getMaxWindowLength();
 
         // align all queries to full minutes
         if (node instanceof ObjectNode) {
@@ -86,6 +91,13 @@ public class MultiKairosDBController extends AbstractZMonController {
                 long start = q.get("start_absolute").asLong();
                 start = start - (start % 60000);
                 q.put("start_absolute", start);
+            }
+            else if (q.has("start_relative")) {
+                if(queryWindow != 0) {
+                    ObjectNode r = (ObjectNode)q.get("start_relative");
+                    r.put("value", queryWindow);
+                    r.put("unit", "minutes");
+                }
             }
         }
 

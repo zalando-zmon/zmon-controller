@@ -22,6 +22,7 @@ public class KairosDBProperties {
         private String name;
         private String url;
         private boolean oauth2=false;
+        private int maxWindowLength = 0;
 
         public KairosDBServiceConfig() {
         }
@@ -48,6 +49,14 @@ public class KairosDBProperties {
 
         public void setOauth2(boolean oauth2) {
             this.oauth2 = oauth2;
+        }
+
+        public int getMaxWindowLength() {
+            return maxWindowLength;
+        }
+
+        public void setMaxWindowLength(int maxWindowLength) {
+            this.maxWindowLength = maxWindowLength;
         }
     }
 
