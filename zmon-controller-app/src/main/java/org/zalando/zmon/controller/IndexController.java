@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.zalando.zmon.config.ControllerProperties;
 import org.zalando.zmon.config.FirebaseProperties;
 import org.zalando.zmon.config.AppdynamicsProperties;
+import org.zalando.zmon.config.GoogleanalyticsProperties;
 import org.zalando.zmon.config.ManifestJsonConfig;
 import org.zalando.zmon.security.permission.DefaultZMonPermissionService;
 
@@ -34,6 +35,8 @@ public class IndexController {
     public static final String KAIROSDB_SERVICES = "KairosDBServices";
     public static final String APPDYNAMICS_ENABLED = "appdynamicsEnabled";
     public static final String APPDYNAMICS_CONFIG = "appdynamicsConfig";
+    public static final String GOOGLEANALYTICS_ENABLED = "googleanalyticsEnabled";
+    public static final String GOOGLEANALYTICS_CONFIG = "googleanalyticsConfig";
     private static final String HAS_SCHEDULE_DOWNTIME_PERMISSION = "hasScheduleDowntimePermission";
     private static final String HAS_DELETE_DOWNTIME_PERMISSION = "hasDeleteDowntimePermission";
     private static final String HAS_TRIAL_RUN_PERMISSION = "hasTrialRunPermission";
@@ -57,6 +60,9 @@ public class IndexController {
 
     @Autowired
     private AppdynamicsProperties appdynamicsProperties;
+
+    @Autowired
+    private GoogleanalyticsProperties googleanalyticsProperties;
 
     @Value("${zmon.cloud.checkid}")
     private int cloudCheckId;
@@ -87,6 +93,8 @@ public class IndexController {
         model.addAttribute("firebaseEnabled", controllerProperties.enableFirebase);
         model.addAttribute(APPDYNAMICS_CONFIG, appdynamicsProperties);
         model.addAttribute(APPDYNAMICS_ENABLED, controllerProperties.enableAppdynamics);
+        model.addAttribute(GOOGLEANALYTICS_CONFIG, googleanalyticsProperties);
+        model.addAttribute(GOOGLEANALYTICS_ENABLED, controllerProperties.enableAppdynamics);
 
         return "index";
     }

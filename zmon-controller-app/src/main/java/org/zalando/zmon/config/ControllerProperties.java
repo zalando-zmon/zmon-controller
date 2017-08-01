@@ -28,6 +28,8 @@ public class ControllerProperties {
 
     public boolean enableAppdynamics = false;
 
+    public boolean enableGoogleanalytics = false;
+
     public List<String> workerQueueKeys = Arrays.asList("zmon:queue:default");
 
     public List<String> getWorkerQueueKeys() {
@@ -48,6 +50,14 @@ public class ControllerProperties {
 
     public void setEnableAppdynamics(boolean enableAppdynamics) {
         this.enableAppdynamics = enableAppdynamics;
+    }
+
+    public boolean isEnableGoogleanalytics() {
+        return enableGoogleanalytics;
+    }
+
+    public void setEnableGoogleanalytics(boolean enableGoogleanalytics) {
+        this.enableGoogleanalytics = enableGoogleanalytics;
     }
 
     public void setWorkerQueueKeys(List<String> workerQueueKeys) {
