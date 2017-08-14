@@ -23,9 +23,10 @@
 
         <dependency>
             <groupId>org.zalando.stups</groupId>
-            <artifactId>spring-boot-zalando-stups-tokens</artifactId>
-            <version>0.9.11.M2</version>
+            <artifactId>tokens-spring-boot-starter</artifactId>
+            <version>0.11.0-beta-3</version>
         </dependency>
+
 
         <dependency>
             <groupId>${project.groupId}</groupId>
