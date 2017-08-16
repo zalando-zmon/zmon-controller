@@ -21,9 +21,6 @@ import org.zalando.zmon.security.AuthorityService;
 @Configuration
 @EnableSocial
 public class ZauthSocialConfigurer extends AbstractZAuthSocialConfigurer {
-    private static final String AUTHORIZE_URL = "https://auth.zalando.com/oauth2/authorize";
-    private static final String ACCESS_TOKEN_URL = "https://auth.zalando.com/oauth2/access_token?realm=/employees";
-
     @Autowired
     private ZmonOAuth2Properties zmonOAuth2Properties;
 
