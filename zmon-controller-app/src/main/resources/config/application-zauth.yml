@@ -4,6 +4,10 @@ zmon:
   oauth2:
     sso:
       credentials-directory-path: ${CREDENTIALS_DIR}
+      token-name: ${CREDENTIALS_TOKEN_NAME}
+      authorize-url: ${SSO_AUTHORIZE_URL}
+      access-token-url: ${SSO_ACCESS_TOKEN_URL}
+      platform-enabled: ${CREDENTIALS_PLATFORM_ENABLED}
 
 tokens:
   enableMock: false

@@ -8,9 +8,9 @@ import org.springframework.social.connect.ConnectionFactoryLocator;
 import org.springframework.social.connect.UsersConnectionRepository;
 import org.springframework.social.connect.mem.InMemoryUsersConnectionRepository;
 import org.springframework.social.oauth2.ClientCredentialsSupplier;
+import org.springframework.social.oauth2.JsonCredentialFileReader;
+import org.springframework.social.oauth2.PlatformCredentialsetFileReader;
 import org.springframework.social.zauth.config.AbstractZAuthSocialConfigurer;
-import org.zalando.stups.tokens.ClientCredentialsProvider;
-import org.zalando.stups.tokens.JsonFileBackedClientCredentialsProvider;
 import org.zalando.zauth.zmon.service.ZauthAccountConnectionSignupService;
 import org.zalando.zmon.config.ZmonOAuth2Properties;
 import org.zalando.zmon.security.AuthorityService;
@@ -21,7 +21,6 @@ import org.zalando.zmon.security.AuthorityService;
 @Configuration
 @EnableSocial
 public class ZauthSocialConfigurer extends AbstractZAuthSocialConfigurer {
-
     @Autowired
     private ZmonOAuth2Properties zmonOAuth2Properties;
 
@@ -41,12 +40,29 @@ public class ZauthSocialConfigurer extends AbstractZAuthSocialConfigurer {
         return repository;
     }
 
-    protected ClientCredentialsProvider getClientCredentialsProvider() {
-        return new JsonFileBackedClientCredentialsProvider();
+    @Override
+    protected ClientCredentialsSupplier getClientCredentialsSupplier() {
+
+        if (zmonOAuth2Properties.isPlatformEnabled()) {
+            return new PlatformCredentialsetFileReader(
+                    zmonOAuth2Properties.getCredentialsDirectoryPath(),
+                    zmonOAuth2Properties.getPlatformTokenName()
+            );
+        }
+
+        return new JsonCredentialFileReader(
+                zmonOAuth2Properties.getCredentialsDirectoryPath()
+        );
+    }
+
+
+    @Override
+    protected String getAuthorizationEndpoint() {
+        return zmonOAuth2Properties.getAuthorizeUrl();
     }
 
     @Override
-    protected ClientCredentialsSupplier getClientCredentialsSupplier() {
-        return new CredentialFileReader(zmonOAuth2Properties.getCredentialsDirectoryPath());
+    protected String getTokenEndpoint() {
+        return zmonOAuth2Properties.getAccessTokenUrl();
     }
 }
