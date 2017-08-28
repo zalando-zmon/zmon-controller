@@ -114,6 +114,7 @@ public class CheckDefinitionsApi extends AbstractZMonController {
         cImport.setTechnicalDetails(check.getTechnicalDetails());
         cImport.setPotentialAnalysis(check.getPotentialAnalysis());
         cImport.setPotentialImpact(check.getPotentialImpact());
+        cImport.setPotentialSolution(check.getPotentialSolution());
 
         return cImport;
     }
