@@ -15,6 +15,8 @@ import org.zalando.zauth.zmon.service.ZauthAccountConnectionSignupService;
 import org.zalando.zmon.config.ZmonOAuth2Properties;
 import org.zalando.zmon.security.AuthorityService;
 
+import java.util.Map;
+
 /**
  * @author jbellmann
  */
@@ -64,5 +66,10 @@ public class ZauthSocialConfigurer extends AbstractZAuthSocialConfigurer {
     @Override
     protected String getTokenEndpoint() {
         return zmonOAuth2Properties.getAccessTokenUrl();
+    }
+
+    @Override
+    protected Map<String, String> getCustomParameters() {
+        return zmonOAuth2Properties.getAdditionalParams();
     }
 }

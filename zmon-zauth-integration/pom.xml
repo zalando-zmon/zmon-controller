@@ -21,7 +21,7 @@
         </dependency>
         <dependency>
             <groupId>org.zalando.stups</groupId>
-            <version>1.0.12</version>
+            <version>1.0.19</version>
             <artifactId>stups-spring-oauth2-client</artifactId>
         </dependency>
         <dependency>
