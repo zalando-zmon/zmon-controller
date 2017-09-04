@@ -22,13 +22,14 @@ public class ZmonApplication {
 	@Bean
 	public io.opentracing.Tracer jaegerTracer() {
 
-		io.opentracing.Tracer tracer = new Configuration("zmon-controller", new Configuration.SamplerConfiguration(ProbabilisticSampler.TYPE, 1),
-				new Configuration.ReporterConfiguration(true, "compose_localhost_1", 5775, 100, 100))
-				.getTracer();
+		Configuration config = Configuration.fromEnv();
+
+		io.opentracing.Tracer tracer = config.getTracer();
 
     	/*return new Configuration("zmon-controller", new Configuration.SamplerConfiguration(ProbabilisticSampler.TYPE, 1),
         	new Configuration.ReporterConfiguration(true, "compose_localhost_1", 5775, 100, 100))
         	.getTracer();*/
+
     	GlobalTracer.register(tracer);
 
     	return tracer;
