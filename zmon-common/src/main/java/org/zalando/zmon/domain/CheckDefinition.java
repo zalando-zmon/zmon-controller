@@ -202,6 +202,10 @@ public class CheckDefinition implements StatusDiff {
         this.lastModifiedBy = lastModifiedBy;
     }
 
+    public boolean isDeleted() {
+        return getStatus() == DefinitionStatus.DELETED;
+    }
+
     @Override
     public String toString() {
         final StringBuilder builder = new StringBuilder();

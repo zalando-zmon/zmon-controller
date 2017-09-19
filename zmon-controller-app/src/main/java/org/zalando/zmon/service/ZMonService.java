@@ -47,7 +47,7 @@ public interface ZMonService {
 
     void deleteDetachedCheckDefinitions();
 
-    List<Integer> deleteUnusedCheckDef(int id, Collection<String> teams);
+    List<Integer> deleteUnusedCheckDef(int id);
 
     JsonNode getEntityProperties();
 
@@ -60,4 +60,13 @@ public interface ZMonService {
     EntityFilterResponse getEntitiesMatchingFilters(EntityFilterRequest request);
 
     Date getMaxCheckDefinitionLastModified();
+//
+//
+//    // deleteUnusedCheckDefAdmin deletes unused checks without permission check.
+//    // It is assumed that this method is called for admin user
+//    List<Integer> deleteUnusedCheckDefAdmin(int id);
+//
+//    // deleteCheckDefinitionAdmin deletes unused checks without permission check.
+//    // It is assumed that this method is called for admin user
+//    void deleteCheckDefinitionAdmin(String userName, String name);
 }

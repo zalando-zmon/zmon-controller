@@ -124,8 +124,9 @@ public class CheckDefinitionsApi extends AbstractZMonController {
     @ResponseBody
     public ResponseEntity<String> deleteUnusedCheck(@PathVariable(value = "id") int id) throws ZMonException {
         LOG.info("Deleting unused check id={} user={} teams={}", id, authorityService.getUserName(), authorityService.getTeams());
-
-        List<Integer> ids = zMonService.deleteUnusedCheckDef(id, authorityService.getTeams());
+        authorityService.verifyDeleteUnusedCheckDefinitionPermission(id);
+        // TODO: check if a user has permission here. Like it's done for alerts
+        List<Integer> ids = zMonService.deleteUnusedCheckDef(id);
         if (ids.size() == 1) {
             return new ResponseEntity<>("Deleted", HttpStatus.OK);
         }
