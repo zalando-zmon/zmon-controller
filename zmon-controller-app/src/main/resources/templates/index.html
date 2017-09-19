@@ -118,6 +118,8 @@
         })(window,document,'script','//eum.instana.io/eum.min.js','ineum');
         ineum('apiKey', instanaConfig.apiKey);
         ineum('traceId', '<%= request.getAttribute("X-INSTANA-T") %>' );
+        // set the name of a page on which this load/errors/calls happened
+        ineum('page', 'ZMON-Landing-Page');
     </script>
 
     <!-- Firebase -->
