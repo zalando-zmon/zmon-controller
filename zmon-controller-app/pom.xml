@@ -249,6 +249,12 @@
             <version>0.4.0</version>
             <scope>test</scope>
         </dependency>
+        <!--Does automatic configuration of OpenTracing tracer. NoopTracer is by default-->
+        <dependency>
+            <groupId>io.opentracing.contrib</groupId>
+            <artifactId>opentracing-spring-web-autoconfigure</artifactId>
+            <version>0.0.10</version>
+        </dependency>
     </dependencies>
 
     <build>
