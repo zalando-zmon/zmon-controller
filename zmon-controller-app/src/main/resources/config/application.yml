@@ -85,3 +85,8 @@ flyway:
   schemas:
     - "zzm_data"
     - "zzm_api"
+opentracing:
+  spring:
+    cloud:
+      websocket:
+        enabled: false
