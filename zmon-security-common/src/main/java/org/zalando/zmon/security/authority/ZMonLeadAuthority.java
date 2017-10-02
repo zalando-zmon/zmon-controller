@@ -1,12 +1,11 @@
 package org.zalando.zmon.security.authority;
 
-import java.util.Set;
-
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableSet;
 import org.springframework.security.core.GrantedAuthority;
 import org.zalando.zmon.domain.AlertDefinition;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableSet;
+import java.util.Set;
 
 public class ZMonLeadAuthority extends ZMonUserAuthority {
 
