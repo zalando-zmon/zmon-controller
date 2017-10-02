@@ -1,12 +1,10 @@
 package org.zalando.zmon.security.permission;
 
-import static org.zalando.zmon.security.permission.AuthorityFunctions.TRIAL_RUN_PERMISSION_FUNCTION;
-
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-
+import com.google.common.base.Function;
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableSet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -14,19 +12,17 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.zalando.zmon.domain.*;
 import org.zalando.zmon.exception.ZMonAuthorizationException;
-import org.zalando.zmon.persistence.AlertDefinitionSProcService;
-import org.zalando.zmon.persistence.CheckDefinitionSProcService;
-import org.zalando.zmon.persistence.DashboardSProcService;
-import org.zalando.zmon.security.authority.ZMonAdminAuthority;
-import org.zalando.zmon.security.authority.ZMonAuthority;
-import org.zalando.zmon.security.authority.ZMonUserAuthority;
+import org.zalando.zmon.persistence.*;
+import org.zalando.zmon.security.authority.*;
 
-import com.google.common.base.Function;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableSet;
+import java.util.*;
+
+import static org.zalando.zmon.security.permission.AuthorityFunctions.TRIAL_RUN_PERMISSION_FUNCTION;
 
 @Service("defaultZMONPermissionService")
 public class DefaultZMonPermissionService {
+
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultZMonPermissionService.class);
 
     private static final String ANONYMOUS_USER = "anonymousUser";
 
@@ -143,17 +139,22 @@ public class DefaultZMonPermissionService {
         final List<CheckDefinition> definitions = checkDefinitionSProc.getCheckDefinitions(null,
                 Collections.singletonList(checkDefinitionId));
 
-        if (definitions == null
-                || definitions.size() != 1
-                || definitions.get(0).isDeleted()
-                || !hasDeleteUnusedCheckDefinitionPermission(definitions.get(0))) {
+        String username = getUserName();
 
-            // TODO: log exact reason why the definition could not be deleted
-            // so in case of any problem we quickly get to the root cause
-
-            throw new ZMonAuthorizationException(getUserName(), getUserAuthorities(),
-                    "You are not allowed to delete this check definition", checkDefinitionId);
+        if (definitions == null) {
+            LOG.info("definition {} was not found for user {}", checkDefinitionId, username);
+        } else if (definitions.size() != 1) {
+            LOG.info("'{}' definitions were found for user {}", definitions.size(), username);
+        } else if (definitions.get(0).isDeleted()) {
+            LOG.info("definition {} is already deleted", checkDefinitionId);
+        } else if (!hasDeleteUnusedCheckDefinitionPermission(definitions.get(0))) {
+            LOG.info("user {} has not enough privileges to delete definition {}", username, checkDefinitionId);
+        } else {
+            return;
         }
+
+        throw new ZMonAuthorizationException(getUserName(), getUserAuthorities(),
+                "You are not allowed to delete this check definition", checkDefinitionId);
     }
 
     public void verifyEditAlertDefinitionPermission(final AlertDefinition alertDefinition) {
