@@ -1,4 +1,6 @@
-CREATE OR REPLACE FUNCTION delete_unused_check(IN id INT) RETURNS SETOF INT AS
+SET SEARCH_PATH TO zzm_api;
+
+CREATE OR REPLACE FUNCTION delete_unused_check_definition(IN id INT) RETURNS SETOF INT AS
 $$
 DELETE FROM zzm_data.check_definition
  WHERE cd_id = id
