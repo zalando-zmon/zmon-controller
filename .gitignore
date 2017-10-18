@@ -28,3 +28,6 @@ zmon-controller-ui/node_modules
 run-dev-firebase.sh
 client.json
 user.json
+
+scm-source.json
+deps/
