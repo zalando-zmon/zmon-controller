@@ -1,6 +1,6 @@
 SET SEARCH_PATH TO zzm_api;
 
-DROP FUNCTION delete_unused_check(INT);
+DROP FUNCTION zzm_data.delete_unused_check(IN id INT);
 
 CREATE OR REPLACE FUNCTION delete_unused_check_definition(IN id INT) RETURNS SETOF INT AS
 $$
