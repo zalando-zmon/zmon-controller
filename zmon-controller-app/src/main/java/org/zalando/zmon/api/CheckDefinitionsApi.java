@@ -1,10 +1,6 @@
 package org.zalando.zmon.api;
 
 import com.google.common.base.Preconditions;
-
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
-
 import com.google.common.collect.Lists;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,12 +17,11 @@ import org.zalando.zmon.persistence.CheckDefinitionImportResult;
 import org.zalando.zmon.security.permission.DefaultZMonPermissionService;
 import org.zalando.zmon.service.ZMonService;
 
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
-import java.util.TimeZone;
+import java.util.*;
 
 @Controller
 @RequestMapping("/api/v1/check-definitions")
@@ -124,8 +119,9 @@ public class CheckDefinitionsApi extends AbstractZMonController {
     @ResponseBody
     public ResponseEntity<String> deleteUnusedCheck(@PathVariable(value = "id") int id) throws ZMonException {
         LOG.info("Deleting unused check id={} user={} teams={}", id, authorityService.getUserName(), authorityService.getTeams());
+        authorityService.verifyDeleteUnusedCheckDefinitionPermission(id);
 
-        List<Integer> ids = zMonService.deleteUnusedCheckDef(id, authorityService.getTeams());
+        List<Integer> ids = zMonService.deleteUnusedCheckDef(id);
         if (ids.size() == 1) {
             return new ResponseEntity<>("Deleted", HttpStatus.OK);
         }

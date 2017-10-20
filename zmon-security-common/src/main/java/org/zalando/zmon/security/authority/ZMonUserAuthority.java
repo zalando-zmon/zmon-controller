@@ -3,10 +3,7 @@ package org.zalando.zmon.security.authority;
 import java.util.Set;
 
 import org.springframework.security.core.GrantedAuthority;
-import org.zalando.zmon.domain.AlertComment;
-import org.zalando.zmon.domain.AlertDefinition;
-import org.zalando.zmon.domain.Dashboard;
-import org.zalando.zmon.domain.DefinitionStatus;
+import org.zalando.zmon.domain.*;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSet;
@@ -134,6 +131,12 @@ public class ZMonUserAuthority extends AbstractZMonAuthority {
     @Override
     public boolean hasDeleteAlertDefinitionPermission(final AlertDefinition alertDefinition) {
         return isMemberOfTeam(alertDefinition.getTeam());
+    }
+
+
+    @Override
+    public boolean hasDeleteUnusedCheckDefinitionPermission(CheckDefinition checkDefinition) {
+        return isMemberOfTeam(checkDefinition.getOwningTeam());
     }
 
     @Override

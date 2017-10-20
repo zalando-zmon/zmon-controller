@@ -1,22 +1,12 @@
 package org.zalando.zmon.service;
 
-import java.util.*;
+import com.fasterxml.jackson.databind.JsonNode;
+import org.zalando.zmon.api.domain.*;
+import org.zalando.zmon.domain.*;
+import org.zalando.zmon.persistence.CheckDefinitionImportResult;
 
 import javax.annotation.Nullable;
-
-import org.zalando.zmon.api.domain.EntityFilterRequest;
-import org.zalando.zmon.api.domain.EntityFilterResponse;
-import org.zalando.zmon.domain.CheckDefinition;
-import org.zalando.zmon.domain.CheckDefinitionImport;
-import org.zalando.zmon.domain.CheckDefinitions;
-import org.zalando.zmon.domain.CheckDefinitionsDiff;
-import org.zalando.zmon.domain.CheckResults;
-import org.zalando.zmon.domain.DefinitionStatus;
-import org.zalando.zmon.domain.ExecutionStatus;
-import org.zalando.zmon.api.domain.CheckChartResult;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import org.zalando.zmon.persistence.CheckDefinitionImportResult;
+import java.util.*;
 
 // TODO split into multiple services
 public interface ZMonService {
@@ -47,7 +37,7 @@ public interface ZMonService {
 
     void deleteDetachedCheckDefinitions();
 
-    List<Integer> deleteUnusedCheckDef(int id, Collection<String> teams);
+    List<Integer> deleteUnusedCheckDef(int id);
 
     JsonNode getEntityProperties();
 

@@ -1,39 +1,36 @@
 package org.zalando.zmon.security.permission;
 
-import static org.zalando.zmon.security.permission.AuthorityFunctions.TRIAL_RUN_PERMISSION_FUNCTION;
-
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-
+import com.google.common.base.Function;
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableSet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import org.zalando.zmon.domain.AlertComment;
-import org.zalando.zmon.domain.AlertDefinition;
-import org.zalando.zmon.domain.Dashboard;
-import org.zalando.zmon.domain.DefinitionStatus;
+import org.zalando.zmon.domain.*;
 import org.zalando.zmon.exception.ZMonAuthorizationException;
-import org.zalando.zmon.persistence.AlertDefinitionSProcService;
-import org.zalando.zmon.persistence.DashboardSProcService;
-import org.zalando.zmon.security.authority.ZMonAdminAuthority;
-import org.zalando.zmon.security.authority.ZMonAuthority;
-import org.zalando.zmon.security.authority.ZMonUserAuthority;
+import org.zalando.zmon.persistence.*;
+import org.zalando.zmon.security.authority.*;
 
-import com.google.common.base.Function;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableSet;
+import java.util.*;
+
+import static org.zalando.zmon.security.permission.AuthorityFunctions.TRIAL_RUN_PERMISSION_FUNCTION;
 
 @Service("defaultZMONPermissionService")
 public class DefaultZMonPermissionService {
+
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultZMonPermissionService.class);
 
     private static final String ANONYMOUS_USER = "anonymousUser";
 
     @Autowired
     private AlertDefinitionSProcService alertDefinitionSProc;
+
+    @Autowired
+    private CheckDefinitionSProcService checkDefinitionSProc;
 
     @Autowired
     private DashboardSProcService dashboardSProc;
@@ -76,7 +73,7 @@ public class DefaultZMonPermissionService {
     public void verifyTrialRunPermission() {
         if (!hasTrialRunPermission()) {
             throw new ZMonAuthorizationException(getUserName(), getUserAuthorities(),
-                "You are not allowed to use 'trial run' functionality");
+                    "You are not allowed to use 'trial run' functionality");
         }
     }
 
@@ -87,7 +84,7 @@ public class DefaultZMonPermissionService {
     public void verifyAddCommentPermission() {
         if (!hasAddCommentPermission()) {
             throw new ZMonAuthorizationException(getUserName(), getUserAuthorities(),
-                "You are not allowed to add comments");
+                    "You are not allowed to add comments");
         }
     }
 
@@ -102,7 +99,7 @@ public class DefaultZMonPermissionService {
 
         if (comment == null || !hasDeleteCommentPermission(comment)) {
             throw new ZMonAuthorizationException(getUserName(), getUserAuthorities(),
-                "You are not allowed to delete this comment", commentId);
+                    "You are not allowed to delete this comment", commentId);
         }
     }
 
@@ -122,14 +119,42 @@ public class DefaultZMonPermissionService {
         return hasAnyAuthority(new HasDeleteAlertDefinitionPermission(alertDefinition));
     }
 
+    public boolean hasDeleteUnusedCheckDefinitionPermission(final CheckDefinition checkDefinition) {
+        Preconditions.checkNotNull(checkDefinition, "checkDefinition must not be null");
+
+        return hasAnyAuthority(new HasDeleteUnusedCheckDefinitionPermission(checkDefinition));
+    }
+
     public void verifyDeleteAlertDefinitionPermission(final int alertDefinitionId) {
         final List<AlertDefinition> definitions = alertDefinitionSProc.getAlertDefinitions(null,
                 Collections.singletonList(alertDefinitionId));
 
         if (definitions == null || definitions.size() != 1 || !hasDeleteAlertDefinitionPermission(definitions.get(0))) {
             throw new ZMonAuthorizationException(getUserName(), getUserAuthorities(),
-                "You are not allowed to delete this alert definition", alertDefinitionId);
+                    "You are not allowed to delete this alert definition", alertDefinitionId);
         }
+    }
+
+    public void verifyDeleteUnusedCheckDefinitionPermission(final int checkDefinitionId) {
+        final List<CheckDefinition> definitions = checkDefinitionSProc.getCheckDefinitions(null,
+                Collections.singletonList(checkDefinitionId));
+
+        String username = getUserName();
+
+        if (definitions == null) {
+            LOG.info("definition {} was not found for user {}", checkDefinitionId, username);
+        } else if (definitions.size() != 1) {
+            LOG.info("'{}' definitions were found for user {}", definitions.size(), username);
+        } else if (definitions.get(0).isDeleted()) {
+            LOG.info("definition {} is already deleted", checkDefinitionId);
+        } else if (!hasDeleteUnusedCheckDefinitionPermission(definitions.get(0))) {
+            LOG.info("user {} has not enough privileges to delete definition {}", username, checkDefinitionId);
+        } else {
+            return;
+        }
+
+        throw new ZMonAuthorizationException(getUserName(), getUserAuthorities(),
+                "You are not allowed to delete this check definition", checkDefinitionId);
     }
 
     public void verifyEditAlertDefinitionPermission(final AlertDefinition alertDefinition) {
@@ -149,7 +174,7 @@ public class DefaultZMonPermissionService {
 
         if (!isAllowed) {
             throw new ZMonAuthorizationException(getUserName(), getUserAuthorities(),
-                "Edit denied. Please check documentation for more details: /docs/permissions.html", alertDefinition);
+                    "Edit denied. Please check documentation for more details: /docs/permissions.html", alertDefinition);
         }
     }
 
@@ -160,7 +185,7 @@ public class DefaultZMonPermissionService {
     public void verifyScheduleDowntimePermission() {
         if (!hasScheduleDowntimePermission()) {
             throw new ZMonAuthorizationException(getUserName(), getUserAuthorities(),
-                "You are not allowed to schedule downtimes");
+                    "You are not allowed to schedule downtimes");
         }
     }
 
@@ -171,7 +196,7 @@ public class DefaultZMonPermissionService {
     public void verifyDeleteDowntimePermission() {
         if (!hasDeleteDowntimePermission()) {
             throw new ZMonAuthorizationException(getUserName(), getUserAuthorities(),
-                "You are not allowed to delete downtimes");
+                    "You are not allowed to delete downtimes");
         }
     }
 
@@ -197,15 +222,15 @@ public class DefaultZMonPermissionService {
         boolean isAllowed = hasAddDashboardPermission();
         if (isAllowed && dashboard.getId() != null) {
             final List<Dashboard> dashboards = dashboardSProc.getDashboards(Collections.singletonList(
-                        dashboard.getId()));
+                    dashboard.getId()));
             isAllowed = dashboards.size() == 1 && hasEditDashboardPermission(dashboards.get(0))
                     && (hasDashboardEditModePermission(dashboards.get(0))
-                        || dashboards.get(0).getEditOption() == dashboard.getEditOption());
+                    || dashboards.get(0).getEditOption() == dashboard.getEditOption());
         }
 
         if (!isAllowed) {
             throw new ZMonAuthorizationException(getUserName(), getUserAuthorities(),
-                "Your are not allowed to create/edit this dashboard", dashboard);
+                    "Your are not allowed to create/edit this dashboard", dashboard);
         }
     }
 
@@ -216,7 +241,7 @@ public class DefaultZMonPermissionService {
     public void verifyInstantaneousAlertEvaluationPermission() {
         if (!hasInstantaneousAlertEvaluationPermission()) {
             throw new ZMonAuthorizationException(getUserName(), getUserAuthorities(),
-                "Your are not allowed to force alert evaluation");
+                    "Your are not allowed to force alert evaluation");
         }
     }
 

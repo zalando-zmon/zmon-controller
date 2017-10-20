@@ -1,13 +1,10 @@
 package org.zalando.zmon.security.authority;
 
-import java.util.Set;
-
-import org.springframework.security.core.GrantedAuthority;
-import org.zalando.zmon.domain.AlertComment;
-import org.zalando.zmon.domain.AlertDefinition;
-import org.zalando.zmon.domain.Dashboard;
-
 import com.google.common.collect.ImmutableSet;
+import org.springframework.security.core.GrantedAuthority;
+import org.zalando.zmon.domain.*;
+
+import java.util.Set;
 
 public class ZMonViewerAuthority extends AbstractZMonAuthority {
 
@@ -87,6 +84,11 @@ public class ZMonViewerAuthority extends AbstractZMonAuthority {
 
     @Override
     public boolean hasDeleteAlertDefinitionPermission(final AlertDefinition alertDefinition) {
+        return false;
+    }
+
+    @Override
+    public boolean hasDeleteUnusedCheckDefinitionPermission(final CheckDefinition checkDefinition) {
         return false;
     }
 

@@ -5,6 +5,7 @@ import java.util.Set;
 import org.springframework.security.core.GrantedAuthority;
 import org.zalando.zmon.domain.AlertComment;
 import org.zalando.zmon.domain.AlertDefinition;
+import org.zalando.zmon.domain.CheckDefinition;
 import org.zalando.zmon.domain.Dashboard;
 
 public interface ZMonAuthority extends GrantedAuthority {
@@ -37,6 +38,8 @@ public interface ZMonAuthority extends GrantedAuthority {
             AlertDefinition newAlertDefinitionDefinition);
 
     boolean hasDeleteAlertDefinitionPermission(AlertDefinition alertDefinition);
+
+    boolean hasDeleteUnusedCheckDefinitionPermission(CheckDefinition checkDefinition);
 
     boolean hasInstantaneousAlertEvaluationPermission();
 

@@ -45,7 +45,7 @@ public interface CheckDefinitionSProcService {
             @SProcParam Date from, @SProcParam Date to);
 
     @SProcCall
-    List<Integer> deleteUnusedCheckDefinition(@SProcParam int id, @SProcParam List<String> teams);
+    List<Integer> deleteUnusedCheckDefinition(@SProcParam int id);
 
     @SProcCall
     Date getCheckLastModifiedMax();

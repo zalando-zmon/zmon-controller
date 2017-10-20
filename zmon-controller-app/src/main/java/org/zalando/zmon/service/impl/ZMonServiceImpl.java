@@ -499,8 +499,8 @@ public class ZMonServiceImpl implements ZMonService {
     }
 
     @Override
-    public List<Integer> deleteUnusedCheckDef(int id, Collection<String> teams) {
-        return checkDefinitionSProc.deleteUnusedCheckDefinition(id, Lists.newArrayList(teams));
+    public List<Integer> deleteUnusedCheckDef(int id) {
+        return checkDefinitionSProc.deleteUnusedCheckDefinition(id);
     }
 
     @Autowired
