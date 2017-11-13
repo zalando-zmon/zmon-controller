@@ -9,7 +9,8 @@ System.register([], function(exports_1) {
                 function OpenTsConfigCtrl($scope) {
                     this.tsdbVersions = [
                         { name: '<=2.1', value: 1 },
-                        { name: '>=2.2', value: 2 },
+                        { name: '==2.2', value: 2 },
+                        { name: '==2.3', value: 3 },
                     ];
                     this.tsdbResolutions = [
                         { name: 'second', value: 1 },

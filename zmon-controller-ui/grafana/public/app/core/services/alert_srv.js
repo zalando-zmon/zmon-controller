@@ -38,9 +38,6 @@ System.register(['angular', 'lodash', 'app/core/core_module', 'app/core/app_even
                         _this.set(alert[0], alert[1], 'success', 3000);
                     }, this.$rootScope);
                     app_events_1.default.on('confirm-modal', this.showConfirmModal.bind(this));
-                    this.$rootScope.onAppEvent('confirm-modal', function (e, data) {
-                        _this.showConfirmModal(data);
-                    }, this.$rootScope);
                 };
                 AlertSrv.prototype.set = function (title, text, severity, timeout) {
                     var _this = this;
@@ -77,6 +74,8 @@ System.register(['angular', 'lodash', 'app/core/core_module', 'app/core/app_even
                     scope.text = payload.text;
                     scope.text2 = payload.text2;
                     scope.onConfirm = payload.onConfirm;
+                    scope.onAltAction = payload.onAltAction;
+                    scope.altActionText = payload.altActionText;
                     scope.icon = payload.icon || "fa-check";
                     scope.yesText = payload.yesText || "Yes";
                     scope.noText = payload.noText || "Cancel";

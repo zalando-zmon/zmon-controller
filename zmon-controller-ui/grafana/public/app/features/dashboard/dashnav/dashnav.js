@@ -25,11 +25,10 @@ System.register(['lodash', 'moment', 'angular'], function(exports_1) {
         execute: function() {
             DashNavCtrl = (function () {
                 /** @ngInject */
-                function DashNavCtrl($scope, $rootScope, alertSrv, $location, playlistSrv, backendSrv, $timeout) {
+                function DashNavCtrl($scope, $rootScope, alertSrv, $location, playlistSrv, backendSrv, $timeout, datasourceSrv) {
                     $scope.init = function () {
                         $scope.onAppEvent('save-dashboard', $scope.saveDashboard);
                         $scope.onAppEvent('delete-dashboard', $scope.deleteDashboard);
-                        $scope.onAppEvent('export-dashboard', $scope.snapshot);
                         $scope.onAppEvent('quick-snapshot', $scope.quickSnapshot);
                         $scope.showSettingsMenu = $scope.dashboardMeta.canEdit || $scope.contextSrv.isEditor;
                         if ($scope.dashboardMeta.isSnapshot) {
@@ -128,6 +127,23 @@ System.register(['lodash', 'moment', 'angular'], function(exports_1) {
                                 }
                             });
                         }
+                        if (err.data && err.data.status === "plugin-dashboard") {
+                            err.isHandled = true;
+                            $scope.appEvent('confirm-modal', {
+                                title: 'Plugin Dashboard',
+                                text: err.data.message,
+                                text2: 'Your changes will be lost when you update the plugin. Use Save As to create custom version.',
+                                yesText: "Overwrite",
+                                icon: "fa-warning",
+                                altActionText: "Save As",
+                                onAltAction: function () {
+                                    $scope.saveDashboardAs();
+                                },
+                                onConfirm: function () {
+                                    $scope.saveDashboard({ overwrite: true });
+                                }
+                            });
+                        }
                     };
                     $scope.deleteDashboard = function () {
                         $scope.appEvent('confirm-modal', {
@@ -158,17 +174,16 @@ System.register(['lodash', 'moment', 'angular'], function(exports_1) {
                             modalClass: 'modal--narrow'
                         });
                     };
-                    $scope.exportDashboard = function () {
+                    $scope.viewJson = function () {
                         var clone = $scope.dashboard.getSaveModelClone();
-                        var blob = new Blob([angular_1.default.toJson(clone, true)], { type: "application/json;charset=utf-8" });
-                        var wnd = window;
-                        wnd.saveAs(blob, $scope.dashboard.title + '-' + new Date().getTime() + '.json');
+                        var html = angular_1.default.toJson(clone, true);
+                        var uri = "data:application/json," + encodeURIComponent(html);
+                        var newWindow = window.open(uri);
                     };
                     $scope.snapshot = function () {
                         $scope.dashboard.snapshot = true;
                         $rootScope.$broadcast('refresh');
                         $timeout(function () {
-                            $scope.exportDashboard();
                             $scope.dashboard.snapshot = false;
                             $scope.appEvent('dashboard-snapshot-cleanup');
                         }, 1000);

@@ -73,6 +73,26 @@ System.register(['../../../../../test/lib/common', '../../../../../test/specs/he
                         common_1.expect(ctx.data.valueFormated).to.be('OK');
                     });
                 });
+                singleStatScenario('When range to text mapping is specifiedfor first range', function (ctx) {
+                    ctx.setup(function () {
+                        ctx.datapoints = [[41, 50]];
+                        ctx.ctrl.panel.mappingType = 2;
+                        ctx.ctrl.panel.rangeMaps = [{ from: '10', to: '50', text: 'OK' }, { from: '51', to: '100', text: 'NOT OK' }];
+                    });
+                    common_1.it('Should replace value with text OK', function () {
+                        common_1.expect(ctx.data.valueFormated).to.be('OK');
+                    });
+                });
+                singleStatScenario('When range to text mapping is specified for other ranges', function (ctx) {
+                    ctx.setup(function () {
+                        ctx.datapoints = [[65, 75]];
+                        ctx.ctrl.panel.mappingType = 2;
+                        ctx.ctrl.panel.rangeMaps = [{ from: '10', to: '50', text: 'OK' }, { from: '51', to: '100', text: 'NOT OK' }];
+                    });
+                    common_1.it('Should replace value with text NOT OK', function () {
+                        common_1.expect(ctx.data.valueFormated).to.be('NOT OK');
+                    });
+                });
             });
         }
     }

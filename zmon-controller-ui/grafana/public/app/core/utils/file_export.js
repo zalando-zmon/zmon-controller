@@ -2,7 +2,7 @@
 System.register(['lodash'], function(exports_1) {
     var lodash_1;
     function exportSeriesListToCsv(seriesList) {
-        var text = 'Series;Time;Value\n';
+        var text = 'sep=;\nSeries;Time;Value\n';
         lodash_1.default.each(seriesList, function (series) {
             lodash_1.default.each(series.datapoints, function (dp) {
                 text += series.alias + ';' + new Date(dp[1]).toISOString() + ';' + dp[0] + '\n';
@@ -12,7 +12,7 @@ System.register(['lodash'], function(exports_1) {
     }
     exports_1("exportSeriesListToCsv", exportSeriesListToCsv);
     function exportSeriesListToCsvColumns(seriesList) {
-        var text = 'Time;';
+        var text = 'sep=;\nTime;';
         // add header
         lodash_1.default.each(seriesList, function (series) {
             text += series.alias + ';';

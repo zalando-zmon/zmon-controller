@@ -5,6 +5,7 @@ import config from 'app/core/config';
 import _ from 'lodash';
 import $ from 'jquery';
 import coreModule from '../../core_module';
+import appEvents from 'app/core/app_events';
 
 export class SearchCtrl {
   isOpen: boolean;
@@ -38,7 +39,7 @@ export class SearchCtrl {
     this.giveSearchFocus = 0;
     this.selectedIndex = -1;
     this.results = [];
-    this.query = { query: '', tag: [], starred: !!localStorage.getItem('zmon-starred') || false };
+    this.query = { query: '', tag: [], starred: false };
     this.currentSearchId = 0;
     this.ignoreClose = true;
 
@@ -139,7 +140,6 @@ export class SearchCtrl {
   showStarred() {
     this.query.starred = !this.query.starred;
     this.giveSearchFocus = this.giveSearchFocus + 1;
-    localStorage.setItem('zmon-starred', this.query.starred ? 'true' : '');
     this.search();
   };
 
@@ -149,9 +149,6 @@ export class SearchCtrl {
     this.searchDashboards();
   };
 
-  newDashboard() {
-    this.$location.url('dashboard/new');
-  };
 }
 
 export function searchDirective() {

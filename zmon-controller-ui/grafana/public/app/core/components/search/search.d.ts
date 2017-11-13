@@ -29,7 +29,6 @@ export declare class SearchCtrl {
     getTags(): any;
     showStarred(): void;
     search(): void;
-    newDashboard(): void;
 }
 export declare function searchDirective(): {
     restrict: string;

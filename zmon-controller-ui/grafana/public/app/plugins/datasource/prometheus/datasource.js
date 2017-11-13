@@ -3,7 +3,7 @@ System.register(['lodash', 'moment', 'app/core/utils/datemath', './metric_find_q
     var lodash_1, moment_1, dateMath, metric_find_query_1;
     var durationSplitRegexp;
     /** @ngInject */
-    function PrometheusDatasource(instanceSettings, $q, backendSrv, templateSrv) {
+    function PrometheusDatasource(instanceSettings, $q, backendSrv, templateSrv, timeSrv) {
         this.type = 'prometheus';
         this.editorSrc = 'app/features/prometheus/partials/query.editor.html';
         this.name = instanceSettings.name;
@@ -13,10 +13,11 @@ System.register(['lodash', 'moment', 'app/core/utils/datemath', './metric_find_q
         this.basicAuth = instanceSettings.basicAuth;
         this.withCredentials = instanceSettings.withCredentials;
         this.lastErrors = {};
-        this._request = function (method, url) {
+        this._request = function (method, url, requestId) {
             var options = {
                 url: this.url + url,
-                method: method
+                method: method,
+                requestId: requestId,
             };
             if (this.basicAuth || this.withCredentials) {
                 options.withCredentials = true;
@@ -31,7 +32,7 @@ System.register(['lodash', 'moment', 'app/core/utils/datemath', './metric_find_q
         function regexEscape(value) {
             return value.replace(/[\\^$*+?.()|[\]{}]/g, '\\\\$&');
         }
-        function interpolateQueryExpr(value, variable, defaultFormatFn) {
+        this.interpolateQueryExpr = function (value, variable, defaultFormatFn) {
             // if no multi or include all do not regexEscape
             if (!variable.multi && !variable.includeAll) {
                 return value;
@@ -41,10 +42,11 @@ System.register(['lodash', 'moment', 'app/core/utils/datemath', './metric_find_q
             }
             var escapedValues = lodash_1.default.map(value, regexEscape);
             return escapedValues.join('|');
-        }
-        ;
+        };
+        var HTTP_REQUEST_ABORTED = -1;
         // Called once per panel (graph)
         this.query = function (options) {
+            var self = this;
             var start = getPrometheusTime(options.range.from, false);
             var end = getPrometheusTime(options.range.to, true);
             var queries = [];
@@ -56,7 +58,8 @@ System.register(['lodash', 'moment', 'app/core/utils/datemath', './metric_find_q
                 }
                 activeTargets.push(target);
                 var query = {};
-                query.expr = templateSrv.replace(target.expr, options.scopedVars, interpolateQueryExpr);
+                query.expr = templateSrv.replace(target.expr, options.scopedVars, self.interpolateQueryExpr);
+                query.requestId = options.panelId + target.refId;
                 var interval = target.interval || options.interval;
                 var intervalFactor = target.intervalFactor || 1;
                 target.step = query.step = this.calculateInterval(interval, intervalFactor);
@@ -77,9 +80,7 @@ System.register(['lodash', 'moment', 'app/core/utils/datemath', './metric_find_q
             var allQueryPromise = lodash_1.default.map(queries, lodash_1.default.bind(function (query) {
                 return this.performTimeSeriesQuery(query, start, end);
             }, this));
-            var self = this;
-            return $q.all(allQueryPromise)
-                .then(function (allResponse) {
+            return $q.all(allQueryPromise).then(function (allResponse) {
                 var result = [];
                 lodash_1.default.each(allResponse, function (response, index) {
                     if (response.status === 'error') {
@@ -96,7 +97,7 @@ System.register(['lodash', 'moment', 'app/core/utils/datemath', './metric_find_q
         };
         this.performTimeSeriesQuery = function (query, start, end) {
             var url = '/api/v1/query_range?query=' + encodeURIComponent(query.expr) + '&start=' + start + '&end=' + end + '&step=' + query.step;
-            return this._request('GET', url);
+            return this._request('GET', url, query.requestId);
         };
         this.performSuggestQuery = function (query) {
             var url = '/api/v1/label/__name__/values';
@@ -112,12 +113,12 @@ System.register(['lodash', 'moment', 'app/core/utils/datemath', './metric_find_q
             }
             var interpolated;
             try {
-                interpolated = templateSrv.replace(query);
+                interpolated = templateSrv.replace(query, {}, this.interpolateQueryExpr);
             }
             catch (err) {
                 return $q.reject(err);
             }
-            var metricFindQuery = new metric_find_query_1.default(this, interpolated);
+            var metricFindQuery = new metric_find_query_1.default(this, interpolated, timeSrv);
             return metricFindQuery.process();
         };
         this.annotationQuery = function (options) {
@@ -131,7 +132,7 @@ System.register(['lodash', 'moment', 'app/core/utils/datemath', './metric_find_q
             }
             var interpolated;
             try {
-                interpolated = templateSrv.replace(expr, {}, interpolateQueryExpr);
+                interpolated = templateSrv.replace(expr, {}, this.interpolateQueryExpr);
             }
             catch (err) {
                 return $q.reject(err);
@@ -210,21 +211,14 @@ System.register(['lodash', 'moment', 'app/core/utils/datemath', './metric_find_q
             }
             return this.renderTemplate(options.legendFormat, labelData) || '{}';
         };
-        this.renderTemplate = function (format, data) {
-            var originalSettings = lodash_1.default.templateSettings;
-            lodash_1.default.templateSettings = {
-                interpolate: /\{\{(.+?)\}\}/g
-            };
-            var template = lodash_1.default.template(templateSrv.replace(format));
-            var result;
-            try {
-                result = template(data);
-            }
-            catch (e) {
-                result = null;
-            }
-            lodash_1.default.templateSettings = originalSettings;
-            return result;
+        this.renderTemplate = function (aliasPattern, aliasData) {
+            var aliasRegex = /\{\{\s*(.+?)\s*\}\}/g;
+            return aliasPattern.replace(aliasRegex, function (match, g1) {
+                if (aliasData[g1]) {
+                    return aliasData[g1];
+                }
+                return g1;
+            });
         };
         this.getOriginalMetricName = function (labelData) {
             var metricName = labelData.__name__ || '';

@@ -53,6 +53,18 @@ System.register(['test/lib/common', 'test/specs/helpers', "../datasource"], func
                         common_1.expect(requestOptions.url).to.be('/api/search/lookup');
                         common_1.expect(requestOptions.params.m).to.be('cpu{hostname=*}');
                     });
+                    common_1.it('tag_values(cpu, test) should generate lookup query', function () {
+                        ctx.ds.metricFindQuery('tag_values(cpu, hostname, env=$env)').then(function (data) { results = data; });
+                        ctx.$rootScope.$apply();
+                        common_1.expect(requestOptions.url).to.be('/api/search/lookup');
+                        common_1.expect(requestOptions.params.m).to.be('cpu{hostname=*,env=$env}');
+                    });
+                    common_1.it('tag_values(cpu, test) should generate lookup query', function () {
+                        ctx.ds.metricFindQuery('tag_values(cpu, hostname, env=$env, region=$region)').then(function (data) { results = data; });
+                        ctx.$rootScope.$apply();
+                        common_1.expect(requestOptions.url).to.be('/api/search/lookup');
+                        common_1.expect(requestOptions.params.m).to.be('cpu{hostname=*,env=$env,region=$region}');
+                    });
                     common_1.it('suggest_tagk() should generate api suggest query', function () {
                         ctx.ds.metricFindQuery('suggest_tagk(foo)').then(function (data) { results = data; });
                         ctx.$rootScope.$apply();

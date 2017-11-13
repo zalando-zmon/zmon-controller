@@ -22,6 +22,7 @@ System.register(['test/lib/common', 'app/core/table_model', '../renderer'], func
                         { text: 'Undefined' },
                         { text: 'String' },
                         { text: 'United', unit: 'bps' },
+                        { text: 'Sanitized' },
                     ];
                     var panel = {
                         pageSize: 10,
@@ -55,10 +56,18 @@ System.register(['test/lib/common', 'app/core/table_model', '../renderer'], func
                                 type: 'number',
                                 unit: 'ms',
                                 decimals: 2,
+                            },
+                            {
+                                pattern: 'Sanitized',
+                                type: 'string',
+                                sanitize: true,
                             }
                         ]
                     };
-                    var renderer = new renderer_1.TableRenderer(panel, table, 'utc');
+                    var sanitize = function (value) {
+                        return 'sanitized';
+                    };
+                    var renderer = new renderer_1.TableRenderer(panel, table, 'utc', sanitize);
                     common_1.it('time column should be formated', function () {
                         var html = renderer.renderCell(0, 1388556366666);
                         common_1.expect(html).to.be('<td>2014-01-01T06:06:06+00:00</td>');
@@ -102,6 +111,10 @@ System.register(['test/lib/common', 'app/core/table_model', '../renderer'], func
                     common_1.it('undefined value should render as -', function () {
                         var html = renderer.renderCell(3, undefined);
                         common_1.expect(html).to.be('<td></td>');
+                    });
+                    common_1.it('sanitized value should render as', function () {
+                        var html = renderer.renderCell(6, 'text <a href="http://google.com">link</a>');
+                        common_1.expect(html).to.be('<td>sanitized</td>');
                     });
                 });
             });

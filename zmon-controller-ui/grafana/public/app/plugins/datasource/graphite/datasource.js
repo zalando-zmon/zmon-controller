@@ -22,16 +22,16 @@ System.register(['lodash', 'app/core/utils/datemath'], function(exports_1) {
             if (params.length === 0) {
                 return $q.when({ data: [] });
             }
-            if (options.format === 'png') {
-                return $q.when({ data: this.url + '/render' + '?' + params.join('&') });
-            }
-            var httpOptions = { method: this.render_method, url: '/render' };
-            if (httpOptions.method === 'GET') {
-                httpOptions.url = httpOptions.url + '?' + params.join('&');
-            }
-            else {
-                httpOptions.data = params.join('&');
-                httpOptions.headers = { 'Content-Type': 'application/x-www-form-urlencoded' };
+            var httpOptions = {
+                method: 'POST',
+                url: '/render',
+                data: params.join('&'),
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+            };
+            if (options.panelId) {
+                httpOptions.requestId = this.name + '.panelId.' + options.panelId;
             }
             return this.doGraphiteRequest(httpOptions).then(this.convertDataPointsToMs);
         };
@@ -163,15 +163,6 @@ System.register(['lodash', 'app/core/utils/datemath'], function(exports_1) {
                 return { status: "success", message: "Data source is working", title: "Success" };
             });
         };
-        this.listDashboards = function (query) {
-            return this.doGraphiteRequest({ method: 'GET', url: '/dashboard/find/', params: { query: query || '' } })
-                .then(function (results) {
-                return results.data.dashboards;
-            });
-        };
-        this.loadDashboard = function (dashName) {
-            return this.doGraphiteRequest({ method: 'GET', url: '/dashboard/load/' + encodeURIComponent(dashName) });
-        };
         this.doGraphiteRequest = function (options) {
             if (this.basicAuth || this.withCredentials) {
                 options.withCredentials = true;
@@ -192,9 +183,7 @@ System.register(['lodash', 'app/core/utils/datemath'], function(exports_1) {
             var regex = /\#([A-Z])/g;
             var intervalFormatFixRegex = /'(\d+)m'/gi;
             var hasTargets = false;
-            if (options.format !== 'png') {
-                options['format'] = 'json';
-            }
+            options['format'] = 'json';
             function fixIntervalFormat(match) {
                 return match.replace('m', 'min').replace('M', 'mon');
             }

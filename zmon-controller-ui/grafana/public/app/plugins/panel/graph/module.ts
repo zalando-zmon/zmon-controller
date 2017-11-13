@@ -92,6 +92,7 @@ class GraphCtrl extends MetricsPanelCtrl {
     tooltip       : {
       value_type: 'cumulative',
       shared: true,
+      sort: 0,
       msResolution: false,
     },
     // time overrides
@@ -156,7 +157,7 @@ class GraphCtrl extends MetricsPanelCtrl {
   }
 
   zoomOut(evt) {
-    this.publishAppEvent('zoom-out', evt);
+    this.publishAppEvent('zoom-out', 2);
   }
 
   onDataSnapshotLoad(snapshotData) {
@@ -170,12 +171,6 @@ class GraphCtrl extends MetricsPanelCtrl {
   }
 
   onDataReceived(dataList) {
-    // png renderer returns just a url
-    if (_.isString(dataList)) {
-      this.render(dataList);
-      return;
-    }
-
     this.datapointsWarning = false;
     this.datapointsCount = 0;
     this.datapointsOutside = false;

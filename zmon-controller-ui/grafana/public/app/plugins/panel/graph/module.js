@@ -109,6 +109,7 @@ System.register(['./graph', './legend', './series_overrides_ctrl', './template',
                         tooltip: {
                             value_type: 'cumulative',
                             shared: true,
+                            sort: 0,
                             msResolution: false,
                         },
                         // time overrides
@@ -160,7 +161,7 @@ System.register(['./graph', './legend', './series_overrides_ctrl', './template',
                     return _super.prototype.issueQueries.call(this, datasource);
                 };
                 GraphCtrl.prototype.zoomOut = function (evt) {
-                    this.publishAppEvent('zoom-out', evt);
+                    this.publishAppEvent('zoom-out', 2);
                 };
                 GraphCtrl.prototype.onDataSnapshotLoad = function (snapshotData) {
                     this.annotationsPromise = this.annotationsSrv.getAnnotations(this.dashboard);
@@ -172,11 +173,6 @@ System.register(['./graph', './legend', './series_overrides_ctrl', './template',
                 };
                 GraphCtrl.prototype.onDataReceived = function (dataList) {
                     var _this = this;
-                    // png renderer returns just a url
-                    if (lodash_1.default.isString(dataList)) {
-                        this.render(dataList);
-                        return;
-                    }
                     this.datapointsWarning = false;
                     this.datapointsCount = 0;
                     this.datapointsOutside = false;

@@ -19,6 +19,13 @@ System.register(['test/lib/common', '../query_part'], function(exports_1) {
                         common_1.expect(part.text).to.be('derivative(10s)');
                         common_1.expect(part.render('mean(value)')).to.be('derivative(mean(value), 10s)');
                     });
+                    common_1.it('should nest spread function', function () {
+                        var part = query_part_1.default.create({
+                            type: 'spread'
+                        });
+                        common_1.expect(part.text).to.be('spread()');
+                        common_1.expect(part.render('value')).to.be('spread(value)');
+                    });
                     common_1.it('should handle suffirx parts', function () {
                         var part = query_part_1.default.create({
                             type: 'math',

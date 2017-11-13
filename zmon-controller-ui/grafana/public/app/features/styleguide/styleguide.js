@@ -21,7 +21,7 @@ System.register(['app/core/core_module', 'app/core/config', 'lodash'], function(
                     this.buttonNames = ['primary', 'secondary', 'inverse', 'success', 'warning', 'danger'];
                     this.buttonSizes = ['btn-small', '', 'btn-large'];
                     this.buttonVariants = ['-', '-outline-'];
-                    this.pages = ['colors', 'buttons', 'forms', 'dashboard', 'query-editors'];
+                    this.pages = ['colors', 'buttons'];
                     this.theme = config_1.default.bootData.user.lightTheme ? 'light' : 'dark';
                     this.page = {};
                     if ($routeParams.page) {

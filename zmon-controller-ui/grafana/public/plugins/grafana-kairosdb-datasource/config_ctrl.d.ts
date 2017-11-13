@@ -4,4 +4,3 @@ export declare class KairosDBConfigCtrl {
     /** @ngInject */
     constructor($scope: any);
 }
-

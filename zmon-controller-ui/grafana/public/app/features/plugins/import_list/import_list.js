@@ -79,15 +79,15 @@ System.register(['lodash', 'app/core/core_module', 'app/core/app_events'], funct
                         });
                     }
                     return this.backendSrv.post("/api/dashboards/import", installCmd).then(function (res) {
-                        _this.$rootScope.appEvent('alert-success', ['Dashboard Installed', dash.title]);
+                        _this.$rootScope.appEvent('alert-success', ['Dashboard Imported', dash.title]);
                         lodash_1.default.extend(dash, res);
                     });
                 };
                 DashImportListCtrl.prototype.remove = function (dash) {
                     var _this = this;
-                    this.backendSrv.delete('/api/dashboards/' + dash.installedUri).then(function () {
+                    this.backendSrv.delete('/api/dashboards/' + dash.importedUri).then(function () {
                         _this.$rootScope.appEvent('alert-success', ['Dashboard Deleted', dash.title]);
-                        dash.installed = false;
+                        dash.imported = false;
                     });
                 };
                 return DashImportListCtrl;

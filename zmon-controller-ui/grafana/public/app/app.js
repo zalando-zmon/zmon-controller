@@ -1,6 +1,6 @@
 ///<reference path="headers/common.d.ts" />
-System.register(['bootstrap', 'vendor/filesaver', 'lodash-src', 'angular-strap', 'angular-route', 'angular-sanitize', 'angular-dragdrop', 'angular-bindonce', 'angular-ui', 'jquery', 'angular', 'lodash', './core/core'], function(exports_1) {
-    var jquery_1, angular_1, lodash_1, core_1;
+System.register(['bootstrap', 'vendor/filesaver', 'lodash-src', 'angular-strap', 'angular-route', 'angular-sanitize', 'angular-dragdrop', 'angular-bindonce', 'angular-ui', 'jquery', 'angular', 'app/core/config', 'lodash', './core/core'], function(exports_1) {
+    var jquery_1, angular_1, config_1, lodash_1, core_1;
     var GrafanaApp;
     return {
         setters:[
@@ -18,6 +18,9 @@ System.register(['bootstrap', 'vendor/filesaver', 'lodash-src', 'angular-strap',
             },
             function (angular_1_1) {
                 angular_1 = angular_1_1;
+            },
+            function (config_1_1) {
+                config_1 = config_1_1;
             },
             function (lodash_1_1) {
                 lodash_1 = lodash_1_1;
@@ -46,8 +49,11 @@ System.register(['bootstrap', 'vendor/filesaver', 'lodash-src', 'angular-strap',
                     var _this = this;
                     var app = angular_1.default.module('grafana', []);
                     app.constant('grafanaVersion', "@grafanaVersion@");
-                    app.config(function ($locationProvider, $controllerProvider, $compileProvider, $filterProvider, $provide) {
-                        //$compileProvider.debugInfoEnabled(false);
+                    app.config(function ($locationProvider, $controllerProvider, $compileProvider, $filterProvider, $httpProvider, $provide) {
+                        if (config_1.default.buildInfo.env !== 'development') {
+                            $compileProvider.debugInfoEnabled(false);
+                        }
+                        $httpProvider.useApplyAsync(true);
                         _this.registerFunctions.controller = $controllerProvider.register;
                         _this.registerFunctions.directive = $compileProvider.directive;
                         _this.registerFunctions.factory = $provide.factory;

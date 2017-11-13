@@ -47,7 +47,7 @@ System.register(['lodash', 'app/core/utils/datemath', './influx_series', './infl
                     var i, y;
                     var allQueries = lodash_1.default.map(options.targets, function (target) {
                         if (target.hide) {
-                            return [];
+                            return "";
                         }
                         queryTargets.push(target);
                         // build query
@@ -55,7 +55,12 @@ System.register(['lodash', 'app/core/utils/datemath', './influx_series', './infl
                         var query = queryModel.render(true);
                         query = query.replace(/\$interval/g, (target.interval || options.interval));
                         return query;
-                    }).join(";");
+                    }).reduce(function (acc, current) {
+                        if (current !== "") {
+                            acc += ";" + current;
+                        }
+                        return acc;
+                    });
                     // replace grafana variables
                     allQueries = allQueries.replace(/\$timeFilter/g, timeFilter);
                     // replace templated variables

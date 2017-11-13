@@ -81,15 +81,19 @@ System.register(['app/core/config', 'jquery', 'lodash', 'app/core/utils/kbn', '.
                         .then(this.issueQueries.bind(this))
                         .then(this.handleQueryResult.bind(this))
                         .catch(function (err) {
+                        // if cancelled  keep loading set to true
+                        if (err.cancelled) {
+                            console.log('Panel request cancelled', err);
+                            return;
+                        }
                         _this.loading = false;
-                        _this.error = err.message || "Timeseries data request error";
+                        _this.error = err.message || "Request Error";
                         _this.inspector = { error: err };
                         _this.events.emit('data-error', err);
                         console.log('Panel data error:', err);
                     });
                 };
                 MetricsPanelCtrl.prototype.setTimeQueryStart = function () {
-                    this.timing = {};
                     this.timing.queryStart = new Date().getTime();
                 };
                 MetricsPanelCtrl.prototype.setTimeQueryEnd = function () {
@@ -176,6 +180,10 @@ System.register(['app/core/config', 'jquery', 'lodash', 'app/core/utils/kbn', '.
                     }
                     if (this.dashboard.snapshot) {
                         this.panel.snapshotData = result.data;
+                    }
+                    if (!result || !result.data) {
+                        console.log('Data source query result invalid, missing data field:', result);
+                        result = { data: [] };
                     }
                     return this.events.emit('data-received', result.data);
                 };
