@@ -11,7 +11,7 @@ import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 
 /**
- * 
+ *
  * @author jbellmann
  *
  */
@@ -84,15 +84,15 @@ public class RedisPoolConfiguration {
     @Bean
     public JedisPoolConfig writeJedisPoolConfig() {
         JedisPoolConfig poolConfig = new JedisPoolConfig();
-//        if (writeRedisProperties.getPool() == null) {
-//            writeRedisProperties.setPool(new RedisProperties.Pool());
-//        }
+        if (writeRedisProperties.getPool() == null) {
+            writeRedisProperties.setPool(new WriteRedisProperties.Pool());
+        }
 
         poolConfig.setMaxIdle(writeRedisProperties.getPool().getMaxIdle());
         poolConfig.setMinIdle(writeRedisProperties.getPool().getMinIdle());
         poolConfig.setMaxTotal(writeRedisProperties.getPool().getMaxActive());
 
-        // poolConfig.setMaxWaitMillis(maxWaitMillis);
+        poolConfig.setMaxWaitMillis(writeRedisProperties.getPool().getMaxWait());
 
         // poolConfig.setBlockWhenExhausted(blockWhenExhausted);
         poolConfig.setTestOnBorrow(false);
