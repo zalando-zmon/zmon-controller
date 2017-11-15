@@ -3,13 +3,10 @@ package org.zalando.zmon.config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.*;
 import org.springframework.core.env.Environment;
 import org.zalando.zmon.config.annotation.RedisWrite;
 import org.zalando.zmon.config.redis.WriteRedisProperties;
-
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 
@@ -35,7 +32,10 @@ public class RedisPoolConfiguration {
     @Bean
     @Primary
     public JedisPool jedisPool() {
-        return new JedisPool(jedisPoolConfig(), redisProperties.getHost(), redisProperties.getPort());
+        return new JedisPool(jedisPoolConfig(),
+                redisProperties.getHost(),
+                redisProperties.getPort(),
+                redisProperties.getTimeout());
     }
 
     // frontend.redis.whenExhaustedAction = 1
@@ -57,7 +57,7 @@ public class RedisPoolConfiguration {
         poolConfig.setMinIdle(redisProperties.getPool().getMinIdle());
         poolConfig.setMaxTotal(redisProperties.getPool().getMaxActive());
 
-        // poolConfig.setMaxWaitMillis(maxWaitMillis);
+        poolConfig.setMaxWaitMillis(redisProperties.getPool().getMaxWait());
 
         // poolConfig.setBlockWhenExhausted(blockWhenExhausted);
         poolConfig.setTestOnBorrow(false);
@@ -75,7 +75,10 @@ public class RedisPoolConfiguration {
     @Bean
     @RedisWrite
     public JedisPool writeJedisPool() {
-        return new JedisPool(writeJedisPoolConfig(), writeRedisProperties.getHost(), writeRedisProperties.getPort());
+        return new JedisPool(writeJedisPoolConfig(),
+                writeRedisProperties.getHost(),
+                writeRedisProperties.getPort(),
+                writeRedisProperties.getTimeout());
     }
 
     @Bean

@@ -3,6 +3,7 @@ spring:
     name: ZMON
 
   redis:
+    timeout: 2000
     host: ${REDIS_HOST:localhost}
     port: ${REDIS_PORT:6379}
     pool:
@@ -66,6 +67,7 @@ zmon:
 
     redis:
       write:
+        timeout: 2000
         host: ${REDIS_WRITE_HOST:${REDIS_HOST:localhost}}
         port: ${REDIS_WRITE_PORT:${REDIS_PORT:6379}}
         pool:
