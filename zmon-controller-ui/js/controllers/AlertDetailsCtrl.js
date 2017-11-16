@@ -130,7 +130,6 @@ angular.module('zmon2App').controller('AlertDetailsCtrl', [ '$location', '$route
                     CommunicationService.getCheckResultsForAlert($scope.alert.id, 1).then(function(results) {
                         collections.checkResults = filterEntitiesWithAlert(results); // gets all OK entities
                         $scope.checkResultsCount = collections.checkResults.length
-                        // fetchEntityData(collections.checkResults)
                         cb();
                     });
                 });
@@ -238,7 +237,7 @@ angular.module('zmon2App').controller('AlertDetailsCtrl', [ '$location', '$route
         }, []);
 
         fetchEntityData(alerts); // append metaData
-        $scope.entitiesNotDisplayed = (alertDetails.entities.length + collections.checkResults) - $scope.allAlerts.length;
+        $scope.entitiesNotDisplayed = (alertDetails.entities.length + collections.checkResults.length) - $scope.allAlerts.length;
         return alerts;
     };
 
