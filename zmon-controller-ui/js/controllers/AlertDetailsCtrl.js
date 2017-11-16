@@ -35,9 +35,10 @@ angular.module('zmon2App').controller('AlertDetailsCtrl', [ '$location', '$route
     $scope.userInfo = UserInfoService.get();
 
     var alertDetails = { entities: [] };
+    var checkResults = [];
 
     $scope.incLimit = function() {
-        if ($scope.limit >= (alertDetails.entities.length + $scope.checkResults) || $scope.limit >= $scope.maxLimit) {
+        if ($scope.limit >= (alertDetails.entities.length + checkResults) || $scope.limit >= $scope.maxLimit) {
             return;
         }
 
@@ -125,8 +126,7 @@ angular.module('zmon2App').controller('AlertDetailsCtrl', [ '$location', '$route
                     alertDetails = details;
                     updateCounters();
                     CommunicationService.getCheckResultsForAlert($scope.alert.id, 1).then(function(results) {
-                        $scope.checkResults = filterEntitiesWithAlert(results); // gets all OK entities
-                        fetchEntityData($scope.checkResults); // add metadata for aws links
+                        checkResults = filterEntitiesWithAlert(results); // gets all OK entities
                         cb();
                     });
                 });
