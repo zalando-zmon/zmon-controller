@@ -47,7 +47,6 @@ angular.module('zmon2App').controller('AlertDetailsCtrl', [ '$location', '$route
 
         $scope.limit += APP_CONST.INFINITE_SCROLL_VISIBLE_ENTITIES_INCREMENT;
         $scope.allAlerts = getSelectedAlerts()
-        $scope.entitiesNotDisplayed = alertDetails.entities.length - $scope.allAlerts.length;
     };
 
     // Notify user when ip has been successfully copied to Clipboard.
@@ -237,7 +236,9 @@ angular.module('zmon2App').controller('AlertDetailsCtrl', [ '$location', '$route
             })
             return result.concat(entities.slice(0, $scope.limit/selected));
         }, []);
+
         fetchEntityData(alerts); // append metaData
+        $scope.entitiesNotDisplayed = (alertDetails.entities.length + collections.checkResults) - $scope.allAlerts.length;
         return alerts;
     };
 
@@ -253,7 +254,6 @@ angular.module('zmon2App').controller('AlertDetailsCtrl', [ '$location', '$route
             $scope.entitiesExcludeFilter = getEntities($scope.alert.entities_exclude, $scope.check.entities_exclude);
             setAlertStates();
             $scope.allAlerts = getSelectedAlerts();
-            $scope.entitiesNotDisplayed = alertDetails.entities.length - $scope.allAlerts.length;
             $scope.downtimeEntities = getSelectedDowntimeEntities();
             setLinkToTrialRun();
         });
@@ -297,7 +297,6 @@ angular.module('zmon2App').controller('AlertDetailsCtrl', [ '$location', '$route
 
     $scope.$watch('selection', function(s) {
         $scope.allAlerts = getSelectedAlerts();
-        $scope.entitiesNotDisplayed = alertDetails.entities.length - $scope.allAlerts.length;
         $scope.downtimeEntities = getSelectedDowntimeEntities();
     }, true);
 
@@ -307,7 +306,6 @@ angular.module('zmon2App').controller('AlertDetailsCtrl', [ '$location', '$route
         if ($scope.alert) {
             $scope.limit = APP_CONST.INFINITE_SCROLL_VISIBLE_ENTITIES_INCREMENT;
             $scope.allAlerts = getSelectedAlerts()
-            $scope.entitiesNotDisplayed = alertDetails.entities.length - $scope.allAlerts.length;
             updateCounters();
         }
     });
