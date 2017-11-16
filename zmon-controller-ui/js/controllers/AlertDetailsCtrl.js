@@ -18,6 +18,7 @@ angular.module('zmon2App').controller('AlertDetailsCtrl', [ '$location', '$route
       checkResults: []
     };
 
+    $scope.allAlerts = [];
     $scope.downtimes = [];
     $scope.downtimeEntities = [];
 
