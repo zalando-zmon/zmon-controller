@@ -37,7 +37,7 @@ angular.module('zmon2App').controller('AlertDetailsCtrl', [ '$location', '$route
     var alertDetails = { entities: [] };
 
     $scope.incLimit = function() {
-        if ($scope.limit >= alertDetails.entities.length || $scope.limit >= $scope.maxLimit) {
+        if ($scope.limit >= (alertDetails.entities.length + $scope.checkResults) || $scope.limit >= $scope.maxLimit) {
             return;
         }
 
