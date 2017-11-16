@@ -98,9 +98,9 @@
             <uib-tab id="alerts-tab" heading="Alerts/Checks">
                 <div class="zmon-controls row">
                     <div class="col-md-8">
-                        <button class="btn" ng-class="{'active-page': selection.activeAlerts && activeAlerts.length > 0}" ng-disabled="activeAlerts.length === 0" ng-click="selection.activeAlerts = !selection.activeAlerts">Alerts ({{allActiveAlertsCount}})</button>
-                        <button class="btn" ng-class="{'active-page': selection.alertsInDowntime && alertsInDowntime.length > 0}" ng-disabled="alertsInDowntime.length === 0" ng-click="selection.alertsInDowntime = !selection.alertsInDowntime">In downtime ({{allDowntimeAlertsCount}})</button>
-                        <button class="btn" ng-class="{'active-page': selection.checkResults && checkResults.length > 0}" ng-disabled="checkResults.length === 0" ng-click="selection.checkResults = !selection.checkResults">OK ({{checkResults.length || 0}})</button>
+                        <button class="btn" ng-class="{'active-page': selection.activeAlerts && allActiveAlertsCount > 0}" ng-disabled="allActiveAlertsCount === 0" ng-click="selection.activeAlerts = !selection.activeAlerts">Alerts ({{allActiveAlertsCount}})</button>
+                        <button class="btn" ng-class="{'active-page': selection.alertsInDowntime && allDowntimeAlertsCount > 0}" ng-disabled="allDowntimeAlertsCount === 0" ng-click="selection.alertsInDowntime = !selection.alertsInDowntime">In downtime ({{allDowntimeAlertsCount}})</button>
+                        <button class="btn" ng-class="{'active-page': selection.checkResults && checkResultsCount > 0}" ng-disabled="checkResultsCount === 0" ng-click="selection.checkResults = !selection.checkResults">OK ({{checkResultsCount || 0}})</button>
                     </div>
                     <div class="col-md-4 text-right">
                         <form id="searchbar" class="form-inline">
