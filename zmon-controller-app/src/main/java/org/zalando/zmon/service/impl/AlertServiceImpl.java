@@ -252,6 +252,21 @@ public class AlertServiceImpl implements AlertService {
         }
     }
 
+    //Added to replace smembers call with scard to avoid pressure on redis during Black Friday period.
+    protected void getActiveAlertsForDefinitionsBF(List<AlertDefinition> definitions, List<ResponseHolder<Integer, Long>> results) {
+        try (Jedis jedis = redisPool.getResource()) {
+
+            // execute async call
+            final Pipeline p = jedis.pipelined();
+            for (final AlertDefinition definition : definitions) {
+                results.add(ResponseHolder.create(definition.getId(),
+                        p.scard(RedisPattern.alertEntities(definition.getId()))));
+            }
+
+            p.sync();
+        }
+    }
+
     @Override
     public List<Alert> getAllAlertsByTeamAndTag(final Set<String> teams, final Set<String> tags) {
 
@@ -281,6 +296,46 @@ public class AlertServiceImpl implements AlertService {
                     final Set<String> entities = entry.getResponse().get();
                     if (!entities.isEmpty()) {
                         final Alert alert = buildAlert(entry.getKey(), entities, def);
+                        alert.setNotificationsAck(ackedAlertIds.contains(alert.getAlertDefinition().getId()));
+                        alerts.add(alert);
+                    }
+                }
+            }
+        }
+
+        return alerts;
+    }
+
+    @Override
+    public List<Alert> getAllAlertsByTeamAndTagBF(final Set<String> teams, final Set<String> tags) {
+
+        final List<Alert> alerts = new LinkedList<>();
+
+        if (teams != null && !teams.isEmpty() || tags != null && !tags.isEmpty()) {
+            final List<AlertDefinition> definitions = getActiveAlertDefinitionByTeamAndTag(teams, tags);
+            final List<ResponseHolder<Integer, Long>> results = new LinkedList<>();
+
+            if (!definitions.isEmpty()) {
+
+                getActiveAlertsForDefinitionsBF(definitions, results);
+
+                // TODO remove duplicate code
+                // TODO move redis calls to a different service
+                // TODO abstract connection management with command pattern/template
+                // TODO remove ResponseHolder and use a Map (alerts should be ordered on the webpage)
+                //
+                // index all definitions
+                final Map<Integer, AlertDefinition> mappedAlerts = Maps.uniqueIndex(definitions,
+                        AlertDefinition::getId);
+                final Set<Integer> ackedAlertIds = getAcknowledgedAlerts();
+                // process alerts
+                for (final ResponseHolder<Integer, Long> entry : results) {
+                    final AlertDefinition def = mappedAlerts.get(entry.getKey());
+
+                    final Long entities = entry.getResponse().get();
+
+                    if (entities > 0) {
+                        final Alert alert = buildAlertBF(entry.getKey(), entities, def);
                         alert.setNotificationsAck(ackedAlertIds.contains(alert.getAlertDefinition().getId()));
                         alerts.add(alert);
                     }
@@ -481,6 +536,43 @@ public class AlertServiceImpl implements AlertService {
 
         return alert;
     }
+
+    protected Alert buildAlertBF(final Integer alertId, final long entities, final AlertDefinition definition) {
+        final List<LastCheckResult> checkResults = new LinkedList<>();
+
+        if (entities > 0) {
+            final List<ResponseHolder<String, String>> results = new LinkedList<>();
+
+            //getAlertEntityData(alertId, entities, results);
+
+            // process results
+            for (final ResponseHolder<String, String> entry : results) {
+                final String result = entry.getResponse().get();
+
+                // alert result might not be there (worker updated might be in progress )
+                if (result != null) {
+                    try {
+                        checkResults.add(new LastCheckResult(entry.getKey(), mapper.readTree(result)));
+                    } catch (final IOException e) {
+                        throw new SerializationException("Could not read JSON: " + result, e);
+                    }
+                }
+            }
+        }
+
+        final Alert alert = new Alert();
+        final AlertDefinitionAuth definitionAuth = AlertDefinitionAuth.from(definition,
+                authorityService.hasEditAlertDefinitionPermission(definition),
+                authorityService.hasAddAlertDefinitionPermission(),
+                authorityService.hasDeleteAlertDefinitionPermission(definition));
+
+        alert.setAlertDefinition(definitionAuth);
+        alert.setNumberofEntities(entities);
+        alert.setMessage(buildMessage(definition.getName(), checkResults));
+
+        return alert;
+    }
+
 
     private String buildMessage(final String template, final List<LastCheckResult> checkResults) {
         String result = template;

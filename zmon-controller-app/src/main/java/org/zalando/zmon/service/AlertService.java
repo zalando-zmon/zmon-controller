@@ -33,6 +33,8 @@ public interface AlertService {
 
     List<Alert> getAllAlertsByTeamAndTag(Set<String> teams, Set<String> tags);
 
+    List<Alert> getAllAlertsByTeamAndTagBF(Set<String> teams, Set<String> tags);
+
     Alert getAlert(int alertId);
 
     AlertDefinition createOrUpdateAlertDefinition(AlertDefinition alertDefinition) throws ZMonException;
