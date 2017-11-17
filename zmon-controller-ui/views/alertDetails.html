@@ -98,8 +98,8 @@
             <uib-tab id="alerts-tab" heading="Alerts/Checks">
                 <div class="zmon-controls row">
                     <div class="col-md-8">
-                        <button class="btn" ng-class="{'active-page': selection.activeAlerts && activeAlerts.length > 0}" ng-disabled="activeAlerts.length === 0" ng-click="selection.activeAlerts = !selection.activeAlerts">Alerts ({{activeAlerts.length || 0}})</button>
-                        <button class="btn" ng-class="{'active-page': selection.alertsInDowntime && alertsInDowntime.length > 0}" ng-disabled="alertsInDowntime.length === 0" ng-click="selection.alertsInDowntime = !selection.alertsInDowntime">In downtime ({{alertsInDowntime.length || 0}})</button>
+                        <button class="btn" ng-class="{'active-page': selection.activeAlerts && activeAlerts.length > 0}" ng-disabled="activeAlerts.length === 0" ng-click="selection.activeAlerts = !selection.activeAlerts">Alerts ({{allActiveAlertsCount}})</button>
+                        <button class="btn" ng-class="{'active-page': selection.alertsInDowntime && alertsInDowntime.length > 0}" ng-disabled="alertsInDowntime.length === 0" ng-click="selection.alertsInDowntime = !selection.alertsInDowntime">In downtime ({{allDowntimeAlertsCount}})</button>
                         <button class="btn" ng-class="{'active-page': selection.checkResults && checkResults.length > 0}" ng-disabled="checkResults.length === 0" ng-click="selection.checkResults = !selection.checkResults">OK ({{checkResults.length || 0}})</button>
                     </div>
                     <div class="col-md-4 text-right">
@@ -152,7 +152,7 @@
                             </tr>
                         </thead>
                         <tbody infinite-scroll="incLimit()">
-                            <tr ng-repeat="entityInstance in allAlerts | filter:alertDetailsSearch.str | orderBy:sortType:sortOrder | limitTo: limit track by entityInstance.entity" ng-class="{'danger': entityInstance.isActiveAlert == true, 'active-downtime': entityInstance.isAlertInDowntime == true, 'success': entityInstance.isCheckResult == true}">
+                            <tr ng-repeat="entityInstance in allAlerts | orderBy:sortType:sortOrder track by entityInstance.entity" ng-class="{'danger': entityInstance.isActiveAlert == true, 'active-downtime': entityInstance.isAlertInDowntime == true, 'success': entityInstance.isCheckResult == true}">
                                 <td class="actions-col">
                                     <input ng-if="userInfo['schedule-downtime']" class="set-downtime-checkbox" type="checkbox" ng-checked="downtimeEntities.indexOf(entityInstance.entity) !== -1" ng-click="toggleAlertForDowntime(entityInstance.entity)">
                                     <div>
@@ -194,6 +194,7 @@
                             </tr>
                         </tbody>
                     </table>
+                    <p class="warning-text" ng-if="limit >= maxLimit">{{entitiesNotDisplayed}}+ Entities not displayed. Please filter your results!</p>
                 </div>
             </uib-tab>
             <uib-tab id="downtimes-tab" heading="Downtimes ({{downtimes.length}})" disabled="downtimes.length == 0">
