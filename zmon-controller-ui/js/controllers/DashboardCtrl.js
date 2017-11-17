@@ -245,7 +245,7 @@ angular.module('zmon2App').controller('DashboardCtrl', ['$scope', '$log', '$rout
         };
 
         $scope.showAllDashboardAlerts = function(filter) {
-            CommunicationService.getAllAlerts(filter).then(
+            CommunicationService.getAllAlertsBF(filter).then(
                 function(data) {
 
                     $scope.alerts = data;
