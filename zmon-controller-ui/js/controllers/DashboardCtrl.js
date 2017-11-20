@@ -18,7 +18,7 @@ angular.module('zmon2App').controller('DashboardCtrl', ['$scope', '$log', '$rout
         $scope.$parent.activePage = 'dashboard';
 
         $scope.alerts = [];
-        $scope.alertsInDowntime = [];
+        // $scope.alertsInDowntime = [];
         $scope.alertsLoaded = false;
         $scope.filter = {};
         $scope.checkResultsByCheckIdByEntity = {};
@@ -254,6 +254,7 @@ angular.module('zmon2App').controller('DashboardCtrl', ['$scope', '$log', '$rout
                     // $scope.evalOldestStartTimes(data);
 
                     // Set lowest priority on alerts in downtime
+<<<<<<< HEAD
                     $scope.alertsInDowntime = [];
 
                     _.each(data, function(alert){
@@ -268,6 +269,18 @@ angular.module('zmon2App').controller('DashboardCtrl', ['$scope', '$log', '$rout
                             $scope.alertsInDowntime.push(alert);
                         }*/
                     });
+=======
+                    // $scope.alertsInDowntime = [];
+
+                    // _.each(data, function(alert){
+                    //
+                    //     var alertDowntimeCount = _.reduce(alert.entities.result, function(sum, r) { return sum+r.downtimes.length}, 0)
+                    //     if (alert.entities_count === alertDowntimeCount) {
+                    //         alert.alert_definition.priority = 10;
+                    //         $scope.alertsInDowntime.push(alert);
+                    //     }
+                    // });
+>>>>>>> e6eada1121565fbc0ce352bc432d042acd64042c
 
                     // For each alert, load check results history to show on graph.
                     // _.each(data, function(alert) {

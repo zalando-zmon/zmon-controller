@@ -40,7 +40,7 @@
                 </button>
             </div>
 
-            <button id="alerts-in-downtime-toggle-button" class="btn" title="Show/Hide Alerts in Downtime" ng-show="alertsInDowntime.length" ng-click="toggleAlertsWithAllDowntime()"><i class="fa fa-flag" ng-hide="showAlertsWithAllEntitiesInDowntime"></i><i class="fa fa-flag-o" ng-show="showAlertsWithAllEntitiesInDowntime"></i> {{ alertsInDowntime.length }}</button>
+            <!-- <button id="alerts-in-downtime-toggle-button" class="btn" title="Show/Hide Alerts in Downtime" ng-show="alertsInDowntime.length" ng-click="toggleAlertsWithAllDowntime()"><i class="fa fa-flag" ng-hide="showAlertsWithAllEntitiesInDowntime"></i><i class="fa fa-flag-o" ng-show="showAlertsWithAllEntitiesInDowntime"></i> {{ alertsInDowntime.length }}</button> -->
             <button id="widgets-toggle-button" class="btn" ng-show="widgetsConf.length" ng-click="showWidgets = !showWidgets" title="Toggle widgets panel"><i class="fa fa-fw fa-toggle-{{ showWidgets ? 'up' : 'down' }}"></i> {{ showWidgets ? 'Hide' : 'Show' }} Widgets</button>
             <button class="btn" ng-click="toggleCompactView()" title="Toggle default / compact view"><i class="fa fa-fw" ng-class="{'fa-columns': !compact, 'fa-bars': compact}"></i></button>
             <button ng-show="dashboardId" class="btn" ng-click="configureWidgets()" title="Configure widgets"><i class="fa fa-fw fa-gear"></i></button>
@@ -48,11 +48,11 @@
     </div>
 
     <div class="row">
-        <div class="zmon-alert no-alerts" ng-show="alertsLoaded && alerts.length === alertsInDowntime.length">
+        <div class="zmon-alert no-alerts" ng-show="alertsLoaded && !alerts.length">
             <div class="col-md-11">
                 <h1>No Alerts for {{ team }}</h1>
                 <p>Good, there are 0 active alerts for team "{{ team }}" at the moment.</p>
-                <p ng-if="alertsInDowntime.length">There are {{ alertsInDowntime.length }} alerts in Downtime (<a class="clickable" ng-click="toggleAlertsWithAllDowntime()"><span ng-hide="showAlertsWithAllEntitiesInDowntime">Show</span><span ng-show="showAlertsWithAllEntitiesInDowntime">Hide</span></a>)</p>
+                <!-- <p ng-if="alertsInDowntime.length">There are {{ alertsInDowntime.length }} alerts in Downtime (<a class="clickable" ng-click="toggleAlertsWithAllDowntime()"><span ng-hide="showAlertsWithAllEntitiesInDowntime">Show</span><span ng-show="showAlertsWithAllEntitiesInDowntime">Hide</span></a>)</p> -->
             </div>
             <div class="col-md-1">
                 <div class="text-right oldest-timestamp">
@@ -70,7 +70,7 @@
               <span class="fa fa-bell clickable" title="This alert has a notification" ng-show="!alertInstance.notifications_ack" ng-if="alertInstance.alert_definition.notifications.length" notification-modal alert="alertInstance"></span>
               <span class="fa fa-bell-o" title="This alert notification has been taken care of!" ng-show="alertInstance.notifications_ack" ng-if="alertInstance.alert_definition.notifications.length"></span>
               <span class="fa fa-check alert-notification-checked" title="This alert notification has been taken care of!" ng-show="alertInstance.notifications_ack" ng-if="alertInstance.alert_definition.notifications.length"></span>
-              <a ng-href="#/alert-details/{{alertInstance.alert_definition.id}}">{{alertInstance.message}}</a> <span ng-if="alertInstance.entitiesCount > 1">({{alertInstance.entitiesCount }})</span>
+              <a ng-href="#/alert-details/{{alertInstance.alert_definition.id}}">{{alertInstance.message}}</a> <span ng-if="alertInstance.entities_count > 1">({{alertInstance.entities_count }})</span>
             </h1>
             <!-- <span ng-show="!compact" ng-repeat="entityInstance in truncateNonDowntimeEntities(alertInstance.entities)">
                 <span ng-if="$index != 0">, </span>
@@ -94,7 +94,7 @@
         <div class="col-md-2">
             <div class="text-right responsible-team ellipsis" title="{{alertInstance.alert_definition.responsible_team}}">
                 <span ng-show="!compact">{{alertInstance.alert_definition.responsible_team}}</span>
-                <a ng-if="alertInstance.entitiesCount" class="fa fa-flag" tooltip="{{alertInstance.entitiesCount}} entities in downtime now" tooltip-placement="left" ng-href="#/alert-details/{{alertInstance.alert_definition.id}}?downtimes"></a>
+                <a ng-if="alertInstance.entities_count" class="fa fa-flag" tooltip="{{alertInstance.entities_count}} entities in downtime now" tooltip-placement="left" ng-href="#/alert-details/{{alertInstance.alert_definition.id}}?downtimes"></a>
             </div>
             <!-- <div class="text-right oldest-timestamp">
                 {{timeSinceLastUpdate(alertInstance.oldestStartTime) | timespan}}
