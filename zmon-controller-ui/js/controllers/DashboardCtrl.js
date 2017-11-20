@@ -245,7 +245,7 @@ angular.module('zmon2App').controller('DashboardCtrl', ['$scope', '$log', '$rout
         // };
 
         $scope.showAllDashboardAlerts = function(filter) {
-            CommunicationService.getAllAlertsBF(filter).then(
+            CommunicationService.getallAlertsWithoutEntities(filter).then(
                 function(data) {
 
                     $scope.alerts = data;
@@ -259,14 +259,14 @@ angular.module('zmon2App').controller('DashboardCtrl', ['$scope', '$log', '$rout
                     _.each(data, function(alert){
 
                         //TODO BLACK_FRIDAY remove this!.. should come from backend! dummy stuff here
-                        alert.entitiesCount = Math.floor(Math.random() * 10);
+                        //alert.entitiesCount = Math.floor(Math.random() * 10);
 
                         //TODO BLACK_FRIDAY this needs some work!
-                        var alertDowntimeCount = _.reduce(alert.entities.result, function(sum, r) { return sum+r.downtimes.length}, 0)
+                        /*var alertDowntimeCount = _.reduce(alert.entities.result, function(sum, r) { return sum+r.downtimes.length}, 0)
                         if (alert.entitiesCount === alertDowntimeCount) {
                             alert.alert_definition.priority = 10;
                             $scope.alertsInDowntime.push(alert);
-                        }
+                        }*/
                     });
 
                     // For each alert, load check results history to show on graph.

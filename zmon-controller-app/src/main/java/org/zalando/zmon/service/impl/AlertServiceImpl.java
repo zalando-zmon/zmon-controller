@@ -253,7 +253,7 @@ public class AlertServiceImpl implements AlertService {
     }
 
     //Added to replace smembers call with scard to avoid pressure on redis during Black Friday period.
-    protected void getActiveAlertsForDefinitionsBF(List<AlertDefinition> definitions, List<ResponseHolder<Integer, Long>> results) {
+    protected void getActiveAlertsForDefinitionsWithoutEntities(List<AlertDefinition> definitions, List<ResponseHolder<Integer, Long>> results) {
         try (Jedis jedis = redisPool.getResource()) {
 
             // execute async call
@@ -307,7 +307,7 @@ public class AlertServiceImpl implements AlertService {
     }
 
     @Override
-    public List<Alert> getAllAlertsByTeamAndTagBF(final Set<String> teams, final Set<String> tags) {
+    public List<Alert> getAllAlertsByTeamAndTagWithoutEntities(final Set<String> teams, final Set<String> tags) {
 
         final List<Alert> alerts = new LinkedList<>();
 
@@ -317,7 +317,7 @@ public class AlertServiceImpl implements AlertService {
 
             if (!definitions.isEmpty()) {
 
-                getActiveAlertsForDefinitionsBF(definitions, results);
+                getActiveAlertsForDefinitionsWithoutEntities(definitions, results);
 
                 // TODO remove duplicate code
                 // TODO move redis calls to a different service
@@ -335,7 +335,7 @@ public class AlertServiceImpl implements AlertService {
                     final Long entities = entry.getResponse().get();
 
                     if (entities > 0) {
-                        final Alert alert = buildAlertBF(entry.getKey(), entities, def);
+                        final Alert alert = buildAlertWithoutEntities(entry.getKey(), entities, def);
                         alert.setNotificationsAck(ackedAlertIds.contains(alert.getAlertDefinition().getId()));
                         alerts.add(alert);
                     }
@@ -537,7 +537,7 @@ public class AlertServiceImpl implements AlertService {
         return alert;
     }
 
-    protected Alert buildAlertBF(final Integer alertId, final long entities, final AlertDefinition definition) {
+    protected Alert buildAlertWithoutEntities(final Integer alertId, final long entities, final AlertDefinition definition) {
         final List<LastCheckResult> checkResults = new LinkedList<>();
 
         if (entities > 0) {
@@ -567,7 +567,7 @@ public class AlertServiceImpl implements AlertService {
                 authorityService.hasDeleteAlertDefinitionPermission(definition));
 
         alert.setAlertDefinition(definitionAuth);
-        alert.setNumberofEntities(entities);
+        alert.setEntitiesCount(entities);
         alert.setMessage(buildMessage(definition.getName(), checkResults));
 
         return alert;

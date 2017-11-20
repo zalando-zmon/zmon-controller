@@ -39,12 +39,12 @@ public class AlertController extends AbstractZMonController {
         return new ResponseEntity<>(alerts, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/allAlertsBF", method = RequestMethod.GET)
+    @RequestMapping(value = "/allAlertsWithoutEntities", method = RequestMethod.GET)
     public ResponseEntity<List<Alert>> getAllAlertsBF(
             @RequestParam(value = "team", required = false) final Set<String> teams,
             @RequestParam(value = "tags", required = false) final Set<String> tags) {
         final List<Alert> alerts = teams == null && tags == null ? service.getAllAlerts()
-                : service.getAllAlertsByTeamAndTagBF(teams, tags);
+                : service.getAllAlertsByTeamAndTagWithoutEntities(teams, tags);
 
         return new ResponseEntity<>(alerts, HttpStatus.OK);
     }
