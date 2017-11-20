@@ -246,7 +246,7 @@ angular.module('zmon2App').directive('dashboardWidget', ['CommunicationService',
                     }
 
                     // Get data if alertId is specified
-                    if (alertIds !== undefined && alertIds !== null && alertIds !== "") {
+                    if (alertIds.length) {
                         var activeAlertIds = [];
                         CommunicationService.getAlertsById(alertIds).then(function(data) {
                             _.each(data, function(alert) {
