@@ -81,7 +81,7 @@ angular.module('zmon2App').factory('CommunicationService', ['$http', '$q', '$log
          * Get all the alerts based on passed filter object (empty object to get everything).
          * Format of passed param object: {'team':'Platform/Software'}
          */
-        service.allAlertsWithoutEntities = function(filter) {
+        service.getAllAlertsWithoutEntities = function(filter) {
             var params = {};
             var timeout = 20000;
             if (filter.team) {
