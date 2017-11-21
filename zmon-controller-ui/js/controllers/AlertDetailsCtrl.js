@@ -241,6 +241,9 @@ angular.module('zmon2App').controller('AlertDetailsCtrl', [ '$location', '$route
     }, true);
 
     $scope.$watch('alertDetailsSearch.str', function(str) {
+        if (!str) {
+            str = null;
+        }
         $location.search('filter', str);
         localStorageService.set('alertDetailsSearchStr', str);
     });
