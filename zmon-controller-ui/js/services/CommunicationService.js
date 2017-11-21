@@ -123,6 +123,27 @@ angular.module('zmon2App').factory('CommunicationService', ['$http', '$q', '$log
         };
 
         /*
+         * Returns check results for passed checkId with optional limitCount & entityId filter without entity information
+         */
+        service.getCheckResultsWithoutEntities = function(checkId, entityId, limitCount) {
+            PreconditionsService.isNotEmpty(checkId);
+            PreconditionsService.isNumber(checkId);
+            var params = {
+                "check_id": checkId
+            };
+            var timeout = 5000;
+            if (entityId) {
+                PreconditionsService.isNumber(entityId);
+                params.entity = entityId;
+            }
+            if (limitCount) {
+                PreconditionsService.isNumber(limitCount);
+                params.limit = limitCount;
+            }
+            return doHttpCall("GET", "rest/checkResultsWithoutEntities", params, null, timeout);
+        };
+
+        /*
          * Returns chart data of check results for passed checkId with optional limitCount & entityId filter
          */
         service.getCheckResultsChart = function(checkId, entityId, limitCount) {

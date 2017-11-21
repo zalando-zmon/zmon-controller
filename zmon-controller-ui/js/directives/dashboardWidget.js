@@ -62,6 +62,7 @@ angular.module('zmon2App').directive('dashboardWidget', ['CommunicationService',
                 // Check if "alertStyles" is properly defined on the widget configuration, following the
                 // schema alertsyles: {"CLASS_NAME: [ARRAY_ALERT_IDS]}
                 var setAlertStyles = function(response) {
+
                     var alertStyles = $scope.config.alertStyles;
 
                     if ($.isPlainObject(alertStyles)) {
@@ -80,6 +81,11 @@ angular.module('zmon2App').directive('dashboardWidget', ['CommunicationService',
                             activeAlertIds = _.map(activeAlertIds, "id");
                         } else {
                             activeAlertIds = response[0].active_alert_ids;
+                            console.log('find activeAlertIds', activeAlertIds, response)
+                            // activeAlertIds = _.filter(
+                            //     _.keys(response.entities_count), function(k) {
+                            //                             return response.entities_count[k]
+                            //                         });
                         }
 
                         $.each(alertStyles, function(key, value) {
@@ -135,7 +141,7 @@ angular.module('zmon2App').directive('dashboardWidget', ['CommunicationService',
                         return;
                     }
 
-                    setAlertStyles();
+                    setAlertStyles(response);
                     $scope.lastUpdate = new Date() / 1000;
 
                     try {
@@ -251,26 +257,24 @@ angular.module('zmon2App').directive('dashboardWidget', ['CommunicationService',
                     }
 
                     // Get data if alertId is specified
-                    if (alertIds !== undefined && alertIds !== null && alertIds !== "") {
-                        var activeAlertIds = [];
-                        CommunicationService.getAlertsById(alertIds).then(function(data) {
-                            _.each(data, function(alert) {
-                                if (!DowntimesService.hasAllEntitiesInDowntime(alert)) {
-                                    activeAlertIds.push(alert);
-                                }
-                            });
-                            $scope.activeAlertIds = activeAlertIds;
-                            setAlertStyles();
-                        });
-                    }
+                    // if (alertIds.length) {
+                    //     var activeAlertIds = [];
+                    //     CommunicationService.getAlertsById(alertIds).then(function(data) {
+                    //         _.each(data, function(alert) {
+                    //             if (!DowntimesService.hasAllEntitiesInDowntime(alert)) {
+                    //                 activeAlertIds.push(alert);
+                    //             }
+                    //         });
+                    //         $scope.activeAlertIds = activeAlertIds;
+                    //         setAlertStyles();
+                    //     });
+                    // }
 
                     // Get data if checkId is specified
                     if (checkDefinitionId > 0) {
-                        return CommunicationService.getCheckResults(checkDefinitionId, entity, limit).then(
-                            function(response) {
-                                setWidgetData(response);
-                            }
-                        );
+                        return CommunicationService
+                            .getCheckResultsWithoutEntities(checkDefinitionId, entity, limit)
+                            .then(setWidgetData);
                     }
 
                     // Get data from KairosDB if Metrics options are specified
@@ -279,11 +283,9 @@ angular.module('zmon2App').directive('dashboardWidget', ['CommunicationService',
                         if (!metric.name) {
                             return;
                         }
-                        return CommunicationService.getKairosResults($scope.config.options).then(
-                            function(response) {
-                                setWidgetData(response);
-                            }
-                        );
+                        return CommunicationService
+                            .getKairosResults($scope.config.options)
+                            .then(setWidgetData);
                     }
                 };
 
