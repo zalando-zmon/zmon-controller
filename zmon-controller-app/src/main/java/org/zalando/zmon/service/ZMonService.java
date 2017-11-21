@@ -27,6 +27,8 @@ public interface ZMonService {
 
     List<CheckResults> getCheckResults(int checkId, String entity, int limit);
 
+    List<CheckResults> getCheckResultsWithoutEntities(int checkId, String entity, int limit);
+
     List<CheckResults> getCheckAlertResults(int alertId, int limit);
 
     CheckDefinitionImportResult createOrUpdateCheckDefinition(CheckDefinitionImport checkDefinition, String userName, List<String> teams);

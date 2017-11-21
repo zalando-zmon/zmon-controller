@@ -292,6 +292,56 @@ public class ZMonServiceImpl implements ZMonService {
     }
 
     @Override
+    public List<CheckResults> getCheckResultsWithoutEntities(final int checkId, final String entity, final int limit) {
+        final List<ResponseHolder<String, List<String>>> results = new LinkedList<>();
+        final List<ResponseHolder<Integer, Long>> alertEntitiesCount = new LinkedList<>();
+        final List<ResponseHolder<Integer, Set<String>>> alertEntities = new LinkedList<>();
+
+        final List<Integer> alertDefinitionIds = alertDefinitionSProc.getAlertIdsByCheckId(checkId);
+        try (Jedis jedis = redisPool.getResource()) {
+            final Set<String> entities = (entity == null ? jedis.smembers(RedisPattern.checkEntities(checkId))
+                    : Collections.singleton(entity));
+            if (!entities.isEmpty()) {
+
+                // execute async calls
+                final Pipeline p = jedis.pipelined();
+                for (final String key : entities) {
+                    results.add(
+                            ResponseHolder.create(key, p.lrange(RedisPattern.checkResult(checkId, key), 0, limit - 1)));
+                }
+
+                for (final Integer alertDefinitionId : alertDefinitionIds) {
+                    alertEntitiesCount.add(ResponseHolder.create(alertDefinitionId,
+                            p.scard(RedisPattern.alertEntities(alertDefinitionId))));
+                }
+
+                p.sync();
+            }
+        }
+
+        final List<CheckResults> checkResults = buildCheckResults(results);
+
+        // group all ids by entity
+        final SetMultimap<String, Integer> entities = HashMultimap.create();
+        final Map<Integer, Long> entitiesCount = new HashMap<>();
+
+        for (final ResponseHolder<Integer, Set<String>> response : alertEntities) {
+            for (final String alertEntity : response.getResponse().get()) {
+                entities.put(alertEntity, response.getKey());
+            }
+        }
+        for (final ResponseHolder<Integer, Long> response : alertEntitiesCount) {
+            entitiesCount.put(response.getKey(), response.getResponse().get());
+        }
+
+        for (final CheckResults checkResult : checkResults) {
+            checkResult.setEntitiesCount(entitiesCount);
+        }
+
+        return checkResults;
+    }
+
+    @Override
     public List<CheckResults> getCheckAlertResults(final int alertId, final int limit) {
 
         // get alert definitions from database
