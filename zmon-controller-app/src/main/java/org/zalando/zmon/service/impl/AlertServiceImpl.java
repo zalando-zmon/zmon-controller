@@ -542,22 +542,6 @@ public class AlertServiceImpl implements AlertService {
 
         if (entities > 0) {
             final List<ResponseHolder<String, String>> results = new LinkedList<>();
-
-            //getAlertEntityData(alertId, entities, results);
-
-            // process results
-            for (final ResponseHolder<String, String> entry : results) {
-                final String result = entry.getResponse().get();
-
-                // alert result might not be there (worker updated might be in progress )
-                if (result != null) {
-                    try {
-                        checkResults.add(new LastCheckResult(entry.getKey(), mapper.readTree(result)));
-                    } catch (final IOException e) {
-                        throw new SerializationException("Could not read JSON: " + result, e);
-                    }
-                }
-            }
         }
 
         final Alert alert = new Alert();
