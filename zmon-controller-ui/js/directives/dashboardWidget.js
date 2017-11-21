@@ -69,23 +69,15 @@ angular.module('zmon2App').directive('dashboardWidget', ['CommunicationService',
                         var activeAlertIds;
                         var isActive = false;
 
-                        // transform strings to numbers
-                        _.each(alertStyles, function(v, k) {
-                            alertStyles[k] = v.map(Number);
-                        });
-
                         // No response? Get predefined alert ids from scope.
-                        if (response === undefined) {
-                            activeAlertIds = $scope.activeAlertIds;
-                            activeAlertIds = _.map(activeAlertIds, "alert_definition");
-                            activeAlertIds = _.map(activeAlertIds, "id");
+                        if (!response || !response.length) {
+                            activeAlertIds = _.map($scope.activeAlertIds, "id");
                         } else {
-                            activeAlertIds = response[0].active_alert_ids;
-                            console.log('find activeAlertIds', activeAlertIds, response)
-                            // activeAlertIds = _.filter(
-                            //     _.keys(response.entities_count), function(k) {
-                            //                             return response.entities_count[k]
-                            //                         });
+                            activeAlertIds = _.filter(
+                                _.keys(response[0].entities_count).map(Number),
+                                    function(k) {
+                                        return response[0].entities_count[k]
+                                    });
                         }
 
                         $.each(alertStyles, function(key, value) {
@@ -255,20 +247,6 @@ angular.module('zmon2App').directive('dashboardWidget', ['CommunicationService',
                     if ($scope.config.type === 'value') {
                         limit = 1;
                     }
-
-                    // Get data if alertId is specified
-                    // if (alertIds.length) {
-                    //     var activeAlertIds = [];
-                    //     CommunicationService.getAlertsById(alertIds).then(function(data) {
-                    //         _.each(data, function(alert) {
-                    //             if (!DowntimesService.hasAllEntitiesInDowntime(alert)) {
-                    //                 activeAlertIds.push(alert);
-                    //             }
-                    //         });
-                    //         $scope.activeAlertIds = activeAlertIds;
-                    //         setAlertStyles();
-                    //     });
-                    // }
 
                     // Get data if checkId is specified
                     if (checkDefinitionId > 0) {
