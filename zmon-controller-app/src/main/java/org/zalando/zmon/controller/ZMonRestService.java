@@ -123,7 +123,7 @@ public class ZMonRestService extends AbstractZMonController {
             @RequestParam(value = "entity", required = false) final String entity,
             @RequestParam(value = "limit", defaultValue = "20") final int limit) {
 
-        return new ResponseEntity<>(service.getCheckResults(checkId, entity, limit), HttpStatus.OK);
+        return new ResponseEntity<>(service.getCheckResultsWithoutEntities(checkId, entity, limit), HttpStatus.OK);
     }
 
     @RequestMapping(value = "checkResultsChart")
