@@ -69,6 +69,11 @@ angular.module('zmon2App').directive('dashboardWidget', ['CommunicationService',
                         var activeAlertIds;
                         var isActive = false;
 
+                        // transform strings to numbers
+                        _.each(alertStyles, function(v, k) {
+                            alertStyles[k] = v.map(Number);
+                        });
+
                         // No response? Get predefined alert ids from scope.
                         if (!response || !response.length) {
                             activeAlertIds = _.map($scope.activeAlertIds, "id");
