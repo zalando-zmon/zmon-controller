@@ -1,5 +1,5 @@
-angular.module('zmon2App').controller('IndexCtrl', ['$scope', '$location', '$rootScope', 'localStorageService', 'MainAlertService', '$interval', 'APP_CONST', 'LoadingIndicatorService', 'UserInfoService',
-    function($scope, $location, $rootScope, localStorageService, MainAlertService, $interval, APP_CONST, LoadingIndicatorService, UserInfoService) {
+angular.module('zmon2App').controller('IndexCtrl', ['$scope', '$window', '$location', '$rootScope', 'localStorageService', 'MainAlertService', '$interval', 'APP_CONST', 'LoadingIndicatorService', 'UserInfoService',
+    function($scope, $window, $location, $rootScope, localStorageService, MainAlertService, $interval, APP_CONST, LoadingIndicatorService, UserInfoService) {
         $scope.IndexCtrl = this;
         $scope.IndexCtrl.activePage = null; // will be set be corresponding controller i.e. from the child $scope
         $scope.statusTooltip = "Loading status...";
@@ -10,6 +10,8 @@ angular.module('zmon2App').controller('IndexCtrl', ['$scope', '$location', '$roo
         $scope.globalSearchVisible = false;
 
         $rootScope.globalSearchQuery = '';
+
+        var $wrapper = $("#message-manager-wrapper")
 
         this.userInfo = UserInfoService.get();
 
@@ -155,4 +157,14 @@ angular.module('zmon2App').controller('IndexCtrl', ['$scope', '$location', '$roo
             localStorageService.set('signinRedirTo', null);
             return $location.url(signinRedirTo);
         }
+
+        // Fix message bar to window top if scroll position moved below navbar
+        angular.element($window).bind("scroll", function() {
+            if (this.pageYOffset >= 50) {
+                $wrapper.addClass('fix');
+            } else {
+                $wrapper.removeClass('fix')
+            }
+            $scope.$apply();
+        })
     }]);
