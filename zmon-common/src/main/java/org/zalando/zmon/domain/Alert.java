@@ -8,6 +8,7 @@ public class Alert {
     private List<LastCheckResult> entities;
     private String message;
     private boolean notificationsAck;
+    private Long entitiesCount;
 
     public AlertDefinition getAlertDefinition() {
         return alertDefinition;
@@ -25,6 +26,14 @@ public class Alert {
         this.entities = entities;
     }
 
+    public void setEntitiesCount(final Long number){
+        this.entitiesCount = number;
+    }
+
+    public Long getEntitiesCount(){
+        return this.entitiesCount;
+    }
+
     public String getMessage() {
         return message;
     }
@@ -32,7 +41,6 @@ public class Alert {
     public void setMessage(final String message) {
         this.message = message;
     }
-
 
     public boolean isNotificationsAck() {
         return notificationsAck;
@@ -49,6 +57,8 @@ public class Alert {
         builder.append(alertDefinition);
         builder.append(", entities=");
         builder.append(entities);
+        builder.append(", entitiesCount=");
+        builder.append(entitiesCount);
         builder.append(", message=");
         builder.append(message);
         builder.append("]");
