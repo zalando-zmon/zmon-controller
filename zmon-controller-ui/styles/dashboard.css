@@ -788,6 +788,7 @@ below styles are active for a widget */
 {
     font-weight: 400 !important;
     margin: 0 0 8px 0;
+    word-break: break-word;
 }
 
 .zmon-alert a
