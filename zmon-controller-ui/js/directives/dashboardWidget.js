@@ -235,7 +235,7 @@ angular.module('zmon2App').directive('dashboardWidget', ['CommunicationService',
 
                 var refreshWidgetData = function() {
 
-                    $scope.isOutdated =  new Date() / 1000 - $scope.lastUpdate > 30 ? true : false;
+                    $scope.isOutdated =  new Date() / 1000 - $scope.lastUpdate > 60 ? true : false;
                     alertIds = $scope.config.options.alertIds || $scope.config.alertIds || [];
 
                     // include as alert Ids all alertStyle ids (i.e. "red": [3, 5, 10]);
