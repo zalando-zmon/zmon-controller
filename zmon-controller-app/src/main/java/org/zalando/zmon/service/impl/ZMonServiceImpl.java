@@ -295,7 +295,6 @@ public class ZMonServiceImpl implements ZMonService {
     public List<CheckResults> getCheckResultsWithoutEntities(final int checkId, final String entity, final int limit) {
         final List<ResponseHolder<String, List<String>>> results = new LinkedList<>();
         final List<ResponseHolder<Integer, Long>> alertEntitiesCount = new LinkedList<>();
-        final List<ResponseHolder<Integer, Set<String>>> alertEntities = new LinkedList<>();
 
         final List<Integer> alertDefinitionIds = alertDefinitionSProc.getAlertIdsByCheckId(checkId);
         try (Jedis jedis = redisPool.getResource()) {
@@ -325,11 +324,6 @@ public class ZMonServiceImpl implements ZMonService {
         final SetMultimap<String, Integer> entities = HashMultimap.create();
         final Map<Integer, Long> entitiesCount = new HashMap<>();
 
-        for (final ResponseHolder<Integer, Set<String>> response : alertEntities) {
-            for (final String alertEntity : response.getResponse().get()) {
-                entities.put(alertEntity, response.getKey());
-            }
-        }
         for (final ResponseHolder<Integer, Long> response : alertEntitiesCount) {
             entitiesCount.put(response.getKey(), response.getResponse().get());
         }
