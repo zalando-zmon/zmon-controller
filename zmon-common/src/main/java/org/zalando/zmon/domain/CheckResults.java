@@ -1,9 +1,6 @@
 package org.zalando.zmon.domain;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -12,6 +9,7 @@ public class CheckResults {
     private String entity;
     private List<JsonNode> results;
     private Set<Integer> activeAlertIds;
+    private Map<Integer, Long> entitiesCount;
 
     public CheckResults() {
 
@@ -29,6 +27,14 @@ public class CheckResults {
 
     public void setEntity(final String entity) {
         this.entity = entity;
+    }
+
+    public void setEntitiesCount(final Map<Integer, Long> entitiesCount) {
+        this.entitiesCount = entitiesCount;
+    }
+
+    public Map<Integer, Long> getEntitiesCount() {
+        return this.entitiesCount;
     }
 
     public List<JsonNode> getResults() {
