@@ -1,5 +1,5 @@
-angular.module('zmon2App').controller('DashboardCtrl', ['$scope', '$log', '$routeParams', 'localStorageService', '$window', '$location', 'MainAlertService', 'CommunicationService', 'DowntimesService', 'APP_CONST',
-    function($scope, $log, $routeParams, localStorageService, $window, $location, MainAlertService, CommunicationService, DowntimesService, APP_CONST) {
+angular.module('zmon2App').controller('DashboardCtrl', ['$scope', '$log', '$routeParams', 'localStorageService', '$window', '$location', 'MainAlertService', 'CommunicationService', 'APP_CONST',
+    function($scope, $log, $routeParams, localStorageService, $window, $location, MainAlertService, CommunicationService, APP_CONST) {
 
         $scope.dashboardId = $routeParams.dashboardId || localStorageService.get('dashboardId');
 
@@ -18,7 +18,7 @@ angular.module('zmon2App').controller('DashboardCtrl', ['$scope', '$log', '$rout
         $scope.$parent.activePage = 'dashboard';
 
         $scope.alerts = [];
-        $scope.alertsInDowntime = [];
+        // $scope.alertsInDowntime = [];
         $scope.alertsLoaded = false;
         $scope.filter = {};
         $scope.checkResultsByCheckIdByEntity = {};
@@ -135,23 +135,23 @@ angular.module('zmon2App').controller('DashboardCtrl', ['$scope', '$log', '$rout
          * Also keeps track of this by alertId in the controller's oldestStartTime[]
          * Used for the 2nd level sorting (1st level sorting is done by alert priority)
          */
-        $scope.evalOldestStartTimes = function(allAlerts) {
-            allAlerts.forEach(function(nextAlert, idx, arr) {
-                // Get the oldest start_time out of all of the entities of this specific allert
-                var alertId = nextAlert.alert_definition.id;
-                // Add the oldest entity's start_time for current alert as property 'oldestStartTime' of the alert
-                _.extend(nextAlert, {
-                    'oldestStartTime': _.min(_.map(_.map(nextAlert.entities, 'result'), 'start_time'))
-                });
-            });
-        };
+        // $scope.evalOldestStartTimes = function(allAlerts) {
+        //     allAlerts.forEach(function(nextAlert, idx, arr) {
+        //         // Get the oldest start_time out of all of the entities of this specific allert
+        //         var alertId = nextAlert.alert_definition.id;
+        //         // Add the oldest entity's start_time for current alert as property 'oldestStartTime' of the alert
+        //         _.extend(nextAlert, {
+        //             'oldestStartTime': _.min(_.map(_.map(nextAlert.entities, 'result'), 'start_time'))
+        //         });
+        //     });
+        // };
 
         /*
          * Returns a human readable string of the interval between alert's last update and its oldest entity
          */
-        $scope.timeSinceLastUpdate = function(time) {
-            return MainAlertService.millisecondsApart(time, MainAlertService.getLastUpdate());
-        };
+        // $scope.timeSinceLastUpdate = function(time) {
+        //     return MainAlertService.millisecondsApart(time, MainAlertService.getLastUpdate());
+        // };
 
         $scope.refreshDashboardAlerts = function() {
 
@@ -198,80 +198,84 @@ angular.module('zmon2App').controller('DashboardCtrl', ['$scope', '$log', '$rout
             }
         };
 
-        var loadCheckResults = function(alert) {
-
-            // only get graphs for first entities
-            var entitiesWithChart = _.map(alert.entities, 'entity').sort().slice(0, APP_CONST.MAX_ENTITIES_WITH_CHARTS);
-
-            var alertId = alert.alert_definition.id;
-            var checkId = alert.alert_definition.check_definition_id;
-
-            // _.each(entitiesWithChart, function(entity) {
-            //     CommunicationService.getCheckResultsChart(checkId, entity).then(
-            //         function(response) {
-
-            //             // Format to array of objects for d3 processing
-            //             var r = [];
-            //             _.each(response.values, function(data, key) {
-            //                 r.push(data);
-            //             });
-            //             $scope.charts[alertId] = r;
-
-            //             // Store the response per checkId & per entity; to be used by the widgets
-            //             // so they don't have to do async getCheckResults() calls each one by itself
-            //             if ($scope.checkResultsByCheckIdByEntity[checkId] === null || typeof $scope.checkResultsByCheckIdByEntity[checkId] !== 'object') {
-            //                 $scope.checkResultsByCheckIdByEntity[checkId] = {};
-            //             }
-            //             $scope.checkResultsByCheckIdByEntity[checkId][entity] = response;
-            //         }
-            //     );
-            // });
-        };
+        // var loadCheckResults = function(alert) {
+        //
+        //     // only get graphs for first entities
+        //     var entitiesWithChart = _.map(alert.entities, 'entity').sort().slice(0, APP_CONST.MAX_ENTITIES_WITH_CHARTS);
+        //
+        //     var alertId = alert.alert_definition.id;
+        //     var checkId = alert.alert_definition.check_definition_id;
+        //
+        //     _.each(entitiesWithChart, function(entity) {
+        //         CommunicationService.getCheckResultsChart(checkId, entity).then(
+        //             function(response) {
+        //
+        //                 // Format to array of objects for d3 processing
+        //                 var r = [];
+        //                 _.each(response.values, function(data, key) {
+        //                     r.push(data);
+        //                 });
+        //                 $scope.charts[alertId] = r;
+        //
+        //                 // Store the response per checkId & per entity; to be used by the widgets
+        //                 // so they don't have to do async getCheckResults() calls each one by itself
+        //                 if ($scope.checkResultsByCheckIdByEntity[checkId] === null || typeof $scope.checkResultsByCheckIdByEntity[checkId] !== 'object') {
+        //                     $scope.checkResultsByCheckIdByEntity[checkId] = {};
+        //                 }
+        //                 $scope.checkResultsByCheckIdByEntity[checkId][entity] = response;
+        //             }
+        //         );
+        //     });
+        // };
 
         /**
          * Filters and returns only entities which are not in downtime right now
          */
-        var getNonDowntimeEntities = function(entitiesArray) {
-            return _.filter(entitiesArray, function(nextEntity) {
-                return nextEntity.result.downtimes.length === 0;
-            });
-        };
+        // var getNonDowntimeEntities = function(entitiesArray) {
+        //     return _.filter(entitiesArray, function(nextEntity) {
+        //         return nextEntity.result.downtimes.length === 0;
+        //     });
+        // };
 
         /*
          * Returns true/false, depending on whether an alert's non-downtime entities list had to be truncated
          */
-        var nonDowntimeEntitiesAreTruncated = function(entitiesArray) {
-            return getNonDowntimeEntities(entitiesArray).length > APP_CONST.MAX_ENTITIES_DISPLAYED;
-        };
+        // var nonDowntimeEntitiesAreTruncated = function(entitiesArray) {
+        //     return getNonDowntimeEntities(entitiesArray).length > APP_CONST.MAX_ENTITIES_DISPLAYED;
+        // };
 
         $scope.showAllDashboardAlerts = function(filter) {
-            CommunicationService.getAllAlerts(filter).then(
+            CommunicationService.getAllAlertsWithoutEntities(filter).then(
                 function(data) {
 
                     $scope.alerts = data;
 
                     // For each alert, eval the oldest start time from the start_time's of all entities
-                    $scope.evalOldestStartTimes(data);
+                    // $scope.evalOldestStartTimes(data);
 
                     // Set lowest priority on alerts in downtime
-                    $scope.alertsInDowntime = [];
-                    _.each(data, function(alert){
-                        if ($scope.hasAllEntitiesInDowntime(alert)) {
-                            alert.alert_definition.priority = 10;
-                            $scope.alertsInDowntime.push(alert);
-                        }
-                    });
+
+                    // $scope.alertsInDowntime = [];
+
+                    // _.each(data, function(alert){
+                    //
+                    //     var alertDowntimeCount = _.reduce(alert.entities.result, function(sum, r) { return sum+r.downtimes.length}, 0)
+                    //     if (alert.entities_count === alertDowntimeCount) {
+                    //         alert.alert_definition.priority = 10;
+                    //         $scope.alertsInDowntime.push(alert);
+                    //     }
+                    // });
 
                     // For each alert, load check results history to show on graph.
-                    _.each(data, function(alert) {
-                        alert.inException = $scope.hasAllEntitiesFailing(alert);
-                        loadCheckResults(alert);
-                    });
+                    // _.each(data, function(alert) {
+                    //     alert.inException = $scope.hasAllEntitiesFailing(alert);
+                    //     loadCheckResults(alert);
+                    // });
 
                     // Determine if all entities of alert are in downtime
-                    _.each(data, function(alert) {
-                        alert.nonDowntimeEntitiesAreTruncated = nonDowntimeEntitiesAreTruncated(alert.entities);
-                    })
+                    // _.each(data, function(alert) {
+                    //     alert.nonDowntimeEntitiesAreTruncated = nonDowntimeEntitiesAreTruncated(alert.entities);
+                    // })
 
                     $scope.alertsLoaded = true;
 
@@ -286,49 +290,49 @@ angular.module('zmon2App').controller('DashboardCtrl', ['$scope', '$log', '$rout
         /*
          * Returns truncated list of non-downtime entities; limit is MAX_ENTITIES_DISPLAYED entities
          */
-        $scope.truncateNonDowntimeEntities = function(entitiesArray) {
-            return getNonDowntimeEntities(entitiesArray).slice(0, APP_CONST.MAX_ENTITIES_DISPLAYED);
-        };
+        // $scope.truncateNonDowntimeEntities = function(entitiesArray) {
+        //     return getNonDowntimeEntities(entitiesArray).slice(0, APP_CONST.MAX_ENTITIES_DISPLAYED);
+        // };
 
         /**
          * Returns the rest of an alert's non-downtime entities that where left out due to the MAX_ENTITIES_DISPLAYED limit
          */
-        $scope.restOfNonDowntimeEntities = function(entitiesArray) {
-            return getNonDowntimeEntities(entitiesArray).slice(APP_CONST.MAX_ENTITIES_DISPLAYED);
-        };
+        // $scope.restOfNonDowntimeEntities = function(entitiesArray) {
+        //     return getNonDowntimeEntities(entitiesArray).slice(APP_CONST.MAX_ENTITIES_DISPLAYED);
+        // };
 
         /**
          * Returns true if all entities of passed alert are failed due to check-level exception
          */
-        $scope.hasAllEntitiesFailing = function(alertInstance) {
-            if (!alertInstance || !alertInstance.entities) return false;
-            return _.every(alertInstance.entities, function(val) {
-                if (!val.result) return false;
-                if (val.result.captures && val.result.captures.exception) return true;
-                return val.result && val.result.exc;
-            });
-        };
-
+        // $scope.hasAllEntitiesFailing = function(alertInstance) {
+        //     if (!alertInstance || !alertInstance.entities) return false;
+        //     return _.every(alertInstance.entities, function(val) {
+        //         if (!val.result) return false;
+        //         if (val.result.captures && val.result.captures.exception) return true;
+        //         return val.result && val.result.exc;
+        //     });
+        // };
+        //
         /**
          * Returns true if all entities of passed alert are actively in downtime, in which case it will hide the alert entirely
          * Also updates property of # of entities of this alert that are *not* in downtime
          */
-        $scope.hasAllEntitiesInDowntime = function(alertInstance) {
-            return DowntimesService.hasAllEntitiesInDowntime(alertInstance);
-        };
+        // $scope.hasAllEntitiesInDowntime = function(alertInstance) {
+        //     return DowntimesService.hasAllEntitiesInDowntime(alertInstance);
+        // };
 
         /*
          * Returns true when none or some entities are in downtime, or false only when all entities are in downtime.
          * Used as a filter, it will hide alerts which have ALL entities in downtime only.
          */
-        $scope.hasNotAllEntitiesInDowntime = function(alertInstance) {
-            return !DowntimesService.hasAllEntitiesInDowntime(alertInstance);
-        };
+        // $scope.hasNotAllEntitiesInDowntime = function(alertInstance) {
+        //     return !DowntimesService.hasAllEntitiesInDowntime(alertInstance);
+        // };
 
         // Returns a comma separated list of entity names from an alert entities object
-        $scope.getEntityNames = function(entities, n) {
-            return _.map(entities, 'entity').sort().slice(0, n).join(',');
-        };
+        // $scope.getEntityNames = function(entities, n) {
+        //     return _.map(entities, 'entity').sort().slice(0, n).join(',');
+        // };
 
         // Add a tag to the tags array
         $scope.addTag = function(tag) {
