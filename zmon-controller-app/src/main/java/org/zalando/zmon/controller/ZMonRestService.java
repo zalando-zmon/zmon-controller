@@ -120,7 +120,7 @@ public class ZMonRestService extends AbstractZMonController {
     @RequestMapping(value = "/checkResultsWithoutEntities")
     public ResponseEntity<List<CheckResults>> getCheckResultsWithoutEntities(
             @RequestParam(value = "check_id", required = true) final int checkId,
-            @RequestParam(value = "entity", required = false) final String entity,
+            @RequestParam(value = "entity", required = true) final String entity,
             @RequestParam(value = "limit", defaultValue = "20") final int limit) {
 
         return new ResponseEntity<>(service.getCheckResultsWithoutEntities(checkId, entity, limit), HttpStatus.OK);
