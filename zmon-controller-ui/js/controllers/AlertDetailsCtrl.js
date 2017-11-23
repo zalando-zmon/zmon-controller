@@ -1,25 +1,13 @@
 angular.module('zmon2App').controller('AlertDetailsCtrl', [ '$location', '$routeParams', '$scope', 'timespanFilter', 'CommunicationService', 'DowntimesService', 'FeedbackMessageService', 'localStorageService', 'MainAlertService', 'UserInfoService', 'APP_CONST', function($location, $routeParams, $scope, timespanFilter, CommunicationService, DowntimesService, FeedbackMessageService, localStorageService, MainAlertService, UserInfoService, APP_CONST) {
 
-    // infinite-scroll initial limit
-    $scope.limit = APP_CONST.INFINITE_SCROLL_VISIBLE_ENTITIES_INCREMENT;
-    $scope.maxLimit = APP_CONST.INFINITE_SCROLL_MAX_LENGTH;
-
     // Set in parent scope which page is active for the menu styling
     $scope.$parent.activePage = 'alert-details'; // is not a menu option, but still set
 
     $scope.alertId = $routeParams.alertId;
     $scope.alert = null;
     $scope.check = null;
-    $scope.entitiesNotDisplayed = 0;
-
-    var collections = {
-      activeAlerts: [],
-      alertsInDowntime: [],
-      checkResults: []
-    };
-
-    $scope.allAlerts = [];
     $scope.downtimes = [];
+
     $scope.downtimeEntities = [];
 
     $scope.commentsCount = 0;
@@ -39,15 +27,11 @@ angular.module('zmon2App').controller('AlertDetailsCtrl', [ '$location', '$route
 
     $scope.userInfo = UserInfoService.get();
 
-    var alertDetails = { entities: [] };
+    // infinite-scroll initial limit
+    $scope.limit = 100;
 
     $scope.incLimit = function() {
-        if ($scope.limit >= (alertDetails.entities.length + collections.checkResults.length) || $scope.limit >= $scope.maxLimit) {
-            return;
-        }
-
-        $scope.limit += APP_CONST.INFINITE_SCROLL_VISIBLE_ENTITIES_INCREMENT;
-        $scope.allAlerts = getSelectedAlerts()
+        $scope.limit += 35;
     };
 
     // Notify user when ip has been successfully copied to Clipboard.
@@ -77,7 +61,7 @@ angular.module('zmon2App').controller('AlertDetailsCtrl', [ '$location', '$route
     };
 
     var filterEntitiesWithAlert = function(results) {
-        var entitiesWithAlert = _.map(alertDetails.entities, 'entity', []);
+        var entitiesWithAlert = _.map($scope.alert.details.entities, 'entity', []);
         return _.map(_.filter(results, function(entityRes) {
                 return (entitiesWithAlert.indexOf(entityRes.entity) === -1);
             }), function(entityRes) {
@@ -89,30 +73,20 @@ angular.module('zmon2App').controller('AlertDetailsCtrl', [ '$location', '$route
             });
     };
 
-    // gets meta data for new entities (where entity.metaData is undefined)
-    // useful for creating aws console links
     var fetchEntityData = function(entities) {
-        var entityIds = _.reduce(entities, function(result, e) {
-            if (!e.entityMeta) {
-                result.push( { id: e.entity })
-            }
-            return result;
-        }, [])
-
-        if (!entityIds || !entityIds.length) {
+        var entitiesId = _.map(_.map(entities, 'entity'), function(id) {
+            return { 'id': id };
+        }, []);
+        if (!entitiesId.length) {
             return;
         }
-
-        CommunicationService.getEntityMetaData(entityIds).then(function(response) {
+        CommunicationService.getEntityMetaData(entitiesId).then(function(response) {
             _.each(entities, function(next) {
                 _.each(response, function(meta) {
                     if (meta.id === next.entity) {
                         next.entityMeta = meta;
                     }
                 });
-                if (!next.entityMeta) {
-                    next.entityMeta = {};
-                }
             });
         });
     };
@@ -126,11 +100,11 @@ angular.module('zmon2App').controller('AlertDetailsCtrl', [ '$location', '$route
                     return cb();
                 }
                 CommunicationService.getAlertDetails($scope.alert.id).then(function (details) {
-                    alertDetails = details;
-                    updateCounters();
+                    $scope.alert.details = details;
+                    fetchEntityData($scope.alert.details.entities);
                     CommunicationService.getCheckResultsForAlert($scope.alert.id, 1).then(function(results) {
-                        collections.checkResults = filterEntitiesWithAlert(results); // gets all OK entities
-                        $scope.checkResultsCount = collections.checkResults.length
+                        $scope.checkResults = filterEntitiesWithAlert(results);
+                        fetchEntityData($scope.checkResults);
                         cb();
                     });
                 });
@@ -179,67 +153,33 @@ angular.module('zmon2App').controller('AlertDetailsCtrl', [ '$location', '$route
     };
 
     var setAlertStates = function() {
-        if ($scope.alert.status !== 'ACTIVE' || alertDetails.entities.length === 0) {
+        if ($scope.alert.status !== 'ACTIVE' || !$scope.alert.details) {
             return;
         }
-
-        collections.alertsInDowntime = [];
-        collections.activeAlerts = [];
-
-        _.each(alertDetails.entities, function(alert) {
+        $scope.alertsInDowntime = [];
+        $scope.activeAlerts = [];
+        _.each($scope.alert.details.entities, function(alert) {
             if (alert.result.downtimes && alert.result.downtimes.length) {
                 // Add it to alertsInDowntime if any of its downtimes is active now; otherwise add it to activeAlerts
                 if (DowntimesService.isAnyDowntimeNow(alert.result.downtimes)) {
                     alert.isAlertInDowntime = true;
-                    collections.alertsInDowntime.push(alert);
+                    $scope.alertsInDowntime.push(alert);
                 } else {
                     alert.isActiveAlert = true;
-                    collections.activeAlerts.push(alert);
+                    $scope.activeAlerts.push(alert);
                 }
             } else {
                 // alert has no downtimes; by definition goes to activeAlerts
                 alert.isActiveAlert = true;
-                collections.activeAlerts.push(alert);
+                $scope.activeAlerts.push(alert);
             }
         });
     };
 
-    var updateCounters = function() {
-        // apply string filter if present
-        var subset = _.filter(alertDetails.entities, function(o) {
-            return o.entity.indexOf($scope.alertDetailsSearch.str || o.entity) !== -1
-        });
-
-        // get entities in downtime
-        var downtimes = subset.filter(function (e) {
-            return e.result && e.result.downtimes
-                && e.result.downtimes.length
-                && DowntimesService.isAnyDowntimeNow(e.result.downtimes)});
-
-        $scope.allDowntimeAlertsCount = downtimes.length || 0;
-        $scope.allActiveAlertsCount = subset.length - $scope.allDowntimeAlertsCount;
-    }
-
-    // return an array of entities to display on the table (ng-repeat on allAlerts)
     var getSelectedAlerts = function() {
-        var selected = 0;   // number of active tabs (alerts, downtime, OK)
-
-        // Concatenates collections of entities into one collection for display
-        // uses 'selected' to share scroll limit between selected collections.
-        var alerts = _.reduce(['activeAlerts', 'alertsInDowntime', 'checkResults'], function(result, a) {
-            if (!$scope.selection[a] || !collections[a] || !collections[a].length) {
-                return result;
-            }
-            selected = selected+1;
-            var entities = _.filter(collections[a], function(o) {
-                return o.entity.indexOf($scope.alertDetailsSearch.str || o.entity) !== -1
-            })
-            return result.concat(entities.slice(0, $scope.limit/selected));
+        return _.reduce(['activeAlerts', 'alertsInDowntime', 'checkResults'], function(result, a) {
+            return $scope.selection[a] && $scope[a] && $scope[a].length ? result.concat($scope[a]) : result;
         }, []);
-
-        fetchEntityData(alerts); // append metaData
-        $scope.entitiesNotDisplayed = (alertDetails.entities.length + collections.checkResults.length) - $scope.allAlerts.length;
-        return alerts;
     };
 
     var getSelectedDowntimeEntities = function() {
@@ -301,16 +241,8 @@ angular.module('zmon2App').controller('AlertDetailsCtrl', [ '$location', '$route
     }, true);
 
     $scope.$watch('alertDetailsSearch.str', function(str) {
-        if (!str) {
-            str = null;
-        }
         $location.search('filter', str);
         localStorageService.set('alertDetailsSearchStr', str);
-        if ($scope.alert) {
-            $scope.limit = APP_CONST.INFINITE_SCROLL_VISIBLE_ENTITIES_INCREMENT;
-            $scope.allAlerts = getSelectedAlerts()
-            updateCounters();
-        }
     });
 
     // start polling data
