@@ -76,6 +76,7 @@
                 <span ng-if="$index != 0">, </span>
                 <span uib-popover="value for {{entityInstance.entity | entityName}}: {{entityInstance.result.value}}" popover-placement="right" popover-class="entityPopover"> {{entityInstance.entity | entityName }} ({{entityInstance.result.captures.dashboard ? entityInstance.result.captures.dashboard : entityInstance.result.value | prettify}}) </span>
             </span>
+            <span ng-show="!compact" ng-if="alertInstance.entities_count && alertInstance.entities == null">This Alert exceeds current limit of {{redisLimit}} entities.</span>
             <span ng-show="!compact" ng-if="alertInstance.nonDowntimeEntitiesAreTruncated">
                 <a ng-click="alertInstance.expanded = true" ng-if="!alertInstance.expanded" class="non-href-anchor">More...</a>
                 <a ng-click="alertInstance.expanded = false" ng-if="alertInstance.expanded" class="non-href-anchor">Hide...</a>
@@ -96,7 +97,7 @@
                 <span ng-show="!compact">{{alertInstance.alert_definition.responsible_team}}</span>
                 <a ng-if="alertInstance.numEntitiesInDowntimeNow" class="fa fa-flag" tooltip="{{alertInstance.numEntitiesInDowntimeNow}} entities in downtime now" tooltip-placement="left" ng-href="#/alert-details/{{alertInstance.alert_definition.id}}?downtimes"></a>
             </div>
-            <div class="text-right oldest-timestamp">
+            <div class="text-right oldest-timestamp" ng-if="alertInstance.entities != null">>
                 {{timeSinceLastUpdate(alertInstance.oldestStartTime) | timespan}}
             </div>
         </div>

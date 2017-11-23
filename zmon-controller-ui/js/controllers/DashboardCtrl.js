@@ -29,6 +29,8 @@ angular.module('zmon2App').controller('DashboardCtrl', ['$scope', '$log', '$rout
         $scope.dashboardTags = { tags: []};
         $scope.showAlertsWithAllEntitiesInDowntime = $location.search().ad || false;
 
+        $scope.redisLimit = null;
+
         $scope.$watch('showWidgets', function() {
             localStorageService.add('showWidgets', $scope.showWidgets);
         });
@@ -371,5 +373,9 @@ angular.module('zmon2App').controller('DashboardCtrl', ['$scope', '$log', '$rout
             $location.search('as', _.isEmpty(newVal) ? null : newVal);
             localStorageService.set('returnTo', '/#' + $location.url());
         });
+
+        CommunicationService.getRedisLimit().then(function(limit) {
+            $scope.redisLimit = limit;
+        })
     }
 ]);
