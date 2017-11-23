@@ -34,6 +34,7 @@ import org.zalando.zmon.util.NamedMessageFormatter;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.Pipeline;
+import redis.clients.jedis.Response;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
@@ -253,14 +254,23 @@ public class AlertServiceImpl implements AlertService {
     }
 
     //Added to replace smembers call with scard to avoid pressure on redis during Black Friday period.
-    protected void getActiveAlertsForDefinitionsWithoutEntities(List<AlertDefinition> definitions, List<ResponseHolder<Integer, Long>> results) {
+    protected void getActiveAlertsForDefinitionsWithoutEntities(List<AlertDefinition> definitions, List<ResponseHolder<Integer, Long>> results, List<ResponseHolder<Integer, Set<String>>> results1) {
         try (Jedis jedis = redisPool.getResource()) {
 
             // execute async call
             final Pipeline p = jedis.pipelined();
             for (final AlertDefinition definition : definitions) {
+
+                Response<Long> response = p.scard(RedisPattern.alertEntities(definition.getId()));
+                p.sync();
+                Long count = response.get();
+
+                if (count > Long.parseLong(System.getenv("REDIS_SMEMBERS_COUNT")))
                 results.add(ResponseHolder.create(definition.getId(),
                         p.scard(RedisPattern.alertEntities(definition.getId()))));
+                else
+                    results1.add(ResponseHolder.create(definition.getId(),
+                            p.smembers(RedisPattern.alertEntities(definition.getId()))));
             }
 
             p.sync();
@@ -313,11 +323,12 @@ public class AlertServiceImpl implements AlertService {
 
         if (teams != null && !teams.isEmpty() || tags != null && !tags.isEmpty()) {
             final List<AlertDefinition> definitions = getActiveAlertDefinitionByTeamAndTag(teams, tags);
-            final List<ResponseHolder<Integer, Long>> results = new LinkedList<>();
+            final List<ResponseHolder<Integer, Long>> resultsEntitiesCount = new LinkedList<>();
+            final List<ResponseHolder<Integer, Set<String>>> resultsEntities = new LinkedList<>();
 
             if (!definitions.isEmpty()) {
 
-                getActiveAlertsForDefinitionsWithoutEntities(definitions, results);
+                getActiveAlertsForDefinitionsWithoutEntities(definitions, resultsEntitiesCount, resultsEntities);
 
                 // TODO remove duplicate code
                 // TODO move redis calls to a different service
@@ -328,18 +339,34 @@ public class AlertServiceImpl implements AlertService {
                 final Map<Integer, AlertDefinition> mappedAlerts = Maps.uniqueIndex(definitions,
                         AlertDefinition::getId);
                 final Set<Integer> ackedAlertIds = getAcknowledgedAlerts();
-                // process alerts
-                for (final ResponseHolder<Integer, Long> entry : results) {
-                    final AlertDefinition def = mappedAlerts.get(entry.getKey());
 
-                    final Long entities = entry.getResponse().get();
+                if(resultsEntitiesCount.size() > 0) {
+                    // process alerts
+                    for (final ResponseHolder<Integer, Long> entry : resultsEntitiesCount) {
+                        final AlertDefinition def = mappedAlerts.get(entry.getKey());
 
-                    if (entities > 0) {
-                        final Alert alert = buildAlertWithoutEntities(entry.getKey(), entities, def);
-                        alert.setNotificationsAck(ackedAlertIds.contains(alert.getAlertDefinition().getId()));
-                        alerts.add(alert);
+                        final Long entities = entry.getResponse().get();
+
+                        if (entities > 0) {
+                            final Alert alert = buildAlertWithoutEntities(entry.getKey(), entities, def);
+                            alert.setNotificationsAck(ackedAlertIds.contains(alert.getAlertDefinition().getId()));
+                            alerts.add(alert);
+                        }
                     }
                 }
+                if(resultsEntities.size() > 0) {
+                    for (final ResponseHolder<Integer, Set<String>> entry : resultsEntities) {
+                        final AlertDefinition def = mappedAlerts.get(entry.getKey());
+
+                        final Set<String> entities = entry.getResponse().get();
+                        if (!entities.isEmpty()) {
+                            final Alert alert = buildAlert(entry.getKey(), entities, def);
+                            alert.setNotificationsAck(ackedAlertIds.contains(alert.getAlertDefinition().getId()));
+                            alerts.add(alert);
+                        }
+                    }
+                }
+
             }
         }
 
