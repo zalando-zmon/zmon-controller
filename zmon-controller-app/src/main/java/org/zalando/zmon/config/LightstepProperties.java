@@ -11,7 +11,7 @@ public class LightstepProperties {
         return accessToken;
     }
 
-    public void setAcessToken(String accessToken) {
+    public void setAccessToken(String accessToken) {
         this.accessToken = accessToken;
     }
 
