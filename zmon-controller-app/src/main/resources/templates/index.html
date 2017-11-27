@@ -120,6 +120,14 @@
         ineum('traceId', '<%= request.getAttribute("X-INSTANA-T") %>' );
     </script>
 
+    <!-- Lightstep EUM -->
+    <script src="/lib/opentracing/opentracing-browser.min.js" th:if="${lightstepEnabled}"></script>
+    <script src="/lib/lightstep/lightstep-tracer.min.js" th:if="${lightstepEnabled}"
+            data-init_global_tracer="true"
+            data-access_token="${lightstepConfig.accessToken}"
+            data-component_name="${lightstepConfig.componentName}"
+    ></script>
+
     <!-- Firebase -->
     <script th:inline="javascript" th:if="${firebaseEnabled}" src="/lib/firebase/firebase-app.js"></script>
     <script th:inline="javascript" th:if="${firebaseEnabled}" src="/lib/firebase/firebase-messaging.js"></script>

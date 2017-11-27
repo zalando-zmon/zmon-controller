@@ -30,6 +30,8 @@ public class ControllerProperties {
 
     public boolean enableInstana = false;
 
+    public boolean enableLightstep = false;
+
     public boolean enableGoogleanalytics = false;
 
     public List<String> workerQueueKeys = Arrays.asList("zmon:queue:default");
@@ -60,6 +62,14 @@ public class ControllerProperties {
 
     public void setEnableInstana(boolean enableInstana) {
         this.enableInstana = enableInstana;
+    }
+
+    public boolean isEnableLightstep() {
+        return enableLightstep;
+    }
+
+    public void setEnableLightstep(boolean enableLightstep) {
+        this.enableLightstep = enableLightstep;
     }
 
     public boolean isEnableGoogleanalytics() {
