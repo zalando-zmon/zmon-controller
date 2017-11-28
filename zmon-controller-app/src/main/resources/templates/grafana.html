@@ -437,5 +437,20 @@
         }
     </script>
 
+    <!-- Lightstep EUM -->
+    <script src="/lib/opentracing/opentracing-browser.min.js" th:if="${lightstepEnabled}"></script>
+    <script src="/lib/lightstep/lightstep-tracer.min.js" th:if="${lightstepEnabled}"></script>
+    <script charset='UTF-8' th:inline="javascript" th:if="${lightstepEnabled}">
+        var lightstepConfig = /*[[${lightstepConfig}]]*/ { accessToken: "", collectorHost: "", collectorPort: 443 };
+        opentracing.initGlobalTracer(new lightstep.Tracer({
+            access_token: lightstepConfig.accessToken,
+            component_name: 'ZMON Controller Grafana UI',
+            xhr_instrumentation: true,
+            collector_host: lightstepConfig.collectorHost,
+            collector_port: lightstepConfig.collectorPort,
+            verbosity: 3
+        }));
+    </script>
+
     <script src="public/app/boot.4595d54e.js"></script>
 </html>

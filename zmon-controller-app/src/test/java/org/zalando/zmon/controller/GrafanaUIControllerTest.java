@@ -5,6 +5,7 @@ import org.junit.Test;
 import org.springframework.ui.ExtendedModelMap;
 import org.zalando.zmon.config.AppdynamicsProperties;
 import org.zalando.zmon.config.InstanaProperties;
+import org.zalando.zmon.config.LightstepProperties;
 import org.zalando.zmon.config.ControllerProperties;
 import org.zalando.zmon.config.KairosDBProperties;
 
@@ -16,6 +17,7 @@ public class GrafanaUIControllerTest {
     public void TestControllerInjectsAppDynamicsConfiguration() {
         AppdynamicsProperties appdynamicsProperties = new AppdynamicsProperties();
         InstanaProperties instanaProperties = new InstanaProperties();
+        LightstepProperties lightstepProperties = new LightstepProperties();
         ControllerProperties controllerProperties = new ControllerProperties();
         controllerProperties.setEnableAppdynamics(true);
 
@@ -23,7 +25,8 @@ public class GrafanaUIControllerTest {
                 mock(KairosDBProperties.class),
                 controllerProperties,
                 appdynamicsProperties,
-                instanaProperties
+                instanaProperties,
+                lightstepProperties
         );
 
         ExtendedModelMap model = new ExtendedModelMap();
@@ -37,6 +40,7 @@ public class GrafanaUIControllerTest {
     public void TestControllerInjectsAppDynamicsConfigurationInDeepLinks() {
         AppdynamicsProperties appdynamicsProperties = new AppdynamicsProperties();
         InstanaProperties instanaProperties = new InstanaProperties();
+        LightstepProperties lightstepProperties = new LightstepProperties();
         ControllerProperties controllerProperties = new ControllerProperties();
         controllerProperties.setEnableAppdynamics(true);
 
@@ -44,7 +48,8 @@ public class GrafanaUIControllerTest {
                 mock(KairosDBProperties.class),
                 controllerProperties,
                 appdynamicsProperties,
-                instanaProperties
+                instanaProperties,
+                lightstepProperties
         );
 
         ExtendedModelMap model = new ExtendedModelMap();
@@ -60,7 +65,8 @@ public class GrafanaUIControllerTest {
                 mock(KairosDBProperties.class),
                 mock(ControllerProperties.class),
                 mock(AppdynamicsProperties.class),
-                mock(InstanaProperties.class)
+                mock(InstanaProperties.class),
+                mock(LightstepProperties.class)
         );
 
         ExtendedModelMap model = new ExtendedModelMap();
@@ -75,7 +81,8 @@ public class GrafanaUIControllerTest {
                 mock(KairosDBProperties.class),
                 mock(ControllerProperties.class),
                 mock(AppdynamicsProperties.class),
-                mock(InstanaProperties.class)
+                mock(InstanaProperties.class),
+                mock(LightstepProperties.class)
         );
 
         ExtendedModelMap model = new ExtendedModelMap();
