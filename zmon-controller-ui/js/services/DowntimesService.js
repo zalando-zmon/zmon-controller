@@ -20,10 +20,6 @@ angular.module('zmon2App').factory('DowntimesService', [
             alertInstance.numEntitiesNotInDowntimeNow = 0;
             alertInstance.numEntitiesInDowntimeNow = 0;
 
-            if (alertInstance.entities == null && alertInstance.entities_count) {
-                return false;
-            }
-
             _.each(arrayOfDowntimesArrays, function(nextEntityDowntimes) {
                 if(!service.isAnyDowntimeNow(nextEntityDowntimes)){
                     // Means we have to show this alertInstance since is has at least one entity now currently in downtime
@@ -33,7 +29,6 @@ angular.module('zmon2App').factory('DowntimesService', [
                     alertInstance.numEntitiesInDowntimeNow++;
                 }
             });
-
             return hasAllEntitiesInDowntime;
         };
 

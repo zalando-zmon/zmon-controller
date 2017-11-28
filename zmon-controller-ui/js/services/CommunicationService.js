@@ -74,12 +74,8 @@ angular.module('zmon2App').factory('CommunicationService', ['$http', '$q', '$log
                 params.tags = filter.tags;
             }
 
-            return doHttpCall("GET", "rest/allAlertsWithoutEntities", params, null, timeout);
+            return doHttpCall("GET", "rest/allAlerts", params, null, timeout);
         };
-
-        service.getRedisLimit = function() {
-            return doHttpCall("GET", "https://s3.eu-central-1.amazonaws.com/redis-limit/redis-limit.txt");
-        }
 
         /*
          * Get alerts by ID.
