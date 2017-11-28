@@ -5,7 +5,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "zmon.lightstep")
 public class LightstepProperties {
     public String accessToken;
-    public String componentName;
+    public String collectorHost;
+    public Integer collectorPort;
 
     public String getAccessToken() {
         return accessToken;
@@ -15,11 +16,19 @@ public class LightstepProperties {
         this.accessToken = accessToken;
     }
 
-    public String getComponentName() {
-        return componentName;
+    public String getCollectorHost() {
+        return collectorHost;
     }
 
-    public void setComponentName(String componentName) {
-        this.componentName = componentName;
+    public void setCollectorHost(String collectorHost) {
+        this.collectorHost = collectorHost;
+    }
+
+    public Integer getCollectorPort() {
+        return collectorPort;
+    }
+
+    public void setCollectorPort(Integer collectorPort) {
+        this.collectorPort = collectorPort;
     }
 }

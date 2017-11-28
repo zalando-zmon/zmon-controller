@@ -110,7 +110,7 @@
     </script>
 
     <!-- Instana EUM -->
-    <script charset='UTF-8' th:inline="javascript" th:if="${instanaEnabled}" >
+    <script charset='UTF-8' th:inline="javascript" th:if="${instanaEnabled}">
         var instanaConfig = /*[[${instanaConfig}]]*/ { apiKey: "" };
         (function(i,s,o,g,r,a,m){i['InstanaEumObject']=r;i[r]=i[r]||function(){
         (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
@@ -122,22 +122,18 @@
 
     <!-- Lightstep EUM -->
     <script src="/lib/opentracing/opentracing-browser.min.js" th:if="${lightstepEnabled}"></script>
-    <script th:inline="javascript" th:if="${lightstepEnabled}">
-      var lightstepConfig = /*[[${lightstepConfig}]]*/ { accessToken: "", componentName: "" };
-      (function(i,s,o,g,r,a,m){a=s.createElement(o),m=s.getElementsByTagName(o)[0];
-      a.async=1;a.src=g;a.dataset.init_global_tracer=true;
-      a.dataset.access_token=lightstepConfig.accessToken;
-      a.dataset.component_name=lightstepConfig.componentName;
-      a.dataset.xhr_instrumentation=true;
-      a.dataset.verbosity=3;
-      m.parentNode.insertBefore(a,m);
-      })(window,document,'script','/lib/lightstep/lightstep-tracer.min.js');
+    <script src="/lib/lightstep/lightstep-tracer.min.js" th:if="${lightstepEnabled}"></script>
+    <script charset='UTF-8' th:inline="javascript" th:if="${lightstepEnabled}">
+        var lightstepConfig = /*[[${lightstepConfig}]]*/ { accessToken: "", collectorHost: "", collectorPort: 443 };
+        opentracing.initGlobalTracer(new lightstep.Tracer({
+            access_token: lightstepConfig.accessToken,
+            component_name: 'ZMON Controller UI',
+            xhr_instrumentation: true,
+            collector_host: lightstepConfig.collectorHost,
+            collector_port: lightstepConfig.collectorPort,
+            verbosity: 3
+        }));
     </script>
-    <!-- <script src="/lib/lightstep/lightstep-tracer.min.js" th:if="${lightstepEnabled}"
-            data-init_global_tracer="true"
-            data-access_token="${lightstepConfig.accessToken}"
-            data-component_name="${lightstepConfig.componentName}"
-    ></script> -->
 
     <!-- Firebase -->
     <script th:inline="javascript" th:if="${firebaseEnabled}" src="/lib/firebase/firebase-app.js"></script>
