@@ -74,7 +74,7 @@ angular.module('zmon2App').factory('CommunicationService', ['$http', '$q', '$log
                 params.tags = filter.tags;
             }
 
-            return doHttpCall("GET", "rest/allAlerts", params, null, timeout);
+            return doHttpCall("GET", "rest/allAlertsWithoutEntities", params, null, timeout);
         };
 
         /*
