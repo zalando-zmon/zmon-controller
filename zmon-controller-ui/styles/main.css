@@ -331,6 +331,11 @@ div.popover
     margin-right: 20px;
 }
 
+#message-manager-wrapper.fix {
+    position: fixed;
+    top: 0;
+}
+
 .semi-transparent
 {
     opacity: 0.5;
