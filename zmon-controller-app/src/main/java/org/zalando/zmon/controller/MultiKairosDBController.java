@@ -8,13 +8,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
+import org.springframework.http.client.AsyncClientHttpRequest;
+import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.util.concurrent.ListenableFuture;
 import org.springframework.util.concurrent.ListenableFutureCallback;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.AsyncRequestCallback;
 import org.springframework.web.client.AsyncRestTemplate;
+import org.springframework.web.client.ResponseExtractor;
 import org.zalando.stups.tokens.AccessTokens;
 import org.zalando.zmon.config.KairosDBProperties;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -135,8 +140,22 @@ public class MultiKairosDBController extends AbstractZMonController {
         return asyncRestTemplate.exchange(kairosdbServices.get(kairosDB).getUrl() + TAGS_QUERY_SUFFIX, HttpMethod.POST, httpEntity, JsonNode.class);
     }
 
+    class KairosAsyncRequestHandler implements AsyncRequestCallback {
+        @Override
+        public void doWithRequest(AsyncClientHttpRequest asyncClientHttpRequest) throws IOException {
+            asyncClientHttpRequest.getHeaders().add(AUTHORIZATION, BEARER + accessTokens.get(KAIROSDB_TOKEN_ID));
+        }
+    }
+
+    class ResponseExtractor implements org.springframework.web.client.ResponseExtractor<JsonNode> {
+        @Override
+        public String extractData(ClientHttpResponse clientHttpResponse) throws IOException {
+            clientHttpResponse.getBody().
+        }
+    }
+
     @RequestMapping(value = "{kairosdbId}/api/v1/metricnames", method = RequestMethod.GET, produces = "application/json")
-    public ListenableFuture<ResponseEntity<JsonNode>> kairosDBmetrics(@PathVariable(value = "kairosdbId") String kairosDB) {
+    public ResponseEntity<String> kairosDBmetrics(@PathVariable(value = "kairosdbId") String kairosDB) {
         if (!kairosdbServices.containsKey(kairosDB)) {
             return null;
         }
@@ -149,7 +168,7 @@ public class MultiKairosDBController extends AbstractZMonController {
 
         HttpEntity<String> httpEntity = new HttpEntity<>(headers);
 
-        return asyncRestTemplate.exchange(kairosdbServices.get(kairosDB).getUrl() + METRIC_NAMES_SUFFIX, HttpMethod.GET, httpEntity, JsonNode.class);
+        return asyncRestTemplate.exchange(kairosdbServices.get(kairosDB).getUrl() + METRIC_NAMES_SUFFIX, HttpMethod.GET);
     }
 
     static class StopTimerCallback implements ListenableFutureCallback<Object> {
