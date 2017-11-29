@@ -15,7 +15,7 @@
         </tr>
     </thead>
     <tbody>
-        <tr ng-repeat="entry in history" ng-if="entry.type_name != 'TRIAL_RUN_SCHEDULED'">
+        <tr ng-repeat="entry in history | orderBy: '-time'" ng-if="entry.type_name != 'TRIAL_RUN_SCHEDULED'">
             <td>{{::entry.time | epochToDate}}</td>
             <td class="text-center">
             <span class="history-tag" style="background-color: hsla({{::HSLaFromHistoryEventTypeId(entry.type_id)}}, 50%, 50%, 1);">{{::entry.type_name}}</span>
