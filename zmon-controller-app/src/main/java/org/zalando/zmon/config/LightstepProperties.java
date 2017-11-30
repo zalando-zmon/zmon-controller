@@ -8,6 +8,8 @@ public class LightstepProperties {
     public String collectorHost;
     public Integer collectorPort;
     public String collectorProtocol="https";
+    public String eumCollectorHost;
+    public Integer eumCollectorPort;
     public String componentName="zmon-controller";
 
     public String getCollectorProtocol() {
@@ -48,5 +50,21 @@ public class LightstepProperties {
 
     public void setCollectorPort(Integer collectorPort) {
         this.collectorPort = collectorPort;
+    }
+
+    public String getEumCollectorHost() {
+        return eumCollectorHost;
+    }
+
+    public void setEumCollectorHost(String eumCollectorHost) {
+        this.eumCollectorHost = eumCollectorHost;
+    }
+
+    public Integer getEumCollectorPort() {
+        return eumCollectorPort;
+    }
+
+    public void setEumCollectorPort(Integer eumCollectorPort) {
+        this.eumCollectorPort = eumCollectorPort;
     }
 }

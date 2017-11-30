@@ -124,13 +124,13 @@
     <script src="/lib/opentracing/opentracing-browser.min.js" th:if="${lightstepEnabled}"></script>
     <script src="/lib/lightstep/lightstep-tracer.min.js" th:if="${lightstepEnabled}"></script>
     <script charset='UTF-8' th:inline="javascript" th:if="${lightstepEnabled}">
-        var lightstepConfig = /*[[${lightstepConfig}]]*/ { accessToken: "", collectorHost: "", collectorPort: 443 };
+        var lightstepConfig = /*[[${lightstepConfig}]]*/ { accessToken: "", eumCollectorHost: "", eumCollectorPort: 443 };
         opentracing.initGlobalTracer(new lightstep.Tracer({
             access_token: lightstepConfig.accessToken,
-            component_name: 'ZMON Controller UI',
+            component_name: 'zmon-controller-ui',
             xhr_instrumentation: true,
-            collector_host: lightstepConfig.collectorHost,
-            collector_port: lightstepConfig.collectorPort,
+            collector_host: lightstepConfig.eumCollectorHost,
+            collector_port: lightstepConfig.eumCollectorPort,
             verbosity: 3
         }));
     </script>
