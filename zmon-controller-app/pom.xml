@@ -285,6 +285,11 @@
             <artifactId>opentracing-redis-jedis</artifactId>
             <version>0.0.1</version>
         </dependency>
+        <dependency>
+            <groupId>io.opentracing.contrib</groupId>
+            <artifactId>opentracing-apache-httpclient</artifactId>
+            <version>0.1.0-RC1</version>
+        </dependency>
     </dependencies>
 
     <build>

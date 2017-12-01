@@ -1,5 +1,6 @@
 package org.zalando.zmon.config;
 
+import io.opentracing.contrib.apache.http.client.TracingHttpClientBuilder;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -43,10 +44,8 @@ public class EventLogConfiguration {
                 .setConnectionRequestTimeout(config.getRequestConnectTimeout())
                 .setSocketTimeout(config.getSocketTimeout())
                 .build();
-        final CloseableHttpClient client = HttpClientBuilder
-                .create()
-                .setDefaultRequestConfig(requestConfig)
-                .build();
+        final CloseableHttpClient client = new TracingHttpClientBuilder().
+                setDefaultRequestConfig(requestConfig).build();
         return new HttpComponentsClientHttpRequestFactory(client);
     }
 
