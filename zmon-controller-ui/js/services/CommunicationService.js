@@ -41,6 +41,7 @@ angular.module('zmon2App').factory('CommunicationService', ['$http', '$q', '$log
 
             extraHeaders = extraHeaders || {};
             var span = OpenTracingService.globalTracer().startSpan('xhr/' + endpoint.split('/').pop());
+            span.logEvent('payload', payload);
             OpenTracingService.globalTracer().inject(span.context(), OpenTracingService.FORMAT_HTTP_HEADERS, extraHeaders);
             httpConfig.headers = extraHeaders;
 
