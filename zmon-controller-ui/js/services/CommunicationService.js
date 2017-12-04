@@ -41,7 +41,6 @@ angular.module('zmon2App').factory('CommunicationService', ['$http', '$q', '$log
 
             extraHeaders = extraHeaders || {};
             var span = OpenTracingService.globalTracer().startSpan('xhr/' + endpoint.split('/').pop());
-            span.logEvent('payload', payload);
             OpenTracingService.globalTracer().inject(span.context(), OpenTracingService.FORMAT_HTTP_HEADERS, extraHeaders);
             httpConfig.headers = extraHeaders;
 
@@ -49,6 +48,7 @@ angular.module('zmon2App').factory('CommunicationService', ['$http', '$q', '$log
                 httpConfig.timeout = timeout;
             }
 
+            span.logEvent('request', { payload: payload });
             $http(httpConfig).success(function(response, status, headers, config) {
                 if (postSuccessProcessing) {
                     var result = postSuccessProcessing(response);
