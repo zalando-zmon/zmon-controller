@@ -1,5 +1,5 @@
-angular.module('zmon2App').factory('CommunicationService', ['$http', '$q', '$log', 'APP_CONST', 'PreconditionsService',
-    function($http, $q, $log, APP_CONST, PreconditionsService) {
+angular.module('zmon2App').factory('CommunicationService', ['$http', '$q', '$log', 'APP_CONST', 'PreconditionsService', 'OpenTracingService',
+    function($http, $q, $log, APP_CONST, PreconditionsService, OpenTracingService) {
         var service = {},
             alertIdCache = {},
             alertNameCache = {},
@@ -39,9 +39,10 @@ angular.module('zmon2App').factory('CommunicationService', ['$http', '$q', '$log
                 httpConfig.url = endpoint + "?" + objectToQueryString(payload);
             }
 
-            if (extraHeaders) {
-                httpConfig.headers = extraHeaders;
-            }
+            extraHeaders = extraHeaders || {};
+            var span = OpenTracingService.globalTracer().startSpan('xhr/' + endpoint.split('/').pop());
+            OpenTracingService.globalTracer().inject(span.context(), OpenTracingService.FORMAT_HTTP_HEADERS, extraHeaders);
+            httpConfig.headers = extraHeaders;
 
             if (timeout) {
                 httpConfig.timeout = timeout;
@@ -52,8 +53,12 @@ angular.module('zmon2App').factory('CommunicationService', ['$http', '$q', '$log
                     var result = postSuccessProcessing(response);
                     response = result ? result : response;
                 }
+                span.finish();
                 deferred.resolve(response);
             }).error(function(response, status, headers, config) {
+                span.setTag('error', true);
+                span.logEvent('response', { status: status, body: response.body });
+                span.finish();
                 deferred.reject(status);
             });
 

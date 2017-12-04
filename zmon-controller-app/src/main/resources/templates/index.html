@@ -128,10 +128,10 @@
         opentracing.initGlobalTracer(new lightstep.Tracer({
             access_token: lightstepConfig.accessToken,
             component_name: 'zmon-controller-ui',
-            xhr_instrumentation: true,
+            xhr_instrumentation: false,
             collector_host: lightstepConfig.eumCollectorHost,
             collector_port: lightstepConfig.eumCollectorPort,
-            verbosity: 3
+            verbosity: 2
         }));
     </script>
 
@@ -292,6 +292,7 @@
 <script th:src="${staticUrl} + '/js/directives/caret.js?t=@buildTime@'"></script>
 <script th:src="${staticUrl} + '/js/directives/notifications.js?t=@buildTime@'"></script>
 <script th:src="${staticUrl} + '/js/services/MainAlertService.js?t=@buildTime@'"></script>
+<script th:src="${staticUrl} + '/js/services/OpenTracingService.js?t=@buildTime@'"></script>
 <script th:src="${staticUrl} + '/js/services/CommunicationService.js?t=@buildTime@'"></script>
 <script th:src="${staticUrl} + '/js/services/FeedbackMessageService.js?t=@buildTime@'"></script>
 <script th:src="${staticUrl} + '/js/services/HttpResponseInterceptor.js?t=@buildTime@'"></script>
