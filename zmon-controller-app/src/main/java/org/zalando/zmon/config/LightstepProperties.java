@@ -8,9 +8,12 @@ public class LightstepProperties {
     public String collectorHost;
     public Integer collectorPort;
     public String collectorProtocol="https";
+    public String componentName="zmon-controller";
     public String eumCollectorHost;
     public Integer eumCollectorPort;
-    public String componentName="zmon-controller";
+    public String eumComponentName="zmon-controller-ui";
+    public String eumGrafanaComponentName="zmon-grafana-ui";
+    public Integer eumVerbosity=1;
 
     public String getCollectorProtocol() {
         return collectorProtocol;
@@ -66,5 +69,29 @@ public class LightstepProperties {
 
     public void setEumCollectorPort(Integer eumCollectorPort) {
         this.eumCollectorPort = eumCollectorPort;
+    }
+
+    public String getEumComponentName() {
+        return eumComponentName;
+    }
+
+    public void setEumComponentName(String eumComponentName) {
+        this.eumComponentName = eumComponentName;
+    }
+
+    public String getEumGrafanaComponentName() {
+        return eumGrafanaComponentName;
+    }
+
+    public void setEumGrafanaComponentName(String eumGrafanaComponentName) {
+        this.eumGrafanaComponentName = eumGrafanaComponentName;
+    }
+
+    public Integer getEumVerbosity() {
+        return eumVerbosity;
+    }
+
+    public void setEumVerbosity(Integer eumVerbosity) {
+        this.eumVerbosity = eumVerbosity;
     }
 }

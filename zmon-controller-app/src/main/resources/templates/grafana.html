@@ -24,7 +24,22 @@
             display: none;
         }
     </style>
-  </head>
+
+    <!-- Lightstep EUM -->
+    <script src="/lib/opentracing/opentracing-browser.min.js" th:if="${lightstepEnabled}"></script>
+    <script src="/lib/lightstep/lightstep-tracer.js" th:if="${lightstepEnabled}"></script>
+    <script charset='UTF-8' th:inline="javascript" th:if="${lightstepEnabled}">
+        var lightstepConfig = /*[[${lightstepConfig}]]*/ { accessToken: "", eumCollectorHost: "", eumCollectorPort: 443 };
+        opentracing.initGlobalTracer(new lightstep.Tracer({
+            xhr_instrumentation: true,
+            access_token: lightstepConfig.accessToken,
+            component_name: lightstepConfig.eumGrafanaComponentName,
+            collector_host: lightstepConfig.eumCollectorHost,
+            collector_port: lightstepConfig.eumCollectorPort,
+            verbosity: lightstepConfig.eumVerbosity
+        }));
+    </script>
+</head>
 
     <body ng-cloak>
         <grafana-app class="grafana-app">
@@ -435,21 +450,6 @@
           + " type='text/javascript' charset='UTF-8'"
           + unescape('%3E%3C/script%3E'));
         }
-    </script>
-
-    <!-- Lightstep EUM -->
-    <script src="/lib/opentracing/opentracing-browser.min.js" th:if="${lightstepEnabled}"></script>
-    <script src="/lib/lightstep/lightstep-tracer.min.js" th:if="${lightstepEnabled}"></script>
-    <script charset='UTF-8' th:inline="javascript" th:if="${lightstepEnabled}">
-        var lightstepConfig = /*[[${lightstepConfig}]]*/ { accessToken: "", eumCollectorHost: "", eumCollectorPort: 443 };
-        opentracing.initGlobalTracer(new lightstep.Tracer({
-            access_token: lightstepConfig.accessToken,
-            component_name: 'zmon-controller-grafana-ui',
-            xhr_instrumentation: true,
-            collector_host: lightstepConfig.eumCollectorHost,
-            collector_port: lightstepConfig.eumCollectorPort,
-            verbosity: 3
-        }));
     </script>
 
     <script src="public/app/boot.4595d54e.js"></script>
