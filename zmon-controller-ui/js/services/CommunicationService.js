@@ -39,27 +39,21 @@ angular.module('zmon2App').factory('CommunicationService', ['$http', '$q', '$log
                 httpConfig.url = endpoint + "?" + objectToQueryString(payload);
             }
 
-            extraHeaders = extraHeaders || {};
-            var span = OpenTracingService.globalTracer().startSpan('xhr/' + endpoint.split('/').pop());
-            OpenTracingService.globalTracer().inject(span.context(), OpenTracingService.FORMAT_HTTP_HEADERS, extraHeaders);
-            httpConfig.headers = extraHeaders;
+            if (extraHeaders) {
+                httpConfig.headers = extraHeaders;
+            }
 
             if (timeout) {
                 httpConfig.timeout = timeout;
             }
 
-            span.logEvent('request', { payload: payload });
             $http(httpConfig).success(function(response, status, headers, config) {
                 if (postSuccessProcessing) {
                     var result = postSuccessProcessing(response);
                     response = result ? result : response;
                 }
-                span.finish();
                 deferred.resolve(response);
             }).error(function(response, status, headers, config) {
-                span.setTag('error', true);
-                span.logEvent('response', { status: status, body: response.body });
-                span.finish();
                 deferred.reject(status);
             });
 
