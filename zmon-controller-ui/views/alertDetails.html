@@ -165,6 +165,12 @@
                                     <a target="_new" ng-if="entityInstance.entityMeta && entityInstance.entityMeta.type && entityInstance.entityMeta.type == 'elb'" href="https://{{::entityInstance.entityMeta.region}}.console.aws.amazon.com/ec2/v2/home?region={{::entityInstance.entityMeta.region}}#LoadBalancers:search={{::entityInstance.entityMeta.name}}"><i class="fa fa-fw fa-cloud"></i></a>
                                     </div>
                                     <div>
+                                    <a target="_new" ng-if="entityInstance.entityMeta && entityInstance.entityMeta.deeplink1" href="https://{{::entityInstance.entityMeta.deeplink1}}"><i class="fa fa-fw {{::entityInstance.entityMeta.icon1}}"></i></a>
+                                    </div>
+                                    <div>
+                                    <a target="_new" ng-if="entityInstance.entityMeta && entityInstance.entityMeta.deeplink2" href="https://{{::entityInstance.entityMeta.deeplink2}}"><i class="fa fa-fw {{::entityInstance.entityMeta.icon2}}"></i></a>
+                                    </div>
+                                    <div>
                                     <i class="fa fa-clipboard clickable" ngclipboard data-clipboard-text={{entityInstance.entityMeta.ip}} ng-click="copyToClipboard(entityInstance.entityMeta.ip)" ng-if="entityInstance.entityMeta.ip" title="Copy IP to Clipboard"></i>
                                     </div>
                                 </td>
