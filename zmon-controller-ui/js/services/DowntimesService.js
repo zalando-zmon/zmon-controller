@@ -33,7 +33,6 @@ angular.module('zmon2App').factory('DowntimesService', [
                     alertInstance.numEntitiesInDowntimeNow++;
                 }
             });
-
             return hasAllEntitiesInDowntime;
         };
 
