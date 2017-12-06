@@ -15,10 +15,13 @@ angular.module('zmon2App').factory('HttpOpenTracingInterceptorService', ['$q', '
                 return response;
             },
             responseError: function (rejection) {
-                var span = response.config._span;
-                span.logEvent('error', rejection.error);
-                span.setTag('error', true);
-                span.finish();
+                if (rejection.config && rejection.config._span) {
+                    var span = rejection.config._span;
+                    span.logEvent('error', rejection.error);
+                    span.setTag('error', true);
+                    span.finish();
+                }
+                return $q.reject(rejection);
             }
         };
     }
