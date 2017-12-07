@@ -3924,7 +3924,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    tags.url_pathname = url.split('?')[0];
 	                }
 
-	                var span = tracer.startSpan('xhr/'.concat(tags.url_pathname));
+					var operationName = tags.url_pathname.split('/').slice(-2).join('/');
+	                var span = tracer.startSpan('xhr/'.concat(operationName));
 	                tracer.addActiveRootSpan(span);
 	                this.__tracer_span = span;
 	                this.__tracer_url = url;
