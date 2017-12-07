@@ -3914,12 +3914,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    return proxied.open.apply(this, arguments);
 	                }
 
-					var urlFragment = url.split('/').pop();
-	                var span = tracer.startSpan('xhr/'.concat(urlFragment));
-	                tracer.addActiveRootSpan(span);
-	                this.__tracer_span = span;
-	                this.__tracer_url = url;
-
 	                var tags = {
 	                    method: method,
 	                    url: url,
@@ -3929,6 +3923,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	                if (url) {
 	                    tags.url_pathname = url.split('?')[0];
 	                }
+
+	                var span = tracer.startSpan('xhr/'.concat(tags.url_pathname));
+	                tracer.addActiveRootSpan(span);
+	                this.__tracer_span = span;
+	                this.__tracer_url = url;
 
 	                var openPayload = {};
 	                (0, _each3.default)(tags, function (val, key) {
