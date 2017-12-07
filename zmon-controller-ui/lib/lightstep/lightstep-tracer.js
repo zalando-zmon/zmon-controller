@@ -3914,7 +3914,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    return proxied.open.apply(this, arguments);
 	                }
 
-	                var span = tracer.startSpan('XMLHttpRequest');
+					var urlFragment = url.split('/').pop();
+	                var span = tracer.startSpan('xhr/'.concat(urlFragment));
 	                tracer.addActiveRootSpan(span);
 	                this.__tracer_span = span;
 	                this.__tracer_url = url;
