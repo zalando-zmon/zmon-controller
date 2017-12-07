@@ -11,6 +11,7 @@ public class LightstepProperties {
     public String componentName="zmon-controller";
     public String eumCollectorHost;
     public Integer eumCollectorPort;
+    public String eumCollectorEncryption="tls";
     public String eumComponentName="zmon-controller-ui";
     public String eumGrafanaComponentName="zmon-grafana-ui";
     public Integer eumVerbosity=1;
@@ -69,6 +70,14 @@ public class LightstepProperties {
 
     public void setEumCollectorPort(Integer eumCollectorPort) {
         this.eumCollectorPort = eumCollectorPort;
+    }
+
+    public String getEumCollectorEncryption() {
+        return eumCollectorEncryption;
+    }
+
+    public void setEumCollectorEncryption(String eumCollectorEncryption) {
+        this.eumCollectorEncryption = eumCollectorEncryption;
     }
 
     public String getEumComponentName() {

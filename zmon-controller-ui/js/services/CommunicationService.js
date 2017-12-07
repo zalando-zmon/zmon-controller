@@ -1,5 +1,5 @@
-angular.module('zmon2App').factory('CommunicationService', ['$http', '$q', '$log', 'APP_CONST', 'PreconditionsService', 'OpenTracingService',
-    function($http, $q, $log, APP_CONST, PreconditionsService, OpenTracingService) {
+angular.module('zmon2App').factory('CommunicationService', ['$http', '$q', '$log', 'APP_CONST', 'PreconditionsService',
+    function($http, $q, $log, APP_CONST, PreconditionsService) {
         var service = {},
             alertIdCache = {},
             alertNameCache = {},

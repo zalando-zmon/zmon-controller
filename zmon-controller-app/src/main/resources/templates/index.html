@@ -124,13 +124,14 @@
     <script src="/lib/opentracing/opentracing-browser.min.js" th:if="${lightstepEnabled}"></script>
     <script src="/lib/lightstep/lightstep-tracer.js" th:if="${lightstepEnabled}"></script>
     <script charset='UTF-8' th:inline="javascript" th:if="${lightstepEnabled}">
-        var lightstepConfig = /*[[${lightstepConfig}]]*/ { accessToken: "", eumCollectorHost: "", eumCollectorPort: 443 };
+        var lightstepConfig = /*[[${lightstepConfig}]]*/ { accessToken: "", eumCollectorHost: "", eumCollectorPort: 443, eumCollectorEncryption: 'tls' };
         opentracing.initGlobalTracer(new lightstep.Tracer({
             xhr_instrumentation: true,
             access_token: lightstepConfig.accessToken,
             component_name: lightstepConfig.eumComponentName,
             collector_host: lightstepConfig.eumCollectorHost,
             collector_port: lightstepConfig.eumCollectorPort,
+            collector_encryption: lightstepConfig.eumCollectorEncryption,
             verbosity: lightstepConfig.eumVerbosity
         }));
     </script>
@@ -292,10 +293,8 @@
 <script th:src="${staticUrl} + '/js/directives/caret.js?t=@buildTime@'"></script>
 <script th:src="${staticUrl} + '/js/directives/notifications.js?t=@buildTime@'"></script>
 <script th:src="${staticUrl} + '/js/services/MainAlertService.js?t=@buildTime@'"></script>
-<script th:src="${staticUrl} + '/js/services/OpenTracingService.js?t=@buildTime@'"></script>
 <script th:src="${staticUrl} + '/js/services/CommunicationService.js?t=@buildTime@'"></script>
 <script th:src="${staticUrl} + '/js/services/FeedbackMessageService.js?t=@buildTime@'"></script>
-<script th:src="${staticUrl} + '/js/services/HttpOpenTracingInterceptor.js?t=@buildTime@'"></script>
 <script th:src="${staticUrl} + '/js/services/HttpResponseInterceptor.js?t=@buildTime@'"></script>
 <script th:src="${staticUrl} + '/js/services/UserInfoService.js?t=@buildTime@'"></script>
 <script th:src="${staticUrl} + '/js/services/DowntimesService.js?t=@buildTime@'"></script>
