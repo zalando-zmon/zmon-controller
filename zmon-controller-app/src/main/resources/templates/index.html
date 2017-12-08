@@ -120,8 +120,10 @@
         ineum('traceId', '<%= request.getAttribute("X-INSTANA-T") %>' );
     </script>
 
+    <!-- Opentracing EUM (common to Lightstep and Jaeger) -->
+    <script src="/lib/opentracing/opentracing-browser.min.js" th:if="${lightstepEnabled || jaegerEnabled}"></script>
+
     <!-- Lightstep EUM -->
-    <script src="/lib/opentracing/opentracing-browser.min.js" th:if="${lightstepEnabled}"></script>
     <script src="/lib/lightstep/lightstep-tracer.js" th:if="${lightstepEnabled}"></script>
     <script charset='UTF-8' th:inline="javascript" th:if="${lightstepEnabled}">
         var lightstepConfig = /*[[${lightstepConfig}]]*/ { accessToken: "", eumCollectorHost: "", eumCollectorPort: 443, eumCollectorEncryption: 'tls' };
@@ -133,6 +135,20 @@
             collector_port: lightstepConfig.eumCollectorPort,
             collector_encryption: lightstepConfig.eumCollectorEncryption,
             verbosity: lightstepConfig.eumVerbosity
+        }));
+    </script>
+
+    <!-- Jaeger EUM -->
+    <script src="/lib/jaeger/lightstep-tracer-adapted-for-jaeger.js" th:if="${jaegerEnabled}"></script>
+    <script charset='UTF-8' th:inline="javascript" th:if="${jaegerEnabled}">
+        var jaegerConfig = /*[[${jaegerConfig}]]*/ { eumCollectorHost: "", eumCollectorPort: 443, eumCollectorEncryption: 'tls' };
+        opentracing.initGlobalTracer(new lightstep.Tracer({
+            xhr_instrumentation: true,
+            component_name: jaegerConfig.eumComponentName,
+            collector_host: jaegerConfig.eumCollectorHost,
+            collector_port: jaegerConfig.eumCollectorPort,
+            collector_encryption: jaegerConfig.eumCollectorEncryption,
+            verbosity: jaegerConfig.eumVerbosity
         }));
     </script>
 

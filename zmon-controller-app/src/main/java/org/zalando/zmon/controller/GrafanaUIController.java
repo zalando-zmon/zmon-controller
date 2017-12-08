@@ -6,6 +6,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.zalando.zmon.config.AppdynamicsProperties;
 import org.zalando.zmon.config.InstanaProperties;
+import org.zalando.zmon.config.JaegerProperties;
 import org.zalando.zmon.config.ControllerProperties;
 import org.zalando.zmon.config.KairosDBProperties;
 import org.zalando.zmon.config.LightstepProperties;
@@ -20,6 +21,7 @@ public class GrafanaUIController {
     private AppdynamicsProperties appdynamicsProperties;
     private InstanaProperties instanaProperties;
     private LightstepProperties lightstepProperties;
+    private JaegerProperties jaegerProperties;
     private ControllerProperties controllerProperties;
 
     public static class KairosDBEntry {
@@ -52,6 +54,7 @@ public class GrafanaUIController {
         this.appdynamicsProperties = appdynamicsProperties;
         this.instanaProperties = instanaProperties;
         this.lightstepProperties = lightstepProperties;
+        this.jaegerProperties = jaegerProperties;
 
         for (KairosDBProperties.KairosDBServiceConfig c : kairosdbProperties.getKairosdbs()) {
             kairosdbServices.add(new KairosDBEntry(c.getName(), "/rest/kairosdbs/" + c.getName()));
@@ -68,6 +71,8 @@ public class GrafanaUIController {
         model.addAttribute(IndexController.INSTANA_ENABLED, controllerProperties.enableInstana);
         model.addAttribute(IndexController.LIGHTSTEP_CONFIG, lightstepProperties);
         model.addAttribute(IndexController.LIGHTSTEP_ENABLED, controllerProperties.enableLightstep);
+        model.addAttribute(IndexController.JAEGER_CONFIG, jaegerProperties);
+        model.addAttribute(IndexController.JAEGER_ENABLED, controllerProperties.enableJaeger);
 
         return "grafana";
     }
