@@ -1,3 +1,8 @@
+jaeger:
+  sampler-type: const
+  sampler-param: 1
+  service-name: zmon-controller-api
+
 spring:
   application:
     name: ZMON
