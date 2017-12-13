@@ -72,6 +72,11 @@
             <version>0.22.0-RC2</version>
         </dependency>
         <dependency>
+            <groupId>io.opentracing.contrib</groupId>
+            <artifactId>opentracing-apache-httpclient</artifactId>
+            <version>0.0.2</version>
+        </dependency>
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-configuration-processor</artifactId>
             <optional>true</optional>
