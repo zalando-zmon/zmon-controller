@@ -750,14 +750,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	            }
 
 	            // See if the Thrift data can be initialized
-	            // if (this._options.access_token.length > 0 && this._options.component_name.length > 0) {
-							if (this._options.component_name.length > 0) {
+	            if (this._options.access_token.length > 0 && this._options.component_name.length > 0) {
 	                (function () {
 	                    _this5._runtimeGUID = _this5._platform.runtimeGUID(_this5._options.component_name);
 
-	                    // _this5._thriftAuth = new _platform_abstraction_layer.crouton_thrift.Auth({
-	                    //     access_token: _this5._options.access_token
-	                    // });
+	                    _this5._thriftAuth = new _platform_abstraction_layer.crouton_thrift.Auth({
+	                        access_token: _this5._options.access_token
+	                    });
 
 	                    //
 	                    // Assemble the tracer tags from the user-specified and automatic,
@@ -796,7 +795,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	                    _this5._info('Initializing thrift reporting data', {
 	                        component_name: _this5._options.component_name,
-	                        // access_token: _this5._thriftAuth.access_token
+	                        access_token: _this5._thriftAuth.access_token
 	                    });
 	                    _this5.emit('reporting_initialized');
 	                })();
@@ -1262,9 +1261,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	                var destinationMicros = _this13._platform.nowMicros();
 	                var reportWindowSeconds = (now - report.oldest_micros) / 1e6;
 
-									if (_this13.verbosity() >= 4) {
-										_this13._debug('Report:', report);
-									}
+					if (_this13.verbosity() >= 4) {
+						_this13._debug('Report:', report);
+					}
 
 	                if (err) {
 	                    // How many errors in a row? Influences the report backoff.
