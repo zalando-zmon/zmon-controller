@@ -142,6 +142,7 @@
     <script src="/lib/jaeger/lightstep-tracer-adapted-for-jaeger.js" th:if="${jaegerEnabled}"></script>
     <script charset='UTF-8' th:inline="javascript" th:if="${jaegerEnabled}">
         var jaegerConfig = /*[[${jaegerConfig}]]*/ { eumCollectorHost: "", eumCollectorPort: 443, eumCollectorEncryption: 'tls' };
+        console.log('Jaeger enabled', jaegerConfig)
         opentracing.initGlobalTracer(new lightstep.Tracer({
             xhr_instrumentation: true,
             component_name: jaegerConfig.eumComponentName,
