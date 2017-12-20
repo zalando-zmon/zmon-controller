@@ -179,7 +179,7 @@ angular.module('zmon2App').controller('AlertDetailsCtrl', [ '$location', '$route
     };
 
     var setAlertStates = function() {
-        if ($scope.alert.status !== 'ACTIVE' || alertDetails.entities.length === 0) {
+        if ($scope.alert.status !== 'ACTIVE') {
             return;
         }
 

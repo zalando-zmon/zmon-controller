@@ -2,7 +2,13 @@ angular.module('zmon2App').factory('HttpResponseInterceptorService', ['$q', '$lo
     function($q, $location, localStorageService, APP_CONST, FeedbackMessageService) {
         var lastContactWithServer = null;
         var lastHistoryBack = 0;
-        var showErrorMessageDebounced = _.debounce(FeedbackMessageService.showErrorMessage, 2 * APP_CONST.FEEBACK_MSG_SHOW_TIME, true);
+        var showErrorMessageDebounced = _.debounce(
+                                            FeedbackMessageService.showErrorMessage,
+                                            APP_CONST.FEEBACK_MSG_SHOW_TIME,
+                                            {
+                                                leading: true
+                                            }
+                                        );
 
         return {
             response: function(response) {
@@ -31,7 +37,7 @@ angular.module('zmon2App').factory('HttpResponseInterceptorService', ['$q', '$lo
                             window.history.back();
                         };
                     } else if (rejection.status === 500) {
-                        message = 'Something went really bad requesting [' + rejection.config.method + ' ' + rejection.config.url + '] Please contact the platform team.';
+                        message = 'Failed to request [' + rejection.config.method + ' ' + rejection.config.url + ']';
                     } else if (rejection.data && rejection.data.message) {
                         message = rejection.data.message;
                     }
