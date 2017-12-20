@@ -1,12 +1,9 @@
 package org.zalando.zmon.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
 
-@Configuration
-@ConfigurationProperties(prefix = "zmon.lightstep")
-public class LightstepProperties {
-    public String accessToken;
+@ConfigurationProperties(prefix = "zmon.jaeger")
+public class JaegerProperties {
     public String collectorHost;
     public Integer collectorPort;
     public String collectorProtocol="https";
@@ -32,14 +29,6 @@ public class LightstepProperties {
 
     public void setComponentName(String componentName) {
         this.componentName = componentName;
-    }
-
-    public String getAccessToken() {
-        return accessToken;
-    }
-
-    public void setAccessToken(String accessToken) {
-        this.accessToken = accessToken;
     }
 
     public String getCollectorHost() {

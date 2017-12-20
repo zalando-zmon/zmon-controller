@@ -306,7 +306,7 @@ div.popover
     position: absolute;
     text-align: center;
     width: 100%;
-    z-index: 4;
+    z-index: 10;
 }
 
 #message-manager-wrapper.success
@@ -329,6 +329,11 @@ div.popover
     display: inline-block;
     font-weight: bolder;
     margin-right: 20px;
+}
+
+#message-manager-wrapper.fix {
+    position: fixed;
+    top: 0;
 }
 
 .semi-transparent
