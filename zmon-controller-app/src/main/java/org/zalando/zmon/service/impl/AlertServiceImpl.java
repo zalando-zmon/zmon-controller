@@ -56,6 +56,7 @@ public class AlertServiceImpl implements AlertService {
     private static final String DOWNTIMES_KEY = "downtimes";
 
     private final NamedMessageFormatter messageFormatter = new NamedMessageFormatter();
+    private final long redisSMembersCount = parseRedisSmembersCount();
 
     @Autowired
     private NoOpEventLog eventLog;
@@ -265,7 +266,7 @@ public class AlertServiceImpl implements AlertService {
                 p.sync();
                 Long count = response.get();
 
-                if (count > Long.parseLong(System.getenv("REDIS_SMEMBERS_COUNT")))
+                if (count > redisSMembersCount)
                 results.add(ResponseHolder.create(definition.getId(),
                         p.scard(RedisPattern.alertEntities(definition.getId()))));
                 else
@@ -626,5 +627,10 @@ public class AlertServiceImpl implements AlertService {
     @Override
     public Date getMaxLastModified() {
         return alertDefinitionSProc.getAlertLastModifiedMax();
+    }
+
+    private static long parseRedisSmembersCount() {
+        final String smembersCount = System.getenv("REDIS_SMEMBERS_COUNT");
+        return smembersCount == null ? 1000 : Long.parseLong(smembersCount);
     }
 }
