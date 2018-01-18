@@ -1,8 +1,11 @@
 package org.zalando.zmon.config;
 
+import io.opentracing.Tracer;
+import io.opentracing.contrib.apache.http.client.TracingHttpClientBuilder;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import java.net.URL;
@@ -13,6 +16,8 @@ import java.net.URL;
 @ConfigurationProperties(prefix = "zmon.scheduler")
 public class SchedulerProperties {
 
+    @Autowired
+    private Tracer tracer;
     private URL url;
 
     private int connectTimeout = 1000; // 1 second
@@ -66,6 +71,9 @@ public class SchedulerProperties {
      */
     public CloseableHttpClient getHttpClient() {
         RequestConfig config = RequestConfig.custom().setSocketTimeout(getSocketTimeout()).setConnectTimeout(getConnectTimeout()).build();
-        return HttpClients.custom().setMaxConnPerRoute(maxConnectionsPerRoute).setMaxConnTotal(maxConnectionsTotal).setDefaultRequestConfig(config).build();
+        return new TracingHttpClientBuilder().
+                setMaxConnPerRoute(maxConnectionsPerRoute).
+                setMaxConnTotal(maxConnectionsTotal).
+                setDefaultRequestConfig(config).build();
     }
 }

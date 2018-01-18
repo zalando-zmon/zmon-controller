@@ -110,7 +110,7 @@
     </script>
 
     <!-- Instana EUM -->
-    <script charset='UTF-8' th:inline="javascript" th:if="${instanaEnabled}" >
+    <script charset='UTF-8' th:inline="javascript" th:if="${instanaEnabled}">
         var instanaConfig = /*[[${instanaConfig}]]*/ { apiKey: "" };
         (function(i,s,o,g,r,a,m){i['InstanaEumObject']=r;i[r]=i[r]||function(){
         (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
@@ -120,6 +120,22 @@
         ineum('traceId', '<%= request.getAttribute("X-INSTANA-T") %>' );
         // set the name of a page on which this load/errors/calls happened
         ineum('page', 'ZMON-Landing-Page');
+    </script>
+
+    <!-- Lightstep EUM -->
+    <script src="/lib/opentracing/opentracing-browser.min.js" th:if="${lightstepEnabled}"></script>
+    <script src="/lib/lightstep/lightstep-tracer.js" th:if="${lightstepEnabled}"></script>
+    <script charset='UTF-8' th:inline="javascript" th:if="${lightstepEnabled}">
+        var lightstepConfig = /*[[${lightstepConfig}]]*/ { accessToken: "", eumCollectorHost: "", eumCollectorPort: 443, eumCollectorEncryption: 'tls' };
+        opentracing.initGlobalTracer(new lightstep.Tracer({
+            xhr_instrumentation: true,
+            access_token: lightstepConfig.accessToken,
+            component_name: lightstepConfig.eumComponentName,
+            collector_host: lightstepConfig.eumCollectorHost,
+            collector_port: lightstepConfig.eumCollectorPort,
+            collector_encryption: lightstepConfig.eumCollectorEncryption,
+            verbosity: lightstepConfig.eumVerbosity
+        }));
     </script>
 
     <!-- Firebase -->

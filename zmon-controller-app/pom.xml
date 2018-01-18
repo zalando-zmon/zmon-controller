@@ -249,6 +249,37 @@
             <version>0.4.0</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>io.opentracing.contrib</groupId>
+            <artifactId>opentracing-spring-cloud-starter</artifactId>
+            <version>0.0.7</version>
+        </dependency>
+        <dependency>
+            <groupId>com.lightstep.tracer</groupId>
+            <artifactId>lightstep-tracer-jre</artifactId>
+            <version>0.12.15</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.grpc</groupId>
+            <artifactId>grpc-netty</artifactId>
+            <version>1.4.0</version>
+        </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-tcnative-boringssl-static</artifactId>
+            <version>2.0.5.Final</version>
+        </dependency>
+        <dependency>
+            <groupId>io.opentracing.contrib</groupId>
+            <artifactId>opentracing-redis-jedis</artifactId>
+            <version>0.0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>io.opentracing.contrib</groupId>
+            <artifactId>opentracing-apache-httpclient</artifactId>
+            <version>0.0.2</version>
+        </dependency>
     </dependencies>
 
     <build>

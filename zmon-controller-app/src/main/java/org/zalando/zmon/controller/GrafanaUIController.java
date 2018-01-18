@@ -8,6 +8,7 @@ import org.zalando.zmon.config.AppdynamicsProperties;
 import org.zalando.zmon.config.InstanaProperties;
 import org.zalando.zmon.config.ControllerProperties;
 import org.zalando.zmon.config.KairosDBProperties;
+import org.zalando.zmon.config.LightstepProperties;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
@@ -18,6 +19,7 @@ public class GrafanaUIController {
 
     private AppdynamicsProperties appdynamicsProperties;
     private InstanaProperties instanaProperties;
+    private LightstepProperties lightstepProperties;
     private ControllerProperties controllerProperties;
 
     public static class KairosDBEntry {
@@ -44,10 +46,12 @@ public class GrafanaUIController {
     public GrafanaUIController(KairosDBProperties kairosdbProperties,
                                ControllerProperties controllerProperties,
                                AppdynamicsProperties appdynamicsProperties,
-                               InstanaProperties instanaProperties) {
+                               InstanaProperties instanaProperties,
+                               LightstepProperties lightstepProperties) {
         this.controllerProperties = controllerProperties;
         this.appdynamicsProperties = appdynamicsProperties;
         this.instanaProperties = instanaProperties;
+        this.lightstepProperties = lightstepProperties;
 
         for (KairosDBProperties.KairosDBServiceConfig c : kairosdbProperties.getKairosdbs()) {
             kairosdbServices.add(new KairosDBEntry(c.getName(), "/rest/kairosdbs/" + c.getName()));
@@ -62,6 +66,8 @@ public class GrafanaUIController {
         model.addAttribute(IndexController.APPDYNAMICS_ENABLED, controllerProperties.enableAppdynamics);
         model.addAttribute(IndexController.INSTANA_CONFIG, instanaProperties);
         model.addAttribute(IndexController.INSTANA_ENABLED, controllerProperties.enableInstana);
+        model.addAttribute(IndexController.LIGHTSTEP_CONFIG, lightstepProperties);
+        model.addAttribute(IndexController.LIGHTSTEP_ENABLED, controllerProperties.enableLightstep);
 
         return "grafana";
     }
@@ -74,6 +80,8 @@ public class GrafanaUIController {
         model.addAttribute(IndexController.APPDYNAMICS_ENABLED, controllerProperties.enableAppdynamics);
         model.addAttribute(IndexController.INSTANA_CONFIG, instanaProperties);
         model.addAttribute(IndexController.INSTANA_ENABLED, controllerProperties.enableInstana);
+        model.addAttribute(IndexController.LIGHTSTEP_CONFIG, lightstepProperties);
+        model.addAttribute(IndexController.LIGHTSTEP_ENABLED, controllerProperties.enableLightstep);
 
         return "grafana";
     }
