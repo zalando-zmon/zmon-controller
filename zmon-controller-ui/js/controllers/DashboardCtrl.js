@@ -39,6 +39,9 @@ angular.module('zmon2App').controller('DashboardCtrl', ['$scope', '$log', '$rout
         if ($scope.dashboardId > 0) {
 
             CommunicationService.getDashboard($scope.dashboardId).then(function(data) {
+
+                $scope.dashboardName = data.name;
+
                 var widgetConfigurations = JSON.parse(data.widget_configuration);
                 // $scope.widgets contains the widget configuration and is passed to directive dashboard-widget (see dashboard.html)
                 $scope.widgetsConf = $scope.layoutWidgets(widgetConfigurations);
