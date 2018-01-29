@@ -30,7 +30,7 @@
                 <form class="form-signin">
                     <div th:if="${param.logout}">
                         <h3 class="redirect-header">You have been logged out</h3>
-                        <h5>Want to log in again? click <a href="@{/auth/zauth}">here</a>.</h5>
+                        <h5>Want to log in again? click <a th:href="@{/auth/zauth}">here</a>.</h5>
                     </div>
                     <div th:if="!${param.logout}">
                         <h3 class="redirect-header">Not logged in yet</h3>
