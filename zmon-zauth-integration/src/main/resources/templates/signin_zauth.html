@@ -50,13 +50,9 @@
                 localStorage.setItem('ls.signinRedirTo', window.location.hash.slice(1));
             }
 
-
-            setTimeout(function() {
-                var a = document.getElementById("clickme");
-                if (document.location.search.indexOf('logout') === -1) {
-                    a.click();
-                }
-            }, 5000);
+            if (document.location.search.indexOf('logout') === -1) {
+                document.getElementById("clickme").click();
+            }
         </script>
 
     </body>
