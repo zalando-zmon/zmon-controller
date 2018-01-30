@@ -1,3 +1,5 @@
+<window-title title="Dashboard - {{dashboardName}} ({{dashboardId}})"></window-title>
+
 <div class="zmon-widgets" ng-class="{noWidgets:!showWidgets}">
     <div class="col-md-{{ nextWidgetConf.width }}" ng-repeat="nextWidgetConf in widgetsConf">
         <dashboard-widget config="nextWidgetConf" data="checkResultsByCheckIdByEntity"/>
