@@ -34,7 +34,7 @@ public class TvTokenService {
     // TODO use sproc
     public boolean isValidToken(String token, String bindIp, String sessionId) {
         List<OnetimeTokenInfo> result = oneTimeTokenSProcService.bindOnetimeToken(token, bindIp, sessionId);
-        return result.size() == 1 ? true : false;
+        return result.size() == 1;
     }
 
     public void deleteCookiesIfExistent(HttpServletRequest request, HttpServletResponse response) {
