@@ -99,7 +99,7 @@ public class ZMonRestService extends AbstractZMonController {
 
         final List<CheckDefinition> checkDefinitions = service.getCheckDefinitions(null, Lists.newArrayList(checkId));
         if (checkDefinitions.isEmpty()) {
-            throw new CheckDefinitionNotFoundException();
+            throw new CheckDefinitionNotFoundException("Check ID not found. Try again with a valid check Id!");
         }
 
         return new ResponseEntity<>(checkDefinitions.get(0), HttpStatus.OK);

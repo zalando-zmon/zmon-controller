@@ -37,5 +37,5 @@ public class EntityFilterResponse {
 
     public int count = 0;
     public final Collection<SimpleEntity> entities = new ArrayList<>(25);
-    public String message = new String("");
+    public String message;
 }
