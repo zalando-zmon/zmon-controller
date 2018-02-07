@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+  <!-- OpenTracing -->
+  <script src="opentracing-javascript-utils.js"></script>
+  <script type="text/javascript">
+
+    let tracer = {};
+    opentracingJavascriptUtils.initOpenTracing({
+      name: 'lightstep',
+      config: {
+        xhr_instrumentation: true,
+        access_token: '123421',
+        component_name: 'something',
+        collector_host: 'localhost',
+        collector_port: 443,
+        collector_encryption: '',
+        verbosity: 1,
+      }})
+      .then(() => {
+        console.log('initialized');
+      }).catch( (e) => {
+        console.log('Something went wrong...', e)
+      })
+
+  </script>
+</head>
+<body>
+</body>
+</html>
