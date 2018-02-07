@@ -29,8 +29,6 @@ angular.module('zmon2App').controller('DashboardCtrl', ['$scope', '$log', '$rout
         $scope.dashboardTags = { tags: []};
         $scope.showAlertsWithAllEntitiesInDowntime = $location.search().ad || false;
 
-        $scope.redisLimit = null;
-
         $scope.$watch('showWidgets', function() {
             localStorageService.add('showWidgets', $scope.showWidgets);
         });
@@ -41,6 +39,9 @@ angular.module('zmon2App').controller('DashboardCtrl', ['$scope', '$log', '$rout
         if ($scope.dashboardId > 0) {
 
             CommunicationService.getDashboard($scope.dashboardId).then(function(data) {
+
+                $scope.dashboardName = data.name;
+
                 var widgetConfigurations = JSON.parse(data.widget_configuration);
                 // $scope.widgets contains the widget configuration and is passed to directive dashboard-widget (see dashboard.html)
                 $scope.widgetsConf = $scope.layoutWidgets(widgetConfigurations);
@@ -373,9 +374,5 @@ angular.module('zmon2App').controller('DashboardCtrl', ['$scope', '$log', '$rout
             $location.search('as', _.isEmpty(newVal) ? null : newVal);
             localStorageService.set('returnTo', '/#' + $location.url());
         });
-
-        CommunicationService.getRedisLimit().then(function(limit) {
-            $scope.redisLimit = limit;
-        })
     }
 ]);

@@ -30,12 +30,11 @@
                 <form class="form-signin">
                     <div th:if="${param.logout}">
                         <h3 class="redirect-header">You have been logged out</h3>
-                        <h5><div class="demo">Want to log in again? click <a href="/signin">here</a>.</div></h5>
+                        <h5>Want to log in again? click <a th:href="@{/auth/zauth}">here</a>.</h5>
                     </div>
                     <div th:if="!${param.logout}">
-                        <h3 class="redirect-header">Not logged in yet?</h3>
-                        <h5><div class="demo">You will be redirected to Zalando for authentication, just wait 5 seconds or click to continue</div></h5>
-                        <a id="clickme" class="btn btn-primary" href="#" th:href="@{/auth/zauth}" role="button">CONTINUE</a>
+                        <h3 class="redirect-header">Not logged in yet</h3>
+                        <h5><div class="demo">You're being redirected to Zalando for authentication</div></h5>
                     </div>
                 </form>
             </div><!-- /.container -->
@@ -50,13 +49,9 @@
                 localStorage.setItem('ls.signinRedirTo', window.location.hash.slice(1));
             }
 
-
-            setTimeout(function() {
-                var a = document.getElementById("clickme");
-                if (document.location.search.indexOf('logout') === -1) {
-                    a.click();
-                }
-            }, 5000);
+            if (document.location.search.indexOf('logout') === -1) {
+                window.location.href = '/auth/zauth';
+            }
         </script>
 
     </body>

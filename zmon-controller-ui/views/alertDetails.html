@@ -1,3 +1,5 @@
+<window-title title="Alert {{alert.id}} - {{alert.name}}"></window-title>
+
 <div class="row">
     <div class="col-md-6">
         <h1>Alert: {{alert.name}} <priority prio="alert.priority" /></h1>
@@ -156,16 +158,22 @@
                                 <td class="actions-col">
                                     <input ng-if="userInfo['schedule-downtime']" class="set-downtime-checkbox" type="checkbox" ng-checked="downtimeEntities.indexOf(entityInstance.entity) !== -1" ng-click="toggleAlertForDowntime(entityInstance.entity)">
                                     <div>
-                                    <a href="/grafana/dashboard/db/zmon-check-{{::check.id}}-{{ ::entityInstance.entity }}"><i class="fa fa-fw fa-bar-chart-o"></i></a>
+                                      <a href="/grafana/dashboard/db/zmon-check-{{::check.id}}-{{ ::entityInstance.entity }}"><i class="fa fa-fw fa-bar-chart-o"></i></a>
                                     </div>
-                                    <div>
-                                    <a target="_new" ng-if="entityInstance.entityMeta && entityInstance.entityMeta.type && entityInstance.entityMeta.type == 'instance'" href="https://{{::entityInstance.entityMeta.region}}.console.aws.amazon.com/ec2/v2/home?region={{::entityInstance.entityMeta.region}}#Instances:search={{::entityInstance.entityMeta.aws_id}};sort=Name" title="ip: {{::entityInstance.entityMeta.ip}}"><i class="fa fa-fw fa-cloud"></i></a>
+                                    <div ng-if="entityInstance.entityMeta && entityInstance.entityMeta.type && entityInstance.entityMeta.type == 'instance'" >
+                                      <a target="_new"href="https://{{::entityInstance.entityMeta.region}}.console.aws.amazon.com/ec2/v2/home?region={{::entityInstance.entityMeta.region}}#Instances:search={{::entityInstance.entityMeta.aws_id}};sort=Name" title="ip: {{::entityInstance.entityMeta.ip}}"><i class="fa fa-fw fa-cloud"></i></a>
                                     </div>
-                                    <div>
-                                    <a target="_new" ng-if="entityInstance.entityMeta && entityInstance.entityMeta.type && entityInstance.entityMeta.type == 'elb'" href="https://{{::entityInstance.entityMeta.region}}.console.aws.amazon.com/ec2/v2/home?region={{::entityInstance.entityMeta.region}}#LoadBalancers:search={{::entityInstance.entityMeta.name}}"><i class="fa fa-fw fa-cloud"></i></a>
+                                    <div ng-if="entityInstance.entityMeta && entityInstance.entityMeta.type && entityInstance.entityMeta.type == 'elb'">
+                                      <a target="_new" href="https://{{::entityInstance.entityMeta.region}}.console.aws.amazon.com/ec2/v2/home?region={{::entityInstance.entityMeta.region}}#LoadBalancers:search={{::entityInstance.entityMeta.name}}"><i class="fa fa-fw fa-cloud"></i></a>
                                     </div>
-                                    <div>
-                                    <i class="fa fa-clipboard clickable" ngclipboard data-clipboard-text={{entityInstance.entityMeta.ip}} ng-click="copyToClipboard(entityInstance.entityMeta.ip)" ng-if="entityInstance.entityMeta.ip" title="Copy IP to Clipboard"></i>
+                                    <div ng-if="entityInstance.entityMeta && entityInstance.entityMeta.deeplink1">
+                                      <a target="_new"href="https://{{::entityInstance.entityMeta.deeplink1}}"><i class="fa fa-fw {{::entityInstance.entityMeta.icon1}}"></i></a>
+                                    </div>
+                                    <div ng-if="entityInstance.entityMeta && entityInstance.entityMeta.deeplink2">
+                                      <a target="_new" href="https://{{::entityInstance.entityMeta.deeplink2}}"><i class="fa fa-fw {{::entityInstance.entityMeta.icon2}}"></i></a>
+                                    </div>
+                                    <div ng-if="entityInstance.entityMeta && entityInstance.entityMeta.ip">
+                                      <i class="fa fa-clipboard clickable" ngclipboard data-clipboard-text={{entityInstance.entityMeta.ip}} ng-click="copyToClipboard(entityInstance.entityMeta.ip)" title="Copy IP to Clipboard"></i>
                                     </div>
                                 </td>
                                 <td>

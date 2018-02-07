@@ -1,3 +1,5 @@
+<window-title title="Alert (Edit) {{alertDefinition.id}} - {{alertDefinition.name}}"></window-title>
+
 <div class="row">
     <div class="col-md-12" ng-switch="mode">
         <h1 ng-switch-when="edit">Edit Alert Definition</h1>
@@ -218,7 +220,7 @@
             <div class="inheritance-overwrite">
                 <a ng-show="mode === 'inherit' || alertDefinition.parent_id" ng-class="{'semi-transparent':isInheriting('period'), 'clickable':!isInheriting('period')}" ng-attr-title="{{isInheriting('period') ? 'Notifications is being inherited from parent Alert' : 'Click to inherit value from parent Alert'}}" ng-click="inheritProperty('period')"><i class="fa fa-sitemap"></i></a>
             </div>
-            <input class="form-control" id="inp-period" ng-model="alertDefinition.period" placeholder="Notification time period (e.g. 'wd {Mon-Fri} hr {9am-5pm}')" ng-change="markAsOverwritten('period')">
+            <input class="form-control" id="inp-period" ng-model="alertDefinition.period" placeholder="Notification time period (e.g. 'wd {Mon-Fri} hr {9-17}')" ng-change="markAsOverwritten('period')">
         </div>
     </div>
 

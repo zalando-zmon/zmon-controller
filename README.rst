@@ -68,8 +68,7 @@ Building the Docker Image
 
 .. code-block:: bash
 
-    $ sudo pip3 install scm-source
-    $ scm-source -f target/scm-source.json
+    $ ./mvnw clean package
     $ docker build -t zmon-controller .
 
 

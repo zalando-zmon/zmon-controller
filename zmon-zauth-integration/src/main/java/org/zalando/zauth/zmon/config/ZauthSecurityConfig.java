@@ -49,6 +49,7 @@ import org.zalando.zmon.security.tvtoken.ZMonTvRememberMeServices;
 public class ZauthSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private static final String LOGIN_PAGE_URL = "/signin";
+    public static final String LOGIN_COOKIE_NAME = "JSESSIONID";
 
     @Autowired
     private AuthorityService authorityService;
@@ -99,13 +100,13 @@ public class ZauthSecurityConfig extends WebSecurityConfigurerAdapter {
         .and()
             .formLogin()
                 .loginPage(LOGIN_PAGE_URL)
-                .failureUrl("/signin?param.error=bad_credentials")
+                .failureUrl("/signin?error=bad_credentials")
                 .permitAll()
         .and()
             .logout()
                 .logoutUrl("/logout")
-                .deleteCookies("JSESSIONID")
-                .logoutSuccessUrl("/signin?param.logout=logout")
+                .deleteCookies(LOGIN_COOKIE_NAME)
+                .logoutSuccessUrl("/signin?logout=yes")
                 .permitAll()
         .and()
             .authorizeRequests()

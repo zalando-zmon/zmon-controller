@@ -48,7 +48,7 @@ public class JWTService {
 
     private static final String AUTHORITY_CLAIM = "authority";
 
-    private static final String COOKIE_NAME = "ZMON_JWT";
+    public static final String COOKIE_NAME = "ZMON_JWT";
 
     private final Logger log = LoggerFactory.getLogger(JWTService.class);
 
@@ -115,6 +115,9 @@ public class JWTService {
             cookie.setMaxAge(0);
             // also overwrite the value to make sure it does not contain a
             // JWT-Token anymore
+            cookie.setPath("/");
+            cookie.setHttpOnly(true);
+            cookie.setSecure(true);
             cookie.setValue("");
             response.addCookie(cookie);
         }
