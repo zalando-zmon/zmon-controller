@@ -5,7 +5,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.zalando.zmon.config.AppdynamicsProperties;
-import org.zalando.zmon.config.InstanaProperties;
 import org.zalando.zmon.config.ControllerProperties;
 import org.zalando.zmon.config.KairosDBProperties;
 
@@ -17,7 +16,6 @@ import java.util.List;
 public class GrafanaUIController {
 
     private AppdynamicsProperties appdynamicsProperties;
-    private InstanaProperties instanaProperties;
     private ControllerProperties controllerProperties;
 
     public static class KairosDBEntry {
@@ -43,11 +41,9 @@ public class GrafanaUIController {
     @Autowired
     public GrafanaUIController(KairosDBProperties kairosdbProperties,
                                ControllerProperties controllerProperties,
-                               AppdynamicsProperties appdynamicsProperties,
-                               InstanaProperties instanaProperties) {
+                               AppdynamicsProperties appdynamicsProperties) {
         this.controllerProperties = controllerProperties;
         this.appdynamicsProperties = appdynamicsProperties;
-        this.instanaProperties = instanaProperties;
 
         for (KairosDBProperties.KairosDBServiceConfig c : kairosdbProperties.getKairosdbs()) {
             kairosdbServices.add(new KairosDBEntry(c.getName(), "/rest/kairosdbs/" + c.getName()));
@@ -60,8 +56,6 @@ public class GrafanaUIController {
         model.addAttribute(IndexController.KAIROSDB_SERVICES, kairosdbServices);
         model.addAttribute(IndexController.APPDYNAMICS_CONFIG, appdynamicsProperties);
         model.addAttribute(IndexController.APPDYNAMICS_ENABLED, controllerProperties.enableAppdynamics);
-        model.addAttribute(IndexController.INSTANA_CONFIG, instanaProperties);
-        model.addAttribute(IndexController.INSTANA_ENABLED, controllerProperties.enableInstana);
 
         return "grafana";
     }
@@ -72,8 +66,6 @@ public class GrafanaUIController {
         model.addAttribute(IndexController.KAIROSDB_SERVICES, kairosdbServices);
         model.addAttribute(IndexController.APPDYNAMICS_CONFIG, appdynamicsProperties);
         model.addAttribute(IndexController.APPDYNAMICS_ENABLED, controllerProperties.enableAppdynamics);
-        model.addAttribute(IndexController.INSTANA_CONFIG, instanaProperties);
-        model.addAttribute(IndexController.INSTANA_ENABLED, controllerProperties.enableInstana);
 
         return "grafana";
     }
