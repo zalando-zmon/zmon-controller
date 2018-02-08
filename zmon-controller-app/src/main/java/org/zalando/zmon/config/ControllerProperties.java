@@ -28,8 +28,6 @@ public class ControllerProperties {
 
     public boolean enableAppdynamics = false;
 
-    public boolean enableInstana = false;
-
     public boolean enableGoogleanalytics = false;
 
     public List<String> workerQueueKeys = Arrays.asList("zmon:queue:default");
@@ -52,14 +50,6 @@ public class ControllerProperties {
 
     public void setEnableAppdynamics(boolean enableAppdynamics) {
         this.enableAppdynamics = enableAppdynamics;
-    }
-
-    public boolean isEnableInstana() {
-        return enableInstana;
-    }
-
-    public void setEnableInstana(boolean enableInstana) {
-        this.enableInstana = enableInstana;
     }
 
     public boolean isEnableGoogleanalytics() {
