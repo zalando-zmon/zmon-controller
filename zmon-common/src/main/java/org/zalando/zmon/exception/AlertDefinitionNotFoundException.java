@@ -1,5 +1,9 @@
 package org.zalando.zmon.exception;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
+
+@ResponseStatus(value= HttpStatus.NOT_FOUND, reason = "Alert ID not found.")
 public class AlertDefinitionNotFoundException extends ZMonException {
 
     public static final ZMonExceptionFactory FACTORY = new ZMonExceptionFactory() {

@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.zalando.zmon.domain.*;
+import org.zalando.zmon.exception.AlertDefinitionNotFoundException;
 import org.zalando.zmon.exception.ZMonException;
 import org.zalando.zmon.security.permission.DefaultZMonPermissionService;
 import org.zalando.zmon.service.AlertService;
@@ -57,11 +58,13 @@ public class AlertController extends AbstractZMonController {
     }
 
     @RequestMapping(value = "/alertDetails")
-    public ResponseEntity<Alert> getAlert(@RequestParam(value = "alert_id", required = true) final Integer alertId) {
+    public ResponseEntity<Alert> getAlert(@RequestParam(value = "alert_id", required = true) final Integer alertId) throws ZMonException{
         final Alert alert = service.getAlert(alertId);
 
-        return alert == null ? new ResponseEntity<>(HttpStatus.NOT_FOUND)
-                : new ResponseEntity<>(alert, HttpStatus.OK);
+        if(null == alert)
+            throw new AlertDefinitionNotFoundException("Alert Id doesn't exist. Check the alert id!");
+        else
+            return new ResponseEntity<>(alert, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/alertDefinitions")
@@ -93,11 +96,11 @@ public class AlertController extends AbstractZMonController {
 
     @RequestMapping(value = "/alertDefinition")
     public ResponseEntity<AlertDefinitionAuth> getAlertDefinition(
-            @RequestParam(value = "id", required = true) final int id) {
+            @RequestParam(value = "id", required = true) final int id) throws ZMonException{
 
         final List<AlertDefinition> alertDefinitions = service.getAlertDefinitions(null, Lists.newArrayList(id));
         if (alertDefinitions.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            throw new AlertDefinitionNotFoundException("Alert definition doesn't exist. Check the alert Id!");
         }
 
         final AlertDefinition def = alertDefinitions.get(0);
