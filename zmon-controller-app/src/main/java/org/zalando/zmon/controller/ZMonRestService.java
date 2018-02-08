@@ -1,6 +1,5 @@
 package org.zalando.zmon.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
@@ -19,16 +18,14 @@ import org.zalando.zmon.api.domain.EntityFilterRequest;
 import org.zalando.zmon.api.domain.EntityFilterResponse;
 import org.zalando.zmon.api.domain.EntityObject;
 import org.zalando.zmon.config.MetricCacheProperties;
-import org.zalando.zmon.domain.CheckDefinition;
-import org.zalando.zmon.domain.CheckDefinitionImport;
-import org.zalando.zmon.domain.CheckResults;
-import org.zalando.zmon.domain.ExecutionStatus;
+import org.zalando.zmon.domain.*;
 import org.zalando.zmon.exception.ZMonException;
 import org.zalando.zmon.api.EntityApi;
 import org.zalando.zmon.api.domain.CheckChartResult;
 import org.zalando.zmon.persistence.CheckDefinitionImportResult;
 import org.zalando.zmon.security.permission.DefaultZMonPermissionService;
 import org.zalando.zmon.service.ZMonService;
+import org.zalando.zmon.exception.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -83,26 +80,26 @@ public class ZMonRestService extends AbstractZMonController {
     }
 
     @RequestMapping(value = "/updateCheckDefinition")
-    public ResponseEntity<CheckDefinition> updateCheckDefinition(@RequestBody(required = true) CheckDefinitionImport check) {
+    public ResponseEntity<CheckDefinition> updateCheckDefinition(@RequestBody(required = true) CheckDefinitionImport check) throws ZMonException {
         if (check.getOwningTeam() == null || "".equals(check.getOwningTeam())) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
         CheckDefinitionImportResult result = service.createOrUpdateCheckDefinition(check, authService.getUserName(), Lists.newArrayList(authService.getTeams()), authService.hasAdminAuthority());
         if (result.isPermissionDenied()) {
-            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+            throw new CheckPermissionDeniedException("Access to check denied. Please check your team permissions!");
         }
 
         return new ResponseEntity<>(result.getEntity(), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/checkDefinition")
-    public ResponseEntity<CheckDefinition> getCheckDefinition(
-            @RequestParam(value = "check_id", required = true) final int checkId) {
+    public ResponseEntity<CheckDefinition> getCheckDefinition (
+            @RequestParam(value = "check_id", required = true) final int checkId) throws ZMonException{
 
         final List<CheckDefinition> checkDefinitions = service.getCheckDefinitions(null, Lists.newArrayList(checkId));
         if (checkDefinitions.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            throw new CheckDefinitionNotFoundException("Check ID not found. Try again with a valid check Id!");
         }
 
         return new ResponseEntity<>(checkDefinitions.get(0), HttpStatus.OK);
@@ -198,10 +195,11 @@ public class ZMonRestService extends AbstractZMonController {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     @RequestMapping(value = "entity-filters", method = RequestMethod.POST)
-    public ResponseEntity<EntityFilterResponse> getMatchingEntities(@RequestBody EntityFilterRequest filter) {
+    public ResponseEntity<EntityFilterResponse> getMatchingEntities(@RequestBody EntityFilterRequest filter) throws ZMonException {
         EntityFilterResponse response = service.getEntitiesMatchingFilters(filter);
         if (null == response) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(new EntityFilterResponse("Exception encountered in filtering the entities. Please try again or validate the entity included/excluded filter"), HttpStatus.BAD_REQUEST);
+
         }
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

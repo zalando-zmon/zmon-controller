@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.zalando.zmon.domain.Dashboard;
 import org.zalando.zmon.domain.DashboardAuth;
 import org.zalando.zmon.domain.EditOption;
+import org.zalando.zmon.exception.DashboardNotFoundException;
 import org.zalando.zmon.exception.ZMonException;
 import org.zalando.zmon.security.permission.DefaultZMonPermissionService;
 import org.zalando.zmon.service.DashboardService;
@@ -39,11 +40,11 @@ public class DashboardController extends AbstractZMonController {
     private DefaultZMonPermissionService authorityService;
 
     @RequestMapping(value = "/dashboard", method = RequestMethod.GET)
-    public ResponseEntity<DashboardAuth> getDashboard(@RequestParam(value = "id", required = true) final int id) {
+    public ResponseEntity<DashboardAuth> getDashboard(@RequestParam(value = "id", required = true) final int id) throws ZMonException{
 
         final List<Dashboard> dashboards = service.getDashboards(Lists.newArrayList(id));
         if (dashboards.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            throw new DashboardNotFoundException("Dashboard doesn't exsits. Please check dashboard Id!");
         }
 
         return new ResponseEntity<>(addDashboardPermissions(dashboards.get(0)), HttpStatus.OK);
