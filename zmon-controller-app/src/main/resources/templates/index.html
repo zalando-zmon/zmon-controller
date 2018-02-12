@@ -110,10 +110,10 @@
     </script>
 
     <!-- OpenTracing -->
-    <script th:inline="javascript" th:if="${tracerEnabled}" src="/lib/opentracing-javascript-utils/opentracing-javascript-utils.js"></script>
-    <script type="text/javascript">
+    <script th:inline="javascript" th:if="${lightstepEnabled}" src="/lib/opentracing-javascript-utils/opentracing-javascript-utils.js"></script>
+    <script type="text/javascript" th:if="${lightstepEnabled}">
       var lightstepConfig = /*[[${lightstepConfig}]]*/ { accessToken: "", eumCollectorHost: "", eumCollectorPort: 443, eumCollectorEncryption: 'tls' };
-      opentracingJavascriptUtils.initOpenTracing(lightstepConfig);
+      opentracingJavascriptUtils.initOpenTracing('lightstep', lightstepConfig);
     </script>
 
     <!-- Firebase -->

@@ -89,7 +89,7 @@
     /**
      * Load dependencies and initialize Tracer
      */
-    initOpenTracing({name, config} = { name: 'opentracing' }, resolve, reject) {
+    initOpenTracing(name = 'opentracing', config, resolve, reject) {
       this.config = config;
       let lib = libraries[name];
       return new Promise((resolve, reject) => {
