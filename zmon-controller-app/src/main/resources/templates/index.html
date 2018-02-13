@@ -199,7 +199,7 @@
                         </button>
                         <ul class="dropdown-menu" role="menu">
                             <li><a href="logout" data-test="logout" th:href="@{/logout}">Logout</a></li>
-                            <th:block th:unless="${#strings.startsWith(userName,'ZMON_TV_')}"><li><a href="tv-mode" data-test="tv-mode" th:href="@{/tv/switch}">Switch to TV mode</a></li></th:block>
+                            <th:block th:unless="${#strings.startsWith(userName,'ZMON_TV_')}"><li><a data-test="tv-mode" ng-click="onSwitchToTvMode()">Switch to TV mode</a></li></th:block>
                         </ul>
                    </span>
                 </div>

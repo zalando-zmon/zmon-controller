@@ -16,11 +16,6 @@ angular.module('zmon2App').controller('IndexCtrl', ['$scope', '$window', '$locat
 
         $scope.userInfo = UserInfoService.get();
 
-        // Show LogOut Dialog if we are in TV Mode
-        if ($scope.userInfo.user.indexOf('ZMON_TV_') === 0 && $scope.userInfo["logout-url"]) {
-            $scope.tvMode = true;
-        }
-
         // limit list of teams on popover to 5
         if ($scope.userInfo.teams) {
             var teams = $scope.userInfo.teams.split(',');
@@ -70,6 +65,10 @@ angular.module('zmon2App').controller('IndexCtrl', ['$scope', '$window', '$locat
                 $scope.globalSearchVisible = false;
             }
         };
+
+        $scope.onSwitchToTvMode = function() {
+            this.tvMode = true
+        }
 
         // Start periodic refresh of the app's overall status only (Q-size etc.)
         // Not related to the periodic data refresh that the page content might by having (e.g. dashboard, alert details etc.)

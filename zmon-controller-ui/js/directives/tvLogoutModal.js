@@ -25,8 +25,10 @@ angular.module('zmon2App').directive('tvLogoutModal', [ '$uibModal', 'UserInfoSe
                     });
 
                     modalInstance.result.then(function() {
-                        console.log(UserInfoService.get())
+                        window.location.href = '/tv/switch'
                         window.open(UserInfoService.get()["logout-url"])
+                    }).catch(function() {
+                        window.location.href = '/tv/switch'
                     });
                 };
 
