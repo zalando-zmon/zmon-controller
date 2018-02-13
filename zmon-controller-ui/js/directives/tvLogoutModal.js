@@ -13,6 +13,10 @@ angular.module('zmon2App').directive('tvLogoutModal', [ '$uibModal', 'UserInfoSe
                     };
                 };
 
+                var redirect = function() {
+                    window.location.href = '/tv/switch'
+                }
+
                 var open = function() {
                     var modalInstance = $uibModal.open({
                         templateUrl: '/templates/tvLogOutModal.html',
@@ -22,16 +26,21 @@ angular.module('zmon2App').directive('tvLogoutModal', [ '$uibModal', 'UserInfoSe
                     });
 
                     modalInstance.result.then(function() {
-                        window.location.href = '/tv/switch'
-                        window.open(UserInfoService.get()["logout-url"])
+                        var url = UserInfoService.get()["logout-url"];
+                        window.open(url)
+                        redirect()
                     }).catch(function() {
-                        window.location.href = '/tv/switch'
+                        redirect()
                     });
                 };
 
-                elem.on('click', function() {
-                    if (UserInfoService.get()["logout-url"]) {
+                elem.on('click', function(e) {
+                    e.preventDefault();
+                    var url = UserInfoService.get()["logout-url"];
+                    if (url) {
                         open();
+                    } else {
+                        redirect();
                     }
                 });
             }
