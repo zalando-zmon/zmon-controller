@@ -66,10 +66,6 @@ angular.module('zmon2App').controller('IndexCtrl', ['$scope', '$window', '$locat
             }
         };
 
-        $scope.onSwitchToTvMode = function() {
-            this.tvMode = true
-        }
-
         // Start periodic refresh of the app's overall status only (Q-size etc.)
         // Not related to the periodic data refresh that the page content might by having (e.g. dashboard, alert details etc.)
         // The periodoc data refresh of the pages that have it are defined in MainAlertService.status's 'hasDataRefresh' and 'isDataRefreshing'
