@@ -14,12 +14,12 @@ angular.module('zmon2App').directive('tvLogoutModal', [ '$uibModal', 'UserInfoSe
                 };
 
                 var redirect = function() {
-                    // window.location.href = '/tv/switch'
+                    window.location.href = '/tv/switch'
                 }
 
                 var open = function() {
                     var modalInstance = $uibModal.open({
-                        templateUrl: '/templates/tvLogOutModal.html',
+                        templateUrl: '/templates/tvLogoutModal.html',
                         controller: modalCtrl,
                         backdrop: false,
                         resolve: {}
