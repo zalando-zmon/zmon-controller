@@ -8,16 +8,22 @@ angular.module('zmon2App').controller('IndexCtrl', ['$scope', '$window', '$locat
         $scope.checkInvocationsCache = {};
         $scope.userTeamsOnPopover = '(no team)';
         $scope.globalSearchVisible = false;
+        $scope.tvMode = false;
 
         $rootScope.globalSearchQuery = '';
 
         var $wrapper = $("#message-manager-wrapper")
 
-        this.userInfo = UserInfoService.get();
+        $scope.userInfo = UserInfoService.get();
+
+        // Show LogOut Dialog if we are in TV Mode
+        if ($scope.userInfo.user.indexOf('ZMON_TV_') === 0 && $scope.userInfo["logout-url"]) {
+            $scope.tvMode = true;
+        }
 
         // limit list of teams on popover to 5
-        if (this.userInfo.teams) {
-            var teams = this.userInfo.teams.split(',');
+        if ($scope.userInfo.teams) {
+            var teams = $scope.userInfo.teams.split(',');
             $scope.userTeamsOnPopover = teams.slice(-5).join(', ') + (teams.length > 5 ? '...' : '');
         }
 

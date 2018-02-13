@@ -9,7 +9,8 @@
  *      data-add-alert-def="true/false"
  *      data-add-dashboard="true/false"
  *      data-add-comment="${hasAddCommentPermission}"
- *      data-instantaneous-alert-evaluation="${hasInstantaneousAlertEvaluationPermission}">
+ *      data-instantaneous-alert-evaluation="${hasInstantaneousAlertEvaluationPermission}"
+ *      data-logout-url="${logoutUrl}">
 */
 
 var UserInfoService = function() {
@@ -26,6 +27,7 @@ var UserInfoService = function() {
                 }
 
             });
+
             return attributes;
         }
     };
