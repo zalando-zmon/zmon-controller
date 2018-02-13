@@ -14,7 +14,7 @@ angular.module('zmon2App').directive('tvLogoutModal', [ '$uibModal', 'UserInfoSe
                 };
 
                 var redirect = function() {
-                    window.location.href = '/tv/switch'
+                    // window.location.href = '/tv/switch'
                 }
 
                 var open = function() {
