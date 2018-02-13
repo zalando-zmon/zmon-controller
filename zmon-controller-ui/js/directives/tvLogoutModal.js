@@ -2,9 +2,6 @@ angular.module('zmon2App').directive('tvLogoutModal', [ '$uibModal', 'UserInfoSe
     function($uibModal, UserInfoService) {
         return {
             restrict: 'A',
-            scope: {
-                tvMode: '='
-            },
             link: function(scope, elem, attrs) {
 
                 var modalCtrl = function($scope, $uibModalInstance) {
@@ -32,8 +29,8 @@ angular.module('zmon2App').directive('tvLogoutModal', [ '$uibModal', 'UserInfoSe
                     });
                 };
 
-                scope.$watch('tvMode', function() {
-                    if (scope.tvMode) {
+                elem.on('click', function() {
+                    if (UserInfoService.get()["logout-url"]) {
                         open();
                     }
                 });
