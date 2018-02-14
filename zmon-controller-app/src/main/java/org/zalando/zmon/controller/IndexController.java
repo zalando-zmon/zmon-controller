@@ -32,6 +32,7 @@ public class IndexController {
 
     // parameters
     public static final String STATIC_URL = "staticUrl";
+    public static final String LOGOUT_URL = "logoutUrl";
     public static final String KAIROSDB_SERVICES = "KairosDBServices";
     public static final String APPDYNAMICS_ENABLED = "appdynamicsEnabled";
     public static final String APPDYNAMICS_CONFIG = "appdynamicsConfig";
@@ -71,6 +72,8 @@ public class IndexController {
     public String index(Model model) {
 
         model.addAttribute(STATIC_URL, controllerProperties.getStaticUrl());
+
+        model.addAttribute(LOGOUT_URL, controllerProperties.getLogoutUrl());
 
         // TODO load all permissions in a single shot
         model.addAttribute(USER_NAME, authorityService.getUserName())

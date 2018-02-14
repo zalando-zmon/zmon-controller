@@ -124,6 +124,7 @@
     <div class="loading-indicator" ng-show="IndexCtrl.getLoadingIndicatorState()">
         Loading...
     </div>
+    <div tv-logout-modal id="tvLogoutModal" tv-mode="tvMode" th:if="${logoutUrl}"></div>
     <nav class="navbar navbar-inverse" role="navigation">
         <div class="span12">
             <div class="navbar-header">
@@ -189,7 +190,8 @@
                         data:add-alert-def="${hasAddAlertDefinitionPermission}"
                         data:add-dashboard="${hasAddDashboardPermission}"
                         data:instantaneous-alert-evaluation="${hasInstantaneousAlertEvaluationPermission}"
-                        data:cloud-check="${cloudCheckId}">
+                        data:cloud-check="${cloudCheckId}"
+                        data:logout-url="${logoutUrl}">
 
                         <button type="button" class="auth-user btn btn-default dropdown-toggle" data-toggle="dropdown" uib-popover="Teams: {{userTeamsOnPopover}}" popover-placement="left" popover-trigger="mouseenter" sec:authentication="name">
                             klaus
@@ -197,7 +199,7 @@
                         </button>
                         <ul class="dropdown-menu" role="menu">
                             <li><a href="logout" data-test="logout" th:href="@{/logout}">Logout</a></li>
-                            <th:block th:unless="${#strings.startsWith(userName,'ZMON_TV_')}"><li><a href="tv-mode" data-test="tv-mode" th:href="@{/tv/switch}">Switch to TV mode</a></li></th:block>
+                            <th:block th:unless="${#strings.startsWith(userName,'ZMON_TV_')}"><li><a tv-logout-modal data-test="tv-mode">Switch to TV mode</a></li></th:block>
                         </ul>
                    </span>
                 </div>
@@ -262,6 +264,7 @@
 <script th:src="${staticUrl} + '/js/directives/alertDowntimes.js?t=@buildTime@'"></script>
 <script th:src="${staticUrl} + '/js/directives/alertDeleteModal.js?t=@buildTime@'"></script>
 <script th:src="${staticUrl} + '/js/directives/codeEditorModal.js?t=@buildTime@'"></script>
+<script th:src="${staticUrl} + '/js/directives/tvLogoutModal.js?t=@buildTime@'"></script>
 <script th:src="${staticUrl} + '/js/directives/globalSearch.js?t=@buildTime@'"></script>
 <script th:src="${staticUrl} + '/js/directives/keytrap.js?t=@buildTime@'"></script>
 <script th:src="${staticUrl} + '/js/directives/caret.js?t=@buildTime@'"></script>
