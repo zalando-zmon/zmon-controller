@@ -12,6 +12,7 @@ import java.util.List;
 public class ControllerProperties {
 
     public String staticUrl = "";
+    public String logoutUrl = "";
     public int grafanaMinInterval;
 
     public boolean emailTokenEnabled = false;
@@ -81,6 +82,15 @@ public class ControllerProperties {
     public void setStaticUrl(String staticUrl) {
         this.staticUrl = staticUrl;
     }
+
+    public String getLogoutUrl() {
+        return logoutUrl;
+    }
+
+    public void setLogoutUrl(String logoutUrl) {
+        this.logoutUrl = logoutUrl;
+    }
+
 
     public int getGrafanaMinInterval() {
         return grafanaMinInterval;
