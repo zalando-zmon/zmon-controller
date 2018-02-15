@@ -4,7 +4,7 @@ package org.zalando.zmon.config;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
-@ConfigurationProperties(prefix = "tracer.lightstep")
+@ConfigurationProperties(prefix = "tracer")
 public class LightstepProperties {
 
     private String accessToken;
