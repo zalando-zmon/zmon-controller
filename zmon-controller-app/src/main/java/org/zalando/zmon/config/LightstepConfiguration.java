@@ -13,29 +13,25 @@ import java.net.MalformedURLException;
 @EnableConfigurationProperties({LightstepProperties.class})
 public class LightstepConfiguration {
 
-    @Autowired
-    LightstepProperties lightstepProperties;
-
-    @Bean
-    public io.opentracing.Tracer lightStepTracer() throws MalformedURLException {
-
-
-        Tracer tracer;
-
-        com.lightstep.tracer.shared.Options.OptionsBuilder options = new com.lightstep.tracer.shared.Options.OptionsBuilder()
-                .withAccessToken(lightstepProperties.getAccessToken())
-                .withCollectorHost(lightstepProperties.getCollectorHost())
-                .withCollectorPort(lightstepProperties.getCollectorPort())
-                .withCollectorProtocol(lightstepProperties.getCollectorProtocol())
-                .withComponentName(lightstepProperties.getComponentName());
-
-        tracer = new com.lightstep.tracer.jre.JRETracer(options.build());
-
-        GlobalTracer.register(tracer);
-
-        return tracer;
-    }
+    // @Autowired
+    // LightstepProperties lightstepProperties;
+    //
+    // @Bean
+    // public io.opentracing.Tracer lightStepTracer() throws MalformedURLException {
+    //
+    //     Tracer tracer;
+    //
+    //     com.tracer.tracer.shared.Options.OptionsBuilder options = new com.tracer.tracer.shared.Options.OptionsBuilder()
+    //             .withAccessToken(lightstepProperties.getAccessToken())
+    //             .withCollectorHost(lightstepProperties.getCollectorHost())
+    //             .withCollectorPort(lightstepProperties.getCollectorPort())
+    //             .withCollectorProtocol(lightstepProperties.getCollectorProtocol())
+    //             .withComponentName(lightstepProperties.getComponentName());
+    //
+    //     tracer = new com.tracer.tracer.jre.JRETracer(options.build());
+    //
+    //     GlobalTracer.register(tracer);
+    //
+    //     return tracer;
+    // }
 }
-
-
-

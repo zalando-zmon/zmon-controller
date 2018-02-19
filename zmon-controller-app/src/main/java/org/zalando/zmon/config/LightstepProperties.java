@@ -2,7 +2,7 @@ package org.zalando.zmon.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-@ConfigurationProperties(prefix = "zmon.lightstep")
+@ConfigurationProperties(prefix = "opentracing.tracer")
 public class LightstepProperties {
     public String accessToken;
     public String collectorHost;

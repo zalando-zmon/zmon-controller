@@ -110,9 +110,12 @@
     </script>
 
     <!-- OpenTracing -->
+    <script th:inline="javascript" th:if="${lightstepEnabled}" src="/lib/opentracing-javascript/opentracing-browser.min.js"></script>
+    <script th:inline="javascript" th:if="${lightstepEnabled}" src="/lib/lightstep-tracer/lightstep-tracer.js"></script>
     <script th:inline="javascript" th:if="${lightstepEnabled}" src="/lib/opentracing-javascript-utils/opentracing-javascript-utils.js"></script>
     <script type="text/javascript" th:if="${lightstepEnabled}">
       var lightstepConfig = /*[[${lightstepConfig}]]*/ { accessToken: "", eumCollectorHost: "", eumCollectorPort: 443, eumCollectorEncryption: 'tls' };
+      console.log('config=', lightstepConfig)
       opentracingJavascriptUtils.initOpenTracing('lightstep', lightstepConfig);
     </script>
 
