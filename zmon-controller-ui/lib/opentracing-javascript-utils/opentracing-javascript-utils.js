@@ -67,8 +67,8 @@
       if (lib && !w[lib.class]) {
           this.dependencies.push(lib.src);
       }
-
-      return this.dependencies.map(this.getScript)
+      let d = this.dependencies.map(this.getScript)
+      return d
     }
 
     /**
@@ -76,10 +76,8 @@
      */
     initGlobalTracer(lib) {
       if (lib && w[lib.class]) {
-        console.log('using lib')
         opentracing.initGlobalTracer(new w[lib.class].Tracer(this.config));
       } else {
-        console.log('no-op')
         opentracing.initGlobalTracer();
       }
     }
@@ -113,7 +111,7 @@
           resolve(opentracing.globalTracer())
         })
         .catch( (e) => {
-          console.log("Can't load Tracing library, defaulting to no-op")
+          console.log("Can't load Tracing library, defaulting to no-op.", e)
           this.initGlobalTracer()
           resolve(opentracing.globalTracer())
         })

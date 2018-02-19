@@ -114,9 +114,15 @@
     <script th:inline="javascript" th:if="${lightstepEnabled}" src="/lib/lightstep-tracer/lightstep-tracer.js"></script>
     <script th:inline="javascript" th:if="${lightstepEnabled}" src="/lib/opentracing-javascript-utils/opentracing-javascript-utils.js"></script>
     <script type="text/javascript" th:if="${lightstepEnabled}">
-      var lightstepConfig = /*[[${lightstepConfig}]]*/ { accessToken: "", eumCollectorHost: "", eumCollectorPort: 443, eumCollectorEncryption: 'tls' };
+      var lightstepConfig = /*[[${lightstepConfig}]]*/  { name: "lightstep", config: {
+                                                                              accessToken: "",
+                                                                              eumCollectorHost: "",
+                                                                              eumCollectorPort: 443,
+                                                                              eumCollectorEncryption: 'tls'
+                                                                            }
+                                                        };
       console.log('config=', lightstepConfig)
-      opentracingJavascriptUtils.initOpenTracing('lightstep', lightstepConfig);
+      opentracingJavascriptUtils.initOpenTracing(lightstepConfig);
     </script>
 
     <!-- Firebase -->
