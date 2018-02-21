@@ -37,9 +37,14 @@ public abstract class AbstractZMonAuthority implements ZMonAuthority {
             // linear time, but we are not expecting a huge set of teams.
             // If we have a huge set of teams, we should use a Patricia trie
             for (final String userTeam : getTeams()) {
-                final int length = Math.min(userTeam.length(), team.length());
-                if (length >= userTeam.length() && userTeam.regionMatches(true, 0, team, 0, length)) {
+                if (userTeam.toLowerCase().equals(team.toLowerCase())) {
                     return true;
+                }
+                if (team.indexOf(0x2F /* "/" */) >= 0) {
+                    final int length = Math.min(userTeam.length(), team.length());
+                    if (length >= userTeam.length() && userTeam.regionMatches(true, 0, team, 0, length)) {
+                        return true;
+                    }
                 }
             }
         }
