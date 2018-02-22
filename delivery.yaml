@@ -23,7 +23,7 @@ pipeline:
             RELEASE_VERSION=$(git describe --tags --always --dirty)
             AGENT_IMAGE=registry-write.opensource.zalan.do/zmon/zmon-controller:${RELEASE_VERSION}
           else
-            AGENT_IMAGE=registry-write.opensource.zalan.do/zmon/zmon-controller:${CDP_BUILD_VERSION}
+            AGENT_IMAGE=registry-write.opensource.zalan.do/zmon/zmon-controller-unstable:${CDP_BUILD_VERSION}
           fi
           docker build --tag "$AGENT_IMAGE" .
           docker push "$AGENT_IMAGE"

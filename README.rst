@@ -22,6 +22,10 @@ ZMON Controller
     :target: https://slack.zmon.io
     :alt: ZMON Slack Signup
 
+.. image:: https://img.shields.io/badge/OpenTracing-enabled-blue.svg
+    :target: http://opentracing.io
+    :alt: OpenTracing enabled
+
 ZMON Controller is the frontend UI and REST API for Zalando's open-source platform monitoring tool.
 
 Running Locally
