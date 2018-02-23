@@ -9,6 +9,8 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.SetMultimap;
+import io.opentracing.Span;
+import io.opentracing.Tracer;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.fluent.Executor;
 import org.apache.http.client.fluent.Request;
@@ -95,6 +97,9 @@ public class ZMonServiceImpl implements ZMonService {
     @Autowired
     private ControllerProperties config;
 
+    @Autowired
+    Tracer tracer;
+
     @Override
     public ExecutionStatus getStatus() {
 
@@ -163,7 +168,6 @@ public class ZMonServiceImpl implements ZMonService {
     public List<String> getAllTeams() {
         final List<String> teams = zmonSProc.getAllTeams();
         Collections.sort(teams);
-
         return teams;
     }
 
@@ -253,6 +257,7 @@ public class ZMonServiceImpl implements ZMonService {
         final List<ResponseHolder<Integer, Set<String>>> alertEntities = new LinkedList<>();
 
         final List<Integer> alertDefinitionIds = alertDefinitionSProc.getAlertIdsByCheckId(checkId);
+        Span span1 = tracer.buildSpan("Redis:getAlertEntities").withTag("Type", "Redis").asChildOf(tracer.activeSpan()).start();
         try (Jedis jedis = redisPool.getResource()) {
             final Set<String> entities = (entity == null ? jedis.smembers(RedisPattern.checkEntities(checkId))
                     : Collections.singleton(entity));
@@ -272,6 +277,7 @@ public class ZMonServiceImpl implements ZMonService {
 
                 p.sync();
             }
+            span1.finish();
         }
 
         final List<CheckResults> checkResults = buildCheckResults(results);
@@ -287,7 +293,6 @@ public class ZMonServiceImpl implements ZMonService {
         for (final CheckResults checkResult : checkResults) {
             checkResult.setActiveAlertIds(entities.get(checkResult.getEntity()));
         }
-
         return checkResults;
     }
 
@@ -297,6 +302,7 @@ public class ZMonServiceImpl implements ZMonService {
         final List<ResponseHolder<Integer, Long>> alertEntitiesCount = new LinkedList<>();
 
         final List<Integer> alertDefinitionIds = alertDefinitionSProc.getAlertIdsByCheckId(checkId);
+        Span span1 = tracer.buildSpan("Redis:getAlertEntities").withTag("Type", "Redis").asChildOf(tracer.activeSpan()).start();
         try (Jedis jedis = redisPool.getResource()) {
             final Set<String> entities = (entity == null ? jedis.smembers(RedisPattern.checkEntities(checkId))
                     : Collections.singleton(entity));
@@ -316,6 +322,7 @@ public class ZMonServiceImpl implements ZMonService {
 
                 p.sync();
             }
+            span1.finish();
         }
 
         final List<CheckResults> checkResults = buildCheckResults(results);

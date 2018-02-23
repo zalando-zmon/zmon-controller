@@ -4,6 +4,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
+import io.opentracing.Span;
+import io.opentracing.Tracer;
+import io.opentracing.contrib.spring.cloud.SpanUtils;
 import org.apache.http.client.fluent.Executor;
 import org.apache.http.client.fluent.Request;
 import org.slf4j.Logger;
@@ -63,6 +66,9 @@ public class ZMonRestService extends AbstractZMonController {
     @Autowired
     AccessTokens accessTokens;
 
+    @Autowired
+    Tracer tracer;
+
     @RequestMapping(value = "/status")
     public ResponseEntity<ExecutionStatus> getStatus() {
         return new ResponseEntity<>(service.getStatus(), HttpStatus.OK);
@@ -76,14 +82,15 @@ public class ZMonRestService extends AbstractZMonController {
     @RequestMapping(value = "/checkDefinitions")
     public ResponseEntity<List<CheckDefinition>> getAllCheckDefinitions(
             @RequestParam(value = "team", required = false) final Set<String> teams) {
+        tracer.activeSpan().setOperationName("checkDefinitions");
         final List<CheckDefinition> defs = teams == null ? service.getCheckDefinitions(null).getCheckDefinitions()
                 : service.getCheckDefinitions(null, teams);
-
         return new ResponseEntity<>(defs, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/updateCheckDefinition")
     public ResponseEntity<CheckDefinition> updateCheckDefinition(@RequestBody(required = true) CheckDefinitionImport check) {
+        tracer.activeSpan().setOperationName("updateCheckDefinition");
         if (check.getOwningTeam() == null || "".equals(check.getOwningTeam())) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
@@ -92,7 +99,6 @@ public class ZMonRestService extends AbstractZMonController {
         if (result.isPermissionDenied()) {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
-
         return new ResponseEntity<>(result.getEntity(), HttpStatus.OK);
     }
 
@@ -100,11 +106,11 @@ public class ZMonRestService extends AbstractZMonController {
     public ResponseEntity<CheckDefinition> getCheckDefinition(
             @RequestParam(value = "check_id", required = true) final int checkId) {
 
+        tracer.activeSpan().setOperationName("checkDefinition").log("check_id"+checkId);
         final List<CheckDefinition> checkDefinitions = service.getCheckDefinitions(null, Lists.newArrayList(checkId));
         if (checkDefinitions.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-
         return new ResponseEntity<>(checkDefinitions.get(0), HttpStatus.OK);
     }
 
@@ -122,6 +128,7 @@ public class ZMonRestService extends AbstractZMonController {
             @RequestParam(value = "check_id", required = true) final int checkId,
             @RequestParam(value = "entity", required = true) final String entity,
             @RequestParam(value = "limit", defaultValue = "20") final int limit) {
+        tracer.activeSpan().setOperationName("checkResultsWithoutEntities").log("check_id:"+checkId+" entity:"+entity+" limit:"+limit);
 
         return new ResponseEntity<>(service.getCheckResultsWithoutEntities(checkId, entity, limit), HttpStatus.OK);
     }
