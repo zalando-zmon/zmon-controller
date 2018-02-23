@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 import io.opentracing.Tracer;
+import io.opentracing.util.GlobalTracer;
 import org.apache.http.client.fluent.Executor;
 import org.apache.http.client.fluent.Request;
 import org.slf4j.Logger;
@@ -61,8 +62,7 @@ public class ZMonRestService extends AbstractZMonController {
     @Autowired
     AccessTokens accessTokens;
 
-    @Autowired
-    Tracer tracer;
+    Tracer tracer = GlobalTracer.get();
 
     @RequestMapping(value = "/status")
     public ResponseEntity<ExecutionStatus> getStatus() {
