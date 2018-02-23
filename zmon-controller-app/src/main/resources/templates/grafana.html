@@ -25,8 +25,18 @@
         }
     </style>
 
-    <!-- Lightstep EUM -->
-    <script src="/lib/opentracing/opentracing-browser.min.js" th:if="${lightstepEnabled}"></script>
+    <!-- Opentracing -->
+      <script th:inline="javascript" th:if="${eumTracingEnabled}" src="/lib/opentracing-javascript/opentracing-browser.min.js"></script>
+      <script th:inline="javascript" th:if="${eumTracingEnabled}" src="https://raw.githubusercontent.com/lightstep/lightstep-tracer-javascript/v0.20.3/dist/lightstep-tracer.min.js"></script>
+      <script th:inline="javascript" th:if="${eumTracingEnabled}" src="/lib/opentracing-javascript-utils/opentracing-javascript-utils.js"></script>
+
+      <script type="text/javascript" th:if="${eumTracingEnabled}">
+      var eumTracingConfig = /*[[${eumTracingConfig}]]*/  { name: "noop", zmonConfig: {} };
+      console.log('zmonConfig=', eumTracingConfig)
+      opentracingJavascriptUtils.initOpenTracing(eumTracingConfig);
+    </script>
+
+    <!--  <script src="/lib/opentracing/opentracing-browser.min.js" th:if="${lightstepEnabled}"></script>
     <script src="/lib/lightstep/lightstep-tracer.js" th:if="${lightstepEnabled}"></script>
     <script charset='UTF-8' th:inline="javascript" th:if="${lightstepEnabled}">
         var lightstepConfig = /*[[${lightstepConfig}]]*/ { accessToken: "", eumCollectorHost: "", eumCollectorPort: 443, eumCollectorEncryption: 'tls' };
@@ -39,7 +49,7 @@
             collector_encryption: lightstepConfig.eumCollectorEncryption,
             verbosity: lightstepConfig.eumVerbosity
         }));
-    </script>
+    </script> -->
 </head>
 
     <body ng-cloak>
@@ -432,14 +442,14 @@
       var appdynamicsConfig = /*[[${appdynamicsConfig}]]*/ { apiKey: "", adrumExtUrlHttp: "", adrumExtUrlHttps: "", beaconUrlHttp: "", beaconUrlHttps: "", xd: true}
       console.log('AppDynamics Agent is Enabled', appdynamicsConfig)
       window['adrum-start-time'] = new Date().getTime();
-      (function(config){
-          config.appKey = 'EUM-AAB-AUY';
-          config.adrumExtUrlHttp = appdynamicsConfig.adrumExtUrlHttp;
-          config.adrumExtUrlHttps = appdynamicsConfig.adrumExtUrlHttps;
-          config.beaconUrlHttp = appdynamicsConfig.beaconUrlHttp;
-          config.beaconUrlHttps = appdynamicsConfig.beaconUrlHttps;
-          config.xd = { enable: appdynamicsConfig.xd.enable };
-        })(window['adrum-config'] || (window['adrum-config'] = {}));
+      (function(zmonConfig){
+          zmonConfig.appKey = 'EUM-AAB-AUY';
+          zmonConfig.adrumExtUrlHttp = appdynamicsConfig.adrumExtUrlHttp;
+          zmonConfig.adrumExtUrlHttps = appdynamicsConfig.adrumExtUrlHttps;
+          zmonConfig.beaconUrlHttp = appdynamicsConfig.beaconUrlHttp;
+          zmonConfig.beaconUrlHttps = appdynamicsConfig.beaconUrlHttps;
+          zmonConfig.xd = { enable: appdynamicsConfig.xd.enable };
+        })(window['adrum-zmonConfig'] || (window['adrum-zmonConfig'] = {}));
         if ('https:' === document.location.protocol) {
             document.write(unescape('%3Cscript')
           + " src='https://cdn.appdynamics.com/adrum/adrum-4.3.2.1.js' "

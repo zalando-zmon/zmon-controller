@@ -29,6 +29,8 @@ public class ControllerProperties {
 
     public boolean enableAppdynamics = false;
 
+    private boolean enableEumTracing = false;
+
     public boolean enableLightstep = false;
 
     public boolean enableGoogleanalytics = false;
@@ -54,6 +56,10 @@ public class ControllerProperties {
     public void setEnableAppdynamics(boolean enableAppdynamics) {
         this.enableAppdynamics = enableAppdynamics;
     }
+
+    public boolean isEnableEumTracing() { return enableEumTracing; }
+
+    public void setEnableEumTracing(boolean enableEumTracing) { this.enableEumTracing = enableEumTracing; }
 
     public boolean isEnableLightstep() {
         return enableLightstep;
@@ -171,4 +177,6 @@ public class ControllerProperties {
     public void setEmailTokenLength(int emailTokenLength) {
         this.emailTokenLength = emailTokenLength;
     }
+
+
 }

@@ -2,23 +2,15 @@ package org.zalando.zmon.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.zalando.zmon.config.ControllerProperties;
-import org.zalando.zmon.config.FirebaseProperties;
-import org.zalando.zmon.config.AppdynamicsProperties;
-import org.zalando.zmon.config.LightstepProperties;
-import org.zalando.zmon.config.GoogleanalyticsProperties;
-import org.zalando.zmon.config.ManifestJsonConfig;
+import org.zalando.zmon.config.*;
 import org.zalando.zmon.security.permission.DefaultZMonPermissionService;
 
 import com.google.common.base.Joiner;
 
-import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -41,6 +33,10 @@ public class IndexController {
     public static final String LIGHTSTEP_CONFIG = "lightstepConfig";
     public static final String GOOGLEANALYTICS_ENABLED = "googleanalyticsEnabled";
     public static final String GOOGLEANALYTICS_CONFIG = "googleanalyticsConfig";
+
+    public static final String EUM_TRACING_ENABLED = "eumTracingEnabled";
+    public static final String EUM_TRACING_ZMON_CONFIG = "eumTracingZmonConfig";
+
     private static final String HAS_SCHEDULE_DOWNTIME_PERMISSION = "hasScheduleDowntimePermission";
     private static final String HAS_DELETE_DOWNTIME_PERMISSION = "hasDeleteDowntimePermission";
     private static final String HAS_TRIAL_RUN_PERMISSION = "hasTrialRunPermission";
@@ -71,6 +67,9 @@ public class IndexController {
     @Autowired
     private GoogleanalyticsProperties googleanalyticsProperties;
 
+    @Autowired
+    private EumTracingZmonProperties eumTracingZmonProperties;
+
     @Value("${zmon.cloud.checkid}")
     private int cloudCheckId;
 
@@ -100,12 +99,16 @@ public class IndexController {
         model.addAttribute("cloudCheckId", cloudCheckId);
         model.addAttribute("firebaseConfig", firebaseProperties);
         model.addAttribute("firebaseEnabled", controllerProperties.enableFirebase);
+
+        model.addAttribute(EUM_TRACING_ZMON_CONFIG, eumTracingZmonProperties);
+
         model.addAttribute(APPDYNAMICS_CONFIG, appdynamicsProperties);
         model.addAttribute(APPDYNAMICS_ENABLED, controllerProperties.enableAppdynamics);
         model.addAttribute(LIGHTSTEP_CONFIG, lightstepProperties);
         model.addAttribute(LIGHTSTEP_ENABLED, controllerProperties.enableLightstep);
         model.addAttribute(GOOGLEANALYTICS_CONFIG, googleanalyticsProperties);
         model.addAttribute(GOOGLEANALYTICS_ENABLED, controllerProperties.enableGoogleanalytics);
+
 
         return "index";
     }

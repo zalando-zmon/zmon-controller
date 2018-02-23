@@ -88,14 +88,14 @@
     <script charset='UTF-8' th:inline="javascript" th:if="${appdynamicsEnabled}" >
         var appdynamicsConfig = /*[[${appdynamicsConfig}]]*/ { apiKey: "", adrumExtUrlHttp: "", adrumExtUrlHttps: "", beaconUrlHttp: "", beaconUrlHttps: "", xd: true}
         window['adrum-start-time'] = new Date().getTime();
-        (function(config){
-            config.appKey = appdynamicsConfig.apiKey;
-            config.adrumExtUrlHttp = appdynamicsConfig.adrumExtUrlHttp;
-            config.adrumExtUrlHttps = appdynamicsConfig.adrumExtUrlHttps;
-            config.beaconUrlHttp = appdynamicsConfig.beaconUrlHttp;
-            config.beaconUrlHttps = appdynamicsConfig.beaconUrlHttps;
-            config.xd = { enable: appdynamicsConfig.xd.enable };
-          })(window['adrum-config'] || (window['adrum-config'] = {}));
+        (function(zmonConfig){
+            zmonConfig.appKey = appdynamicsConfig.apiKey;
+            zmonConfig.adrumExtUrlHttp = appdynamicsConfig.adrumExtUrlHttp;
+            zmonConfig.adrumExtUrlHttps = appdynamicsConfig.adrumExtUrlHttps;
+            zmonConfig.beaconUrlHttp = appdynamicsConfig.beaconUrlHttp;
+            zmonConfig.beaconUrlHttps = appdynamicsConfig.beaconUrlHttps;
+            zmonConfig.xd = { enable: appdynamicsConfig.xd.enable };
+          })(window['adrum-zmonConfig'] || (window['adrum-zmonConfig'] = {}));
           if ('https:' === document.location.protocol) {
               document.write(unescape('%3Cscript')
             + " src='https://cdn.appdynamics.com/adrum/adrum-4.3.2.1.js' "
@@ -110,28 +110,38 @@
     </script>
 
     <!-- OpenTracing -->
-    <script th:inline="javascript" th:if="${lightstepEnabled}" src="/lib/opentracing-javascript/opentracing-browser.min.js"></script>
+    <script th:inline="javascript" th:if="${eumTracingEnabled}" src="/lib/opentracing-javascript/opentracing-browser.min.js"></script>
+    <script th:inline="javascript" th:if="${eumTracingEnabled}" src="https://raw.githubusercontent.com/lightstep/lightstep-tracer-javascript/v0.20.3/dist/lightstep-tracer.min.js"></script>
+    <script th:inline="javascript" th:if="${eumTracingEnabled}" src="/lib/opentracing-javascript-utils/opentracing-javascript-utils.js"></script>
+
+    <script type="text/javascript" th:if="${eumTracingEnabled}">
+      var eumTracingZmonConfig = /*[[${eumTracingZmonConfig}]]*/  { name: "noop", zmonConfig: {} };
+      console.log('zmonConfig=', eumTracingZmonConfig)
+      opentracingJavascriptUtils.initOpenTracing(eumTracingZmonConfig);
+    </script>
+
+    <!--<script th:inline="javascript" th:if="${lightstepEnabled}" src="/lib/opentracing-javascript/opentracing-browser.min.js"></script>
     <script th:inline="javascript" th:if="${lightstepEnabled}" src="/lib/lightstep-tracer/lightstep-tracer.js"></script>
     <script th:inline="javascript" th:if="${lightstepEnabled}" src="/lib/opentracing-javascript-utils/opentracing-javascript-utils.js"></script>
     <script type="text/javascript" th:if="${lightstepEnabled}">
-      var lightstepConfig = /*[[${lightstepConfig}]]*/  { name: "lightstep", config: {
+      var lightstepConfig = /*[[${lightstepConfig}]]*/  { name: "lightstep", zmonConfig: {
                                                                               accessToken: "",
                                                                               eumCollectorHost: "",
                                                                               eumCollectorPort: 443,
                                                                               eumCollectorEncryption: 'tls'
                                                                             }
                                                         };
-      console.log('config=', lightstepConfig)
+      console.log('zmonConfig=', lightstepConfig)
       opentracingJavascriptUtils.initOpenTracing(lightstepConfig);
-    </script>
+    </script>-->
 
     <!-- Firebase -->
     <script th:inline="javascript" th:if="${firebaseEnabled}" src="/lib/firebase/firebase-app.js"></script>
     <script th:inline="javascript" th:if="${firebaseEnabled}" src="/lib/firebase/firebase-messaging.js"></script>
     <script th:inline="javascript" th:if="${firebaseEnabled}">
         // Initialize Firebase
-        var config = /*[[${firebaseConfig}]]*/ { apiKey: "", authDomain: "", databaseURL: "", storageBucket: "", messagingSenderId: ""};
-        firebase.initializeApp(config);
+        var zmonConfig = /*[[${firebaseConfig}]]*/ { apiKey: "", authDomain: "", databaseURL: "", storageBucket: "", messagingSenderId: ""};
+        firebase.initializeApp(zmonConfig);
     </script>
     <link rel="manifest" href="/manifest.json">
 </head>
