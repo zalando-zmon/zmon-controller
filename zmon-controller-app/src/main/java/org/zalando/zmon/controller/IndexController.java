@@ -80,6 +80,7 @@ public class IndexController {
 
         model.addAttribute(LOGOUT_URL, controllerProperties.getLogoutUrl());
         LOG.warn("Test EUM config: "+eumTracingProperties.grafanaConfig.toString());
+        LOG.warn("Test EUM config: "+eumTracingProperties.zmonConfig.toString());
         // TODO load all permissions in a single shot
         model.addAttribute(USER_NAME, authorityService.getUserName())
                 .addAttribute(TEAMS, COMMA_JOINER.join(authorityService.getTeams()))
