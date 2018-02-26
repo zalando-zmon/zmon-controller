@@ -75,7 +75,7 @@ public class IndexController {
         model.addAttribute(STATIC_URL, controllerProperties.getStaticUrl());
 
         model.addAttribute(LOGOUT_URL, controllerProperties.getLogoutUrl());
-
+        System.out.println(eumTracingProperties.grafanaConfig);
         // TODO load all permissions in a single shot
         model.addAttribute(USER_NAME, authorityService.getUserName())
                 .addAttribute(TEAMS, COMMA_JOINER.join(authorityService.getTeams()))
