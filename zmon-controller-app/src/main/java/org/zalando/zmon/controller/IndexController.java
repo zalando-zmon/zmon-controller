@@ -1,5 +1,7 @@
 package org.zalando.zmon.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -25,6 +27,8 @@ import java.io.InputStream;
 public class IndexController {
 
     private static final Joiner COMMA_JOINER = Joiner.on(',');
+
+    private static final Logger LOG = LoggerFactory.getLogger(IndexController.class);
 
     // parameters
     public static final String STATIC_URL = "staticUrl";
@@ -75,7 +79,7 @@ public class IndexController {
         model.addAttribute(STATIC_URL, controllerProperties.getStaticUrl());
 
         model.addAttribute(LOGOUT_URL, controllerProperties.getLogoutUrl());
-        System.out.println(eumTracingProperties.grafanaConfig);
+        LOG.warn("Test EUM config: "+eumTracingProperties.grafanaConfig.toString());
         // TODO load all permissions in a single shot
         model.addAttribute(USER_NAME, authorityService.getUserName())
                 .addAttribute(TEAMS, COMMA_JOINER.join(authorityService.getTeams()))
