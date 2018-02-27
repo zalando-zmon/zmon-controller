@@ -28,10 +28,8 @@
       <!-- Opentracing -->
       <script th:inline="javascript" th:if="${eumTracingEnabled}" src="/lib/opentracing-javascript/opentracing-browser.min.js"></script>
       <script th:inline="javascript" th:if="${eumTracingEnabled}" src="/lib/opentracing-javascript-utils/opentracing-javascript-utils.js"></script>
-
       <script th:inline="javascript" th:if="${eumTracingEnabled}">
       var eumTracingConfig = /*[[${eumGrafanaTracingConfig}]]*/  { name: "noop", grafanaConfig: {} };
-      console.log('grafanaEUMConfig=', JSON.parse(eumTracingConfig));
       opentracingJavascriptUtils.initOpenTracing(JSON.parse(eumTracingConfig));
     </script>
 

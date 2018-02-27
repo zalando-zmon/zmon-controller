@@ -6,7 +6,7 @@
   const libraries = {
     lightstep: {
       class: 'lightstep',
-      src: 'https://raw.githubusercontent.com/lightstep/lightstep-tracer-javascript/v0.20.3/dist/lightstep-tracer.min.js',        // TODO add CDN url instead of github raw link
+      src: 'https://rawgit.com/lightstep/lightstep-tracer-javascript/v0.20.3/dist/lightstep-tracer.min.js',
     }
   };
 
