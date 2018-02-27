@@ -31,8 +31,8 @@
 
       <script th:inline="javascript" th:if="${eumTracingEnabled}">
       var eumTracingConfig = /*[[${eumGrafanaTracingConfig}]]*/  { name: "noop", grafanaConfig: {} };
-      console.log('grafanaEUMConfig=', eumTracingConfig);
-      opentracingJavascriptUtils.initOpenTracing(eumTracingConfig);
+      console.log('grafanaEUMConfig=', JSON.parse(eumTracingConfig));
+      opentracingJavascriptUtils.initOpenTracing(JSON.parse(eumTracingConfig));
     </script>
 
   </head>

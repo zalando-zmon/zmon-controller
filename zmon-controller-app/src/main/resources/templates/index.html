@@ -115,8 +115,8 @@
 
     <script th:inline="javascript" th:if="${eumTracingEnabled}">
       var eumTracingConfig = /*[[${eumZmonTracingConfig}]]*/  { name: "noop", grafanaConfig: {} };
-      console.log('zmonEUMConfig=', eumTracingConfig);
-      opentracingJavascriptUtils.initOpenTracing(eumTracingConfig);
+      console.log('zmonEUMConfig=', JSON.parse(eumTracingConfig));
+      opentracingJavascriptUtils.initOpenTracing(JSON.parse(eumTracingConfig));
     </script>
 
     <!-- Firebase -->
