@@ -101,7 +101,6 @@ public class IndexController {
         model.addAttribute("firebaseEnabled", controllerProperties.enableFirebase);
         model.addAttribute(EUM_TRACING_ENABLED, controllerProperties.enableEumTracing);
         model.addAttribute(EUM_ZMON_TRACING_CONFIG, eumTracingProperties.zmonConfig);
-        model.addAttribute(EUM_GRAFANA_TRACING_CONFIG, eumTracingProperties.grafanaConfig);
         model.addAttribute(APPDYNAMICS_CONFIG, appdynamicsProperties);
         model.addAttribute(APPDYNAMICS_ENABLED, controllerProperties.enableAppdynamics);
         model.addAttribute(GOOGLEANALYTICS_CONFIG, googleanalyticsProperties);

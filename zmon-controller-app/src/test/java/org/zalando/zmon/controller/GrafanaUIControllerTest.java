@@ -5,6 +5,7 @@ import org.junit.Test;
 import org.springframework.ui.ExtendedModelMap;
 import org.zalando.zmon.config.AppdynamicsProperties;
 import org.zalando.zmon.config.ControllerProperties;
+import org.zalando.zmon.config.EumTracingProperties;
 import org.zalando.zmon.config.KairosDBProperties;
 
 import static org.mockito.Mockito.mock;
@@ -15,12 +16,14 @@ public class GrafanaUIControllerTest {
     public void TestControllerInjectsAppDynamicsConfiguration() {
         AppdynamicsProperties appdynamicsProperties = new AppdynamicsProperties();
         ControllerProperties controllerProperties = new ControllerProperties();
+        EumTracingProperties eumTracingProperties = new EumTracingProperties();
         controllerProperties.setEnableAppdynamics(true);
 
         GrafanaUIController controller = new GrafanaUIController(
                 mock(KairosDBProperties.class),
                 controllerProperties,
-                appdynamicsProperties
+                appdynamicsProperties,
+                eumTracingProperties
         );
 
         ExtendedModelMap model = new ExtendedModelMap();
@@ -34,12 +37,14 @@ public class GrafanaUIControllerTest {
     public void TestControllerInjectsAppDynamicsConfigurationInDeepLinks() {
         AppdynamicsProperties appdynamicsProperties = new AppdynamicsProperties();
         ControllerProperties controllerProperties = new ControllerProperties();
+        EumTracingProperties eumTracingProperties = new EumTracingProperties();
         controllerProperties.setEnableAppdynamics(true);
 
         GrafanaUIController controller = new GrafanaUIController(
                 mock(KairosDBProperties.class),
                 controllerProperties,
-                appdynamicsProperties
+                appdynamicsProperties,
+                eumTracingProperties
         );
 
         ExtendedModelMap model = new ExtendedModelMap();
@@ -54,7 +59,8 @@ public class GrafanaUIControllerTest {
         GrafanaUIController controller = new GrafanaUIController(
                 mock(KairosDBProperties.class),
                 mock(ControllerProperties.class),
-                mock(AppdynamicsProperties.class)
+                mock(AppdynamicsProperties.class),
+                mock(EumTracingProperties.class)
         );
 
         ExtendedModelMap model = new ExtendedModelMap();
@@ -68,7 +74,8 @@ public class GrafanaUIControllerTest {
         GrafanaUIController controller = new GrafanaUIController(
                 mock(KairosDBProperties.class),
                 mock(ControllerProperties.class),
-                mock(AppdynamicsProperties.class)
+                mock(AppdynamicsProperties.class),
+                mock(EumTracingProperties.class)
         );
 
         ExtendedModelMap model = new ExtendedModelMap();
