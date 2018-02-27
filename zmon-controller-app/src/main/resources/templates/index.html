@@ -114,8 +114,8 @@
     <script th:inline="javascript" th:if="${eumTracingEnabled}" src="/lib/opentracing-javascript-utils/opentracing-javascript-utils.js"></script>
 
     <script th:inline="javascript" th:if="${eumTracingEnabled}">
-      var eumTracingConfig = /*[[${eumTracingConfig}]]*/  { zmonConfig: "" };
-      console.log('zmonEUMConfig=', eumTracingConfig)
+      var eumTracingConfig = /*[[${eumZmonTracingConfig}]]*/  { name: "noop", grafanaConfig: {} };
+      console.log('zmonEUMConfig=', eumTracingConfig);
       opentracingJavascriptUtils.initOpenTracing(eumTracingConfig);
     </script>
 

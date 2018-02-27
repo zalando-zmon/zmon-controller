@@ -39,7 +39,8 @@ public class IndexController {
     public static final String GOOGLEANALYTICS_ENABLED = "googleanalyticsEnabled";
     public static final String GOOGLEANALYTICS_CONFIG = "googleanalyticsConfig";
     public static final String EUM_TRACING_ENABLED = "eumTracingEnabled";
-    public static final String EUM_TRACING_CONFIG = "eumTracingConfig";
+    public static final String EUM_ZMON_TRACING_CONFIG = "eumZmonTracingConfig";
+    public static final String EUM_GRAFANA_TRACING_CONFIG = "eumGrafanaTracingConfig";
     private static final String HAS_SCHEDULE_DOWNTIME_PERMISSION = "hasScheduleDowntimePermission";
     private static final String HAS_DELETE_DOWNTIME_PERMISSION = "hasDeleteDowntimePermission";
     private static final String HAS_TRIAL_RUN_PERMISSION = "hasTrialRunPermission";
@@ -101,7 +102,8 @@ public class IndexController {
         model.addAttribute("firebaseConfig", firebaseProperties);
         model.addAttribute("firebaseEnabled", controllerProperties.enableFirebase);
         model.addAttribute(EUM_TRACING_ENABLED, controllerProperties.enableEumTracing);
-        model.addAttribute(EUM_TRACING_CONFIG, eumTracingProperties);
+        model.addAttribute(EUM_ZMON_TRACING_CONFIG, eumTracingProperties.zmonConfig);
+        model.addAttribute(EUM_GRAFANA_TRACING_CONFIG, eumTracingProperties.grafanaConfig);
         model.addAttribute(APPDYNAMICS_CONFIG, appdynamicsProperties);
         model.addAttribute(APPDYNAMICS_ENABLED, controllerProperties.enableAppdynamics);
         model.addAttribute(GOOGLEANALYTICS_CONFIG, googleanalyticsProperties);
