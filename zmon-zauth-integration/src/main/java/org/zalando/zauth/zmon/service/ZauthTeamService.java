@@ -2,6 +2,7 @@ package org.zalando.zauth.zmon.service;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Sets;
+import io.opentracing.contrib.spring.web.client.TracingRestTemplateInterceptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.ParameterizedTypeReference;
@@ -42,6 +43,8 @@ public class ZauthTeamService implements TeamService {
         this.dynamicTeamService = dynamicTeamService;
 
         restTemplate = new StupsOAuth2RestTemplate(new StupsTokensAccessTokenProvider("team-service", accessTokens));
+        restTemplate.getInterceptors().add(new TracingRestTemplateInterceptor());
+
         log.info("Configured Team Service with URL {}", zauthProperties.getTeamServiceUrl());
         log.info("Overlay configured: {}", zauthProperties.getTeamOverlay().entrySet());
     }

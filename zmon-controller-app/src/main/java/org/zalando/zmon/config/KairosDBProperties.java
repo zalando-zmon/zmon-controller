@@ -1,8 +1,8 @@
 package org.zalando.zmon.config;
 
+import io.opentracing.contrib.apache.http.client.TracingHttpClientBuilder;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
 import org.apache.http.impl.nio.client.HttpAsyncClients;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -123,7 +123,10 @@ public class KairosDBProperties {
      */
     public CloseableHttpClient getHttpClient() {
         RequestConfig config = RequestConfig.custom().setSocketTimeout(getSocketTimeout()).setConnectTimeout(getConnectTimeout()).build();
-        return HttpClients.custom().setMaxConnPerRoute(maxConnectionsPerRoute).setMaxConnTotal(maxConnectionsTotal).setDefaultRequestConfig(config).build();
+        return new TracingHttpClientBuilder().
+                setMaxConnPerRoute(maxConnectionsPerRoute).
+                setMaxConnTotal(maxConnectionsTotal).
+                setDefaultRequestConfig(config).build();
     }
 
     public CloseableHttpAsyncClient getHttpAsyncClient() {

@@ -1,5 +1,6 @@
 package org.zalando.zmon.config;
 
+import io.opentracing.contrib.spring.web.client.TracingAsyncRestTemplateInterceptor;
 import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -32,6 +33,9 @@ public class KairosDBConfiguration {
     @Bean
     public AsyncRestTemplate asyncRestTemplate() {
         CloseableHttpAsyncClient client = kairosDBProperties.getHttpAsyncClient();
-        return new AsyncRestTemplate(new HttpComponentsAsyncClientHttpRequestFactory(client));
+        final AsyncRestTemplate restTemplate = new AsyncRestTemplate(new HttpComponentsAsyncClientHttpRequestFactory(client));
+
+        restTemplate.getInterceptors().add(new TracingAsyncRestTemplateInterceptor());
+        return restTemplate;
     }
 }

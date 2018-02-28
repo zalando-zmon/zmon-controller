@@ -1,8 +1,9 @@
 package org.zalando.zmon.config;
 
+import io.opentracing.contrib.apache.http.client.TracingHttpClientBuilder;
+import io.opentracing.contrib.spring.web.client.TracingRestTemplateInterceptor;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -34,7 +35,10 @@ public class EventLogConfiguration {
 
     @Bean
     public RestOperations restOperations(final EventLogProperties config) {
-        return new RestTemplate(getClientHttpRequestFactory(config));
+        RestTemplate restTemplate = new RestTemplate(getClientHttpRequestFactory(config));
+        restTemplate.getInterceptors().add(new TracingRestTemplateInterceptor());
+
+        return restTemplate;
     }
 
     private ClientHttpRequestFactory getClientHttpRequestFactory(final EventLogProperties config) {
@@ -43,10 +47,8 @@ public class EventLogConfiguration {
                 .setConnectionRequestTimeout(config.getRequestConnectTimeout())
                 .setSocketTimeout(config.getSocketTimeout())
                 .build();
-        final CloseableHttpClient client = HttpClientBuilder
-                .create()
-                .setDefaultRequestConfig(requestConfig)
-                .build();
+        final CloseableHttpClient client = new TracingHttpClientBuilder().
+                setDefaultRequestConfig(requestConfig).build();
         return new HttpComponentsClientHttpRequestFactory(client);
     }
 
