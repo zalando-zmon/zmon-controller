@@ -1,11 +1,6 @@
 package org.zalando.zmon.config;
 
-import org.apache.http.client.config.RequestConfig;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-
-import java.net.URL;
 
 /**
  * Created by hjacobs on 2/5/16.

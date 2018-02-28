@@ -3,11 +3,10 @@ package org.zalando.zauth.zmon.service;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
+import io.opentracing.contrib.spring.web.client.TracingRestTemplateInterceptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 import org.zalando.stups.oauth2.spring.client.StupsOAuth2RestTemplate;
@@ -42,6 +41,7 @@ public class ZauthAuthorityService implements AuthorityService {
         this.teamService = teamService;
 
         restTemplate = new StupsOAuth2RestTemplate(new StupsTokensAccessTokenProvider("user-service", accessTokens));
+        restTemplate.getInterceptors().add(new TracingRestTemplateInterceptor());
     }
 
     private Set<String> getGroups(String username) {
