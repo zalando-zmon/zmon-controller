@@ -421,7 +421,7 @@
         eumTracingConfig = JSON.parse(eumTracingConfig);
         opentracingJavascriptUtils.initOpenTracing(eumTracingConfig)
                       .then((e) => {
-                            console.log('Opentracing Initialized', e);
+                            console.log('Opentracing Initialized');
                           }).catch( (e) => {
                             console.log("Couldn't initialize Opentracing.", e)
                           })
