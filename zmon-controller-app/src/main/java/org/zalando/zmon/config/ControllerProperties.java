@@ -27,6 +27,8 @@ public class ControllerProperties {
 
     public boolean enableFirebase = false;
 
+    public boolean enableEumTracing = false;
+
     public boolean enableAppdynamics = false;
 
     public boolean enableGoogleanalytics = false;
@@ -160,5 +162,13 @@ public class ControllerProperties {
 
     public void setEmailTokenLength(int emailTokenLength) {
         this.emailTokenLength = emailTokenLength;
+    }
+
+    public boolean isEnableEumTracing() {
+        return enableEumTracing;
+    }
+
+    public void setEnableEumTracing(boolean enableEumTracing) {
+        this.enableEumTracing = enableEumTracing;
     }
 }

@@ -6,6 +6,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.zalando.zmon.config.AppdynamicsProperties;
 import org.zalando.zmon.config.ControllerProperties;
+import org.zalando.zmon.config.EumTracingProperties;
 import org.zalando.zmon.config.KairosDBProperties;
 
 import javax.servlet.http.HttpServletRequest;
@@ -17,6 +18,7 @@ public class GrafanaUIController {
 
     private AppdynamicsProperties appdynamicsProperties;
     private ControllerProperties controllerProperties;
+    private EumTracingProperties eumTracingProperties;
 
     public static class KairosDBEntry {
         public String name;
@@ -41,9 +43,11 @@ public class GrafanaUIController {
     @Autowired
     public GrafanaUIController(KairosDBProperties kairosdbProperties,
                                ControllerProperties controllerProperties,
-                               AppdynamicsProperties appdynamicsProperties) {
+                               AppdynamicsProperties appdynamicsProperties,
+                               EumTracingProperties eumTracingProperties) {
         this.controllerProperties = controllerProperties;
         this.appdynamicsProperties = appdynamicsProperties;
+        this.eumTracingProperties = eumTracingProperties;
 
         for (KairosDBProperties.KairosDBServiceConfig c : kairosdbProperties.getKairosdbs()) {
             kairosdbServices.add(new KairosDBEntry(c.getName(), "/rest/kairosdbs/" + c.getName()));
@@ -56,6 +60,8 @@ public class GrafanaUIController {
         model.addAttribute(IndexController.KAIROSDB_SERVICES, kairosdbServices);
         model.addAttribute(IndexController.APPDYNAMICS_CONFIG, appdynamicsProperties);
         model.addAttribute(IndexController.APPDYNAMICS_ENABLED, controllerProperties.enableAppdynamics);
+        model.addAttribute(IndexController.EUM_TRACING_ENABLED, controllerProperties.enableEumTracing);
+        model.addAttribute(IndexController.EUM_GRAFANA_TRACING_CONFIG, eumTracingProperties.grafanaConfig);
 
         return "grafana";
     }
@@ -66,6 +72,8 @@ public class GrafanaUIController {
         model.addAttribute(IndexController.KAIROSDB_SERVICES, kairosdbServices);
         model.addAttribute(IndexController.APPDYNAMICS_CONFIG, appdynamicsProperties);
         model.addAttribute(IndexController.APPDYNAMICS_ENABLED, controllerProperties.enableAppdynamics);
+        model.addAttribute(IndexController.EUM_TRACING_ENABLED, controllerProperties.enableEumTracing);
+        model.addAttribute(IndexController.EUM_GRAFANA_TRACING_CONFIG, eumTracingProperties.grafanaConfig);
 
         return "grafana";
     }

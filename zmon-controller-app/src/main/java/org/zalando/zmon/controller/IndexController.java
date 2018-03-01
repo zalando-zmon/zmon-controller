@@ -1,5 +1,7 @@
 package org.zalando.zmon.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -8,11 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.zalando.zmon.config.ControllerProperties;
-import org.zalando.zmon.config.FirebaseProperties;
-import org.zalando.zmon.config.AppdynamicsProperties;
-import org.zalando.zmon.config.GoogleanalyticsProperties;
-import org.zalando.zmon.config.ManifestJsonConfig;
+import org.zalando.zmon.config.*;
 import org.zalando.zmon.security.permission.DefaultZMonPermissionService;
 
 import com.google.common.base.Joiner;
@@ -38,6 +36,9 @@ public class IndexController {
     public static final String APPDYNAMICS_CONFIG = "appdynamicsConfig";
     public static final String GOOGLEANALYTICS_ENABLED = "googleanalyticsEnabled";
     public static final String GOOGLEANALYTICS_CONFIG = "googleanalyticsConfig";
+    public static final String EUM_TRACING_ENABLED = "eumTracingEnabled";
+    public static final String EUM_ZMON_TRACING_CONFIG = "eumZmonTracingConfig";
+    public static final String EUM_GRAFANA_TRACING_CONFIG = "eumGrafanaTracingConfig";
     private static final String HAS_SCHEDULE_DOWNTIME_PERMISSION = "hasScheduleDowntimePermission";
     private static final String HAS_DELETE_DOWNTIME_PERMISSION = "hasDeleteDowntimePermission";
     private static final String HAS_TRIAL_RUN_PERMISSION = "hasTrialRunPermission";
@@ -65,6 +66,9 @@ public class IndexController {
     @Autowired
     private GoogleanalyticsProperties googleanalyticsProperties;
 
+    @Autowired
+    private EumTracingProperties eumTracingProperties;
+
     @Value("${zmon.cloud.checkid}")
     private int cloudCheckId;
 
@@ -74,7 +78,6 @@ public class IndexController {
         model.addAttribute(STATIC_URL, controllerProperties.getStaticUrl());
 
         model.addAttribute(LOGOUT_URL, controllerProperties.getLogoutUrl());
-
         // TODO load all permissions in a single shot
         model.addAttribute(USER_NAME, authorityService.getUserName())
                 .addAttribute(TEAMS, COMMA_JOINER.join(authorityService.getTeams()))
@@ -94,6 +97,8 @@ public class IndexController {
         model.addAttribute("cloudCheckId", cloudCheckId);
         model.addAttribute("firebaseConfig", firebaseProperties);
         model.addAttribute("firebaseEnabled", controllerProperties.enableFirebase);
+        model.addAttribute(EUM_TRACING_ENABLED, controllerProperties.enableEumTracing);
+        model.addAttribute(EUM_ZMON_TRACING_CONFIG, eumTracingProperties.zmonConfig);
         model.addAttribute(APPDYNAMICS_CONFIG, appdynamicsProperties);
         model.addAttribute(APPDYNAMICS_ENABLED, controllerProperties.enableAppdynamics);
         model.addAttribute(GOOGLEANALYTICS_CONFIG, googleanalyticsProperties);
