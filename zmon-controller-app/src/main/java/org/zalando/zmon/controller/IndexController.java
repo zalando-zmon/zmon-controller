@@ -28,8 +28,6 @@ public class IndexController {
 
     private static final Joiner COMMA_JOINER = Joiner.on(',');
 
-    private static final Logger LOG = LoggerFactory.getLogger(IndexController.class);
-
     // parameters
     public static final String STATIC_URL = "staticUrl";
     public static final String LOGOUT_URL = "logoutUrl";
