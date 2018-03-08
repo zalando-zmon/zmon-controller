@@ -2,12 +2,14 @@ package org.zalando.zmon.controller;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.opentracing.contrib.apache.http.client.TracingHttpClientBuilder;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.fluent.Executor;
 import org.apache.http.client.fluent.Request;
 import org.apache.http.client.fluent.Response;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +35,8 @@ public class NotificationController {
 
     private final Logger log = LoggerFactory.getLogger(NotificationController.class);
 
+    private final Executor executor;
+
     @Autowired
     private DefaultZMonPermissionService authorityService;
 
@@ -45,8 +49,11 @@ public class NotificationController {
     @Autowired
     ObjectMapper mapper;
 
-    public NotificationController() {
 
+    public NotificationController() {
+        // TODO: provide configuration to the client and probably extract it to configuration class (if needed)
+        final CloseableHttpClient client = new TracingHttpClientBuilder().build();
+        executor = Executor.newInstance(client);
     }
 
     public static class DeviceRegistrationBody {
@@ -73,7 +80,7 @@ public class NotificationController {
         final String url = config.getUrl() + "/api/v1/users/" + authorityService.getUserName() + "/devices";
         HttpEntity entity = new StringEntity(mapper.writeValueAsString(body), "UTF-8");
         Request request = Request.Post(url).body(entity).addHeader("Authorization", "Bearer " + accessTokens.get("notification-service")).addHeader("Content-Type", "application/json");
-        Response r = Executor.newInstance().execute(request);
+        executor.execute(request);
     }
 
     @ResponseBody
@@ -81,7 +88,7 @@ public class NotificationController {
     public void unregisterDevice(@RequestParam(name="registration_token") String registrationToken) throws IOException {
         final String url = config.getUrl() + "/api/v1/device/" + registrationToken;
         Request request = Request.Delete(url).addHeader("Authorization", "Bearer " + accessTokens.get("notification-service")).addHeader("Content-Type", "application/json");
-        Executor.newInstance().execute(request);
+        executor.execute(request);
     }
 
     @ResponseBody
@@ -90,7 +97,7 @@ public class NotificationController {
         final String url = config.getUrl() + "/api/v1/users/" + authorityService.getUserName() + "/teams";
         HttpEntity entity = new StringEntity(mapper.writeValueAsString(body), "UTF-8");
         Request request = Request.Post(url).body(entity).addHeader("Authorization", "Bearer " + accessTokens.get("notification-service")).addHeader("Content-Type", "application/json");
-        Executor.newInstance().execute(request);
+        executor.execute(request);
     }
 
     @ResponseBody
@@ -98,7 +105,7 @@ public class NotificationController {
     public ResponseEntity<JsonNode> getSubscribedTeams() throws IOException {
         final String url = config.getUrl() + "/api/v1/users/" + authorityService.getUserName() + "/teams";
         Request request = Request.Get(url).addHeader("Authorization", "Bearer " + accessTokens.get("notification-service"));
-        Response r = Executor.newInstance().execute(request);
+        Response r = executor.execute(request);
         return new ResponseEntity<>(mapper.readTree(r.returnContent().asString()), HttpStatus.OK);
     }
 
@@ -108,7 +115,7 @@ public class NotificationController {
         final String url = config.getUrl() + "/api/v1/users/" + authorityService.getUserName() + "/teams";
         URI uri = new URIBuilder(url).addParameter("team", team).build();
         Request request = Request.Delete(uri).addHeader("Authorization", "Bearer " + accessTokens.get("notification-service")).addHeader("Content-Type", "application/json");
-        Executor.newInstance().execute(request);
+        executor.execute(request);
     }
 
     @ResponseBody
@@ -116,7 +123,7 @@ public class NotificationController {
     public ResponseEntity<JsonNode> getSubscribedAlerts() throws IOException {
         final String url = config.getUrl() + "/api/v1/users/" + authorityService.getUserName() + "/alerts";
         Request request = Request.Get(url).addHeader("Authorization", "Bearer " + accessTokens.get("notification-service"));
-        Response r = Executor.newInstance().execute(request);
+        Response r = executor.execute(request);
         return new ResponseEntity<>(mapper.readTree(r.returnContent().asString()), HttpStatus.OK);
     }
 
@@ -125,7 +132,7 @@ public class NotificationController {
     public ResponseEntity<JsonNode> getPriority() throws IOException {
         final String url = config.getUrl() + "/api/v1/users/" + authorityService.getUserName() + "/priority";
         Request request = Request.Get(url).addHeader("Authorization", "Bearer " + accessTokens.get("notification-service"));
-        Response r = Executor.newInstance().execute(request);
+        Response r = executor.execute(request);
         return new ResponseEntity<>(mapper.readTree(r.returnContent().asString()), HttpStatus.OK);
     }
 
@@ -135,7 +142,7 @@ public class NotificationController {
         final String url = config.getUrl() + "/api/v1/users/" + authorityService.getUserName() + "/priority";
         HttpEntity entity = new StringEntity(mapper.writeValueAsString(body), "UTF-8");
         Request request = Request.Post(url).body(entity).addHeader("Authorization", "Bearer " + accessTokens.get("notification-service")).addHeader("Content-Type", "application/json");
-        Executor.newInstance().execute(request);
+        executor.execute(request);
     }
 
     @ResponseBody
@@ -145,7 +152,7 @@ public class NotificationController {
         final String alertBody = mapper.writeValueAsString(body);
         HttpEntity entity = new StringEntity(alertBody, "UTF-8");
         Request request = Request.Post(url).body(entity).addHeader("Authorization", "Bearer " + accessTokens.get("notification-service")).addHeader("Content-Type", "application/json");
-        Executor.newInstance().execute(request);
+        executor.execute(request);
     }
 
     @ResponseBody
@@ -154,6 +161,6 @@ public class NotificationController {
         final String url = config.getUrl() + "/api/v1/users/" + authorityService.getUserName() + "/alerts";
         URI uri = new URIBuilder(url).addParameter("alertId", "" + alertId).build();
         Request request = Request.Delete(uri).addHeader("Authorization", "Bearer " + accessTokens.get("notification-service")).addHeader("Content-Type", "application/json");
-        Executor.newInstance().execute(request);
+        executor.execute(request);
     }
 }

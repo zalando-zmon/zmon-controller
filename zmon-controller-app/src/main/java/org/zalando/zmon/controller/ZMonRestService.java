@@ -3,8 +3,10 @@ package org.zalando.zmon.controller;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
+import io.opentracing.contrib.apache.http.client.TracingHttpClientBuilder;
 import org.apache.http.client.fluent.Executor;
 import org.apache.http.client.fluent.Request;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +40,7 @@ import java.util.Set;
 public class ZMonRestService extends AbstractZMonController {
 
     private final Logger log = LoggerFactory.getLogger(ZMonRestService.class);
+    private final Executor executor;
 
     @Autowired
     private ZMonService service;
@@ -59,6 +62,12 @@ public class ZMonRestService extends AbstractZMonController {
 
     @Autowired
     AccessTokens accessTokens;
+
+    public ZMonRestService() {
+        // TODO: provide configuration to the client and probably extract it to configuration class (if needed)
+        final CloseableHttpClient client = new TracingHttpClientBuilder().build();
+        executor = Executor.newInstance(client);
+    }
 
     @RequestMapping(value = "/status")
     public ResponseEntity<ExecutionStatus> getStatus() {
@@ -161,9 +170,6 @@ public class ZMonRestService extends AbstractZMonController {
     @RequestMapping(value = "cloud-view-endpoints", produces = "application/json")
     public void cloudViewEndpoints(@RequestParam(value = "application_id") String applicationId, final Writer writer,
                                    final HttpServletResponse response) throws IOException {
-
-        final Executor executor = Executor.newInstance();
-
         final String dataServiceQuery = metricCacheProperties.getUrl() + "/api/v1/rest-api-metrics/kairosdb-format?application_id=" + applicationId;
 
         int nodeId = Math.abs(applicationId.hashCode() % metricCacheProperties.getNodes());
