@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html ng-app="zmon2App" ng-controller="IndexCtrl"
+<html ng-controller="IndexCtrl"
     xmlns:th="http://www.thymeleaf.org"
     xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
     xmlns:data="https://github.com/mxab/thymeleaf-extras-data-attribute">
@@ -109,6 +109,15 @@
           }
     </script>
 
+    <!-- AngularJS Bootstrap -->
+    <script type="text/javascript">
+        var bootstrap = function() {
+            angular.element(function() {
+                angular.bootstrap(document, ['zmon2App']);
+            });
+        }
+    </script>
+
     <!-- OpenTracing -->
     <script th:inline="javascript" th:if="${eumTracingEnabled}" src="/lib/opentracing-javascript/opentracing-browser.min.js"></script>
     <script th:inline="javascript" th:if="${eumTracingEnabled}" src="/lib/opentracing-javascript-utils/opentracing-javascript-utils.js"></script>
@@ -116,11 +125,18 @@
       var eumTracingConfig = /*[[${eumZmonTracingConfig}]]*/  { name: "noop", config: {} };
       eumTracingConfig = JSON.parse(eumTracingConfig);
       opentracingJavascriptUtils.initOpenTracing(eumTracingConfig)
-                      .then((e) => {
-                            console.log('Opentracing Initialized');
-                          }).catch( (e) => {
-                            console.log("Couldn't initialize Opentracing.", e)
-                          })
+                                    .then((e) => {
+                                        console.log('Opentracing Initialized');
+                                    }).catch( (e) => {
+                                        console.log("Couldn't initialize Opentracing.", e)
+                                    })
+                                    .then( () => {
+                                        bootstrap();
+                                    })
+    </script>
+
+    <script th:inline="javascript" th:if="!${eumTracingEnabled}">
+        bootstrap();
     </script>
 
     <!-- Firebase -->
@@ -131,6 +147,7 @@
         var config = /*[[${firebaseConfig}]]*/ { apiKey: "", authDomain: "", databaseURL: "", storageBucket: "", messagingSenderId: ""};
         firebase.initializeApp(config);
     </script>
+
     <link rel="manifest" href="/manifest.json">
 </head>
 
