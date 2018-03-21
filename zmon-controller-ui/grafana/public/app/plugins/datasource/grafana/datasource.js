@@ -1,25 +1,4 @@
-///<reference path="../../../headers/common.d.ts" />
-System.register([], function(exports_1) {
-    var GrafanaDatasource;
-    return {
-        setters:[],
-        execute: function() {
-            GrafanaDatasource = (function () {
-                /** @ngInject */
-                function GrafanaDatasource(backendSrv) {
-                    this.backendSrv = backendSrv;
-                }
-                GrafanaDatasource.prototype.query = function (options) {
-                    return this.backendSrv.get('/api/metrics/test', {
-                        from: options.range.from.valueOf(),
-                        to: options.range.to.valueOf(),
-                        maxDataPoints: options.maxDataPoints
-                    });
-                };
-                return GrafanaDatasource;
-            })();
-            exports_1("GrafanaDatasource", GrafanaDatasource);
-        }
-    }
-});
-//# sourceMappingURL=datasource.js.map
+/*! grafana - v3.1.0 - 2018-03-21
+ * Copyright (c) 2018 Torkel Ödegaard; Licensed Apache-2.0 */
+
+System.register([],function(a){var b;return{setters:[],execute:function(){b=function(){function a(a){this.backendSrv=a}return a.$inject=["backendSrv"],a.prototype.query=function(a){return this.backendSrv.get("/api/metrics/test",{from:a.range.from.valueOf(),to:a.range.to.valueOf(),maxDataPoints:a.maxDataPoints})},a}(),a("GrafanaDatasource",b)}}});

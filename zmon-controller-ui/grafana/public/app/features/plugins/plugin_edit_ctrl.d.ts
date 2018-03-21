@@ -23,7 +23,7 @@ export declare class PluginEditCtrl {
     initReadme(): any;
     getPluginIcon(type: any): string;
     update(): void;
-    importDashboards(): Promise<{}>;
+    importDashboards(): Promise<void>;
     setPreUpdateHook(callback: () => any): void;
     setPostUpdateHook(callback: () => any): void;
     updateAvailable(): void;

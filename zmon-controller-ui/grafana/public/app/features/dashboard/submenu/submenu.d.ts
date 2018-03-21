@@ -2,12 +2,13 @@
 export declare class SubmenuCtrl {
     private $rootScope;
     private templateValuesSrv;
-    private dynamicDashboardSrv;
+    private templateSrv;
+    private $location;
     annotations: any;
     variables: any;
     dashboard: any;
     /** @ngInject */
-    constructor($rootScope: any, templateValuesSrv: any, dynamicDashboardSrv: any);
+    constructor($rootScope: any, templateValuesSrv: any, templateSrv: any, $location: any);
     disableAnnotation(annotation: any): void;
     getValuesForTag(variable: any, tagKey: any): any;
     variableUpdated(variable: any): void;

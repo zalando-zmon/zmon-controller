@@ -1,43 +1,4 @@
-define([
-  'lodash',
-  'jquery',
-  '../core_module',
-],
-function (_, $, coreModule) {
-  'use strict';
+/*! grafana - v3.1.0 - 2018-03-21
+ * Copyright (c) 2018 Torkel Ödegaard; Licensed Apache-2.0 */
 
-  coreModule.default.directive('dashClass', function() {
-    return {
-      link: function($scope, elem) {
-
-        var lastHideControlsVal;
-
-        $scope.onAppEvent('panel-fullscreen-enter', function() {
-          elem.toggleClass('panel-in-fullscreen', true);
-        });
-
-        $scope.onAppEvent('panel-fullscreen-exit', function() {
-          elem.toggleClass('panel-in-fullscreen', false);
-        });
-
-        $scope.$watch('dashboard.hideControls', function() {
-          if (!$scope.dashboard) {
-            return;
-          }
-
-          var hideControls = $scope.dashboard.hideControls || $scope.playlist_active;
-
-          if (lastHideControlsVal !== hideControls) {
-            elem.toggleClass('hide-controls', hideControls);
-            lastHideControlsVal = hideControls;
-          }
-        });
-
-        $scope.$watch('playlistSrv', function(newValue) {
-          elem.toggleClass('playlist-active', _.isObject(newValue));
-        });
-      }
-    };
-  });
-
-});
+define(["lodash","jquery","../core_module"],function(a,b,c){"use strict";c["default"].directive("dashClass",function(){return{link:function(b,c){var d;b.onAppEvent("panel-fullscreen-enter",function(){c.toggleClass("panel-in-fullscreen",!0)}),b.onAppEvent("panel-fullscreen-exit",function(){c.toggleClass("panel-in-fullscreen",!1)}),b.$watch("dashboard.hideControls",function(){if(b.dashboard){var a=b.dashboard.hideControls||b.playlist_active;d!==a&&(c.toggleClass("hide-controls",a),d=a)}}),b.$watch("playlistSrv",function(b){c.toggleClass("playlist-active",a.isObject(b))})}}})});

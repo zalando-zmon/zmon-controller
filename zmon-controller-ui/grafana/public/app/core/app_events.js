@@ -1,16 +1,4 @@
-///<reference path="../headers/common.d.ts" />
-System.register(['./utils/emitter'], function(exports_1) {
-    var emitter_1;
-    var appEvents;
-    return {
-        setters:[
-            function (emitter_1_1) {
-                emitter_1 = emitter_1_1;
-            }],
-        execute: function() {
-            appEvents = new emitter_1.Emitter();
-            exports_1("default",appEvents);
-        }
-    }
-});
-//# sourceMappingURL=app_events.js.map
+/*! grafana - v3.1.0 - 2018-03-21
+ * Copyright (c) 2018 Torkel Ödegaard; Licensed Apache-2.0 */
+
+System.register(["./utils/emitter"],function(a){var b,c;return{setters:[function(a){b=a}],execute:function(){c=new b.Emitter,a("default",c)}}});

@@ -1,26 +1,4 @@
-define([], function() {
-  'use strict';
+/*! grafana - v3.1.0 - 2018-03-21
+ * Copyright (c) 2018 Torkel Ödegaard; Licensed Apache-2.0 */
 
-  return {
-    get: function(key) {
-      return window.localStorage[key];
-    },
-    set: function(key, value) {
-      window.localStorage[key] = value;
-    },
-    getBool: function(key, def) {
-      if (def !== void 0 && !this.exists(key)) {
-        return def;
-      }
-      return window.localStorage[key] === 'true';
-    },
-    exists: function(key) {
-      return window.localStorage[key] !== void 0;
-    },
-    delete: function(key) {
-      window.localStorage.removeItem(key);
-    }
-
-  };
-
-});
+define([],function(){"use strict";return{get:function(a){return window.localStorage[a]},set:function(a,b){window.localStorage[a]=b},getBool:function(a,b){return void 0===b||this.exists(a)?"true"===window.localStorage[a]:b},exists:function(a){return void 0!==window.localStorage[a]},"delete":function(a){window.localStorage.removeItem(a)}}});

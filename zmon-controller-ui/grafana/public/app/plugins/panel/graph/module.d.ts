@@ -55,6 +55,7 @@ declare class GraphCtrl extends MetricsPanelCtrl {
         tooltip: {
             value_type: string;
             shared: boolean;
+            sort: number;
             msResolution: boolean;
         };
         timeFrom: any;

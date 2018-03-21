@@ -1,39 +1,4 @@
-System.register(['./datasource', './query_ctrl'], function(exports_1) {
-    var datasource_1, query_ctrl_1;
-    var GraphiteConfigCtrl, GraphiteQueryOptionsCtrl, AnnotationsQueryCtrl;
-    return {
-        setters:[
-            function (datasource_1_1) {
-                datasource_1 = datasource_1_1;
-            },
-            function (query_ctrl_1_1) {
-                query_ctrl_1 = query_ctrl_1_1;
-            }],
-        execute: function() {
-            GraphiteConfigCtrl = (function () {
-                function GraphiteConfigCtrl() {
-                }
-                GraphiteConfigCtrl.templateUrl = 'partials/config.html';
-                return GraphiteConfigCtrl;
-            })();
-            GraphiteQueryOptionsCtrl = (function () {
-                function GraphiteQueryOptionsCtrl() {
-                }
-                GraphiteQueryOptionsCtrl.templateUrl = 'partials/query.options.html';
-                return GraphiteQueryOptionsCtrl;
-            })();
-            AnnotationsQueryCtrl = (function () {
-                function AnnotationsQueryCtrl() {
-                }
-                AnnotationsQueryCtrl.templateUrl = 'partials/annotations.editor.html';
-                return AnnotationsQueryCtrl;
-            })();
-            exports_1("Datasource", datasource_1.GraphiteDatasource);
-            exports_1("QueryCtrl", query_ctrl_1.GraphiteQueryCtrl);
-            exports_1("ConfigCtrl", GraphiteConfigCtrl);
-            exports_1("QueryOptionsCtrl", GraphiteQueryOptionsCtrl);
-            exports_1("AnnotationsQueryCtrl", AnnotationsQueryCtrl);
-        }
-    }
-});
-//# sourceMappingURL=module.js.map
+/*! grafana - v3.1.0 - 2018-03-21
+ * Copyright (c) 2018 Torkel Ödegaard; Licensed Apache-2.0 */
+
+System.register(["./datasource","./query_ctrl"],function(a){var b,c,d,e,f;return{setters:[function(a){b=a},function(a){c=a}],execute:function(){d=function(){function a(){}return a.templateUrl="partials/config.html",a}(),e=function(){function a(){}return a.templateUrl="partials/query.options.html",a}(),f=function(){function a(){}return a.templateUrl="partials/annotations.editor.html",a}(),a("Datasource",b.GraphiteDatasource),a("QueryCtrl",c.GraphiteQueryCtrl),a("ConfigCtrl",d),a("QueryOptionsCtrl",e),a("AnnotationsQueryCtrl",f)}}});

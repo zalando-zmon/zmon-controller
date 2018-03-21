@@ -1,42 +1,4 @@
-System.register([], function(exports_1) {
-    var TableModel;
-    return {
-        setters:[],
-        execute: function() {
-            TableModel = (function () {
-                function TableModel() {
-                    this.columns = [];
-                    this.rows = [];
-                    this.type = 'table';
-                }
-                TableModel.prototype.sort = function (options) {
-                    if (options.col === null || this.columns.length <= options.col) {
-                        return;
-                    }
-                    this.rows.sort(function (a, b) {
-                        a = a[options.col];
-                        b = b[options.col];
-                        if (a < b) {
-                            return -1;
-                        }
-                        if (a > b) {
-                            return 1;
-                        }
-                        return 0;
-                    });
-                    this.columns[options.col].sort = true;
-                    if (options.desc) {
-                        this.rows.reverse();
-                        this.columns[options.col].desc = true;
-                    }
-                    else {
-                        this.columns[options.col].desc = false;
-                    }
-                };
-                return TableModel;
-            })();
-            exports_1("default", TableModel);
-        }
-    }
-});
-//# sourceMappingURL=table_model.js.map
+/*! grafana - v3.1.0 - 2018-03-21
+ * Copyright (c) 2018 Torkel Ödegaard; Licensed Apache-2.0 */
+
+System.register([],function(a){var b;return{setters:[],execute:function(){b=function(){function a(){this.columns=[],this.rows=[],this.type="table"}return a.prototype.sort=function(a){null===a.col||this.columns.length<=a.col||(this.rows.sort(function(b,c){return b=b[a.col],c=c[a.col],b<c?-1:b>c?1:0}),this.columns[a.col].sort=!0,a.desc?(this.rows.reverse(),this.columns[a.col].desc=!0):this.columns[a.col].desc=!1)},a}(),a("default",b)}}});

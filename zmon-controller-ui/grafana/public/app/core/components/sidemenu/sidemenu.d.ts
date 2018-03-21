@@ -11,6 +11,7 @@ export declare class SideMenuCtrl {
     mainLinks: any;
     orgMenu: any;
     appSubUrl: string;
+    loginUrl: string;
     /** @ngInject */
     constructor($scope: any, $location: any, contextSrv: any, backendSrv: any, $element: any);
     getUrl(url: any): any;

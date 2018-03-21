@@ -1,29 +1,4 @@
-System.register(['./datasource', './query_ctrl', './config_ctrl'], function(exports_1) {
-    var datasource_1, query_ctrl_1, config_ctrl_1;
-    var AnnotationsQueryCtrl;
-    return {
-        setters:[
-            function (datasource_1_1) {
-                datasource_1 = datasource_1_1;
-            },
-            function (query_ctrl_1_1) {
-                query_ctrl_1 = query_ctrl_1_1;
-            },
-            function (config_ctrl_1_1) {
-                config_ctrl_1 = config_ctrl_1_1;
-            }],
-        execute: function() {
-            AnnotationsQueryCtrl = (function () {
-                function AnnotationsQueryCtrl() {
-                }
-                AnnotationsQueryCtrl.templateUrl = 'partials/annotations.editor.html';
-                return AnnotationsQueryCtrl;
-            })();
-            exports_1("Datasource", datasource_1.OpenTsDatasource);
-            exports_1("QueryCtrl", query_ctrl_1.OpenTsQueryCtrl);
-            exports_1("ConfigCtrl", config_ctrl_1.OpenTsConfigCtrl);
-            exports_1("AnnotationsQueryCtrl", AnnotationsQueryCtrl);
-        }
-    }
-});
-//# sourceMappingURL=module.js.map
+/*! grafana - v3.1.0 - 2018-03-21
+ * Copyright (c) 2018 Torkel Ödegaard; Licensed Apache-2.0 */
+
+System.register(["./datasource","./query_ctrl","./config_ctrl"],function(a){var b,c,d,e;return{setters:[function(a){b=a},function(a){c=a},function(a){d=a}],execute:function(){e=function(){function a(){}return a.templateUrl="partials/annotations.editor.html",a}(),a("Datasource",b.OpenTsDatasource),a("QueryCtrl",c.OpenTsQueryCtrl),a("ConfigCtrl",d.OpenTsConfigCtrl),a("AnnotationsQueryCtrl",e)}}});

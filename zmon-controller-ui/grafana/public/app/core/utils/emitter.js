@@ -1,40 +1,4 @@
-///<reference path="../../headers/common.d.ts" />
-System.register(['eventemitter3'], function(exports_1) {
-    var eventemitter3_1;
-    var hasOwnProp, Emitter;
-    function createName(name) {
-        return '$' + name;
-    }
-    return {
-        setters:[
-            function (eventemitter3_1_1) {
-                eventemitter3_1 = eventemitter3_1_1;
-            }],
-        execute: function() {
-            hasOwnProp = {}.hasOwnProperty;
-            Emitter = (function () {
-                function Emitter() {
-                    this.emitter = new eventemitter3_1.default();
-                }
-                Emitter.prototype.emit = function (name, data) {
-                    this.emitter.emit(name, data);
-                };
-                Emitter.prototype.on = function (name, handler, scope) {
-                    var _this = this;
-                    this.emitter.on(name, handler);
-                    if (scope) {
-                        scope.$on('$destroy', function () {
-                            _this.emitter.off(name, handler);
-                        });
-                    }
-                };
-                Emitter.prototype.off = function (name, handler) {
-                    this.emitter.off(name, handler);
-                };
-                return Emitter;
-            })();
-            exports_1("Emitter", Emitter);
-        }
-    }
-});
-//# sourceMappingURL=emitter.js.map
+/*! grafana - v3.1.0 - 2018-03-21
+ * Copyright (c) 2018 Torkel Ödegaard; Licensed Apache-2.0 */
+
+System.register(["eventemitter3"],function(a){var b,c,d;return{setters:[function(a){b=a}],execute:function(){c={}.hasOwnProperty,d=function(){function a(){this.emitter=new b["default"]}return a.prototype.emit=function(a,b){this.emitter.emit(a,b)},a.prototype.on=function(a,b,c){var d=this;this.emitter.on(a,b),c&&c.$on("$destroy",function(){d.emitter.off(a,b)})},a.prototype.off=function(a,b){this.emitter.off(a,b)},a}(),a("Emitter",d)}}});

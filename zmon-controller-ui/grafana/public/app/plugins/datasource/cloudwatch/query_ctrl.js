@@ -1,31 +1,4 @@
-///<reference path="../../../headers/common.d.ts" />
-System.register(['./query_parameter_ctrl', 'app/plugins/sdk'], function(exports_1) {
-    var __extends = (this && this.__extends) || function (d, b) {
-        for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-    var sdk_1;
-    var CloudWatchQueryCtrl;
-    return {
-        setters:[
-            function (_1) {},
-            function (sdk_1_1) {
-                sdk_1 = sdk_1_1;
-            }],
-        execute: function() {
-            CloudWatchQueryCtrl = (function (_super) {
-                __extends(CloudWatchQueryCtrl, _super);
-                /** @ngInject **/
-                function CloudWatchQueryCtrl($scope, $injector) {
-                    _super.call(this, $scope, $injector);
-                    this.aliasSyntax = '{{metric}} {{stat}} {{namespace}} {{region}} {{<dimension name>}}';
-                }
-                CloudWatchQueryCtrl.templateUrl = 'partials/query.editor.html';
-                return CloudWatchQueryCtrl;
-            })(sdk_1.QueryCtrl);
-            exports_1("CloudWatchQueryCtrl", CloudWatchQueryCtrl);
-        }
-    }
-});
-//# sourceMappingURL=query_ctrl.js.map
+/*! grafana - v3.1.0 - 2018-03-21
+ * Copyright (c) 2018 Torkel Ödegaard; Licensed Apache-2.0 */
+
+System.register(["./query_parameter_ctrl","app/plugins/sdk"],function(a){var b,c,d=this&&this.__extends||function(a,b){function c(){this.constructor=a}for(var d in b)b.hasOwnProperty(d)&&(a[d]=b[d]);a.prototype=null===b?Object.create(b):(c.prototype=b.prototype,new c)};return{setters:[function(a){},function(a){b=a}],execute:function(){c=function(a){function b(b,c){a.call(this,b,c),this.aliasSyntax="{{metric}} {{stat}} {{namespace}} {{region}} {{<dimension name>}}"}return d(b,a),b.$inject=["$scope","$injector"],b.templateUrl="partials/query.editor.html",b}(b.QueryCtrl),a("CloudWatchQueryCtrl",c)}}});

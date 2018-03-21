@@ -1,45 +1,4 @@
-define([
-  '../core_module',
-],
-function (coreModule) {
-  'use strict';
+/*! grafana - v3.1.0 - 2018-03-21
+ * Copyright (c) 2018 Torkel Ödegaard; Licensed Apache-2.0 */
 
-  coreModule.default.directive('passwordStrength', function() {
-    var template = '<div class="password-strength small" ng-if="!loginMode" ng-class="strengthClass">' +
-      '<em>{{strengthText}}</em>' +
-      '</div>';
-    return {
-      template: template,
-      scope: {
-        password: "=",
-      },
-      link: function($scope) {
-
-        $scope.strengthClass = '';
-
-        function passwordChanged(newValue) {
-          if (!newValue) {
-            $scope.strengthText = "";
-            $scope.strengthClass = "hidden";
-            return;
-          }
-          if (newValue.length < 4) {
-            $scope.strengthText = "strength: weak sauce.";
-            $scope.strengthClass = "password-strength-bad";
-            return;
-          }
-          if (newValue.length <= 8) {
-            $scope.strengthText = "strength: you can do better.";
-            $scope.strengthClass = "password-strength-ok";
-            return;
-          }
-
-          $scope.strengthText = "strength: strong like a bull.";
-          $scope.strengthClass = "password-strength-good";
-        }
-
-        $scope.$watch("password", passwordChanged);
-      }
-    };
-  });
-});
+define(["../core_module"],function(a){"use strict";a["default"].directive("passwordStrength",function(){var a='<div class="password-strength small" ng-if="!loginMode" ng-class="strengthClass"><em>{{strengthText}}</em></div>';return{template:a,scope:{password:"="},link:function(a){function b(b){return b?b.length<4?(a.strengthText="strength: weak sauce.",void(a.strengthClass="password-strength-bad")):b.length<=8?(a.strengthText="strength: you can do better.",void(a.strengthClass="password-strength-ok")):(a.strengthText="strength: strong like a bull.",void(a.strengthClass="password-strength-good")):(a.strengthText="",void(a.strengthClass="hidden"))}a.strengthClass="",a.$watch("password",b)}}})});

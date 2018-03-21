@@ -1,40 +1,4 @@
-define([
-  'angular',
-],
-function (angular) {
-  'use strict';
+/*! grafana - v3.1.0 - 2018-03-21
+ * Copyright (c) 2018 Torkel Ödegaard; Licensed Apache-2.0 */
 
-  var module = angular.module('grafana.controllers');
-
-  module.controller('AdminListOrgsCtrl', function($scope, backendSrv) {
-
-    $scope.init = function() {
-      $scope.getOrgs();
-    };
-
-    $scope.getOrgs = function() {
-      backendSrv.get('/api/orgs').then(function(orgs) {
-        $scope.orgs = orgs;
-      });
-    };
-
-    $scope.deleteOrg = function(org) {
-      $scope.appEvent('confirm-modal', {
-        title: 'Delete',
-        text: 'Do you want to delete organization ' + org.name + '?',
-        text2: 'All dashboards for this organization will be removed!',
-        icon: 'fa-trash',
-        yesText: 'Delete',
-        onConfirm: function() {
-          backendSrv.delete('/api/orgs/' + org.id).then(function() {
-            $scope.getOrgs();
-          });
-        }
-      });
-    };
-
-    $scope.init();
-
-  });
-
-});
+define(["angular"],function(a){"use strict";var b=a.module("grafana.controllers");b.controller("AdminListOrgsCtrl",["$scope","backendSrv",function(a,b){a.init=function(){a.getOrgs()},a.getOrgs=function(){b.get("/api/orgs").then(function(b){a.orgs=b})},a.deleteOrg=function(c){a.appEvent("confirm-modal",{title:"Delete",text:"Do you want to delete organization "+c.name+"?",text2:"All dashboards for this organization will be removed!",icon:"fa-trash",yesText:"Delete",onConfirm:function(){b["delete"]("/api/orgs/"+c.id).then(function(){a.getOrgs()})}})},a.init()}])});
