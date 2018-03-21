@@ -1,7 +1,7 @@
 /// <reference path="../../../../public/app/headers/common.d.ts" />
 import { PanelCtrl } from './panel_ctrl';
 declare class MetricsPanelCtrl extends PanelCtrl {
-    error: boolean;
+    error: any;
     loading: boolean;
     datasource: any;
     datasourceName: any;

@@ -1,31 +1,4 @@
-System.register(['test/lib/common', 'app/core/utils/flatten'], function(exports_1) {
-    var common_1, flatten_1;
-    return {
-        setters:[
-            function (common_1_1) {
-                common_1 = common_1_1;
-            },
-            function (flatten_1_1) {
-                flatten_1 = flatten_1_1;
-            }],
-        execute: function() {
-            common_1.describe("flatten", function () {
-                common_1.it('should return flatten object', function () {
-                    var flattened = flatten_1.default({
-                        level1: 'level1-value',
-                        deeper: {
-                            level2: 'level2-value',
-                            deeper: {
-                                level3: 'level3-value'
-                            }
-                        }
-                    }, null);
-                    common_1.expect(flattened['level1']).to.be('level1-value');
-                    common_1.expect(flattened['deeper.level2']).to.be('level2-value');
-                    common_1.expect(flattened['deeper.deeper.level3']).to.be('level3-value');
-                });
-            });
-        }
-    }
-});
-//# sourceMappingURL=flatten_specs.js.map
+/*! grafana - v3.1.0 - 2018-03-21
+ * Copyright (c) 2018 Torkel Ödegaard; Licensed Apache-2.0 */
+
+System.register(["test/lib/common","app/core/utils/flatten"],function(a){var b,c;return{setters:[function(a){b=a},function(a){c=a}],execute:function(){b.describe("flatten",function(){b.it("should return flatten object",function(){var a=c["default"]({level1:"level1-value",deeper:{level2:"level2-value",deeper:{level3:"level3-value"}}},null);b.expect(a.level1).to.be("level1-value"),b.expect(a["deeper.level2"]).to.be("level2-value"),b.expect(a["deeper.deeper.level3"]).to.be("level3-value")})})}}});

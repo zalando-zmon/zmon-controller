@@ -1,42 +1,4 @@
-///<reference path="../../headers/common.d.ts" />
-System.register(['angular'], function(exports_1) {
-    var angular_1;
-    var PluginListCtrl;
-    return {
-        setters:[
-            function (angular_1_1) {
-                angular_1 = angular_1_1;
-            }],
-        execute: function() {
-            PluginListCtrl = (function () {
-                /** @ngInject */
-                function PluginListCtrl(backendSrv, $location) {
-                    var _this = this;
-                    this.backendSrv = backendSrv;
-                    this.tabIndex = 0;
-                    var pluginType = $location.search().type || 'panel';
-                    switch (pluginType) {
-                        case "datasource": {
-                            this.tabIndex = 1;
-                            break;
-                        }
-                        case "app": {
-                            this.tabIndex = 2;
-                            break;
-                        }
-                        case "panel":
-                        default:
-                            this.tabIndex = 0;
-                    }
-                    this.backendSrv.get('api/plugins', { embedded: 0, type: pluginType }).then(function (plugins) {
-                        _this.plugins = plugins;
-                    });
-                }
-                return PluginListCtrl;
-            })();
-            exports_1("PluginListCtrl", PluginListCtrl);
-            angular_1.default.module('grafana.controllers').controller('PluginListCtrl', PluginListCtrl);
-        }
-    }
-});
-//# sourceMappingURL=plugin_list_ctrl.js.map
+/*! grafana - v3.1.0 - 2018-03-21
+ * Copyright (c) 2018 Torkel Ödegaard; Licensed Apache-2.0 */
+
+System.register(["angular"],function(a){var b,c;return{setters:[function(a){b=a}],execute:function(){c=function(){function a(a,b){var c=this;this.backendSrv=a,this.tabIndex=0;var d=b.search().type||"panel";switch(d){case"datasource":this.tabIndex=1;break;case"app":this.tabIndex=2;break;case"panel":default:this.tabIndex=0}this.backendSrv.get("api/plugins",{embedded:0,type:d}).then(function(a){c.plugins=a})}return a.$inject=["backendSrv","$location"],a}(),a("PluginListCtrl",c),b["default"].module("grafana.controllers").controller("PluginListCtrl",c)}}});

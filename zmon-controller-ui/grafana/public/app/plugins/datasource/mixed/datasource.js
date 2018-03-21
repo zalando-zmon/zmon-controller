@@ -1,45 +1,4 @@
-///<reference path="../../../headers/common.d.ts" />
-System.register(['angular', 'lodash'], function(exports_1) {
-    var angular_1, lodash_1;
-    var MixedDatasource;
-    return {
-        setters:[
-            function (angular_1_1) {
-                angular_1 = angular_1_1;
-            },
-            function (lodash_1_1) {
-                lodash_1 = lodash_1_1;
-            }],
-        execute: function() {
-            MixedDatasource = (function () {
-                /** @ngInject */
-                function MixedDatasource($q, datasourceSrv) {
-                    this.$q = $q;
-                    this.datasourceSrv = datasourceSrv;
-                }
-                MixedDatasource.prototype.query = function (options) {
-                    var _this = this;
-                    var sets = lodash_1.default.groupBy(options.targets, 'datasource');
-                    var promises = lodash_1.default.map(sets, function (targets) {
-                        var dsName = targets[0].datasource;
-                        if (dsName === '-- Mixed --') {
-                            return _this.$q([]);
-                        }
-                        return _this.datasourceSrv.get(dsName).then(function (ds) {
-                            var opt = angular_1.default.copy(options);
-                            opt.targets = targets;
-                            return ds.query(opt);
-                        });
-                    });
-                    return this.$q.all(promises).then(function (results) {
-                        return { data: lodash_1.default.flatten(lodash_1.default.pluck(results, 'data')) };
-                    });
-                };
-                return MixedDatasource;
-            })();
-            exports_1("MixedDatasource", MixedDatasource);
-            exports_1("Datasource", MixedDatasource);
-        }
-    }
-});
-//# sourceMappingURL=datasource.js.map
+/*! grafana - v3.1.0 - 2018-03-21
+ * Copyright (c) 2018 Torkel Ödegaard; Licensed Apache-2.0 */
+
+System.register(["angular","lodash"],function(a){var b,c,d;return{setters:[function(a){b=a},function(a){c=a}],execute:function(){d=function(){function a(a,b){this.$q=a,this.datasourceSrv=b}return a.$inject=["$q","datasourceSrv"],a.prototype.query=function(a){var d=this,e=c["default"].groupBy(a.targets,"datasource"),f=c["default"].map(e,function(c){var e=c[0].datasource;return"-- Mixed --"===e?d.$q([]):d.datasourceSrv.get(e).then(function(d){var e=b["default"].copy(a);return e.targets=c,d.query(e)})});return this.$q.all(f).then(function(a){return{data:c["default"].flatten(c["default"].pluck(a,"data"))}})},a}(),a("MixedDatasource",d),a("Datasource",d)}}});

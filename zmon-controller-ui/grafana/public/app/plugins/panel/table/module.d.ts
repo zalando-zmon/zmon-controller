@@ -2,6 +2,7 @@
 import { MetricsPanelCtrl } from 'app/plugins/sdk';
 declare class TablePanelCtrl extends MetricsPanelCtrl {
     private annotationsSrv;
+    private $sanitize;
     static templateUrl: string;
     pageIndex: number;
     dataRaw: any;
@@ -33,7 +34,7 @@ declare class TablePanelCtrl extends MetricsPanelCtrl {
         };
     };
     /** @ngInject */
-    constructor($scope: any, $injector: any, annotationsSrv: any);
+    constructor($scope: any, $injector: any, annotationsSrv: any, $sanitize: any);
     onInitEditMode(): void;
     onInitPanelActions(actions: any): void;
     issueQueries(datasource: any): any;

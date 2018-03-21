@@ -1,44 +1,4 @@
-define(['jquery', 'angular', 'lodash'],
-function ($, angular, _) {
-  'use strict';
+/*! grafana - v3.1.0 - 2018-03-21
+ * Copyright (c) 2018 Torkel Ödegaard; Licensed Apache-2.0 */
 
-  var $win = $(window);
-
-  $.fn.place_tt = (function () {
-    var defaults = {
-      offset: 5,
-    };
-
-    return function (x, y, opts) {
-      opts = $.extend(true, {}, defaults, opts);
-
-      return this.each(function () {
-        var $tooltip = $(this), width, height;
-
-        $tooltip.addClass('grafana-tooltip');
-
-        $("#tooltip").remove();
-        $tooltip.appendTo(document.body);
-
-        if (opts.compile) {
-          angular.element(document).injector().invoke(["$compile", "$rootScope", function($compile, $rootScope) {
-            var tmpScope = $rootScope.$new(true);
-            _.extend(tmpScope, opts.scopeData);
-
-            $compile($tooltip)(tmpScope);
-            tmpScope.$digest();
-            tmpScope.$destroy();
-          }]);
-        }
-
-        width = $tooltip.outerWidth(true);
-        height = $tooltip.outerHeight(true);
-
-        $tooltip.css('left', x + opts.offset + width > $win.width() ? x - opts.offset - width : x + opts.offset);
-        $tooltip.css('top', y + opts.offset + height > $win.height() ? y - opts.offset - height : y + opts.offset);
-      });
-    };
-  })();
-
-  return $;
-});
+define(["jquery","angular","lodash"],function(a,b,c){"use strict";var d=a(window);return a.fn.place_tt=function(){var e={offset:5};return function(f,g,h){return h=a.extend(!0,{},e,h),this.each(function(){var e,i,j=a(this);j.addClass("grafana-tooltip"),a("#tooltip").remove(),j.appendTo(document.body),h.compile&&b.element(document).injector().invoke(["$compile","$rootScope",function(a,b){var d=b.$new(!0);c.extend(d,h.scopeData),a(j)(d),d.$digest(),d.$destroy()}]),e=j.outerWidth(!0),i=j.outerHeight(!0),j.css("left",f+h.offset+e>d.width()?f-h.offset-e:f+h.offset),j.css("top",g+h.offset+i>d.height()?g-h.offset-i:g+h.offset)})}}(),a});

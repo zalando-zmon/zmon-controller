@@ -1,38 +1,4 @@
-define([
-  'angular',
-],
-function (angular) {
-  'use strict';
+/*! grafana - v3.1.0 - 2018-03-21
+ * Copyright (c) 2018 Torkel Ödegaard; Licensed Apache-2.0 */
 
-  var module = angular.module('grafana.controllers');
-
-  module.controller('AdminListUsersCtrl', function($scope, backendSrv) {
-
-    $scope.init = function() {
-      $scope.getUsers();
-    };
-
-    $scope.getUsers = function() {
-      backendSrv.get('/api/users').then(function(users) {
-        $scope.users = users;
-      });
-    };
-
-    $scope.deleteUser = function(user) {
-      $scope.appEvent('confirm-modal', {
-        title: 'Delete',
-        text: 'Do you want to delete ' + user.login + '?',
-        icon: 'fa-trash',
-        yesText: 'Delete',
-        onConfirm: function() {
-          backendSrv.delete('/api/admin/users/' + user.id).then(function() {
-            $scope.getUsers();
-          });
-        }
-      });
-    };
-
-    $scope.init();
-
-  });
-});
+define(["angular"],function(a){"use strict";var b=a.module("grafana.controllers");b.controller("AdminListUsersCtrl",["$scope","backendSrv",function(a,b){a.init=function(){a.getUsers()},a.getUsers=function(){b.get("/api/users").then(function(b){a.users=b})},a.deleteUser=function(c){a.appEvent("confirm-modal",{title:"Delete",text:"Do you want to delete "+c.login+"?",icon:"fa-trash",yesText:"Delete",onConfirm:function(){b["delete"]("/api/admin/users/"+c.id).then(function(){a.getUsers()})}})},a.init()}])});

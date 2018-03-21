@@ -1,37 +1,4 @@
-define([
-  'angular',
-],
-function (angular) {
-  'use strict';
+/*! grafana - v3.1.0 - 2018-03-21
+ * Copyright (c) 2018 Torkel Ödegaard; Licensed Apache-2.0 */
 
-  var module = angular.module('grafana.controllers');
-
-  module.controller('OrgDetailsCtrl', function($scope, $http, backendSrv, contextSrv) {
-
-    $scope.init = function() {
-      $scope.getOrgInfo();
-    };
-
-    $scope.getOrgInfo = function() {
-      backendSrv.get('/api/org').then(function(org) {
-        $scope.org = org;
-        $scope.address = org.address;
-        contextSrv.user.orgName = org.name;
-      });
-    };
-
-    $scope.update = function() {
-      if (!$scope.orgForm.$valid) { return; }
-      var data = {name: $scope.org.name};
-      backendSrv.put('/api/org', data).then($scope.getOrgInfo);
-    };
-
-    $scope.updateAddress = function() {
-      if (!$scope.addressForm.$valid) { return; }
-      backendSrv.put('/api/org/address', $scope.address).then($scope.getOrgInfo);
-    };
-
-    $scope.init();
-
-  });
-});
+define(["angular"],function(a){"use strict";var b=a.module("grafana.controllers");b.controller("OrgDetailsCtrl",["$scope","$http","backendSrv","contextSrv",function(a,b,c,d){a.init=function(){a.getOrgInfo()},a.getOrgInfo=function(){c.get("/api/org").then(function(b){a.org=b,a.address=b.address,d.user.orgName=b.name})},a.update=function(){if(a.orgForm.$valid){var b={name:a.org.name};c.put("/api/org",b).then(a.getOrgInfo)}},a.updateAddress=function(){a.addressForm.$valid&&c.put("/api/org/address",a.address).then(a.getOrgInfo)},a.init()}])});

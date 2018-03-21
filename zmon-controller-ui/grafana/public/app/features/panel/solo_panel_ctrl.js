@@ -1,46 +1,4 @@
-define([
-  'angular',
-  'jquery',
-],
-function (angular, $) {
-  "use strict";
+/*! grafana - v3.1.0 - 2018-03-21
+ * Copyright (c) 2018 Torkel Ödegaard; Licensed Apache-2.0 */
 
-  var module = angular.module('grafana.routes');
-
-  module.controller('SoloPanelCtrl', function($scope, $routeParams, $location, dashboardLoaderSrv, contextSrv) {
-
-    var panelId;
-
-    $scope.init = function() {
-      contextSrv.sidemenu = false;
-
-      var params = $location.search();
-      panelId = parseInt(params.panelId);
-
-      dashboardLoaderSrv.loadDashboard($routeParams.type, $routeParams.slug).then(function(result) {
-        $scope.initDashboard(result, $scope);
-      });
-
-      $scope.onAppEvent("dashboard-loaded", $scope.initPanelScope);
-    };
-
-    $scope.initPanelScope = function() {
-      $scope.row = {
-        height: $(window).height() + 'px',
-      };
-
-      $scope.test = "Hej";
-      $scope.$index = 0;
-      $scope.panel = $scope.dashboard.getPanelById(panelId);
-
-      if (!$scope.panel) {
-        $scope.appEvent('alert-error', ['Panel not found', '']);
-        return;
-      }
-
-      $scope.panel.span = 12;
-    };
-
-    $scope.init();
-  });
-});
+define(["angular","jquery"],function(a,b){"use strict";var c=a.module("grafana.routes");c.controller("SoloPanelCtrl",["$scope","$routeParams","$location","dashboardLoaderSrv","contextSrv",function(a,c,d,e,f){var g;a.init=function(){f.sidemenu=!1;var b=d.search();g=parseInt(b.panelId),b.fullscreen=!0,d.search(b),e.loadDashboard(c.type,c.slug).then(function(b){a.initDashboard(b,a)}),a.onAppEvent("dashboard-initialized",a.initPanelScope)},a.initPanelScope=function(){return a.row={height:b(window).height()+"px"},a.test="Hej",a.$index=0,a.panel=a.dashboard.getPanelById(g),a.panel?void(a.panel.span=12):void a.appEvent("alert-error",["Panel not found",""])},a.init()}])});

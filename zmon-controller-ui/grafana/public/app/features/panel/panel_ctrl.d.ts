@@ -19,6 +19,7 @@ export declare class PanelCtrl {
     height: any;
     containerHeight: any;
     events: Emitter;
+    timing: any;
     constructor($scope: any, $injector: any);
     init(): void;
     renderingCompleted(): void;
@@ -29,6 +30,7 @@ export declare class PanelCtrl {
     editPanel(): void;
     exitFullscreen(): void;
     initEditMode(): void;
+    changeTab(newIndex: any): void;
     addEditorTab(title: any, directiveFn: any, index?: any): void;
     getMenu(): any[];
     getExtendedMenu(): {

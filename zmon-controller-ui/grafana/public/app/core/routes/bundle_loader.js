@@ -1,27 +1,4 @@
-///<reference path="../../headers/common.d.ts" />
-System.register([], function(exports_1) {
-    var BundleLoader;
-    return {
-        setters:[],
-        execute: function() {
-            BundleLoader = (function () {
-                function BundleLoader(bundleName) {
-                    var _this = this;
-                    this.lazy = ["$q", "$route", "$rootScope", function ($q, $route, $rootScope) {
-                            if (_this.loadingDefer) {
-                                return _this.loadingDefer.promise;
-                            }
-                            _this.loadingDefer = $q.defer();
-                            System.import(bundleName).then(function () {
-                                _this.loadingDefer.resolve();
-                            });
-                            return _this.loadingDefer.promise;
-                        }];
-                }
-                return BundleLoader;
-            })();
-            exports_1("BundleLoader", BundleLoader);
-        }
-    }
-});
-//# sourceMappingURL=bundle_loader.js.map
+/*! grafana - v3.1.0 - 2018-03-21
+ * Copyright (c) 2018 Torkel Ödegaard; Licensed Apache-2.0 */
+
+System.register([],function(a){var b;return{setters:[],execute:function(){b=function(){function a(a){var b=this;this.lazy=["$q","$route","$rootScope",function(c,d,e){return b.loadingDefer?b.loadingDefer.promise:(b.loadingDefer=c.defer(),System["import"](a).then(function(){b.loadingDefer.resolve()}),b.loadingDefer.promise)}]}return a}(),a("BundleLoader",b)}}});

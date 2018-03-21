@@ -1,33 +1,4 @@
-define([
-  'angular',
-  'lodash',
-  '../core_module',
-],
-function (angular, _, coreModule) {
-  'use strict';
+/*! grafana - v3.1.0 - 2018-03-21
+ * Copyright (c) 2018 Torkel Ödegaard; Licensed Apache-2.0 */
 
-  coreModule.default.service('timer', function($timeout) {
-    // This service really just tracks a list of $timeout promises to give us a
-    // method for cancelling them all when we need to
-
-    var timers = [];
-
-    this.register = function(promise) {
-      timers.push(promise);
-      return promise;
-    };
-
-    this.cancel = function(promise) {
-      timers = _.without(timers,promise);
-      $timeout.cancel(promise);
-    };
-
-    this.cancel_all = function() {
-      _.each(timers, function(t) {
-        $timeout.cancel(t);
-      });
-      timers = [];
-    };
-  });
-
-});
+define(["angular","lodash","../core_module"],function(a,b,c){"use strict";c["default"].service("timer",["$timeout",function(a){var c=[];this.register=function(a){return c.push(a),a},this.cancel=function(d){c=b.without(c,d),a.cancel(d)},this.cancel_all=function(){b.each(c,function(b){a.cancel(b)}),c=[]}}])});

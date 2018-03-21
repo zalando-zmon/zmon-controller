@@ -1,32 +1,4 @@
-System.register(['./datasource', './query_ctrl'], function(exports_1) {
-    var datasource_1, query_ctrl_1;
-    var PrometheusConfigCtrl, PrometheusAnnotationsQueryCtrl;
-    return {
-        setters:[
-            function (datasource_1_1) {
-                datasource_1 = datasource_1_1;
-            },
-            function (query_ctrl_1_1) {
-                query_ctrl_1 = query_ctrl_1_1;
-            }],
-        execute: function() {
-            PrometheusConfigCtrl = (function () {
-                function PrometheusConfigCtrl() {
-                }
-                PrometheusConfigCtrl.templateUrl = 'partials/config.html';
-                return PrometheusConfigCtrl;
-            })();
-            PrometheusAnnotationsQueryCtrl = (function () {
-                function PrometheusAnnotationsQueryCtrl() {
-                }
-                PrometheusAnnotationsQueryCtrl.templateUrl = 'partials/annotations.editor.html';
-                return PrometheusAnnotationsQueryCtrl;
-            })();
-            exports_1("Datasource", datasource_1.PrometheusDatasource);
-            exports_1("QueryCtrl", query_ctrl_1.PrometheusQueryCtrl);
-            exports_1("ConfigCtrl", PrometheusConfigCtrl);
-            exports_1("AnnotationsQueryCtrl", PrometheusAnnotationsQueryCtrl);
-        }
-    }
-});
-//# sourceMappingURL=module.js.map
+/*! grafana - v3.1.0 - 2018-03-21
+ * Copyright (c) 2018 Torkel Ödegaard; Licensed Apache-2.0 */
+
+System.register(["./datasource","./query_ctrl"],function(a){var b,c,d,e;return{setters:[function(a){b=a},function(a){c=a}],execute:function(){d=function(){function a(){}return a.templateUrl="partials/config.html",a}(),e=function(){function a(){}return a.templateUrl="partials/annotations.editor.html",a}(),a("Datasource",b.PrometheusDatasource),a("QueryCtrl",c.PrometheusQueryCtrl),a("ConfigCtrl",d),a("AnnotationsQueryCtrl",e)}}});

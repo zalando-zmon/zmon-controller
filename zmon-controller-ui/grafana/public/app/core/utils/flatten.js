@@ -1,38 +1,4 @@
-System.register([], function(exports_1) {
-    // Copyright (c) 2014, Hugh Kennedy
-    // Based on code from https://github.com/hughsk/flat/blob/master/index.js
-    //
-    function flatten(target, opts) {
-        opts = opts || {};
-        var delimiter = opts.delimiter || '.';
-        var maxDepth = opts.maxDepth || 3;
-        var currentDepth = 1;
-        var output = {};
-        function step(object, prev) {
-            Object.keys(object).forEach(function (key) {
-                var value = object[key];
-                var isarray = opts.safe && Array.isArray(value);
-                var type = Object.prototype.toString.call(value);
-                var isobject = type === "[object Object]";
-                var newKey = prev ? prev + delimiter + key : key;
-                if (!opts.maxDepth) {
-                    maxDepth = currentDepth + 1;
-                }
-                if (!isarray && isobject && Object.keys(value).length && currentDepth < maxDepth) {
-                    ++currentDepth;
-                    return step(value, newKey);
-                }
-                output[newKey] = value;
-            });
-        }
-        step(target, null);
-        return output;
-    }
-    exports_1("default", flatten);
-    return {
-        setters:[],
-        execute: function() {
-        }
-    }
-});
-//# sourceMappingURL=flatten.js.map
+/*! grafana - v3.1.0 - 2018-03-21
+ * Copyright (c) 2018 Torkel Ödegaard; Licensed Apache-2.0 */
+
+System.register([],function(a){function b(a,b){function c(a,h){Object.keys(a).forEach(function(i){var j=a[i],k=b.safe&&Array.isArray(j),l=Object.prototype.toString.call(j),m="[object Object]"===l,n=h?h+d+i:i;return b.maxDepth||(e=f+1),!k&&m&&Object.keys(j).length&&f<e?(++f,c(j,n)):void(g[n]=j)})}b=b||{};var d=b.delimiter||".",e=b.maxDepth||3,f=1,g={};return c(a,null),g}return a("default",b),{setters:[],execute:function(){}}});

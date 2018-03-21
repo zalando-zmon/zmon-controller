@@ -1,43 +1,4 @@
-System.register(['test/lib/common', '../query_part'], function(exports_1) {
-    var common_1, query_part_1;
-    return {
-        setters:[
-            function (common_1_1) {
-                common_1 = common_1_1;
-            },
-            function (query_part_1_1) {
-                query_part_1 = query_part_1_1;
-            }],
-        execute: function() {
-            common_1.describe('InfluxQueryPart', function () {
-                common_1.describe('series with mesurement only', function () {
-                    common_1.it('should handle nested function parts', function () {
-                        var part = query_part_1.default.create({
-                            type: 'derivative',
-                            params: ['10s'],
-                        });
-                        common_1.expect(part.text).to.be('derivative(10s)');
-                        common_1.expect(part.render('mean(value)')).to.be('derivative(mean(value), 10s)');
-                    });
-                    common_1.it('should handle suffirx parts', function () {
-                        var part = query_part_1.default.create({
-                            type: 'math',
-                            params: ['/ 100'],
-                        });
-                        common_1.expect(part.text).to.be('math(/ 100)');
-                        common_1.expect(part.render('mean(value)')).to.be('mean(value) / 100');
-                    });
-                    common_1.it('should handle alias parts', function () {
-                        var part = query_part_1.default.create({
-                            type: 'alias',
-                            params: ['test'],
-                        });
-                        common_1.expect(part.text).to.be('alias(test)');
-                        common_1.expect(part.render('mean(value)')).to.be('mean(value) AS "test"');
-                    });
-                });
-            });
-        }
-    }
-});
-//# sourceMappingURL=query_part_specs.js.map
+/*! grafana - v3.1.0 - 2018-03-21
+ * Copyright (c) 2018 Torkel Ödegaard; Licensed Apache-2.0 */
+
+System.register(["test/lib/common","../query_part"],function(a){var b,c;return{setters:[function(a){b=a},function(a){c=a}],execute:function(){b.describe("InfluxQueryPart",function(){b.describe("series with mesurement only",function(){b.it("should handle nested function parts",function(){var a=c["default"].create({type:"derivative",params:["10s"]});b.expect(a.text).to.be("derivative(10s)"),b.expect(a.render("mean(value)")).to.be("derivative(mean(value), 10s)")}),b.it("should nest spread function",function(){var a=c["default"].create({type:"spread"});b.expect(a.text).to.be("spread()"),b.expect(a.render("value")).to.be("spread(value)")}),b.it("should handle suffirx parts",function(){var a=c["default"].create({type:"math",params:["/ 100"]});b.expect(a.text).to.be("math(/ 100)"),b.expect(a.render("mean(value)")).to.be("mean(value) / 100")}),b.it("should handle alias parts",function(){var a=c["default"].create({type:"alias",params:["test"]});b.expect(a.text).to.be("alias(test)"),b.expect(a.render("mean(value)")).to.be('mean(value) AS "test"')})})})}}});

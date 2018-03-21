@@ -1,46 +1,4 @@
-define([
-  'angular',
-],
-function (angular) {
-  'use strict';
+/*! grafana - v3.1.0 - 2018-03-21
+ * Copyright (c) 2018 Torkel Ödegaard; Licensed Apache-2.0 */
 
-  var module = angular.module('grafana.controllers');
-
-  module.controller('OrgApiKeysCtrl', function($scope, $http, backendSrv) {
-
-    $scope.roleTypes = ['Viewer', 'Editor', 'Admin'];
-    $scope.token = { role: 'Viewer' };
-
-    $scope.init = function() {
-      $scope.getTokens();
-    };
-
-    $scope.getTokens = function() {
-      backendSrv.get('/api/auth/keys').then(function(tokens) {
-        $scope.tokens = tokens;
-      });
-    };
-
-    $scope.removeToken = function(id) {
-      backendSrv.delete('/api/auth/keys/'+id).then($scope.getTokens);
-    };
-
-    $scope.addToken = function() {
-      backendSrv.post('/api/auth/keys', $scope.token).then(function(result) {
-
-        var modalScope = $scope.$new(true);
-        modalScope.key = result.key;
-
-        $scope.appEvent('show-modal', {
-          src: 'public/app/features/org/partials/apikeyModal.html',
-          scope: modalScope
-        });
-
-        $scope.getTokens();
-      });
-    };
-
-    $scope.init();
-
-  });
-});
+define(["angular"],function(a){"use strict";var b=a.module("grafana.controllers");b.controller("OrgApiKeysCtrl",["$scope","$http","backendSrv",function(a,b,c){a.roleTypes=["Viewer","Editor","Admin"],a.token={role:"Viewer"},a.init=function(){a.getTokens()},a.getTokens=function(){c.get("/api/auth/keys").then(function(b){a.tokens=b})},a.removeToken=function(b){c["delete"]("/api/auth/keys/"+b).then(a.getTokens)},a.addToken=function(){c.post("/api/auth/keys",a.token).then(function(b){var c=a.$new(!0);c.key=b.key,a.appEvent("show-modal",{src:"public/app/features/org/partials/apikeyModal.html",scope:c}),a.getTokens()})},a.init()}])});

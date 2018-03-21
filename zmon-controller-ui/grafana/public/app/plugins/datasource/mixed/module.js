@@ -1,15 +1,4 @@
-///<reference path="../../../headers/common.d.ts" />
-System.register(['./datasource'], function(exports_1) {
-    var datasource_1;
-    return {
-        setters:[
-            function (datasource_1_1) {
-                datasource_1 = datasource_1_1;
-            }],
-        execute: function() {
-            exports_1("MixedDatasource", datasource_1.MixedDatasource);
-            exports_1("Datasource", datasource_1.MixedDatasource);
-        }
-    }
-});
-//# sourceMappingURL=module.js.map
+/*! grafana - v3.1.0 - 2018-03-21
+ * Copyright (c) 2018 Torkel Ödegaard; Licensed Apache-2.0 */
+
+System.register(["./datasource"],function(a){var b;return{setters:[function(a){b=a}],execute:function(){a("MixedDatasource",b.MixedDatasource),a("Datasource",b.MixedDatasource)}}});

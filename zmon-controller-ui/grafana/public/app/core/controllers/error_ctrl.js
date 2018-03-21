@@ -1,19 +1,4 @@
-define([
-  'angular',
-  '../core_module',
-],
-function (angular, coreModule) {
-  'use strict';
+/*! grafana - v3.1.0 - 2018-03-21
+ * Copyright (c) 2018 Torkel Ödegaard; Licensed Apache-2.0 */
 
-  coreModule.default.controller('ErrorCtrl', function($scope, contextSrv) {
-
-    var showSideMenu = contextSrv.sidemenu;
-    contextSrv.sidemenu = false;
-
-    $scope.$on('$destroy', function() {
-      $scope.contextSrv.sidemenu = showSideMenu;
-    });
-
-  });
-
-});
+define(["angular","../core_module"],function(a,b){"use strict";b["default"].controller("ErrorCtrl",["$scope","contextSrv",function(a,b){var c=b.sidemenu;b.sidemenu=!1,a.$on("$destroy",function(){a.contextSrv.sidemenu=c})}])});
