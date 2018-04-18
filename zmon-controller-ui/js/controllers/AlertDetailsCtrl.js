@@ -1,4 +1,4 @@
-angular.module('zmon2App').controller('AlertDetailsCtrl', [ '$location', '$routeParams', '$scope', 'timespanFilter', 'CommunicationService', 'DowntimesService', 'FeedbackMessageService', 'localStorageService', 'MainAlertService', 'UserInfoService', 'APP_CONST', function($location, $routeParams, $scope, timespanFilter, CommunicationService, DowntimesService, FeedbackMessageService, localStorageService, MainAlertService, UserInfoService, APP_CONST) {
+angular.module('zmon2App').controller('AlertDetailsCtrl', [ '$location', '$routeParams', '$scope', 'timespanFilter', 'CommunicationService', 'DowntimesService', 'FeedbackMessageService', 'MainAlertService', 'UserInfoService', 'APP_CONST', function($location, $routeParams, $scope, timespanFilter, CommunicationService, DowntimesService, FeedbackMessageService, MainAlertService, UserInfoService, APP_CONST) {
 
     // infinite-scroll initial limit
     $scope.limit = APP_CONST.INFINITE_SCROLL_VISIBLE_ENTITIES_INCREMENT;
@@ -57,7 +57,7 @@ angular.module('zmon2App').controller('AlertDetailsCtrl', [ '$location', '$route
 
     // Entity Filter. Defined as object to $watch by reference on 'str' since input field is inside ui-bootstrap's tabset.
     $scope.alertDetailsSearch = {
-        str: $location.search().filter || localStorageService.get('alertDetailsSearchStr') || ''
+        str: $location.search().filter || ''
     };
 
     var setLinkToTrialRun = function () {
@@ -305,7 +305,6 @@ angular.module('zmon2App').controller('AlertDetailsCtrl', [ '$location', '$route
             str = null;
         }
         $location.search('filter', str);
-        localStorageService.set('alertDetailsSearchStr', str);
         if ($scope.alert) {
             $scope.limit = APP_CONST.INFINITE_SCROLL_VISIBLE_ENTITIES_INCREMENT;
             $scope.allAlerts = getSelectedAlerts()
