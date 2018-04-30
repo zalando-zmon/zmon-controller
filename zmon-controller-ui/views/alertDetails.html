@@ -1,8 +1,7 @@
 <window-title title="Alert {{::alert.id}} - {{::alert.name}}"></window-title>
 
 <div class="row">
-    <div class="col-md-6">
-        <h1>Alert: {{alert.name}} <priority prio="alert.priority" /></h1>
+    <div class="col-md-6"><h1>Alert: {{alert.name}} <small ng-show="alert.template">Template</span><priority prio="alert.priority" /></h1>
     </div>
     <div class="col-md-6 text-right">
         <div>
