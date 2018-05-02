@@ -104,7 +104,7 @@ var TrialRunCtrl = function ($scope, $interval, $timeout, timespanFilter, Commun
     };
 
     var updateUrlParameters = function() {
-        $location.search('json', JSON.stringify($scope.alert));
+        $location.search('json', JSON.stringify($scope.alert)).replace();
     };
 
     var getMatchedEntities = function() {

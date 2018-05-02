@@ -304,7 +304,7 @@ angular.module('zmon2App').controller('AlertDetailsCtrl', [ '$location', '$route
         if (!str) {
             str = null;
         }
-        $location.search('filter', str);
+        $location.search('filter', str).replace();
         localStorageService.set('alertDetailsSearchStr', str);
         if ($scope.alert) {
             $scope.limit = APP_CONST.INFINITE_SCROLL_VISIBLE_ENTITIES_INCREMENT;
