@@ -14,6 +14,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.concurrent.TimeUnit;
 
+import io.opentracing.util.GlobalTracer;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -63,7 +64,7 @@ public class MultiKairosDBControllerTest {
 
         this.mockMvc = MockMvcBuilders
                 .standaloneSetup(new MultiKairosDBController(properties, metricsRegistry,
-                        new AsyncRestTemplate(new HttpComponentsAsyncClientHttpRequestFactory()), accessTokens))
+                        new AsyncRestTemplate(new HttpComponentsAsyncClientHttpRequestFactory()), accessTokens, GlobalTracer.get()))
                 .alwaysDo(MockMvcResultHandlers.print())
                 .build();
     }

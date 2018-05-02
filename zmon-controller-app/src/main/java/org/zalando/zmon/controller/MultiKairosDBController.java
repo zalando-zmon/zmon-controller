@@ -4,6 +4,10 @@ import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import io.opentracing.Scope;
+import io.opentracing.ScopeManager;
+import io.opentracing.Span;
+import io.opentracing.Tracer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +35,8 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 @RequestMapping(value = "/rest/kairosdbs/")
 public class MultiKairosDBController extends AbstractZMonController {
 
+    private static final Logger LOG = LoggerFactory.getLogger(MultiKairosDBController.class);
+
     private final Logger log = LoggerFactory.getLogger(MultiKairosDBController.class);
 
     public static final String KAIROSDB_TOKEN_ID = "kairosdb";
@@ -51,9 +57,11 @@ public class MultiKairosDBController extends AbstractZMonController {
 
     private final Map<String, KairosDBProperties.KairosDBServiceConfig> kairosdbServices = new HashMap<>();
 
+    private final Tracer tracer;
+
     @Autowired
     public MultiKairosDBController(KairosDBProperties kairosDBProperties, MetricRegistry metricRegistry,
-                                   AsyncRestTemplate asyncRestTemplate, AccessTokens accessTokens) {
+                                   AsyncRestTemplate asyncRestTemplate, AccessTokens accessTokens, Tracer tracer) {
         this.metricRegistry = metricRegistry;
         this.asyncRestTemplate = asyncRestTemplate;
         this.accessTokens = accessTokens;
@@ -62,6 +70,8 @@ public class MultiKairosDBController extends AbstractZMonController {
             kairosdbServices.put(c.getName(), c);
             log.info("Registering: name={} url={} oauth={} timewindow={}", c.getName(), c.getUrl(), c.isOauth2(), c.getMaxWindowLength());
         }
+
+        this.tracer = tracer;
     }
 
     /*
@@ -69,7 +79,19 @@ public class MultiKairosDBController extends AbstractZMonController {
      * URLs too
      */
     @RequestMapping(value = "{kairosdbId}/api/v1/datapoints/query", method = RequestMethod.POST, produces = "application/json")
-    public ListenableFuture<ResponseEntity<JsonNode>> kairosDBPost(@RequestBody(required = true) final JsonNode node, @PathVariable(value = "kairosdbId") String kairosDB) {
+    public ListenableFuture<ResponseEntity<JsonNode>> kairosDBPost(@RequestBody(required = true) final JsonNode node, @PathVariable(value = "kairosdbId") String kairosDB, @RequestHeader(value="Referer") String referer) {
+
+        Scope scope = tracer.scopeManager().active();
+        Span span;
+        long QuerySpan = 0;
+        if (scope != null)
+            span = scope.span();
+        else
+        {
+            span = tracer.buildSpan("Kairosdb-Datapoints Query").start();
+            scope = tracer.scopeManager().activate(span, true);
+        }
+
 
         if (!kairosdbServices.containsKey(kairosDB)) {
             return null;
@@ -89,15 +111,52 @@ public class MultiKairosDBController extends AbstractZMonController {
             q.put("cache_time", 60);
             if (q.has("start_absolute")) {
                 long start = q.get("start_absolute").asLong();
+                long finish = q.get("end_absolute").asLong();
                 start = start - (start % 60000);
                 q.put("start_absolute", start);
+                QuerySpan = (finish-start)/86400000;
             }
             else if (q.has("start_relative")) {
+
+                ObjectNode r = (ObjectNode)q.get("start_relative");
+
                 if(queryWindow != 0) {
-                    ObjectNode r = (ObjectNode)q.get("start_relative");
                     r.put("value", queryWindow);
                     r.put("unit", "minutes");
                 }
+
+                switch(r.get("unit").asText()){
+                    case "seconds":
+                        QuerySpan = r.get("value").asLong()/86400;
+                        break;
+                    case "minutes":
+                        QuerySpan = r.get("value").asLong()/1440;
+                        break;
+                    case "hours":
+                        QuerySpan = r.get("value").asLong()/24;
+                        break;
+                    case "days":
+                        QuerySpan = r.get("value").asLong();
+                        break;
+                    case "weeks":
+                        QuerySpan = r.get("value").asLong()*7;
+                        break;
+                    case "months":
+                        QuerySpan = r.get("value").asLong()*30;
+                        break;
+                    case "years":
+                        QuerySpan = r.get("value").asLong()*365;
+                        break;
+                    default:
+                        throw new IllegalArgumentException("Invalid unit: " + r.get("unit").toString());
+                }
+            }
+            
+            if (QuerySpan >= 30) {
+                span.setTag("LongQuery", "True");
+                span.setTag("Check Id", checkId);
+                span.setTag("Referer", referer);
+                span.setTag("Query-Span", QuerySpan + " days");
             }
         }
 
@@ -115,6 +174,7 @@ public class MultiKairosDBController extends AbstractZMonController {
                 httpEntity, JsonNode.class);
         lf.addCallback(new StopTimerCallback(timer));
 
+        scope.close();
         return lf;
     }
 
