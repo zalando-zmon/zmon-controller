@@ -17,6 +17,7 @@ import org.springframework.util.concurrent.ListenableFutureCallback;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.AsyncRestTemplate;
 import org.zalando.stups.tokens.AccessTokens;
+import org.zalando.zmon.config.ControllerProperties;
 import org.zalando.zmon.config.KairosDBProperties;
 
 import java.util.HashMap;
@@ -58,6 +59,9 @@ public class MultiKairosDBController extends AbstractZMonController {
     private final Map<String, KairosDBProperties.KairosDBServiceConfig> kairosdbServices = new HashMap<>();
 
     private final Tracer tracer;
+
+    @Autowired
+    private ControllerProperties config;
 
     @Autowired
     public MultiKairosDBController(KairosDBProperties kairosDBProperties, MetricRegistry metricRegistry,
@@ -153,13 +157,13 @@ public class MultiKairosDBController extends AbstractZMonController {
                 }
             }
 
-            if (querySpan >= 30) {
+            if (querySpan >= config.queryDays) {
                 span.setTag("LongQuery", "True");
                 span.setTag("Check Id", checkId);
                 span.setTag("Referer", referer);
                 span.setTag("Query-Span", querySpan + " days");
             }
-            if (queryDistance >= 30) {
+            if (queryDistance >= config.queryDays) {
                 span.setTag("LongQuery", "True");
                 span.setTag("Check Id", checkId);
                 span.setTag("Referer", referer);
