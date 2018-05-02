@@ -69,7 +69,7 @@ angular.module('zmon2App').controller('EntityCtrl', ['$scope', '$window', '$rout
         $scope.setTeamFilter = function(team) {
             $scope.teamFilter = team ? team.split(',')[0] : null;
             $scope.EntityCtrl.fetchAlertCoverage();
-            $location.search('tf', $scope.teamFilter ? $scope.teamFilter : 'all');
+            $location.search('tf', $scope.teamFilter ? $scope.teamFilter : 'all').replace();
             localStorageService.set('teamFilter', $scope.teamFilter);
             localStorageService.set('returnTo', '/#' + $location.url());
         };
@@ -225,7 +225,7 @@ angular.module('zmon2App').controller('EntityCtrl', ['$scope', '$window', '$rout
         };
 
         $scope.$watch('entityFilter', function(newVal) {
-            $location.search('ef', _.isEmpty(newVal) ? null : newVal);
+            $location.search('ef', _.isEmpty(newVal) ? null : newVal).replace();
             localStorageService.set('returnTo', '/#' + $location.url());
             $scope.EntityCtrl.fetchAlertCoverage();
         });

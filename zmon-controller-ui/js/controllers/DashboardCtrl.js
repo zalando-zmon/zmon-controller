@@ -107,10 +107,10 @@ angular.module('zmon2App').controller('DashboardCtrl', ['$scope', '$log', '$rout
             }
             // Reflect it in URL
             if($scope.compact) {
-                $location.search('compact', 'true');
+                $location.search('compact', 'true').replace();
                 localStorageService.set('returnTo', '#/' + $location.url());
             } else {
-                $location.search('compact', null);
+                $location.search('compact', null).replace();
                 localStorageService.set('returnTo', '#/' + $location.url());
             }
         };
@@ -119,9 +119,9 @@ angular.module('zmon2App').controller('DashboardCtrl', ['$scope', '$log', '$rout
         $scope.toggleAlertsWithAllDowntime = function() {
             $scope.showAlertsWithAllEntitiesInDowntime = !$scope.showAlertsWithAllEntitiesInDowntime;
             if ($scope.showAlertsWithAllEntitiesInDowntime) {
-                return $location.search('ad', true);
+                return $location.search('ad', true).replace();
             }
-            $location.search('ad', null);
+            $location.search('ad', null).replace();
         };
 
         // Show/Hide Alert Tags editor popup
@@ -336,7 +336,7 @@ angular.module('zmon2App').controller('DashboardCtrl', ['$scope', '$log', '$rout
         // Add a tag to the tags array
         $scope.addTag = function(tag) {
             $scope.filter.tags = $scope.dashboardTags.tags.toString();
-            $location.search('tags', $scope.filter.tags);
+            $location.search('tags', $scope.filter.tags).replace();
             $scope.showAllDashboardAlerts($scope.filter);
         };
 
@@ -346,7 +346,7 @@ angular.module('zmon2App').controller('DashboardCtrl', ['$scope', '$log', '$rout
             if ($scope.dashboardTags.tags.length === 0) {
                 $scope.filter.tags = '';
             }
-            $location.search('tags', $scope.filter.tags);
+            $location.search('tags', $scope.filter.tags).replace();
             $scope.showAllDashboardAlerts($scope.filter);
         };
 
@@ -371,7 +371,7 @@ angular.module('zmon2App').controller('DashboardCtrl', ['$scope', '$log', '$rout
         }
 
         $scope.$watch('alertSearch', function(newVal) {
-            $location.search('as', _.isEmpty(newVal) ? null : newVal);
+            $location.search('as', _.isEmpty(newVal) ? null : newVal).replace();
             localStorageService.set('returnTo', '/#' + $location.url());
         });
     }
