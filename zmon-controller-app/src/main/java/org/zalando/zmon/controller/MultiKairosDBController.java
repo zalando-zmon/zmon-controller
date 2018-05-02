@@ -83,7 +83,7 @@ public class MultiKairosDBController extends AbstractZMonController {
 
         Scope scope = tracer.scopeManager().active();
         Span span;
-        long QuerySpan = 0;
+        long querySpan = 0, queryDistance = 0;
         if (scope != null)
             span = scope.span();
         else
@@ -112,9 +112,10 @@ public class MultiKairosDBController extends AbstractZMonController {
             if (q.has("start_absolute")) {
                 long start = q.get("start_absolute").asLong();
                 long finish = q.get("end_absolute").asLong();
+                queryDistance = (System.currentTimeMillis() - start)/86400000;
+                querySpan = (finish-start)/86400000;
                 start = start - (start % 60000);
                 q.put("start_absolute", start);
-                QuerySpan = (finish-start)/86400000;
             }
             else if (q.has("start_relative")) {
 
@@ -127,36 +128,42 @@ public class MultiKairosDBController extends AbstractZMonController {
 
                 switch(r.get("unit").asText()){
                     case "seconds":
-                        QuerySpan = r.get("value").asLong()/86400;
+                        querySpan = r.get("value").asLong()/86400;
                         break;
                     case "minutes":
-                        QuerySpan = r.get("value").asLong()/1440;
+                        querySpan = r.get("value").asLong()/1440;
                         break;
                     case "hours":
-                        QuerySpan = r.get("value").asLong()/24;
+                        querySpan = r.get("value").asLong()/24;
                         break;
                     case "days":
-                        QuerySpan = r.get("value").asLong();
+                        querySpan = r.get("value").asLong();
                         break;
                     case "weeks":
-                        QuerySpan = r.get("value").asLong()*7;
+                        querySpan = r.get("value").asLong()*7;
                         break;
                     case "months":
-                        QuerySpan = r.get("value").asLong()*30;
+                        querySpan = r.get("value").asLong()*30;
                         break;
                     case "years":
-                        QuerySpan = r.get("value").asLong()*365;
+                        querySpan = r.get("value").asLong()*365;
                         break;
                     default:
                         throw new IllegalArgumentException("Invalid unit: " + r.get("unit").toString());
                 }
             }
-            
-            if (QuerySpan >= 30) {
+
+            if (querySpan >= 30) {
                 span.setTag("LongQuery", "True");
                 span.setTag("Check Id", checkId);
                 span.setTag("Referer", referer);
-                span.setTag("Query-Span", QuerySpan + " days");
+                span.setTag("Query-Span", querySpan + " days");
+            }
+            if (queryDistance >= 30) {
+                span.setTag("LongQuery", "True");
+                span.setTag("Check Id", checkId);
+                span.setTag("Referer", referer);
+                span.setTag("Query-Distance", queryDistance + " days");
             }
         }
 
