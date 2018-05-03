@@ -23,6 +23,7 @@ import org.zalando.zmon.config.KairosDBProperties;
 import java.util.HashMap;
 import java.util.Map;
 
+import static java.util.concurrent.TimeUnit.*;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 /**
@@ -60,12 +61,15 @@ public class MultiKairosDBController extends AbstractZMonController {
 
     private final Tracer tracer;
 
-    @Autowired
+    private final static long MILLIS_PER_DAY = MILLISECONDS.convert(1L, DAYS);
+
+    private final static long MILLIS_PER_MINUTE = MILLISECONDS.convert(1L, MINUTES);
+
     private ControllerProperties config;
 
     @Autowired
     public MultiKairosDBController(KairosDBProperties kairosDBProperties, MetricRegistry metricRegistry,
-                                   AsyncRestTemplate asyncRestTemplate, AccessTokens accessTokens, Tracer tracer) {
+                                   AsyncRestTemplate asyncRestTemplate, AccessTokens accessTokens, Tracer tracer, ControllerProperties config) {
         this.metricRegistry = metricRegistry;
         this.asyncRestTemplate = asyncRestTemplate;
         this.accessTokens = accessTokens;
@@ -76,6 +80,7 @@ public class MultiKairosDBController extends AbstractZMonController {
         }
 
         this.tracer = tracer;
+        this.config = config;
     }
 
     /*
@@ -86,16 +91,17 @@ public class MultiKairosDBController extends AbstractZMonController {
     public ListenableFuture<ResponseEntity<JsonNode>> kairosDBPost(@RequestBody(required = true) final JsonNode node, @PathVariable(value = "kairosdbId") String kairosDB, @RequestHeader(value="Referer") String referer) {
 
         Scope scope = tracer.scopeManager().active();
+        Scope newScope = null;
         Span span;
         long querySpan = 0, queryDistance = 0;
-        if (scope != null)
+        if (scope != null) {
             span = scope.span();
-        else
-        {
-            span = tracer.buildSpan("Kairosdb-Datapoints Query").start();
-            scope = tracer.scopeManager().activate(span, true);
         }
 
+        else {
+            span = tracer.buildSpan("kairosdb-datapoints-query").start();
+            newScope = tracer.scopeManager().activate(span, true);
+        }
 
         if (!kairosdbServices.containsKey(kairosDB)) {
             return null;
@@ -114,43 +120,52 @@ public class MultiKairosDBController extends AbstractZMonController {
             ObjectNode q = (ObjectNode) node;
             q.put("cache_time", 60);
             if (q.has("start_absolute")) {
+
                 long start = q.get("start_absolute").asLong();
-                long finish = q.get("end_absolute").asLong();
-                queryDistance = (System.currentTimeMillis() - start)/86400000;
-                querySpan = (finish-start)/86400000;
-                start = start - (start % 60000);
+
+                if (q.has("end_absolute")) {
+                    long finish = q.get("end_absolute").asLong();
+                    querySpan = (finish-start)/MILLIS_PER_DAY;
+                }
+                else { querySpan = (System.currentTimeMillis() - start)/MILLIS_PER_DAY; }
+
+                queryDistance = (System.currentTimeMillis() - start)/MILLIS_PER_DAY;
+
+                start = start - (start % MILLIS_PER_MINUTE);
                 q.put("start_absolute", start);
             }
             else if (q.has("start_relative")) {
 
                 ObjectNode r = (ObjectNode)q.get("start_relative");
+                final long value = r.get("value").asLong();
+                final String unit = r.get("unit").asText();
 
                 if(queryWindow != 0) {
                     r.put("value", queryWindow);
                     r.put("unit", "minutes");
                 }
 
-                switch(r.get("unit").asText()){
+                switch(unit){
                     case "seconds":
-                        querySpan = r.get("value").asLong()/86400;
+                        querySpan = DAYS.convert(value, SECONDS);
                         break;
                     case "minutes":
-                        querySpan = r.get("value").asLong()/1440;
+                        querySpan = DAYS.convert(value, MINUTES);
                         break;
                     case "hours":
-                        querySpan = r.get("value").asLong()/24;
+                        querySpan = DAYS.convert(value, HOURS);
                         break;
                     case "days":
-                        querySpan = r.get("value").asLong();
+                        querySpan = value;
                         break;
                     case "weeks":
-                        querySpan = r.get("value").asLong()*7;
+                        querySpan = value * 7;
                         break;
                     case "months":
-                        querySpan = r.get("value").asLong()*30;
+                        querySpan = value * 30;
                         break;
                     case "years":
-                        querySpan = r.get("value").asLong()*365;
+                        querySpan = value * 365;
                         break;
                     default:
                         throw new IllegalArgumentException("Invalid unit: " + r.get("unit").toString());
@@ -158,16 +173,16 @@ public class MultiKairosDBController extends AbstractZMonController {
             }
 
             if (querySpan >= config.queryDays) {
-                span.setTag("LongQuery", "True");
-                span.setTag("Check Id", checkId);
-                span.setTag("Referer", referer);
-                span.setTag("Query-Span", querySpan + " days");
+                span.setTag("longquery.span", "True");
+                span.setTag("checkid", checkId);
+                span.setTag("referer", referer);
+                span.setTag("query.span", querySpan + " days");
             }
             if (queryDistance >= config.queryDays) {
-                span.setTag("LongQuery", "True");
-                span.setTag("Check Id", checkId);
-                span.setTag("Referer", referer);
-                span.setTag("Query-Distance", queryDistance + " days");
+                span.setTag("longquery.distance", "True");
+                span.setTag("checkid", checkId);
+                span.setTag("referer", referer);
+                span.setTag("query.distance", queryDistance + " days");
             }
         }
 
@@ -185,7 +200,10 @@ public class MultiKairosDBController extends AbstractZMonController {
                 httpEntity, JsonNode.class);
         lf.addCallback(new StopTimerCallback(timer));
 
-        scope.close();
+        if(newScope != null){
+            newScope.close();
+        }
+
         return lf;
     }
 

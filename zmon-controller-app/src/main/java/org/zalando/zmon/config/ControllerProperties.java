@@ -172,4 +172,7 @@ public class ControllerProperties {
     public void setEnableEumTracing(boolean enableEumTracing) {
         this.enableEumTracing = enableEumTracing;
     }
+    public int getQueryDays() { return queryDays; }
+
+    public void setQueryDays(int queryDays) { this.queryDays = queryDays; }
 }

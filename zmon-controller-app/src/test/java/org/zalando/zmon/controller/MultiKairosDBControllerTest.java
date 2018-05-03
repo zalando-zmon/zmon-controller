@@ -12,12 +12,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import io.opentracing.util.GlobalTracer;
+import io.opentracing.mock.MockSpan;
+import io.opentracing.mock.MockTracer;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import static org.junit.Assert.assertEquals;
 import org.mockito.Mockito;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -29,6 +32,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.client.AsyncRestTemplate;
 import org.zalando.stups.tokens.AccessTokens;
+import org.zalando.zmon.config.ControllerProperties;
 import org.zalando.zmon.config.KairosDBProperties;
 
 import com.codahale.metrics.MetricRegistry;
@@ -41,6 +45,7 @@ public class MultiKairosDBControllerTest {
 
     private MockMvc mockMvc;
     private MetricRegistry metricsRegistry;
+    private MockTracer tracer;
 
     @Before
     public void setUp() throws MalformedURLException {
@@ -61,10 +66,13 @@ public class MultiKairosDBControllerTest {
         c.setUrl("http://localhost:9998");
         c.setOauth2(false);
         properties.getKairosdbs().add(c);
+        ControllerProperties prop = new ControllerProperties();
+        prop.setQueryDays(10);
+        tracer = new MockTracer();
 
         this.mockMvc = MockMvcBuilders
                 .standaloneSetup(new MultiKairosDBController(properties, metricsRegistry,
-                        new AsyncRestTemplate(new HttpComponentsAsyncClientHttpRequestFactory()), accessTokens, GlobalTracer.get()))
+                        new AsyncRestTemplate(new HttpComponentsAsyncClientHttpRequestFactory()), accessTokens, tracer, prop))
                 .alwaysDo(MockMvcResultHandlers.print())
                 .build();
     }
@@ -95,8 +103,67 @@ public class MultiKairosDBControllerTest {
     public void testKairosDbPost() throws Exception {
         mockMvc.perform(post("/rest/kairosdbs/kairosdb/api/v1/datapoints/query")
                 .header(HttpHeaders.AUTHORIZATION, "Bearer 123456789")
+                .header(HttpHeaders.REFERER,"Test URL")
                 .content("{\"metrics\":[{\"name\":\"value\"}]}")
                 .contentType(APPLICATION_JSON)).andExpect(status().isOk());
+
+        mockMvc.perform(post("/rest/kairosdbs/kairosdb/api/v1/datapoints/query")
+                .header(HttpHeaders.AUTHORIZATION, "Bearer 123456789")
+                .header(HttpHeaders.REFERER,"Test URL")
+                .content("{\"metrics\":[{\"name\":\"zmon.check.1\"}],\"start_relative\":{\"value\":\"8640000\",\"unit\":\"seconds\"}}")
+                .contentType(APPLICATION_JSON));
+
+        mockMvc.perform(post("/rest/kairosdbs/kairosdb/api/v1/datapoints/query")
+                .header(HttpHeaders.AUTHORIZATION, "Bearer 123456789")
+                .header(HttpHeaders.REFERER,"Test URL")
+                .content("{\"metrics\":[{\"name\":\"zmon.check.1\"}],\"start_relative\":{\"value\":\"864000\",\"unit\":\"minutes\"}}")
+                .contentType(APPLICATION_JSON));
+
+        mockMvc.perform(post("/rest/kairosdbs/kairosdb/api/v1/datapoints/query")
+                .header(HttpHeaders.AUTHORIZATION, "Bearer 123456789")
+                .header(HttpHeaders.REFERER,"Test URL")
+                .content("{\"metrics\":[{\"name\":\"zmon.check.1\"}],\"start_relative\":{\"value\":\"300\",\"unit\":\"hours\"}}")
+                .contentType(APPLICATION_JSON));
+
+        mockMvc.perform(post("/rest/kairosdbs/kairosdb/api/v1/datapoints/query")
+                .header(HttpHeaders.AUTHORIZATION, "Bearer 123456789")
+                .header(HttpHeaders.REFERER,"Test URL")
+                .content("{\"metrics\":[{\"name\":\"zmon.check.1\"}],\"start_relative\":{\"value\":\"13\",\"unit\":\"days\"}}")
+                .contentType(APPLICATION_JSON));
+
+        mockMvc.perform(post("/rest/kairosdbs/kairosdb/api/v1/datapoints/query")
+                .header(HttpHeaders.AUTHORIZATION, "Bearer 123456789")
+                .header(HttpHeaders.REFERER,"Test URL")
+                .content("{\"metrics\":[{\"name\":\"zmon.check.1\",\"start_relative\":{\"value\":\"2\",\"unit\":\"weeks\"}}")
+                .contentType(APPLICATION_JSON));
+
+        mockMvc.perform(post("/rest/kairosdbs/kairosdb/api/v1/datapoints/query")
+                .header(HttpHeaders.AUTHORIZATION, "Bearer 123456789")
+                .header(HttpHeaders.REFERER,"Test URL")
+                .content("{\"metrics\":[{\"name\":\"zmon.check.1\"}],\"start_relative\":{\"value\":\"2\",\"unit\":\"months\"}}")
+                .contentType(APPLICATION_JSON));
+
+        mockMvc.perform(post("/rest/kairosdbs/kairosdb/api/v1/datapoints/query")
+                .header(HttpHeaders.AUTHORIZATION, "Bearer 123456789")
+                .header(HttpHeaders.REFERER,"Test URL")
+                .content("{\"metrics\":[{\"name\":\"zmon.check.1\"}],\"start_relative\":{\"value\":\"1\",\"unit\":\"years\"}}")
+                .contentType(APPLICATION_JSON));
+
+        mockMvc.perform(post("/rest/kairosdbs/kairosdb/api/v1/datapoints/query")
+                .header(HttpHeaders.AUTHORIZATION, "Bearer 123456789")
+                .header(HttpHeaders.REFERER,"Test URL")
+                .content("{\"metrics\":[{\"name\":\"zmon.check.33\"}],\"start_absolute\":1514764800000}")
+                .contentType(APPLICATION_JSON));
+
+        mockMvc.perform(post("/rest/kairosdbs/kairosdb/api/v1/datapoints/query")
+                .header(HttpHeaders.AUTHORIZATION, "Bearer 123456789")
+                .header(HttpHeaders.REFERER,"Test URL")
+                .content("{\"metrics\":[{\"name\":\"zmon.check.98\"}],\"start_absolute\":1517443200000,\"end_absolute\":1525353003307}")
+                .contentType(APPLICATION_JSON));
+
+        List<MockSpan> finishedSpans = tracer.finishedSpans();
+        assertEquals(9, finishedSpans.size());
+
     }
 
 }
