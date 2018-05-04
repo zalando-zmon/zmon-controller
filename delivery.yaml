@@ -5,6 +5,7 @@ pipeline:
     commands:
       - desc: "Install dependencies"
         cmd: |
+          apt-get update
           apt-get install -y \
           openjdk-8-* \
           maven \
