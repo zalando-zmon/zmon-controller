@@ -245,7 +245,7 @@ angular.module('zmon2App').controller('CloudCtrl', ['$scope', '$interval', '$loc
         // set app on URL and let children controller CloudEntitirsCtrl take action
         $scope.showApp = function(appId) {
             $scope.selectedApplication = appId;
-            $location.search('app', appId);
+            $location.search('app', appId).replace();
         };
 
         // return number of ELBs for a given 'team' which are public.
@@ -265,8 +265,8 @@ angular.module('zmon2App').controller('CloudCtrl', ['$scope', '$interval', '$loc
             $scope.selectedApplication = null;
             $scope.selectedEndpoint = null;
 
-            $location.search('team', team);
-            $location.search('app', null);
+            $location.search('team', team).replace();
+            $location.search('app', null).replace();
 
             if (!team && !fetchInterval) {
                 startFetchInterval();
@@ -282,7 +282,7 @@ angular.module('zmon2App').controller('CloudCtrl', ['$scope', '$interval', '$loc
 
             $('#overview-charts svg').empty();
 
-            $location.search('app', appId);
+            $location.search('app', appId).replace();
         };
 
         // user select endpoint from app list of endpoints

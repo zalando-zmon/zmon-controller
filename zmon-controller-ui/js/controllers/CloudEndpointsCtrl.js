@@ -565,7 +565,7 @@ angular.module('zmon2App').controller('CloudEndpointsCtrl', ['$scope', '$timeout
             LoadingIndicatorService.stop();
             $scope.loading = false;
 
-            $location.search('app', appId);
+            $location.search('app', appId).replace();
         };
 
         var fetchAppData = function(appId, cb) {
