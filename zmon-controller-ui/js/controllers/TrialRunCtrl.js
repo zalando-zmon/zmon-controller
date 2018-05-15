@@ -238,7 +238,7 @@ var TrialRunCtrl = function ($scope, $interval, $timeout, timespanFilter, Commun
         }
     );
 
-    // // Deep watch
+    // Deep watch
     // $scope.$watch('alert', function () {
     //     // Clean up previous blob and create new one
     //     window.URL.revokeObjectURL($scope.blob);
