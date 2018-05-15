@@ -1,51 +1,37 @@
 {
-  "_args": [
-    [
-      "tether@^1.2.0",
-      "/Users/elauria/Code/grafana3.1-zalando"
-    ]
-  ],
-  "_from": "tether@>=1.2.0 <2.0.0",
-  "_id": "tether@1.3.2",
-  "_inCache": true,
-  "_installable": true,
+  "_from": "tether@^1.2.0",
+  "_id": "tether@1.4.1",
+  "_inBundle": false,
+  "_integrity": "sha512-RQ+DAk1gwcQpc0If2dYeFdWPb1osUnMivXAUcAaLXfwoRtoKr/XdVluxNqx7g+YGRvOuPJY2b036hdpdTV97Pg==",
   "_location": "/tether",
-  "_nodeVersion": "4.2.4",
-  "_npmOperationalInternal": {
-    "host": "packages-12-west.internal.npmjs.com",
-    "tmp": "tmp/tether-1.3.2.tgz_1461866039580_0.9770346274599433"
-  },
-  "_npmUser": {
-    "email": "devteam@hubspot.com",
-    "name": "hs"
-  },
-  "_npmVersion": "2.14.12",
   "_phantomChildren": {},
   "_requested": {
-    "name": "tether",
+    "type": "range",
+    "registry": true,
     "raw": "tether@^1.2.0",
+    "name": "tether",
+    "escapedName": "tether",
     "rawSpec": "^1.2.0",
-    "scope": null,
-    "spec": ">=1.2.0 <2.0.0",
-    "type": "range"
+    "saveSpec": null,
+    "fetchSpec": "^1.2.0"
   },
   "_requiredBy": [
     "/",
     "/tether-drop"
   ],
-  "_resolved": "https://registry.npmjs.org/tether/-/tether-1.3.2.tgz",
-  "_shasum": "99882bff445d4579877e1e358d65ce96431e08d0",
-  "_shrinkwrap": null,
+  "_resolved": "https://registry.npmjs.org/tether/-/tether-1.4.1.tgz",
+  "_shasum": "78112ef21adf2aea68cd90e72185f43d9ffc44e8",
   "_spec": "tether@^1.2.0",
-  "_where": "/Users/elauria/Code/grafana3.1-zalando",
+  "_where": "/Users/elauria/Code/grafana-3.1.1",
   "authors": [
-    "Adam Schwartz <adam.flynn.schwartz@gmail.com>",
-    "Zack Bloom <zackbloom@gmail.com>"
+    "Zack Bloom <zackbloom@gmail.com>",
+    "Adam Schwartz <adam.flynn.schwartz@gmail.com>"
   ],
   "bugs": {
     "url": "https://github.com/HubSpot/tether/issues"
   },
-  "dependencies": {},
+  "bundleDependencies": false,
+  "deprecated": false,
   "description": "A client-side library to make absolutely positioned elements attach to elements in the page efficiently.",
   "devDependencies": {
     "del": "^2.0.2",
@@ -63,32 +49,20 @@
     "gulp-uglify": "^1.4.1",
     "gulp-wrap-umd": "^0.2.1"
   },
-  "directories": {},
-  "dist": {
-    "shasum": "99882bff445d4579877e1e358d65ce96431e08d0",
-    "tarball": "https://registry.npmjs.org/tether/-/tether-1.3.2.tgz"
-  },
-  "gitHead": "48ad90f391c432847757d6b5fb142f6bee93d303",
   "homepage": "https://github.com/HubSpot/tether#readme",
   "license": "MIT",
   "main": "dist/js/tether.js",
   "maintainers": [
     {
-      "name": "hs",
-      "email": "devteam@hubspot.com"
+      "name": "Nicholas Hwang",
+      "email": "nick.joosung.hwang@gmail.com"
     },
     {
-      "name": "timmfin",
-      "email": "timmfin@timmfin.net"
-    },
-    {
-      "name": "zackbloom",
-      "email": "zackbloom@gmail.com"
+      "name": "Trevor Burnham",
+      "email": "trevorburnham@gmail.com"
     }
   ],
   "name": "tether",
-  "optionalDependencies": {},
-  "readme": "ERROR: No README data found!",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/HubSpot/tether.git"
@@ -98,5 +72,5 @@
     "reinstall": "del node_modules && npm install",
     "watch": "gulp watch"
   },
-  "version": "1.3.2"
+  "version": "1.4.1"
 }

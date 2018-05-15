@@ -1,6 +1,6 @@
 ///<reference path="../../headers/common.d.ts" />
-System.register(['angular', 'lodash', 'app/core/app_events'], function(exports_1) {
-    var angular_1, lodash_1, app_events_1;
+System.register(['angular', 'lodash'], function(exports_1) {
+    var angular_1, lodash_1;
     var PluginEditCtrl;
     return {
         setters:[
@@ -9,9 +9,6 @@ System.register(['angular', 'lodash', 'app/core/app_events'], function(exports_1
             },
             function (lodash_1_1) {
                 lodash_1 = lodash_1_1;
-            },
-            function (app_events_1_1) {
-                app_events_1 = app_events_1_1;
             }],
         execute: function() {
             PluginEditCtrl = (function () {
@@ -88,26 +85,7 @@ System.register(['angular', 'lodash', 'app/core/app_events'], function(exports_1
                     });
                 };
                 PluginEditCtrl.prototype.importDashboards = function () {
-                    var _this = this;
-                    // move to dashboards tab
-                    this.tabIndex = 2;
-                    return new Promise(function (resolve) {
-                        if (!_this.$scope.$$phase) {
-                            _this.$scope.$digest();
-                        }
-                        // let angular load dashboards tab
-                        setTimeout(function () {
-                            resolve();
-                        }, 1000);
-                    }).then(function () {
-                        return new Promise(function (resolve, reject) {
-                            // send event to import list component
-                            app_events_1.default.emit('dashboard-list-import-all', {
-                                resolve: resolve,
-                                reject: reject
-                            });
-                        });
-                    });
+                    return Promise.resolve();
                 };
                 PluginEditCtrl.prototype.setPreUpdateHook = function (callback) {
                     this.preUpdateHook = callback;

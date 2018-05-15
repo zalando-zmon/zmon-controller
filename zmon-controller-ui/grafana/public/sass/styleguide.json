@@ -37,8 +37,8 @@
         "$scrollbarBackground2": "#3a3a3a",
         "$dropdownDividerBottom": "#444",
         "$wellBackground": "#131517",
-        "$errorText": "#b94a48",
-        "$successText": "#468847"
+        "$errorText": "#E84D4D",
+        "$successText": "#12D95A"
     },
     "light": {
         "$black": "#000",

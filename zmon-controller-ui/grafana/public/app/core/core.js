@@ -1,7 +1,7 @@
 ///<reference path="../headers/common.d.ts" />
 ///<reference path="./mod_defs.d.ts" />
-System.register(["./directives/annotation_tooltip", "./directives/dash_class", "./directives/confirm_click", "./directives/dash_edit_link", "./directives/dash_upload", "./directives/dropdown_typeahead", "./directives/grafana_version_check", "./directives/metric_segment", "./directives/misc", "./directives/ng_model_on_blur", "./directives/password_strenght", "./directives/spectrum_picker", "./directives/tags", "./directives/value_select_dropdown", "./directives/plugin_component", "./directives/rebuild_on_change", "./directives/give_focus", './jquery_extended', './partials', './components/grafana_app', './components/sidemenu/sidemenu', './components/search/search', './components/info_popover', './components/colorpicker', './components/navbar/navbar', './directives/array_join', './live/live_srv', './utils/emitter', './components/layout_selector/layout_selector', './components/switch', './components/dashboard_selector', 'app/core/controllers/all', 'app/core/services/all', 'app/core/routes/routes', './filters/filters', './core_module', './app_events'], function(exports_1) {
-    var grafana_app_1, sidemenu_1, search_1, info_popover_1, colorpicker_1, navbar_1, array_join_1, live_srv_1, emitter_1, layout_selector_1, switch_1, dashboard_selector_1, core_module_1, app_events_1;
+System.register(["./directives/annotation_tooltip", "./directives/dash_class", "./directives/confirm_click", "./directives/dash_edit_link", "./directives/dropdown_typeahead", "./directives/grafana_version_check", "./directives/metric_segment", "./directives/misc", "./directives/ng_model_on_blur", "./directives/password_strenght", "./directives/spectrum_picker", "./directives/tags", "./directives/value_select_dropdown", "./directives/plugin_component", "./directives/rebuild_on_change", "./directives/give_focus", './jquery_extended', './partials', './components/grafana_app', './components/sidemenu/sidemenu', './components/search/search', './components/info_popover', './components/colorpicker', './components/navbar/navbar', './directives/array_join', './live/live_srv', './utils/emitter', './components/layout_selector/layout_selector', './components/switch', './components/dashboard_selector', './components/query_part/query_part_editor', './components/wizard/wizard', 'app/core/controllers/all', 'app/core/services/all', 'app/core/routes/routes', './filters/filters', './core_module', './app_events'], function(exports_1) {
+    var grafana_app_1, sidemenu_1, search_1, info_popover_1, colorpicker_1, navbar_1, array_join_1, live_srv_1, emitter_1, layout_selector_1, switch_1, dashboard_selector_1, query_part_editor_1, wizard_1, core_module_1, app_events_1;
     return {
         setters:[
             function (_1) {},
@@ -22,7 +22,6 @@ System.register(["./directives/annotation_tooltip", "./directives/dash_class", "
             function (_16) {},
             function (_17) {},
             function (_18) {},
-            function (_19) {},
             function (grafana_app_1_1) {
                 grafana_app_1 = grafana_app_1_1;
             },
@@ -59,10 +58,16 @@ System.register(["./directives/annotation_tooltip", "./directives/dash_class", "
             function (dashboard_selector_1_1) {
                 dashboard_selector_1 = dashboard_selector_1_1;
             },
+            function (query_part_editor_1_1) {
+                query_part_editor_1 = query_part_editor_1_1;
+            },
+            function (wizard_1_1) {
+                wizard_1 = wizard_1_1;
+            },
+            function (_19) {},
             function (_20) {},
             function (_21) {},
             function (_22) {},
-            function (_23) {},
             function (core_module_1_1) {
                 core_module_1 = core_module_1_1;
             },
@@ -84,6 +89,8 @@ System.register(["./directives/annotation_tooltip", "./directives/dash_class", "
             exports_1("Emitter", emitter_1.Emitter);
             exports_1("appEvents", app_events_1.default);
             exports_1("dashboardSelector", dashboard_selector_1.dashboardSelector);
+            exports_1("queryPartEditorDirective", query_part_editor_1.queryPartEditorDirective);
+            exports_1("WizardFlow", wizard_1.WizardFlow);
         }
     }
 });

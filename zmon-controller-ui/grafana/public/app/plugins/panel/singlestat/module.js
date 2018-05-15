@@ -60,6 +60,14 @@ System.register(['lodash', 'jquery', 'jquery.flot', 'jquery.flot.gauge', 'app/co
                         valueMaps: [
                             { value: 'null', op: '=', text: 'N/A' }
                         ],
+                        mappingTypes: [
+                            { name: 'value to text', value: 1 },
+                            { name: 'range to text', value: 2 },
+                        ],
+                        rangeMaps: [
+                            { from: 'null', to: 'null', text: 'N/A' }
+                        ],
+                        mappingType: 1,
                         nullPointMode: 'connected',
                         valueName: 'avg',
                         prefixFontSize: '50%',
@@ -92,6 +100,7 @@ System.register(['lodash', 'jquery', 'jquery.flot', 'jquery.flot.gauge', 'app/co
                 SingleStatCtrl.prototype.onInitEditMode = function () {
                     this.fontSizes = ['20%', '30%', '50%', '70%', '80%', '100%', '110%', '120%', '150%', '170%', '200%'];
                     this.addEditorTab('Options', 'public/app/plugins/panel/singlestat/editor.html', 2);
+                    this.addEditorTab('Value Mappings', 'public/app/plugins/panel/singlestat/mappings.html', 3);
                     this.unitFormats = kbn_1.default.getUnitFormats();
                 };
                 SingleStatCtrl.prototype.setUnitFormat = function (subItem) {
@@ -194,22 +203,44 @@ System.register(['lodash', 'jquery', 'jquery.flot', 'jquery.flot.gauge', 'app/co
                             data.valueRounded = kbn_1.default.roundValue(data.value, decimalInfo.decimals);
                         }
                     }
-                    // check value to text mappings
-                    for (var i = 0; i < this.panel.valueMaps.length; i++) {
-                        var map = this.panel.valueMaps[i];
-                        // special null case
-                        if (map.value === 'null') {
-                            if (data.value === null || data.value === void 0) {
+                    // check value to text mappings if its enabled
+                    if (this.panel.mappingType === 1) {
+                        for (var i = 0; i < this.panel.valueMaps.length; i++) {
+                            var map = this.panel.valueMaps[i];
+                            // special null case
+                            if (map.value === 'null') {
+                                if (data.value === null || data.value === void 0) {
+                                    data.valueFormated = map.text;
+                                    return;
+                                }
+                                continue;
+                            }
+                            // value/number to text mapping
+                            var value = parseFloat(map.value);
+                            if (value === data.valueRounded) {
                                 data.valueFormated = map.text;
                                 return;
                             }
-                            continue;
                         }
-                        // value/number to text mapping
-                        var value = parseFloat(map.value);
-                        if (value === data.valueRounded) {
-                            data.valueFormated = map.text;
-                            return;
+                    }
+                    else if (this.panel.mappingType === 2) {
+                        for (var i = 0; i < this.panel.rangeMaps.length; i++) {
+                            var map = this.panel.rangeMaps[i];
+                            // special null case
+                            if (map.from === 'null' && map.to === 'null') {
+                                if (data.value === null || data.value === void 0) {
+                                    data.valueFormated = map.text;
+                                    return;
+                                }
+                                continue;
+                            }
+                            // value/number to range mapping
+                            var from = parseFloat(map.from);
+                            var to = parseFloat(map.to);
+                            if (to >= data.valueRounded && from <= data.valueRounded) {
+                                data.valueFormated = map.text;
+                                return;
+                            }
                         }
                     }
                     if (data.value === null || data.value === void 0) {
@@ -225,6 +256,15 @@ System.register(['lodash', 'jquery', 'jquery.flot', 'jquery.flot.gauge', 'app/co
                 ;
                 SingleStatCtrl.prototype.addValueMap = function () {
                     this.panel.valueMaps.push({ value: '', op: '=', text: '' });
+                };
+                SingleStatCtrl.prototype.removeRangeMap = function (rangeMap) {
+                    var index = lodash_1.default.indexOf(this.panel.rangeMaps, rangeMap);
+                    this.panel.rangeMaps.splice(index, 1);
+                    this.render();
+                };
+                ;
+                SingleStatCtrl.prototype.addRangeMap = function () {
+                    this.panel.rangeMaps.push({ from: '', to: '', text: '' });
                 };
                 SingleStatCtrl.prototype.link = function (scope, elem, attrs, ctrl) {
                     var $location = this.$location;
@@ -273,14 +313,14 @@ System.register(['lodash', 'jquery', 'jquery.flot', 'jquery.flot.gauge', 'app/co
                         return result;
                     }
                     function addGauge() {
+                        var width = elem.width();
+                        var height = elem.height();
                         ctrl.invalidGaugeRange = false;
                         if (panel.gauge.minValue > panel.gauge.maxValue) {
                             ctrl.invalidGaugeRange = true;
                             return;
                         }
                         var plotCanvas = jquery_1.default('<div></div>');
-                        var width = elem.width();
-                        var height = elem.height();
                         var plotCss = {
                             top: '10px',
                             margin: 'auto',

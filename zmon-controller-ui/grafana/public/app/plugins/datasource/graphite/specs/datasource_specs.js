@@ -14,7 +14,7 @@ System.register(['test/lib/common', 'test/specs/helpers', "../datasource"], func
         execute: function() {
             common_1.describe('graphiteDatasource', function () {
                 var ctx = new helpers_1.default.ServiceTestContext();
-                var instanceSettings = { url: [''] };
+                var instanceSettings = { url: [''], name: 'graphiteProd' };
                 common_1.beforeEach(common_1.angularMocks.module('grafana.core'));
                 common_1.beforeEach(common_1.angularMocks.module('grafana.services'));
                 common_1.beforeEach(ctx.providePhase(['backendSrv']));
@@ -30,6 +30,7 @@ System.register(['test/lib/common', 'test/specs/helpers', "../datasource"], func
                 });
                 common_1.describe('When querying influxdb with one target using query editor target spec', function () {
                     var query = {
+                        panelId: 3,
                         rangeRaw: { from: 'now-1h', to: 'now' },
                         targets: [{ target: 'prod1.count' }, { target: 'prod2.count' }],
                         maxDataPoints: 500,
@@ -46,6 +47,9 @@ System.register(['test/lib/common', 'test/specs/helpers', "../datasource"], func
                     });
                     common_1.it('should generate the correct query', function () {
                         common_1.expect(requestOptions.url).to.be('/render');
+                    });
+                    common_1.it('should set unique requestId', function () {
+                        common_1.expect(requestOptions.requestId).to.be('graphiteProd.panelId.3');
                     });
                     common_1.it('should query correctly', function () {
                         var params = requestOptions.data.split('&');

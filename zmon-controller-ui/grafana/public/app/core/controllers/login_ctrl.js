@@ -35,15 +35,6 @@ function (angular, coreModule, config) {
       }
     };
 
-    // build info view model
-    $scope.buildInfo = {
-      version: config.buildInfo.version,
-      commit: config.buildInfo.commit,
-      buildstamp: new Date(config.buildInfo.buildstamp * 1000),
-      latestVersion: config.buildInfo.latestVersion,
-      hasUpdate: config.buildInfo.hasUpdate,
-    };
-
     $scope.submit = function() {
       if ($scope.loginMode) {
         $scope.login();
@@ -78,7 +69,12 @@ function (angular, coreModule, config) {
       }
 
       backendSrv.post('/login', $scope.formModel).then(function(result) {
-        if (result.redirectUrl) {
+        var params = $location.search();
+
+        if (params.redirect && params.redirect[0] === '/') {
+          window.location.href = config.appSubUrl + params.redirect;
+        }
+        else if (result.redirectUrl) {
           window.location.href = result.redirectUrl;
         } else {
           window.location.href = config.appSubUrl + '/';

@@ -154,10 +154,6 @@ System.register(['app/core/config', 'lodash', '../../core_module'], function(exp
                     this.searchDashboards();
                 };
                 ;
-                SearchCtrl.prototype.newDashboard = function () {
-                    this.$location.url('dashboard/new');
-                };
-                ;
                 return SearchCtrl;
             })();
             exports_1("SearchCtrl", SearchCtrl);

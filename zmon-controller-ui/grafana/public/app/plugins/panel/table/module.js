@@ -34,9 +34,10 @@ System.register(['lodash', 'jquery', 'app/core/utils/file_export', 'app/plugins/
             TablePanelCtrl = (function (_super) {
                 __extends(TablePanelCtrl, _super);
                 /** @ngInject */
-                function TablePanelCtrl($scope, $injector, annotationsSrv) {
+                function TablePanelCtrl($scope, $injector, annotationsSrv, $sanitize) {
                     _super.call(this, $scope, $injector);
                     this.annotationsSrv = annotationsSrv;
+                    this.$sanitize = $sanitize;
                     this.panelDefaults = {
                         targets: [{}],
                         transform: 'timeseries_to_columns',
@@ -158,7 +159,7 @@ System.register(['lodash', 'jquery', 'app/core/utils/file_export', 'app/plugins/
                         return (panelHeight - 31) + 'px';
                     }
                     function appendTableRows(tbodyElem) {
-                        var renderer = new renderer_1.TableRenderer(panel, data, ctrl.dashboard.isTimezoneUtc());
+                        var renderer = new renderer_1.TableRenderer(panel, data, ctrl.dashboard.isTimezoneUtc(), ctrl.$sanitize);
                         tbodyElem.empty();
                         tbodyElem.html(renderer.render(ctrl.pageIndex));
                     }

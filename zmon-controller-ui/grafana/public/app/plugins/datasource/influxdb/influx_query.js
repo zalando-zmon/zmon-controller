@@ -141,7 +141,7 @@ System.register(['lodash', './query_part'], function(exports_1) {
                             value = this.templateSrv.replace(value, this.scopedVars);
                         }
                         if (operator !== '>' && operator !== '<') {
-                            value = "'" + value.replace('\\', '\\\\') + "'";
+                            value = "'" + value.replace(/\\/g, '\\\\') + "'";
                         }
                     }
                     else if (interpolate) {

@@ -1,7 +1,7 @@
 ///<reference path="../../headers/common.d.ts" />
-System.register(['app/core/config', 'lodash', 'angular', 'jquery', 'app/core/core'], function(exports_1) {
-    var config_1, lodash_1, angular_1, jquery_1, core_1;
-    var TITLE_HEIGHT, EMPTY_TITLE_HEIGHT, PANEL_PADDING, PanelCtrl;
+System.register(['app/core/config', 'lodash', 'angular', 'jquery', 'app/core/profiler', 'app/core/core'], function(exports_1) {
+    var config_1, lodash_1, angular_1, jquery_1, profiler_1, core_1;
+    var TITLE_HEIGHT, EMPTY_TITLE_HEIGHT, PANEL_PADDING, PANEL_BORDER, PanelCtrl;
     return {
         setters:[
             function (config_1_1) {
@@ -16,6 +16,9 @@ System.register(['app/core/config', 'lodash', 'angular', 'jquery', 'app/core/cor
             function (jquery_1_1) {
                 jquery_1 = jquery_1_1;
             },
+            function (profiler_1_1) {
+                profiler_1 = profiler_1_1;
+            },
             function (core_1_1) {
                 core_1 = core_1_1;
             }],
@@ -23,6 +26,7 @@ System.register(['app/core/config', 'lodash', 'angular', 'jquery', 'app/core/cor
             TITLE_HEIGHT = 25;
             EMPTY_TITLE_HEIGHT = 9;
             PANEL_PADDING = 5;
+            PANEL_BORDER = 2;
             PanelCtrl = (function () {
                 function PanelCtrl($scope, $injector) {
                     var _this = this;
@@ -31,6 +35,7 @@ System.register(['app/core/config', 'lodash', 'angular', 'jquery', 'app/core/cor
                     this.$timeout = $injector.get('$timeout');
                     this.editorTabIndex = 0;
                     this.events = new core_1.Emitter();
+                    this.timing = {};
                     var plugin = config_1.default.panels[this.panel.type];
                     if (plugin) {
                         this.pluginId = plugin.id;
@@ -46,7 +51,7 @@ System.register(['app/core/config', 'lodash', 'angular', 'jquery', 'app/core/cor
                     this.events.emit('panel-initialized');
                 };
                 PanelCtrl.prototype.renderingCompleted = function () {
-                    this.$scope.$root.performance.panelsRendered++;
+                    profiler_1.profiler.renderingCompleted(this.panel.id, this.timing);
                 };
                 PanelCtrl.prototype.refresh = function () {
                     this.events.emit('refresh', null);
@@ -69,10 +74,25 @@ System.register(['app/core/config', 'lodash', 'angular', 'jquery', 'app/core/cor
                     this.changeView(false, false);
                 };
                 PanelCtrl.prototype.initEditMode = function () {
+                    var _this = this;
                     this.editorTabs = [];
                     this.addEditorTab('General', 'public/app/partials/panelgeneral.html');
                     this.editModeInitiated = true;
                     this.events.emit('init-edit-mode', null);
+                    var routeParams = this.$injector.get('$routeParams');
+                    if (routeParams.editorTab) {
+                        this.editorTabs.forEach(function (tab, i) {
+                            if (tab.title === routeParams.editorTab) {
+                                _this.editorTabIndex = i;
+                            }
+                        });
+                    }
+                };
+                PanelCtrl.prototype.changeTab = function (newIndex) {
+                    this.editorTabIndex = newIndex;
+                    var route = this.$injector.get('$route');
+                    route.current.params.editorTab = this.editorTabs[newIndex].title;
+                    route.updateParams();
                 };
                 PanelCtrl.prototype.addEditorTab = function (title, directiveFn, index) {
                     var editorTab = { title: title, directiveFn: directiveFn };
@@ -119,7 +139,7 @@ System.register(['app/core/config', 'lodash', 'angular', 'jquery', 'app/core/cor
                             this.containerHeight = parseInt(this.containerHeight.replace('px', ''), 10);
                         }
                     }
-                    this.height = this.containerHeight - (PANEL_PADDING + (this.panel.title ? TITLE_HEIGHT : EMPTY_TITLE_HEIGHT));
+                    this.height = this.containerHeight - (PANEL_BORDER + PANEL_PADDING + (this.panel.title ? TITLE_HEIGHT : EMPTY_TITLE_HEIGHT));
                 };
                 PanelCtrl.prototype.render = function (payload) {
                     // ignore if other panel is in fullscreen mode
@@ -127,6 +147,7 @@ System.register(['app/core/config', 'lodash', 'angular', 'jquery', 'app/core/cor
                         return;
                     }
                     this.calculatePanelHeight();
+                    this.timing.renderStart = new Date().getTime();
                     this.events.emit('render', payload);
                 };
                 PanelCtrl.prototype.toggleEditorHelp = function (index) {

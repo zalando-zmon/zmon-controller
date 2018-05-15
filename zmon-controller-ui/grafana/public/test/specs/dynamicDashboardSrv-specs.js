@@ -1,5 +1,5 @@
 define([
-  'app/features/dashboard/dynamicDashboardSrv',
+  'app/features/dashboard/dynamic_dashboard_srv',
   'app/features/dashboard/dashboardSrv'
 ], function() {
   'use strict';
@@ -12,6 +12,7 @@ define([
       ctx.setup = function (setupFunc) {
 
         beforeEach(module('grafana.services'));
+        beforeEach(module('grafana.core'));
         beforeEach(module(function($provide) {
           $provide.value('contextSrv', {
             user: { timezone: 'utc'}
@@ -167,6 +168,7 @@ define([
 
     it('should generate a repeartRowId based on repeat row index', function() {
       expect(ctx.rows[1].repeatRowId).to.be(1);
+      expect(ctx.rows[1].repeatIteration).to.be(ctx.dynamicDashboardSrv.iteration);
     });
 
     it('should set scopedVars on row panels', function() {

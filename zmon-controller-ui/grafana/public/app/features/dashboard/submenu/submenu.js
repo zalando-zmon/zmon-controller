@@ -23,10 +23,11 @@ System.register(['angular'], function(exports_1) {
         execute: function() {
             SubmenuCtrl = (function () {
                 /** @ngInject */
-                function SubmenuCtrl($rootScope, templateValuesSrv, dynamicDashboardSrv) {
+                function SubmenuCtrl($rootScope, templateValuesSrv, templateSrv, $location) {
                     this.$rootScope = $rootScope;
                     this.templateValuesSrv = templateValuesSrv;
-                    this.dynamicDashboardSrv = dynamicDashboardSrv;
+                    this.templateSrv = templateSrv;
+                    this.$location = $location;
                     this.annotations = this.dashboard.templating.list;
                     this.variables = this.dashboard.templating.list;
                 }
@@ -40,7 +41,6 @@ System.register(['angular'], function(exports_1) {
                 SubmenuCtrl.prototype.variableUpdated = function (variable) {
                     var _this = this;
                     this.templateValuesSrv.variableUpdated(variable).then(function () {
-                        _this.dynamicDashboardSrv.update(_this.dashboard);
                         _this.$rootScope.$emit('template-variable-value-updated');
                         _this.$rootScope.$broadcast('refresh');
                     });

@@ -31,7 +31,7 @@ System.register(['lodash', 'moment'], function(exports_1) {
                 mathString = text.substring(index + 2);
             }
             // We're going to just require ISO8601 timestamps, k?
-            time = moment_1.default(parseString);
+            time = moment_1.default(parseString, moment_1.default.ISO_8601);
         }
         if (!mathString.length) {
             return time;

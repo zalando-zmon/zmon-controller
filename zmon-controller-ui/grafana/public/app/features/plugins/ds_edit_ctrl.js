@@ -161,8 +161,18 @@ System.register(['angular', 'lodash', 'app/core/config', 'app/core/core'], funct
             core_1.coreModule.controller('DataSourceEditCtrl', DataSourceEditCtrl);
             core_1.coreModule.directive('datasourceHttpSettings', function () {
                 return {
-                    scope: { current: "=" },
-                    templateUrl: 'public/app/features/plugins/partials/ds_http_settings.html'
+                    scope: {
+                        current: "=",
+                        suggestUrl: "@",
+                    },
+                    templateUrl: 'public/app/features/plugins/partials/ds_http_settings.html',
+                    link: {
+                        pre: function ($scope, elem, attrs) {
+                            $scope.getSuggestUrls = function () {
+                                return [$scope.suggestUrl];
+                            };
+                        }
+                    }
                 };
             });
         }

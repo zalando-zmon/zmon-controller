@@ -54,10 +54,12 @@ System.register(['app/core/config', 'jquery', '../../core_module'], function(exp
                     this.showSignout = this.contextSrv.isSignedIn && !config_1.default['authProxyEnabled'];
                     this.mainLinks = config_1.default.bootData.mainNavLinks;
                     this.openUserDropdown();
+                    this.loginUrl = 'login?redirect=' + encodeURIComponent(this.$location.path());
                     this.$scope.$on('$routeChangeSuccess', function () {
                         if (!_this.contextSrv.pinned) {
                             _this.contextSrv.sidemenu = false;
                         }
+                        _this.loginUrl = 'login?redirect=' + encodeURIComponent(_this.$location.path());
                     });
                 }
                 SideMenuCtrl.prototype.getUrl = function (url) {

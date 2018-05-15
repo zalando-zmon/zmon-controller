@@ -15,10 +15,11 @@ System.register(['lodash', 'moment', 'app/core/utils/kbn'], function(exports_1) 
             }],
         execute: function() {
             TableRenderer = (function () {
-                function TableRenderer(panel, table, isUtc) {
+                function TableRenderer(panel, table, isUtc, sanitize) {
                     this.panel = panel;
                     this.table = table;
                     this.isUtc = isUtc;
+                    this.sanitize = sanitize;
                     this.formaters = [];
                     this.colorState = {};
                 }
@@ -33,14 +34,19 @@ System.register(['lodash', 'moment', 'app/core/utils/kbn'], function(exports_1) 
                     }
                     return lodash_1.default.first(style.colors);
                 };
-                TableRenderer.prototype.defaultCellFormater = function (v) {
+                TableRenderer.prototype.defaultCellFormater = function (v, style) {
                     if (v === null || v === void 0 || v === undefined) {
                         return '';
                     }
                     if (lodash_1.default.isArray(v)) {
                         v = v.join(', ');
                     }
-                    return v;
+                    if (style && style.sanitize) {
+                        return this.sanitize(v);
+                    }
+                    else {
+                        return lodash_1.default.escape(v);
+                    }
                 };
                 TableRenderer.prototype.createColumnFormater = function (style, column) {
                     var _this = this;
@@ -66,7 +72,7 @@ System.register(['lodash', 'moment', 'app/core/utils/kbn'], function(exports_1) 
                                 return '-';
                             }
                             if (lodash_1.default.isString(v)) {
-                                return v;
+                                return _this.defaultCellFormater(v, style);
                             }
                             if (style.colorMode) {
                                 _this.colorState[style.colorMode] = _this.getColorForValue(v, style);
@@ -74,7 +80,9 @@ System.register(['lodash', 'moment', 'app/core/utils/kbn'], function(exports_1) 
                             return valueFormater(v, style.decimals, null);
                         };
                     }
-                    return this.defaultCellFormater;
+                    return function (value) {
+                        return _this.defaultCellFormater(value, style);
+                    };
                 };
                 TableRenderer.prototype.formatColumnValue = function (colIndex, value) {
                     if (this.formaters[colIndex]) {
@@ -95,7 +103,6 @@ System.register(['lodash', 'moment', 'app/core/utils/kbn'], function(exports_1) 
                 TableRenderer.prototype.renderCell = function (columnIndex, value, addWidthHack) {
                     if (addWidthHack === void 0) { addWidthHack = false; }
                     value = this.formatColumnValue(columnIndex, value);
-                    value = lodash_1.default.escape(value);
                     var style = '';
                     if (this.colorState.cell) {
                         style = ' style="background-color:' + this.colorState.cell + ';color: white"';
