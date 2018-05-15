@@ -220,38 +220,38 @@ var TrialRunCtrl = function ($scope, $interval, $timeout, timespanFilter, Commun
      * We transform it to be an array of objects, one object per entity filter type with keys: "type" + keys that correspond to each filter type
      * E.g. [ {"type": "zomcat", "environment": "..", "project": "..", ...}, {"type": "host", "external_ip": "..", ...}, ... ]
      */
-    CommunicationService.getEntityProperties().then(
-        function (data) {
-            for (var p in data) {
-                if (data.hasOwnProperty(p)) {
-                    var nextFilterType = {};
-                    nextFilterType.type = p;
-                    angular.extend(nextFilterType, data[p]);
-                    trc.entityFilter.types.push(nextFilterType);
-                    trc.entityExcludeFilter.types.push(nextFilterType);
-                }
-            }
+    // CommunicationService.getEntityProperties().then(
+    //     function (data) {
+    //         for (var p in data) {
+    //             if (data.hasOwnProperty(p)) {
+    //                 var nextFilterType = {};
+    //                 nextFilterType.type = p;
+    //                 angular.extend(nextFilterType, data[p]);
+    //                 trc.entityFilter.types.push(nextFilterType);
+    //                 trc.entityExcludeFilter.types.push(nextFilterType);
+    //             }
+    //         }
 
-            // Sort entity filter types.
-            trc.entityFilter.types = _.sortBy(trc.entityFilter.types, "type");
-            trc.entityExcludeFilter.types = _.sortBy(trc.entityExcludeFilter.types, "type");
-        }
-    );
+    //         // Sort entity filter types.
+    //         trc.entityFilter.types = _.sortBy(trc.entityFilter.types, "type");
+    //         trc.entityExcludeFilter.types = _.sortBy(trc.entityExcludeFilter.types, "type");
+    //     }
+    // );
 
-    // Deep watch
-    $scope.$watch('alert', function () {
-        // Clean up previous blob and create new one
-        window.URL.revokeObjectURL($scope.blob);
-        try {
-            $scope.blob = new Blob([trc.buildYAMLContent()], {
-                type: 'text/plain'
-            });
-            $scope.yamlBlobUrl = window.URL.createObjectURL($scope.blob);
-        } catch (e) {
-            console.log('Failed to create blob. Probably empty content?');
-        }
-        updateUrlParameters();
-    }, true);
+    // // Deep watch
+    // $scope.$watch('alert', function () {
+    //     // Clean up previous blob and create new one
+    //     window.URL.revokeObjectURL($scope.blob);
+    //     try {
+    //         $scope.blob = new Blob([trc.buildYAMLContent()], {
+    //             type: 'text/plain'
+    //         });
+    //         $scope.yamlBlobUrl = window.URL.createObjectURL($scope.blob);
+    //     } catch (e) {
+    //         console.log('Failed to create blob. Probably empty content?');
+    //     }
+    //     updateUrlParameters();
+    // }, true);
 
     // If entity filter input method is 'form', reflect changes of entityFilter.formEntityFilters on entityFilter.textEntityFilters
     $scope.$watch('TrialRunCtrl.entityFilter.formEntityFilters', function (newVal, oldVal) {
