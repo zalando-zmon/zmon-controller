@@ -30,14 +30,14 @@
                     <div class="form-group" ng-class="{'has-error': trForm.submitted && trForm.name.$error.required}">
                         <label for="inp-name" class="col-sm-2 control-label">Name</label>
                         <div class="col-sm-10">
-                            <input type="text" class="form-control" id="inp-name" name="name" placeholder="Alert name (will be shown on dashboard)" ng-model="alert.name" required ng-focus="trForm.submitted && trForm.name.$error.required">
+                            <input type="text" class="form-control" id="inp-name" name="name" placeholder="Alert name (will be shown on dashboard)" ng-model="alert.name" ng-model-options="{ updateOn: 'blur' }" required ng-focus="trForm.submitted && trForm.name.$error.required">
                         </div>
                     </div>
 
                     <div class="form-group" ng-class="{'has-error': trForm.submitted && trForm.description.$error.required}">
                         <label for="inp-description" class="col-sm-2 control-label">Description</label>
                         <div class="col-sm-10">
-                            <textarea class="form-control" id="inp-description" name="description" placeholder="Short descriptive text about the check" ng-model="alert.description" ng-focus="trForm.submitted && trForm.description.$error.required" ng-required="!onRun"></textarea>
+                            <textarea class="form-control" id="inp-description" name="description" placeholder="Short descriptive text about the check" ng-model="alert.description" ng-model-options="{ updateOn: 'blur' }" ng-focus="trForm.submitted && trForm.description.$error.required" ng-required="!onRun"></textarea>
                         </div>
                     </div>
 
@@ -57,7 +57,7 @@
                         <label for="inp-command" class="col-sm-2 control-label"><a href="https://docs.zmon.io/en/latest/user/check-commands.html" rel="help" target="docs">Check Command</a></label>
                         <div class="col-sm-10">
                             <code-editor-modal code="alert.check_command" title="Check Command" language="python"></code-editor-modal>
-                            <div id="inp-command" name="check_command" class="code-editor" ng-model="alert.check_command" code-language="python" code-editor required ng-focus="trForm.submitted && trForm.check_command.$error.required"></div>
+                            <div id="inp-command" name="check_command" class="code-editor" ng-model="alert.check_command" code-language="python" ng-model-options="{ debounce: 200 }" code-editor required ng-focus="trForm.submitted && trForm.check_command.$error.required"></div>
                             <span class="help-block">Valid Python expression used to query the instances specified in entities filter.</span>
                         </div>
                     </div>
@@ -66,7 +66,7 @@
                         <label for="inp-condition" class="col-sm-2 control-label"><a href="https://docs.zmon.io/en/latest/user/alert-definitions.html#condition" rel="help" target="docs">Alert Condition</a></label>
                         <div class="col-sm-10">
                             <code-editor-modal code="alert.alert_condition" title="Alert Condition" language="python"></code-editor-modal>
-                            <div id="inp-condition" name="alert_condition" class="code-editor" ng-model="alert.alert_condition" code-language="python" code-editor></div>
+                            <div id="inp-condition" name="alert_condition" class="code-editor" ng-model="alert.alert_condition" ng-model-options="{ debounce: 200 }" code-language="python" code-editor></div>
                             <span class="help-block">Valid Python expression to return true when alert should be "on". Use <code>value</code> to access the check result value.</span>
                         </div>
                     </div>
@@ -83,20 +83,20 @@
                                 <div class="row parameter-row" ng-repeat="param in TrialRunCtrl.parameters" ng-form="pForm">
 
                                     <div class="col-sm-2 name-col">
-                                        <input type="text" class="form-control parameter" name="name" placeholder="Name" ng-model="param.name" ng-class="{'has-error': pForm.name.$error.required || !TrialRunCtrl.paramNameIsValid(param.name)}" model-change-blur required/>
+                                        <input type="text" class="form-control parameter" name="name" placeholder="Name" ng-model="param.name" ng-model-options="{ updateOn: 'blur' }" ng-class="{'has-error': pForm.name.$error.required || !TrialRunCtrl.paramNameIsValid(param.name)}" model-change-blur required/>
                                     </div>
                                     <div class="col-sm-2">
-                                        <input ng-if="param.type === undefined || param.type === 'str' || param.type === 'int' || param.type === 'float'" type="text" class="form-control parameter" name="value" placeholder="Value" ng-model="param.value" ng-class="{'has-error':pForm.value.$error.required}" required/>
-                                        <select ng-if="param.type === 'bool'" class="form-control parameter" name="value" ng-model="param.value" ng-options="item.value as item.label for item in TrialRunCtrl.parameterTypeBooleanOptions"></select>
+                                        <input ng-if="param.type === undefined || param.type === 'str' || param.type === 'int' || param.type === 'float'" type="text" class="form-control parameter" name="value" placeholder="Value" ng-model="param.value" ng-model-options="{ updateOn: 'blur' }" ng-class="{'has-error':pForm.value.$error.required}" required/>
+                                        <select ng-if="param.type === 'bool'" class="form-control parameter" name="value" ng-model="param.value" ng-model-options="{ updateOn: 'blur' }" ng-options="item.value as item.label for item in TrialRunCtrl.parameterTypeBooleanOptions"></select>
                                         <div ng-if="param.type === 'date'">
-                                            <input type="text" class="form-control" uib-datepicker-popup="{{TrialRunCtrl.format}}" ng-model="param.value" name="value" datepicker-options="TrialRunCtrl.dateOptions" close-text="Close" ng-class="{'has-error':pForm.value.$error.required}" required />
+                                            <input type="text" class="form-control" uib-datepicker-popup="{{TrialRunCtrl.format}}" ng-model="param.value" ng-model-options="{ updateOn: 'blur' }" name="value" datepicker-options="TrialRunCtrl.dateOptions" close-text="Close" ng-class="{'has-error':pForm.value.$error.required}" required />
                                         </div>
                                     </div>
                                     <div class="col-sm-4">
-                                        <input type="text" class="form-control parameter param-desc" name="description" placeholder="Description" ng-model="param.comment" />
+                                        <input type="text" class="form-control parameter param-desc" name="description" placeholder="Description" ng-model="param.comment" ng-model-options="{ updateOn: 'blur' }" />
                                     </div>
                                     <div class="col-sm-2">
-                                        <select class="form-control parameter" name="type" ng-model="param.type" ng-class="{'has-error': pForm.type.$error.required }" ng-options="item.value as item.label for item in TrialRunCtrl.parameterTypeOptions" required></select>
+                                        <select class="form-control parameter" name="type" ng-model="param.type" ng-class="{'has-error': pForm.type.$error.required }" ng-options="item.value as item.label for item in TrialRunCtrl.parameterTypeOptions" ng-model-options="{ updateOn: 'blur' }" required></select>
                                     </div>
                                     <div class="col-sm-2">
                                         <span class="btn btn-primary" ng-click="TrialRunCtrl.removeParameter(param.name)"><i class="fa fa-fw fa-minus-circle" ></i></span>
@@ -113,13 +113,13 @@
                         <label for="inp-entities" class="col-sm-2 control-label">
                             <a href="https://docs.zmon.io/en/latest/user/alert-definitions.html#entity-exclude-filter" rel="help" target="docs">Included Entities</a>
                             <div id="entity-filter-buttons">
-                                <button type="button" class="btn btn-primary fa fa-keyboard-o" ng-model="TrialRunCtrl.entityFilterInputMethod" uib-btn-radio="'text'" title="Plain text input"></button>
-                                <button type="button" class="btn btn-primary fa fa-check-square-o" ng-model="TrialRunCtrl.entityFilterInputMethod" uib-btn-radio="'form'" title="Form input"></button>
+                                <button type="button" class="btn btn-primary fa fa-keyboard-o" ng-model="TrialRunCtrl.entityFilterInputMethod" ng-model-options="{ updateOn: 'blur' }" uib-btn-radio="'text'" title="Plain text input"></button>
+                                <button type="button" class="btn btn-primary fa fa-check-square-o" ng-model="TrialRunCtrl.entityFilterInputMethod" ng-model-options="{ updateOn: 'blur' }" uib-btn-radio="'form'" title="Form input"></button>
                             </div>
                         </label>
                         <div class="col-sm-10" ng-class="{'has-error': trForm.submitted && trForm.entities.$error['non-empty-json']}">
                             <code-editor-modal code="TrialRunCtrl.entityFilter.textEntityFilters" title="Included Entities" ng-show="TrialRunCtrl.entityFilterInputMethod === 'text'"></code-editor-modal>
-                            <div id="inp-entities" name="entities" ng-show="TrialRunCtrl.entityFilterInputMethod == 'text'" class="code-editor" ng-model="TrialRunCtrl.entityFilter.textEntityFilters" json non-empty-json code-editor required></div>
+                            <div id="inp-entities" name="entities" ng-show="TrialRunCtrl.entityFilterInputMethod == 'text'" class="code-editor" ng-model="TrialRunCtrl.entityFilter.textEntityFilters" ng-model-options="{ debounce: 200 }" json non-empty-json code-editor required></div>
                             <div ng-show="TrialRunCtrl.entityFilterInputMethod == 'form'">
                                 <entity-filter-container entity-filter-types="TrialRunCtrl.entityFilter.types" form-entity-filters="TrialRunCtrl.entityFilter.formEntityFilters" invalid-json="trForm.entities.$error['valid-json']" empty-json="trForm.entities.$error['non-empty-json']"></entity-filter-container>
                             </div>
@@ -130,13 +130,13 @@
                         <label for="inp-entities-exclude" class="col-sm-2 control-label">
                             <a href="https://docs.zmon.io/en/latest/user/alert-definitions.html#entity-exclude-filter" rel="help" target="docs">Excluded Entities</a>
                             <div id="entity-exclude-filter-buttons">
-                                <button type="button" class="btn btn-primary fa fa-keyboard-o" ng-model="TrialRunCtrl.entityExcludeFilterInputMethod" uib-btn-radio="'text'" title="Plain text input"></button>
-                                <button type="button" class="btn btn-primary fa fa-check-square-o" ng-model="TrialRunCtrl.entityExcludeFilterInputMethod" uib-btn-radio="'form'" title="Form input"></button>
+                                <button type="button" class="btn btn-primary fa fa-keyboard-o" ng-model="TrialRunCtrl.entityExcludeFilterInputMethod" ng-model-options="{ updateOn: 'blur' }" uib-btn-radio="'text'" title="Plain text input"></button>
+                                <button type="button" class="btn btn-primary fa fa-check-square-o" ng-model="TrialRunCtrl.entityExcludeFilterInputMethod" ng-model-options="{ updateOn: 'blur' }" uib-btn-radio="'form'" title="Form input"></button>
                             </div>
                         </label>
                         <div class="col-sm-10" ng-class="{'has-error': trForm.submitted && trForm.entitiesExclude.$error['non-empty-json']}">
                             <code-editor-modal code="TrialRunCtrl.entityExcludeFilter.textEntityFilters" title="Excluded Entities" ng-show="TrialRunCtrl.entityExcludeFilterInputMethod === 'text'"></code-editor-modal>
-                            <div id="inp-entities-exclude" name="entitiesExclude" ng-show="TrialRunCtrl.entityExcludeFilterInputMethod == 'text'" class="code-editor" ng-model="TrialRunCtrl.entityExcludeFilter.textEntityFilters" json code-editor required></div>
+                            <div id="inp-entities-exclude" name="entitiesExclude" ng-show="TrialRunCtrl.entityExcludeFilterInputMethod == 'text'" class="code-editor" ng-model="TrialRunCtrl.entityExcludeFilter.textEntityFilters" ng-model-options="{ debounce: 200 }" json code-editor required></div>
                             <div ng-show="TrialRunCtrl.entityExcludeFilterInputMethod == 'form'">
                                 <entity-filter-container entity-filter-types="TrialRunCtrl.entityExcludeFilter.types" form-entity-filters="TrialRunCtrl.entityExcludeFilter.formEntityFilters" invalid-json="trForm.entitiesExclude.$error['valid-json']" empty-json="trForm.entitiesExclude.$error['non-empty-json']" exclude="true"></entity-filter-container>
                             </div>
@@ -155,21 +155,21 @@
                     <div class="form-group">
                         <label for="inp-period" class="col-sm-2 control-label"><a href="https://docs.zmon.io/en/latest/user/alert-definitions.html#time-periods" rel="help" target="docs">Time Period</a></label>
                         <div class="col-sm-10">
-                            <input class="form-control" id="inp-period" ng-model="alert.period" placeholder="Notification time period (e.g. 'wd {Mon-Fri} hr {9-16}')">
+                            <input class="form-control" id="inp-period" ng-model="alert.period" ng-model-options="{ updateOn: 'blur' }" placeholder="Notification time period (e.g. 'wd {Mon-Fri} hr {9-16}')">
                         </div>
                     </div>
 
                     <div class="form-group" ng-class="{'has-error': trForm.submitted && (trForm.interval.$error.required || trForm.interval.$error.number)}">
                         <label for="inp-interval" class="col-sm-2 control-label"><a href="https://docs.zmon.io/en/latest/user/check-definitions.html#interval" rel="help" target="docs">Interval</a></label>
                         <div class="col-sm-10">
-                            <input id="inp-interval" name="interval" type="number" min="5" class="form-control" ng-model="alert.interval" placeholder="Please type interval in seconds" required>
+                            <input id="inp-interval" name="interval" type="number" min="5" class="form-control" ng-model="alert.interval" ng-model-options="{ updateOn: 'blur' }" placeholder="Please type interval in seconds" required>
                         </div>
                     </div>
 
                     <div class="form-group">
                         <label for="inp-technical-details" class="col-sm-2 control-label">Technical Details</label>
                         <div class="col-sm-10">
-                            <textarea class="form-control" id="inp-technical-details" name="technicalDetails" placeholder="Add any technical details this check may have" ng-model="alert.technical_details"></textarea>
+                            <textarea class="form-control" id="inp-technical-details" name="technicalDetails" placeholder="Add any technical details this check may have" ng-model="alert.technical_details" ng-model-options="{ updateOn: 'blur' }"></textarea>
                         </div>
                     </div>
 
