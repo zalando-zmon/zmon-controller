@@ -238,20 +238,20 @@ var TrialRunCtrl = function ($scope, $interval, $timeout, timespanFilter, Commun
         }
     );
 
-    // Deep watch
-    $scope.$watch('alert', function () {
-        // Clean up previous blob and create new one
-        window.URL.revokeObjectURL($scope.blob);
-        try {
-            $scope.blob = new Blob([trc.buildYAMLContent()], {
-                type: 'text/plain'
-            });
-            $scope.yamlBlobUrl = window.URL.createObjectURL($scope.blob);
-        } catch (e) {
-            console.log('Failed to create blob. Probably empty content?');
-        }
-        updateUrlParameters();
-    }, true);
+    // // Deep watch
+    // $scope.$watch('alert', function () {
+    //     // Clean up previous blob and create new one
+    //     window.URL.revokeObjectURL($scope.blob);
+    //     try {
+    //         $scope.blob = new Blob([trc.buildYAMLContent()], {
+    //             type: 'text/plain'
+    //         });
+    //         $scope.yamlBlobUrl = window.URL.createObjectURL($scope.blob);
+    //     } catch (e) {
+    //         console.log('Failed to create blob. Probably empty content?');
+    //     }
+    //     updateUrlParameters();
+    // }, true);
 
     // If entity filter input method is 'form', reflect changes of entityFilter.formEntityFilters on entityFilter.textEntityFilters
     $scope.$watch('TrialRunCtrl.entityFilter.formEntityFilters', function (newVal, oldVal) {
