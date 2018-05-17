@@ -1,6 +1,5 @@
 angular.module('zmon2App').factory('EntityFilterTypesService', ['$q', 'debounce', 'CommunicationService',
     function($q, debounce, CommunicationService) {
-    	console.log('EntityFilterTypesService started');
 
     	var service = {};
 
@@ -11,37 +10,35 @@ angular.module('zmon2App').factory('EntityFilterTypesService', ['$q', 'debounce'
     	var queue = [];
 
     	var fetch = function(cb) {
-    		console.log('fetch');
+    		
+    		if (service.entityTypeNames.length) {
+    			resolveQueue();
+    			return cb(service.entityProperties);
+    		} 
+
     		CommunicationService.getEntityProperties().then(function(data) {
     			service.entityProperties = data;
 	    		service.entityTypeNames = [].concat(Object.keys(data).sort());
+	    		resolveQueue();
 	    		cb(data);
-    		})
+    		});
     	}
 
-    	var shiftDebounced = debounce(function() { queue.shift()() }, 2000, false);
+    	var resolveQueue = function() {
+    		while (queue.length) {
+    			queue.shift()();
+    		}
+    	}
+
+    	var shiftDebounced = debounce(function() { queue.shift()() }, 0, false);
 
     	service.fetchEntityProperties = function(cb) {
-
     		var deferred = $q.defer();		
-
-			if (service.entityTypeNames.length) {
-				
-				console.log('cached')
-
-	    		deferred.resolve(service.entityProperties);	
-
-			} else {
-	    		
-	    		console.log('bounce')
-				queue.push(function() { fetch(function(data) {
-					console.log('cb!', data, service.entityProperties)
-					deferred.resolve(service.entityProperties);
-				})});
-
-				shiftDebounced();
-			}
-
+			queue.push(function() { fetch(function(data) {
+				deferred.resolve(service.entityProperties);
+		
+			})});
+			shiftDebounced();
     		return deferred.promise;
     	}
 
@@ -66,7 +63,6 @@ angular.module('zmon2App').factory('EntityFilterTypesService', ['$q', 'debounce'
     	service.getEntityPropertiesByName = function(name) {
     		var deferred = $q.defer();
 			service.fetchEntityProperties().then(function() {
-				console.log('properties', service.entityProperties, name);
     			deferred.resolve(service.entityProperties[name]);
     		});
     		return deferred.promise;

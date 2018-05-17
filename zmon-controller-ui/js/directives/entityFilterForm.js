@@ -54,7 +54,6 @@ angular.module('zmon2App').directive('entityFilterForm', ['EntityFilterTypesServ
                 // Update autocomplete data
                 EntityFilterTypesService.getEntityPropertiesByName(scope.entityFilter.type)
                     .then(function(data){
-                        console.log('got data', data)
                         scope.config = data;
                     });
             })

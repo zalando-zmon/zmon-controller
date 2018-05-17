@@ -68,7 +68,6 @@ angular.module('zmon2App').directive('entityFilterContainer', ['$compile', '$log
                 }, true);
 
                 EntityFilterTypesService.getEntityTypeNames().then(function(names) {
-                    console.log('got names', names);
                     scope.availableEntityFilterTypes = scope.availableEntityFilterTypes.concat(names);
                 });
             }
