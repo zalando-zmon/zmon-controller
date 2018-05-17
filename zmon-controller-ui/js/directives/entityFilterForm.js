@@ -1,4 +1,4 @@
-angular.module('zmon2App').directive('entityFilterForm', function () {
+angular.module('zmon2App').directive('entityFilterForm', ['EntityFilterTypesService', function (EntityFilterTypesService) {
     return {
         restrict: 'E',
         scope: {
@@ -6,10 +6,12 @@ angular.module('zmon2App').directive('entityFilterForm', function () {
             allEntityFilters: '=',
             definitionIndex: '=',
             inEditMode: '=',
-            config: '='
         },
         templateUrl: 'templates/entityFilterForm.html',
         link: function (scope, element, attrs, controller) {
+
+            // autocomplete data
+            scope.config = {};
 
             // Remove empty properties: null, undefined or empty arrays.
             var cleanUpFilter = function(filter) {
@@ -47,6 +49,17 @@ angular.module('zmon2App').directive('entityFilterForm', function () {
             scope.$watch('entityFilter', function() {
                 scope.definition = angular.copy(scope.entityFilter);
             });
+
+            scope.$watch('entityFilter.type', function() {
+                // Update autocomplete data
+                EntityFilterTypesService.getEntityPropertiesByName(scope.entityFilter.type)
+                    .then(function(data){
+                        console.log('got data', data)
+                        scope.config = data;
+                    });
+            })
+
+
         }
     };
-});
+}]);

@@ -9,7 +9,8 @@ angular.module('zmon2App', [
     'infinite-scroll',
     'ngclipboard',
     'ui.select',
-    'hljs'
+    'hljs',
+    'ngDebounce'
 ])
     .config(['$routeProvider', '$compileProvider',
         function($routeProvider, $compileProvider) {

@@ -19,14 +19,6 @@ angular.module('zmon2App').controller('AlertDefinitionEditCtrl', ['$scope', '$ro
         var user = UserInfoService.get();
         $scope.teams = user.teams !== "" ? user.teams.split(',') : [];
 
-        // Entity filter types initialized by default with GLOBAL (which is not provided by backend as separate type) and the rest comes from backend
-        $scope.entityFilter.types = [{
-            "type": "GLOBAL"
-        }];
-        $scope.entityExcludeFilter.types = [{
-            "type": "GLOBAL"
-        }];
-
         // User can define the entity filters either as plain JSON text or through a form which corresponds to an array of objects
         $scope.entityFilter.formEntityFilters = [];
         $scope.entityFilter.textEntityFilters = '[]';
@@ -626,27 +618,6 @@ angular.module('zmon2App').controller('AlertDefinitionEditCtrl', ['$scope', '$ro
             }
         }, true);
 
-        /** The getEntityProperties() returns an object with the data to populate the directives that represent the entity filter forms
-         * We transform it to be an array of objects, one object per entity filter type with keys: "type" + keys that correspond to each filter type
-         * E.g. [ {"type": "zomcat", "environment": "..", "project": "..", ...}, {"type": "host", "external_ip": "..", ...}, ... ]
-         */
-        CommunicationService.getEntityProperties().then(
-            function(data) {
-                for (var p in data) {
-                    if (data.hasOwnProperty(p)) {
-                        var nextFilterType = {};
-                        nextFilterType.type = p;
-                        angular.extend(nextFilterType, data[p]);
-                        $scope.entityFilter.types.push(nextFilterType);
-                        $scope.entityExcludeFilter.types.push(nextFilterType);
-                    }
-                }
-
-                // Sort entity filter types.
-                $scope.entityFilter.types = _.sortBy($scope.entityFilter.types, "type");
-                $scope.entityExcludeFilter.types = _.sortBy($scope.entityExcludeFilter.types, "type");
-            }
-        );
 
         // Get all available tags
         CommunicationService.getAllTags().then(
