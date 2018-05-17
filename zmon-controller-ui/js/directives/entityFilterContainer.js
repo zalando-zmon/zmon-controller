@@ -1,9 +1,8 @@
-angular.module('zmon2App').directive('entityFilterContainer', ['$compile', '$log', 'FeedbackMessageService',
-    function ($compile, $log, FeedbackMessageService) {
+angular.module('zmon2App').directive('entityFilterContainer', ['$compile', '$log', 'EntityFilterTypesService', 'FeedbackMessageService',
+    function ($compile, $log, EntityFilterTypesService, FeedbackMessageService) {
         return {
             restrict: 'E',
             scope: {
-                entityFilterTypes: '=',
                 checkEntities: '=',
                 formEntityFilters: '=',
                 emptyJson: '=?',
@@ -15,19 +14,8 @@ angular.module('zmon2App').directive('entityFilterContainer', ['$compile', '$log
                 scope.inEditMode = false;
                 scope.selectedType = 'GLOBAL';
                 scope.globalIsUsed = false;
-                scope.config = {};
                 scope.availableEntityFilterTypes = [ 'GLOBAL' ];
                 scope.entityFilter = { type: scope.selectedType };
-
-                var getEntityFilterConfig = function(type) {
-                    var entityFilter = { type: type };
-                    _.each(scope.entityFilterTypes, function(filter) {
-                        if (filter.type[0] === type) {
-                            entityFilter = filter;
-                        }
-                    });
-                    return entityFilter;
-                };
 
                 // When an entity filter is missing a type, a default type can be taken from the Check
                 var getTypeFromCheck = function() {
@@ -45,7 +33,6 @@ angular.module('zmon2App').directive('entityFilterContainer', ['$compile', '$log
                         scope.entityFilter = { type: 'GLOBAL' };
                         return scope.formEntityFilters.push(scope.entityFilter);
                     }
-                    scope.config = getEntityFilterConfig(scope.selectedType);
                     scope.entityFilter = { type: scope.selectedType };
                     scope.inEditMode = true;
                 };
@@ -58,7 +45,6 @@ angular.module('zmon2App').directive('entityFilterContainer', ['$compile', '$log
                         scope.entityFilter.type = getTypeFromCheck();
                     }
 
-                    scope.config = getEntityFilterConfig(scope.entityFilter.type);
                     scope.selectedType = scope.entityFilter.type;
                     scope.inEditMode = true;
                 };
@@ -66,15 +52,6 @@ angular.module('zmon2App').directive('entityFilterContainer', ['$compile', '$log
                 scope.removeEntityFilter = function (idx) {
                     scope.formEntityFilters.splice(idx, 1);
                 };
-
-                scope.$watch('entityFilterTypes', function(){
-                    scope.availableEntityFilterTypes = _.map(_.map(scope.entityFilterTypes, 'type'), function(t) {
-                        if (t === 'GLOBAL')
-                            return t;
-                        else
-                            return t[0];
-                    }, []);
-                }, true);
 
                 scope.$watch('formEntityFilters', function() {
                     // Remove GLOBAL type if used.
@@ -89,6 +66,10 @@ angular.module('zmon2App').directive('entityFilterContainer', ['$compile', '$log
                         scope.selectedType = 'GLOBAL';
                     }
                 }, true);
+
+                EntityFilterTypesService.getEntityTypeNames().then(function(names) {
+                    scope.availableEntityFilterTypes = scope.availableEntityFilterTypes.concat(names);
+                });
             }
         };
     }

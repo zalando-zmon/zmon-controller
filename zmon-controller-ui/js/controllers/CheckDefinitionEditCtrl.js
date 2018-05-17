@@ -21,10 +21,6 @@ angular.module('zmon2App').controller('CheckDefinitionEditCtrl', ['$scope', '$ro
         $scope.teams = user.teams !== "" ? user.teams.split(',') : [];
 
         $scope.entityFilter = {
-            "types":
-            [{
-                "type": "GLOBAL"
-            }],
             formEntityFilters: [],
             textEntityFilters: '[]'
         };
@@ -142,22 +138,6 @@ angular.module('zmon2App').controller('CheckDefinitionEditCtrl', ['$scope', '$ro
         };
 
         $scope.format = 'dd.MM.yyyy';
-
-        CommunicationService.getEntityProperties().then(
-            function (data) {
-                for (var p in data) {
-                    if (data.hasOwnProperty(p)) {
-                        var nextFilterType = {};
-                        nextFilterType.type = p;
-                        angular.extend(nextFilterType, data[p]);
-                        $scope.entityFilter.types.push(nextFilterType);
-                    }
-                }
-
-                // Sort entity filter types.
-                $scope.entityFilter.types = _.sortBy($scope.entityFilter.types, "type");
-            }
-        );
 
         $scope.$watch('entityFilter.formEntityFilters', function (newVal, oldVal) {
             if ($scope.entityFilterInputMethod === 'form') {

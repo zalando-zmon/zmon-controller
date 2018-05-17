@@ -160,18 +160,6 @@ var TrialRunCtrl = function ($scope, $interval, $timeout, timespanFilter, Commun
     trc.entityFilter = {};
     trc.entityExcludeFilter = {};
 
-    // Entity filter types initialized by default with GLOBAL (which is not provided by backend as separate type) and the rest comes from backend
-    trc.entityFilter.types = [
-        {
-            "type": "GLOBAL"
-        }
-    ];
-    trc.entityExcludeFilter.types = [
-        {
-            "type": "GLOBAL"
-        }
-    ];
-
     // User can define the entity filters either as plain JSON text or through a form which corresponds to an array of objects
     trc.entityFilter.formEntityFilters = [];
     trc.entityFilter.textEntityFilters = [];
@@ -215,28 +203,6 @@ var TrialRunCtrl = function ($scope, $interval, $timeout, timespanFilter, Commun
        parameters: [],
        interval: 120
     });
-
-    /** The getEntityProperties() returns an object with the data to populate the directives that represent the entity filter forms
-     * We transform it to be an array of objects, one object per entity filter type with keys: "type" + keys that correspond to each filter type
-     * E.g. [ {"type": "zomcat", "environment": "..", "project": "..", ...}, {"type": "host", "external_ip": "..", ...}, ... ]
-     */
-    CommunicationService.getEntityProperties().then(
-        function (data) {
-            for (var p in data) {
-                if (data.hasOwnProperty(p)) {
-                    var nextFilterType = {};
-                    nextFilterType.type = p;
-                    angular.extend(nextFilterType, data[p]);
-                    trc.entityFilter.types.push(nextFilterType);
-                    trc.entityExcludeFilter.types.push(nextFilterType);
-                }
-            }
-
-            // Sort entity filter types.
-            trc.entityFilter.types = _.sortBy(trc.entityFilter.types, "type");
-            trc.entityExcludeFilter.types = _.sortBy(trc.entityExcludeFilter.types, "type");
-        }
-    );
 
     // Deep watch
     $scope.$watch('alert', function () {

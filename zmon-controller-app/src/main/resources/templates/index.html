@@ -72,6 +72,7 @@
     <script th:src="${staticUrl} + '/lib/angular-ui-select/select.min.js?t=@buildTime@'" chartset="utf-8"></script>
     <script th:src="${staticUrl} + '/lib/highlightjs/highlight.pack.min.js?t=@buildTime@'" chartset="utf-8"></script>
     <script th:src="${staticUrl} + '/lib/angular-highlightjs/angular-highlightjs.min.js?t=@buildTime@'" chartset="utf-8"></script>
+    <script th:src="${staticUrl} + '/lib/ng-debounce/ng-debounce.js?t=@buildTime@'" chartset="utf-8"></script>
 
     <!-- Google Analytics -->
     <script charset='UTF-8' th:inline="javascript" th:if="${googleanalyticsEnabled}">
@@ -303,6 +304,7 @@
 <script th:src="${staticUrl} + '/js/directives/windowTitle.js?t=@buildTime@'"></script>
 <script th:src="${staticUrl} + '/js/services/MainAlertService.js?t=@buildTime@'"></script>
 <script th:src="${staticUrl} + '/js/services/CommunicationService.js?t=@buildTime@'"></script>
+<script th:src="${staticUrl} + '/js/services/EntityFilterTypesService.js?t=@buildTime@'"></script>
 <script th:src="${staticUrl} + '/js/services/FeedbackMessageService.js?t=@buildTime@'"></script>
 <script th:src="${staticUrl} + '/js/services/HttpResponseInterceptor.js?t=@buildTime@'"></script>
 <script th:src="${staticUrl} + '/js/services/UserInfoService.js?t=@buildTime@'"></script>

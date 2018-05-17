@@ -121,7 +121,7 @@
                             <code-editor-modal code="TrialRunCtrl.entityFilter.textEntityFilters" title="Included Entities" ng-show="TrialRunCtrl.entityFilterInputMethod === 'text'"></code-editor-modal>
                             <div id="inp-entities" name="entities" ng-show="TrialRunCtrl.entityFilterInputMethod == 'text'" class="code-editor" ng-model="TrialRunCtrl.entityFilter.textEntityFilters" json non-empty-json code-editor required></div>
                             <div ng-show="TrialRunCtrl.entityFilterInputMethod == 'form'">
-                                <entity-filter-container entity-filter-types="TrialRunCtrl.entityFilter.types" form-entity-filters="TrialRunCtrl.entityFilter.formEntityFilters" invalid-json="trForm.entities.$error['valid-json']" empty-json="trForm.entities.$error['non-empty-json']"></entity-filter-container>
+                                <entity-filter-container form-entity-filters="TrialRunCtrl.entityFilter.formEntityFilters" invalid-json="trForm.entities.$error['valid-json']" empty-json="trForm.entities.$error['non-empty-json']"></entity-filter-container>
                             </div>
                         </div>
                     </div>
@@ -138,7 +138,7 @@
                             <code-editor-modal code="TrialRunCtrl.entityExcludeFilter.textEntityFilters" title="Excluded Entities" ng-show="TrialRunCtrl.entityExcludeFilterInputMethod === 'text'"></code-editor-modal>
                             <div id="inp-entities-exclude" name="entitiesExclude" ng-show="TrialRunCtrl.entityExcludeFilterInputMethod == 'text'" class="code-editor" ng-model="TrialRunCtrl.entityExcludeFilter.textEntityFilters" json code-editor required></div>
                             <div ng-show="TrialRunCtrl.entityExcludeFilterInputMethod == 'form'">
-                                <entity-filter-container entity-filter-types="TrialRunCtrl.entityExcludeFilter.types" form-entity-filters="TrialRunCtrl.entityExcludeFilter.formEntityFilters" invalid-json="trForm.entitiesExclude.$error['valid-json']" empty-json="trForm.entitiesExclude.$error['non-empty-json']" exclude="true"></entity-filter-container>
+                                <entity-filter-container form-entity-filters="TrialRunCtrl.entityExcludeFilter.formEntityFilters" invalid-json="trForm.entitiesExclude.$error['valid-json']" empty-json="trForm.entitiesExclude.$error['non-empty-json']" exclude="true"></entity-filter-container>
                             </div>
                         </div>
                         <div class="col-sm-10 col-sm-offset-2" ng-if="matchedEntitiesCount !== null">

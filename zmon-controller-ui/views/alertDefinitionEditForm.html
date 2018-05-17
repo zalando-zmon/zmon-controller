@@ -165,7 +165,7 @@
             </div>
             <div id="inp-entities" name="entities" ng-show="entityFilterInputMethod == 'text'" class="code-editor" ng-model="entityFilter.textEntityFilters" ng-model-options="{ debounce: 200 }" ng-change="markAsOverwritten('entities')" json code-editor ng-required="!alertDefinition.template" ng-class="{'onTemplate':entityFilter.textEntityFilters === '' && alertDefinition.template}"></div>
             <div ng-show="entityFilterInputMethod == 'form'">
-                <entity-filter-container entity-filter-types="entityFilter.types" check-entities="checkDefinition.entities" invalid-json="adForm.entities.$error['valid-json']" form-entity-filters="entityFilter.formEntityFilters" ng-click="markAsOverwritten('entities')"></entity-filter-container>
+                <entity-filter-container check-entities="checkDefinition.entities" invalid-json="adForm.entities.$error['valid-json']" form-entity-filters="entityFilter.formEntityFilters" ng-click="markAsOverwritten('entities')"></entity-filter-container>
             </div>
         </div>
     </div>
@@ -187,7 +187,7 @@
             </div>
             <div id="inp-entities-exclude" name="entities_exclude" ng-show="entityExcludeFilterInputMethod == 'text'" class="code-editor" ng-model="entityExcludeFilter.textEntityFilters" ng-model-options="{ debounce: 200 }" ng-change="markAsOverwritten('entities_exclude')" json code-editor ng-required="!alertDefinition.template" ng-class="{'onTemplate':entityExcludeFilter.textEntityFilters === '' && alertDefinition.template}"></div>
             <div ng-show="entityExcludeFilterInputMethod == 'form'">
-                <entity-filter-container entity-filter-types="entityExcludeFilter.types" check-entities="checkDefinition.entities" invalid-json="adForm.entities_exclude.$error['valid-json']" form-entity-filters="entityExcludeFilter.formEntityFilters" ng-click="markAsOverwritten('entities_exclude')" exclude="true"></entity-filter-container>
+                <entity-filter-container check-entities="checkDefinition.entities" invalid-json="adForm.entities_exclude.$error['valid-json']" form-entity-filters="entityExcludeFilter.formEntityFilters" ng-click="markAsOverwritten('entities_exclude')" exclude="true"></entity-filter-container>
             </div>
         </div>
 

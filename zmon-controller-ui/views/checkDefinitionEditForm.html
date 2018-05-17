@@ -63,7 +63,7 @@
             <code-editor-modal code="entityFilter.textEntityFilters" title="Included Entities"></code-editor-modal>
             <div id="inp-entities" name="entities" ng-show="entityFilterInputMethod == 'text'" class="code-editor" ng-model="entityFilter.textEntityFilters" json non-empty-json code-editor required></div>
             <div ng-show="entityFilterInputMethod == 'form'">
-                <entity-filter-container entity-filter-types="entityFilter.types" form-entity-filters="entityFilter.formEntityFilters" invalid-json="cdForm.entities.$error['valid-json']" empty-json="cdForm.entities.$error['non-empty-json']"></entity-filter-container>
+                <entity-filter-container form-entity-filters="entityFilter.formEntityFilters" invalid-json="cdForm.entities.$error['valid-json']" empty-json="cdForm.entities.$error['non-empty-json']"></entity-filter-container>
             </div>
         </div>
         <div class="col-sm-10 col-sm-offset-2" ng-if="matchedEntitiesCount !== null">
