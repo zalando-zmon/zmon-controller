@@ -149,6 +149,10 @@
         firebase.initializeApp(config);
     </script>
 
+    <script th:inline="javascript" th:if="${consentEnabled}">
+        var consent = /*[[${consentConfig}]]*/ { title: "", content: "" };
+    </script>
+
     <link rel="manifest" href="/manifest.json">
 </head>
 
@@ -156,6 +160,7 @@
     <div class="loading-indicator" ng-show="IndexCtrl.getLoadingIndicatorState()">
         Loading...
     </div>
+    <consent-modal title="{{title}}" content="{{content}}" th:if="${consentEnabled}"></consent-modal>
     <div tv-logout-modal id="tvLogoutModal" tv-mode="tvMode" th:if="${logoutUrl}"></div>
     <nav class="navbar navbar-inverse" role="navigation">
         <div class="span12">
@@ -297,6 +302,7 @@
 <script th:src="${staticUrl} + '/js/directives/alertDeleteModal.js?t=@buildTime@'"></script>
 <script th:src="${staticUrl} + '/js/directives/codeEditorModal.js?t=@buildTime@'"></script>
 <script th:src="${staticUrl} + '/js/directives/tvLogoutModal.js?t=@buildTime@'"></script>
+<script th:src="${staticUrl} + '/js/directives/consentModal.js?t=@buildTime@'"></script>
 <script th:src="${staticUrl} + '/js/directives/globalSearch.js?t=@buildTime@'"></script>
 <script th:src="${staticUrl} + '/js/directives/keytrap.js?t=@buildTime@'"></script>
 <script th:src="${staticUrl} + '/js/directives/caret.js?t=@buildTime@'"></script>

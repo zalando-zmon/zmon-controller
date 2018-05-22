@@ -33,6 +33,8 @@ public class ControllerProperties {
 
     public boolean enableGoogleanalytics = false;
 
+    public boolean enableConsent = false;
+
     public List<String> workerQueueKeys = Arrays.asList("zmon:queue:default");
 
     public List<String> getWorkerQueueKeys() {
@@ -61,6 +63,14 @@ public class ControllerProperties {
 
     public void setEnableGoogleanalytics(boolean enableGoogleanalytics) {
         this.enableGoogleanalytics = enableGoogleanalytics;
+    }
+
+    public boolean isEnableConsent() {
+        return enableConsent;
+    }
+
+    public void setEnableConsent(boolean enableConsent) {
+        this.enableConsent = enableConsent;
     }
 
     public void setWorkerQueueKeys(List<String> workerQueueKeys) {

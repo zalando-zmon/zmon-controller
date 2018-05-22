@@ -36,6 +36,8 @@ public class IndexController {
     public static final String APPDYNAMICS_CONFIG = "appdynamicsConfig";
     public static final String GOOGLEANALYTICS_ENABLED = "googleanalyticsEnabled";
     public static final String GOOGLEANALYTICS_CONFIG = "googleanalyticsConfig";
+    public static final String CONSENT_ENABLED = "consentEnabled";
+    public static final String CONSENT_CONFIG = "consentConfig";
     public static final String EUM_TRACING_ENABLED = "eumTracingEnabled";
     public static final String EUM_ZMON_TRACING_CONFIG = "eumZmonTracingConfig";
     public static final String EUM_GRAFANA_TRACING_CONFIG = "eumGrafanaTracingConfig";
@@ -65,6 +67,9 @@ public class IndexController {
 
     @Autowired
     private GoogleanalyticsProperties googleanalyticsProperties;
+
+    @Autowired
+    private ConsentProperties consentProperties;
 
     @Autowired
     private EumTracingProperties eumTracingProperties;
@@ -103,6 +108,8 @@ public class IndexController {
         model.addAttribute(APPDYNAMICS_ENABLED, controllerProperties.enableAppdynamics);
         model.addAttribute(GOOGLEANALYTICS_CONFIG, googleanalyticsProperties);
         model.addAttribute(GOOGLEANALYTICS_ENABLED, controllerProperties.enableGoogleanalytics);
+        model.addAttribute(CONSENT_CONFIG, consentProperties);
+        model.addAttribute(CONSENT_ENABLED, controllerProperties.enableConsent);
 
         return "index";
     }
