@@ -149,7 +149,7 @@
         firebase.initializeApp(config);
     </script>
 
-    <script th:inline="javascript" th:if="${consentEnabled}">
+    <script th:inline="javascript">
         var consent = /*[[${consentConfig}]]*/ { title: "", content: "" };
     </script>
 
