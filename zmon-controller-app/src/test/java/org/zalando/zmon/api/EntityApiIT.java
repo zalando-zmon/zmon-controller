@@ -73,6 +73,21 @@ public class EntityApiIT {
         content = executor.execute(getEntity("testentity")).returnContent().asString();
         assertThat(content).contains("\"foo\": \"bar\"");
 
+        // Creating entity of "type" GLOBAL is not allowed
+        response = executor.execute(updateEntity(
+                "{\"id\":\"testentity\",\"type\":\"GLOBAL\",\"team\":\"team1\"}"));
+        assertThat(response.returnResponse().getStatusLine().getStatusCode()).isEqualTo(403);
+
+        // Anyone other tha administrators are not allowed to create entity of "type" zmon_config
+        response = executor.execute(updateEntity(
+                "{\"id\":\"testentity\",\"type\":\"zmon_config\",\"team\":\"team1\"}"));
+        assertThat(response.returnResponse().getStatusLine().getStatusCode()).isEqualTo(403);
+
+        // Entity input should be properly formatted
+        response = executor.execute(updateEntity(
+                "{\"id\"\"testentity\",\"type\":\"test\",\"team\":\"team1\"}"));
+        assertThat(response.returnResponse().getStatusLine().getStatusCode()).isEqualTo(400);
+
         // now set the special "team" property
         response = executor.execute(updateEntity(
                 "{\"id\":\"testentity\",\"type\":\"test\",\"team\":\"team1\"}"));
