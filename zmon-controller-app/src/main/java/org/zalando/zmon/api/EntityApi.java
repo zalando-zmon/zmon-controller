@@ -61,7 +61,7 @@ public class EntityApi {
 
         if (entity.has("type")){
             if ("global".equals(entity.get("type").textValue().toLowerCase())){
-                return new ResponseEntity<>("Creating entity with type - GLOBAL is not allowed.", HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>("Creating entity with type - GLOBAL is not allowed.", HttpStatus.FORBIDDEN);
             }
 
             if ("zmon_config".equals(entity.get("type").textValue())){
