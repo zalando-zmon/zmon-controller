@@ -57,12 +57,19 @@ public class EntityApi {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     @RequestMapping(value = {"/", ""}, method = {RequestMethod.PUT, RequestMethod.POST})
-    public void addEntity(@RequestBody JsonNode entity) {
-        if (entity.has("type") && "zmon_config".equals(entity.get("type").textValue())) {
-            if (!authService.hasAdminAuthority()) {
-                throw new AccessDeniedException("No ADMIN privileges present to update configuration.");
+    public ResponseEntity<String> addEntity(@RequestBody JsonNode entity) {
+
+        if (entity.has("type")){
+            if ("global".equals(entity.get("type").textValue().toLowerCase())){
+                return new ResponseEntity<>("Creating entity with type - GLOBAL is not allowed.", HttpStatus.FORBIDDEN);
             }
-            log.info("Modifying config entity: id={} user={}", entity.get("id"), authService.getUserName());
+
+            if ("zmon_config".equals(entity.get("type").textValue())){
+                if (!authService.hasAdminAuthority()) {
+                    throw new AccessDeniedException("No ADMIN privileges present to update configuration.");
+                }
+                log.info("Modifying config entity: id={} user={}", entity.get("id"), authService.getUserName());
+            }
         }
 
         try {
@@ -71,8 +78,10 @@ public class EntityApi {
             if (id == null) {
                 throw new AccessDeniedException("Access denied: entity was not updated");
             }
+            return new ResponseEntity<>(HttpStatus.OK);
         } catch (IOException ex) {
             log.error("Entity not serializable", ex);
+            return new ResponseEntity<>("Entity not serializable.", HttpStatus.BAD_REQUEST);
         }
     }
 
