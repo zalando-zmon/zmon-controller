@@ -40,7 +40,6 @@ public class EntityApiTest {
         when(entitySProcService.createOrUpdateEntity("{}", teams, "anonymousUser")).thenReturn("myid");
         MvcResult result = mockMvc.perform(post("/api/v1/entities").header("Content-Type", "application/json").content("{}")).andReturn();
         assertThat(result.getResponse().getStatus()).isEqualTo(200);
-        assertThat(result.getResponse().getContentAsString()).isEqualTo("Entity was successfully created with id: myid");
     }
 
     @Test

@@ -78,8 +78,7 @@ public class EntityApi {
             if (id == null) {
                 throw new AccessDeniedException("Access denied: entity was not updated");
             }
-            String responseMessage= "Entity was successfully created with id: "+id;
-            return new ResponseEntity<>(responseMessage,HttpStatus.OK);
+            return new ResponseEntity<>(HttpStatus.OK);
         } catch (IOException ex) {
             log.error("Entity not serializable", ex);
             return new ResponseEntity<>("Entity not serializable.", HttpStatus.BAD_REQUEST);
