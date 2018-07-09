@@ -85,12 +85,6 @@
     width: 8%;
 }
 
-.zmon-data-table th.last-run-col,
-.zmon-data-table th.active-since-col
-{
-    width: 200px;
-}
-
 .zmon-data-table th.captures-col
 {
     width: 10%;
@@ -139,6 +133,11 @@
 .zmon-data-table th.data-col
 {
     width: 20%;
+}
+
+.zmon-data-table th.value-col
+{
+    width: 30%;
 }
 
 .zmon-data-table th.modification-type-col
