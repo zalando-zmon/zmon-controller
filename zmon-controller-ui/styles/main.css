@@ -284,6 +284,11 @@ div.popover
     word-wrap: break-word;
 }
 
+.table th, .table td
+{
+    overflow: hidden;
+}
+
 /*  For check/alert defs tables;
     we only need to set the widths of the headers; rest of table will follow due to table-layout: fixed
     To be used with ".ellipsis" class in a table cell =>
