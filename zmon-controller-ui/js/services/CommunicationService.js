@@ -14,6 +14,26 @@ angular.module('zmon2App').factory('CommunicationService', ['$http', '$q', '$log
             PreconditionsService.isNotEmpty(httpMethod);
             PreconditionsService.isHTTPMethod(httpMethod);
             PreconditionsService.isNotEmpty(endpoint);
+
+           // Opentracing headers ingestion
+            if (opentracing) {
+                extraHeaders = extraHeaders ? extraHeaders : {};
+                var tracer = opentracing.globalTracer();
+                var span = tracer.startSpan('http_request');
+                span
+                  .setTag(opentracing.Tags.HTTP_URL, endpoint)
+                  .setTag(opentracing.Tags.HTTP_METHOD, httpMethod)
+                  .setTag(opentracing.Tags.SPAN_KIND, opentracing.Tags.SPAN_KIND_RPC_CLIENT)
+                  .setTag(opentracing.Tags.COMPONENT, 'zmon-controller-ui')
+                  .setTag('browser', true);
+
+                // Inject OT headers
+                var headersCarrier = {};
+                tracer.inject(span.context(), opentracing.FORMAT_TEXT_MAP, headersCarrier)
+                Object.assign(extraHeaders, headersCarrier)
+            }
+
+
             /**
              * Converts a simple object (flat key/value pairs; no nested objects|arrays) into a query string
              * Used only for GETs/DELETEs; POST payload is sent as is
@@ -53,8 +73,24 @@ angular.module('zmon2App').factory('CommunicationService', ['$http', '$q', '$log
                     response = result ? result : response;
                 }
                 deferred.resolve(response);
+
+                if (span) {
+                    span
+                        .setTag(opentracing.Tags.HTTP_STATUS_CODE, status)
+                        .finish()
+                }
+
+
             }).error(function(response, status, headers, config) {
                 deferred.reject(status);
+                if (span) {
+                    span
+                        .setTag(opentracing.Tags.HTTP_STATUS_CODE, status)
+                        .setTag(opentracing.Tags.ERROR, true)
+                        .log({'message': response})
+                        .finish()
+                }
+
             });
 
             return deferred.promise;
