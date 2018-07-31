@@ -77,6 +77,7 @@ angular.module('zmon2App').factory('CommunicationService', ['$http', '$q', '$log
                 if (span) {
                     span
                         .setTag(opentracing.Tags.HTTP_STATUS_CODE, status)
+                        .log({'ui-state': window.location.hash})
                         .finish()
                 }
 
