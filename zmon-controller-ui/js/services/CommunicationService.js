@@ -16,7 +16,7 @@ angular.module('zmon2App').factory('CommunicationService', ['$http', '$q', '$log
             PreconditionsService.isNotEmpty(endpoint);
 
            // Opentracing headers ingestion
-            if (opentracing) {
+            if (window.opentracing) {
                 extraHeaders = extraHeaders ? extraHeaders : {};
                 var tracer = opentracing.globalTracer();
                 var span = tracer.startSpan('http_request');
@@ -25,7 +25,8 @@ angular.module('zmon2App').factory('CommunicationService', ['$http', '$q', '$log
                   .setTag(opentracing.Tags.HTTP_METHOD, httpMethod)
                   .setTag(opentracing.Tags.SPAN_KIND, opentracing.Tags.SPAN_KIND_RPC_CLIENT)
                   .setTag(opentracing.Tags.COMPONENT, 'zmon-controller-ui')
-                  .setTag('browser', true);
+                  .setTag('browser', true)
+                  .log({'ui-state': window.location.hash});
 
                 // Inject OT headers
                 var headersCarrier = {};
@@ -77,7 +78,6 @@ angular.module('zmon2App').factory('CommunicationService', ['$http', '$q', '$log
                 if (span) {
                     span
                         .setTag(opentracing.Tags.HTTP_STATUS_CODE, status)
-                        .log({'ui-state': window.location.hash})
                         .finish()
                 }
 
