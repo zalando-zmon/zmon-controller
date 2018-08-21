@@ -16,7 +16,7 @@ angular.module('zmon2App').factory('CommunicationService', ['$http', '$q', '$log
             PreconditionsService.isNotEmpty(endpoint);
 
            // Opentracing headers ingestion
-            if (window.opentracing) {
+            if (window.opentracing && window.eumTracingConfig && !window.eumTracingConfig.xhr_instrumentation) {
                 extraHeaders = extraHeaders ? extraHeaders : {};
                 var tracer = opentracing.globalTracer();
                 var span = tracer.startSpan('http_request');
