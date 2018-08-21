@@ -428,7 +428,7 @@
 
     <script th:inline="javascript" th:if="${eumTracingEnabled}">
 
-        if (eumTracingConfig && !eumTracingConfig.xhr_instrumentation) {
+        if (eumTracingConfig && !eumTracingConfig.config.xhr_instrumentation) {
             // HTTP Interception to add span instrumentation
             (function(open) {
                 XMLHttpRequest.prototype.open = function(method, url, async, user, pass) {
