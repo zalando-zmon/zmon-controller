@@ -68,6 +68,10 @@
                         <i class="fa fa-fw fa-sort-asc sort-arrow" ng-show="sortType === 'responsible_team' && sortOrder"></i>
                         <i class="fa fa-fw fa-sort-desc sort-arrow" ng-show="sortType === 'responsibl_team' && !sortOrder"></i>
                     </th>
+                    <th class="tags-col" ng-click="sortType = 'tags'; sortOrder = !sortOrder">Tags
+                        <i class="fa fa-fw fa-sort-asc sort-arrow" ng-show="sortType === 'tags' && sortOrder"></i>
+                        <i class="fa fa-fw fa-sort-desc sort-arrow" ng-show="sortType === 'tags' && !sortOrder"></i>
+                    </th>
                     <th class="priority-col" ng-click="sortType = 'priority'; sortOrder = !sortOrder">Priority
                         <i class="fa fa-fw fa-sort-asc sort-arrow" ng-show="sortType === 'priority' && sortOrder"></i>
                         <i class="fa fa-fw fa-sort-desc sort-arrow" ng-show="sortType === 'priority' && !sortOrder"></i>
@@ -90,6 +94,7 @@
                     <td><a href="#/check-definitions/view/{{def.check_definition_id}}">{{def.check_definition_id}}</a></td>
                     <td>{{def.team}}</td>
                     <td>{{def.responsible_team}}</td>
+                    <td>{{def.tags.toString()}}</td>
                     <td class="text-center"><priority prio="def.priority"></priority></td>
                     <td><status status="def.status"></status><i id="star" class='fa fa-star' ng-show="def.star" title="new alert"></i></td>
                 </tr>

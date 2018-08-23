@@ -51,6 +51,10 @@
                     <i class="fa fa-fw fa-sort-asc sort-arrow" ng-show="sortType === 'last_modified' && sortOrder"></i>
                     <i class="fa fa-fw fa-sort-desc sort-arrow" ng-show="sortType === 'last_modified' && !sortOrder"></i>
                 </th>
+                <th class="tags-col" ng-click="sortType = 'tags'; sortOrder = !sortOrder">Tags
+                    <i class="fa fa-fw fa-sort-asc sort-arrow" ng-show="sortType === 'tags' && sortOrder"></i>
+                    <i class="fa fa-fw fa-sort-desc sort-arrow" ng-show="sortType === 'tags' && !sortOrder"></i>
+                </th>
                 <th ng-click="sortType = 'edit_option'; sortOrder = !sortOrder">Edit Mode
                     <i class="fa fa-fw fa-sort-asc sort-arrow" ng-show="sortType === 'edit_option' && sortOrder"></i>
                     <i class="fa fa-fw fa-sort-desc sort-arrow" ng-show="sortType === 'edit_option' && !sortOrder"></i>
@@ -89,6 +93,7 @@
                 <td>{{def.created_by}}</td>
                 <td>{{def.last_modified_by}}</td>
                 <td>{{def.last_modified | date:'medium'}}</td>
+                <td>{{def.tags.toString()}}</td>
                 <td>{{def.edit_option}}</td>
                 <td>{{def.alert_teams}}</td>
             </tr>
