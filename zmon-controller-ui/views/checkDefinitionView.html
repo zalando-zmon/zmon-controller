@@ -98,6 +98,10 @@
                     <i class="fa fa-fw fa-sort-asc sort-arrow" ng-show="sortType === 'responsible_team' && sortOrder"></i>
                     <i class="fa fa-fw fa-sort-desc sort-arrow" ng-show="sortType === 'responsible_team' && !sortOrder"></i>
                 </th>
+                <th class="tags-col" ng-click="sortType = 'tags'; sortOrder = !sortOrder">Tags
+                    <i class="fa fa-fw fa-sort-asc sort-arrow" ng-show="sortType === 'tags' && sortOrder"></i>
+                    <i class="fa fa-fw fa-sort-desc sort-arrow" ng-show="sortType === 'tags' && !sortOrder"></i>
+                </th>
                 <th ng-click="sortType = 'priority'; sortOrder = !sortOrder">Priority
                     <i class="fa fa-fw fa-sort-asc sort-arrow" ng-show="sortType === 'priority' && sortOrder"></i>
                     <i class="fa fa-fw fa-sort-desc sort-arrow" ng-show="sortType === 'priority' && !sortOrder"></i>
@@ -121,6 +125,7 @@
                 <td><span class="text-muted" ng-show="def.entities.length === 0">(no entity filter)</span><div ng-bind-html="def.entities | entities"></div></td>
                 <td>{{def.team}}</td>
                 <td>{{def.responsible_team}}</td>
+                <td>{{def.tags.toString()}}</td>
                 <td class="text-center"><priority prio="def.priority" /></td>
                 <td class="text-center"><status status="def.status"/></td>
             </tr>
