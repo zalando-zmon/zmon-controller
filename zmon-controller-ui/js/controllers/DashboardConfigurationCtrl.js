@@ -118,7 +118,7 @@ angular.module('zmon2App').controller('DashboardConfigurationCtrl', ['$scope', '
         // Get all available tags
         CommunicationService.getAllTags().then(
             function(data) {
-                $scope.allTags = data;
+             $scope.allTags = _.map(data, 'text');
             }
         );
 
