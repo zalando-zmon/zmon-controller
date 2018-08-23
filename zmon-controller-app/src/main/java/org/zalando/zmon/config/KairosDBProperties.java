@@ -130,7 +130,15 @@ public class KairosDBProperties {
     }
 
     public CloseableHttpAsyncClient getHttpAsyncClient() {
-        RequestConfig config = RequestConfig.custom().setSocketTimeout(getSocketTimeout()).setConnectTimeout(getConnectTimeout()).build();
-        return HttpAsyncClients.custom().setMaxConnPerRoute(maxConnectionsPerRoute).setMaxConnTotal(maxConnectionsTotal).setDefaultRequestConfig(config).build();
+        RequestConfig config = RequestConfig.custom()
+                .setSocketTimeout(getSocketTimeout())
+                .setConnectTimeout(getConnectTimeout())
+                .build();
+        return HttpAsyncClients.custom()
+                .setMaxConnPerRoute(maxConnectionsPerRoute)
+                .setMaxConnTotal(maxConnectionsTotal)
+                .setDefaultRequestConfig(config)
+                .useSystemProperties()
+                .build();
     }
 }
