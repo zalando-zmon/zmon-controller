@@ -16,10 +16,11 @@
 
 <form class="form-horizontal" role="form" name="ddForm" novalidate>
 
-    <div class="form-group" ng-class="{'has-error': ddForm.submitted && ddForm.name.$error.required}">
+    <div class="form-group" ng-class="{'has-error': ddForm.submitted && ddForm.name.$error.required || ddForm.name.$error.unique }">
         <label for="inp-dashboard" class="col-sm-2 control-label">Dashboard name</label>
         <div class="col-sm-10">
-            <input type="text" class="form-control" id="inp-dashboard" name="name" placeholder="Dashboard name (will be shown on dashboards)" ng-model="dashboardName" ng-focus="ddForm.submitted && ddForm.name.$error.required" required>
+            <input type="text" class="form-control" id="inp-dashboard" name="name" placeholder="Dashboard name (will be shown on dashboards)" ng-model="dashboardName" ng-focus="ddForm.submitted && ddForm.name.$error.required" ng-blur="onNameBlur($event)" required>
+            <span class="existing-name" ng-show="ddForm.name.$error.unique" class="error"> Dashboard with same name already exist. Please choose another name.</span>
         </div>
     </div>
 

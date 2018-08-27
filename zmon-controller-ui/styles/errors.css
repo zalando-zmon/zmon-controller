@@ -50,3 +50,10 @@
 {
     color: blue;
 }
+
+.existing-name{
+    position: absolute;
+    top: 32px;
+    left: 25px;
+    color:  #d40018;
+}
