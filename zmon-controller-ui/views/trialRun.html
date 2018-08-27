@@ -28,21 +28,21 @@
                 <form id="alert-form" class="form-horizontal" role="form" name="trForm" novalidate>
 
                     <div class="form-group" ng-class="{'has-error': trForm.submitted && trForm.name.$error.required}">
-                        <label for="inp-name" class="col-sm-2 control-label">Name</label>
+                        <label for="inp-name" class="col-sm-2 control-label">Name *</label>
                         <div class="col-sm-10">
                             <input type="text" class="form-control" id="inp-name" name="name" placeholder="Alert name (will be shown on dashboard)" ng-model="alert.name" required ng-focus="trForm.submitted && trForm.name.$error.required">
                         </div>
                     </div>
 
                     <div class="form-group" ng-class="{'has-error': trForm.submitted && trForm.description.$error.required}">
-                        <label for="inp-description" class="col-sm-2 control-label">Description</label>
+                        <label for="inp-description" class="col-sm-2 control-label">Description *</label>
                         <div class="col-sm-10">
                             <textarea class="form-control" id="inp-description" name="description" placeholder="Short descriptive text about the check" ng-model="alert.description" ng-focus="trForm.submitted && trForm.description.$error.required" ng-required="!onRun"></textarea>
                         </div>
                     </div>
 
                     <div class="form-group" ng-class="{'has-error': trForm.submitted && trForm.owningTeam.$error.required}">
-                        <label for="inp-owning-team" class="col-sm-2 control-label">Owner Team</label>
+                        <label for="inp-owning-team" class="col-sm-2 control-label">Owner Team *</label>
                         <div class="col-sm-10">
                             <ui-select name="owningTeam" ng-model="alert.owning_team" theme="select2" ng-focus="trForm.submitted && trForm.owningTeam.$error.required" required>
                                 <ui-select-match placeholder="Select or search a team in the list...">{{$select.selected}}</ui-select-match>
@@ -54,7 +54,7 @@
                     </div>
 
                     <div class="form-group" ng-class="{'has-error': trForm.submitted && trForm.check_command.$error.required}">
-                        <label for="inp-command" class="col-sm-2 control-label"><a href="https://docs.zmon.io/en/latest/user/check-commands.html" rel="help" target="docs">Check Command</a></label>
+                        <label for="inp-command" class="col-sm-2 control-label"><a href="https://docs.zmon.io/en/latest/user/check-commands.html" rel="help" target="docs">Check Command *</a></label>
                         <div class="col-sm-10">
                             <code-editor-modal code="alert.check_command" title="Check Command" language="python"></code-editor-modal>
                             <div id="inp-command" name="check_command" class="code-editor" ng-model="alert.check_command" code-language="python" code-editor required ng-focus="trForm.submitted && trForm.check_command.$error.required"></div>
@@ -83,10 +83,10 @@
                                 <div class="row parameter-row" ng-repeat="param in TrialRunCtrl.parameters" ng-form="pForm">
 
                                     <div class="col-sm-2 name-col">
-                                        <input type="text" class="form-control parameter" name="name" placeholder="Name" ng-model="param.name" ng-class="{'has-error': pForm.name.$error.required || !TrialRunCtrl.paramNameIsValid(param.name)}" model-change-blur required/>
+                                        <input type="text" class="form-control parameter" name="name" placeholder="Name *" ng-model="param.name" ng-class="{'has-error': pForm.name.$error.required || !TrialRunCtrl.paramNameIsValid(param.name)}" model-change-blur required/>
                                     </div>
                                     <div class="col-sm-2">
-                                        <input ng-if="param.type === undefined || param.type === 'str' || param.type === 'int' || param.type === 'float'" type="text" class="form-control parameter" name="value" placeholder="Value" ng-model="param.value" ng-class="{'has-error':pForm.value.$error.required}" required/>
+                                        <input ng-if="param.type === undefined || param.type === 'str' || param.type === 'int' || param.type === 'float'" type="text" class="form-control parameter" name="value" placeholder="Value *" ng-model="param.value" ng-class="{'has-error':pForm.value.$error.required}" required/>
                                         <select ng-if="param.type === 'bool'" class="form-control parameter" name="value" ng-model="param.value" ng-options="item.value as item.label for item in TrialRunCtrl.parameterTypeBooleanOptions"></select>
                                         <div ng-if="param.type === 'date'">
                                             <input type="text" class="form-control" uib-datepicker-popup="{{TrialRunCtrl.format}}" ng-model="param.value" name="value" datepicker-options="TrialRunCtrl.dateOptions" close-text="Close" ng-class="{'has-error':pForm.value.$error.required}" required />

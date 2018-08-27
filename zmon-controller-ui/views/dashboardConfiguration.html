@@ -49,7 +49,7 @@
         <label for="inp-tags" class="col-sm-2 control-label">Filter Tags</label>
         <div class="col-sm-10">
             <ui-select name="tags" multiple tagging tagging-label="(custom 'new' tag)" ng-model="dashboard.tags" theme="bootstrap" sortable="true" title="Tags" ng-required="teamsJson === '[]'">
-                <ui-select-match placeholder="Add tags...">{{$item}}</ui-select-match>
+                <ui-select-match placeholder="Add atleast one tag or alert team to save...">{{$item}}</ui-select-match>
                 <ui-select-choices repeat="tag in allTags| filter: $select.search">{{tag}}</ui-select-choices>
             </ui-select>
         </div>
