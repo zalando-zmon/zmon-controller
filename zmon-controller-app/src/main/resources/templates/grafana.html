@@ -429,12 +429,20 @@
     <script th:inline="javascript" th:if="${eumTracingEnabled}">
 
         if (eumTracingConfig && !eumTracingConfig.config.xhr_instrumentation) {
-            // HTTP Interception to add span instrumentation
+            (function(send) {
+                XMLHttpRequest.prototype.send = function(data) {
+                    let headers = XMLHttpRequest.prototype._opentracingHeaders;
+                    for (let key in headers) {
+                        this.setRequestHeader(key, headers[key]);
+                    }
+                    send.call(this, data);
+                }
+            })(XMLHttpRequest.prototype.send);
+
             (function(open) {
                 XMLHttpRequest.prototype.open = function(method, url, async, user, pass) {
                     var tracer = null;
                     var span = null;
-                    var extraHeaders = {};
 
                     if (url.indexOf('/api/v0/reports') === -1) {
                         this.addEventListener("readystatechange", function() {
@@ -445,8 +453,6 @@
                             }
                         }, false);
                     }
-
-                    open.call(this, method, url, async, user, pass);
 
                     // Opentracing headers ingestion
                     if (window.opentracing && url.indexOf('/api/v0/reports') === -1) {
@@ -459,12 +465,13 @@
                           .setTag(opentracing.Tags.COMPONENT, 'zmon-controller-grafana-ui')
                           .setTag('browser', true)
                           .log({'ui-state': window.location.pathname});
-
-                        // Inject OT headers
-                        var headersCarrier = {};
-                        tracer.inject(span.context(), opentracing.FORMAT_TEXT_MAP, headersCarrier)
-                        Object.assign(extraHeaders, headersCarrier)
                     }
+
+                    // Inject OT headers
+                    XMLHttpRequest.prototype._opentracingHeaders = {};
+                    tracer.inject(span.context(), opentracing.FORMAT_TEXT_MAP, XMLHttpRequest.prototype._opentracingHeaders)
+
+                    open.call(this, method, url, async, user, pass);
                 };
             })(XMLHttpRequest.prototype.open);
         }
