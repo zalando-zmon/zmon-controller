@@ -444,6 +444,8 @@
                     var tracer = null;
                     var span = null;
 
+                    XMLHttpRequest.prototype._opentracingHeaders = {};
+
                     if (url.indexOf('/api/v0/reports') === -1) {
                         this.addEventListener("readystatechange", function() {
                             if (this.readyState == 4 && span) {
@@ -452,24 +454,25 @@
                                     .finish()
                             }
                         }, false);
-                    }
 
-                    // Opentracing headers ingestion
-                    if (window.opentracing && url.indexOf('/api/v0/reports') === -1) {
-                        tracer = opentracing.globalTracer();
-                        span = tracer.startSpan('http_request');
-                        span
-                          .setTag(opentracing.Tags.HTTP_URL, url)
-                          .setTag(opentracing.Tags.HTTP_METHOD, method)
-                          .setTag(opentracing.Tags.SPAN_KIND, opentracing.Tags.SPAN_KIND_RPC_CLIENT)
-                          .setTag(opentracing.Tags.COMPONENT, 'zmon-controller-grafana-ui')
-                          .setTag('browser', true)
-                          .log({'ui-state': window.location.pathname});
+                        // Opentracing headers ingestion
+                        if (window.opentracing) {
+                            tracer = opentracing.globalTracer();
+                            span = tracer.startSpan('http_request');
+                            span
+                              .setTag(opentracing.Tags.HTTP_URL, url)
+                              .setTag(opentracing.Tags.HTTP_METHOD, method)
+                              .setTag(opentracing.Tags.SPAN_KIND, opentracing.Tags.SPAN_KIND_RPC_CLIENT)
+                              .setTag(opentracing.Tags.COMPONENT, 'zmon-controller-grafana-ui')
+                              .setTag('browser', true)
+                              .log({'ui-state': window.location.pathname});
 
-                        // Store OT headers to inject before send()
-                        var headers = {};
-                        tracer.inject(span.context(), opentracing.FORMAT_TEXT_MAP, headers);
-                        XMLHttpRequest.prototype._opentracingHeaders = headers;
+                            // Store OT headers to inject before send()
+                            var headers = {};
+                            tracer.inject(span.context(), opentracing.FORMAT_TEXT_MAP, headers);
+                            XMLHttpRequest.prototype._opentracingHeaders = headers;
+                        }
+
                     }
 
                     open.call(this, method, url, async, user, pass);
