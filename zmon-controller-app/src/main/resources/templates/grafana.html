@@ -429,8 +429,8 @@
     <script th:inline="javascript" th:if="${eumTracingEnabled}">
 
         if (eumTracingConfig && !eumTracingConfig.config.xhr_instrumentation) {
-            (function(send) {
-                XMLHttpRequest.prototype.send = function(data) {
+            (function(send){
+                XMLHttpRequest.prototype.send = function (data) {
                     let headers = XMLHttpRequest.prototype._opentracingHeaders;
                     for (let key in headers) {
                         this.setRequestHeader(key, headers[key]);
@@ -465,11 +465,12 @@
                           .setTag(opentracing.Tags.COMPONENT, 'zmon-controller-grafana-ui')
                           .setTag('browser', true)
                           .log({'ui-state': window.location.pathname});
-                    }
 
-                    // Inject OT headers
-                    XMLHttpRequest.prototype._opentracingHeaders = {};
-                    tracer.inject(span.context(), opentracing.FORMAT_TEXT_MAP, XMLHttpRequest.prototype._opentracingHeaders)
+                        // Store OT headers to inject before send()
+                        var headers = {};
+                        tracer.inject(span.context(), opentracing.FORMAT_TEXT_MAP, headers);
+                        XMLHttpRequest.prototype._opentracingHeaders = headers;
+                    }
 
                     open.call(this, method, url, async, user, pass);
                 };
