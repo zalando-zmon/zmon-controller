@@ -17,21 +17,21 @@
     </div>
 
     <div class="form-group" ng-class="{'has-error': cdForm.submitted && cdForm.name.$error.required}">
-        <label for="inp-name" class="col-sm-2 control-label">Name</label>
+        <label for="inp-name" class="col-sm-2 control-label">Name *</label>
         <div class="col-sm-10">
             <input type="text" class="form-control" id="inp-name" name="name" placeholder="Check name" ng-model="check.name" required  ng-focus="cdForm.submitted && cdForm.name.$error.required">
         </div>
     </div>
 
     <div class="form-group" ng-class="{'has-error': cdForm.submitted && cdForm.description.$error.required}">
-        <label for="inp-description" class="col-sm-2 control-label">Description</label>
+        <label for="inp-description" class="col-sm-2 control-label">Description *</label>
         <div class="col-sm-10">
             <textarea class="form-control" id="inp-description" name="description" placeholder="Short descriptive text about the check" ng-model="check.description" ng-focus="cdForm.submitted && cdForm.description.$error.required" required></textarea>
         </div>
     </div>
 
     <div class="form-group" ng-class="{'has-error': cdForm.submitted && cdForm.team.$error.required}">
-        <label for="inp-owning-team" class="col-sm-2 control-label">Owner Team</label>
+        <label for="inp-owning-team" class="col-sm-2 control-label">Owner Team *</label>
         <div class="col-sm-10">
             <ui-select name="owningTeam" ng-model="check.owning_team" theme="select2" ng-focus="cdForm.submitted && cdForm.owningTeam.$error.required" required>
                 <ui-select-match placeholder="Select or search a team in the list...">{{$select.selected}}</ui-select-match>
@@ -43,7 +43,7 @@
     </div>
 
     <div class="form-group" ng-class="{'has-error': cdForm.submitted && cdForm.check_command.$error.required}" ng-focus="cdForm.submitted">
-        <label for="inp-command" class="col-sm-2 control-label"><a href="https://docs.zmon.io/en/latest/user/check-commands.html" rel="help" target="docs">Check Command</a></label>
+        <label for="inp-command" class="col-sm-2 control-label"><a href="https://docs.zmon.io/en/latest/user/check-commands.html" rel="help" target="docs">Check Command *</a></label>
         <div class="col-sm-10">
             <code-editor-modal code="check.command" title="Check Command" language="python"></code-editor-modal>
             <div id="inp-command" name="check_command" class="code-editor" ng-model="check.command" code-language="python" code-editor required ng-focus="cdForm.submitted && cdForm.check_command.$error.required"></div>
