@@ -429,12 +429,23 @@
     <script th:inline="javascript" th:if="${eumTracingEnabled}">
 
         if (eumTracingConfig && !eumTracingConfig.config.xhr_instrumentation) {
-            // HTTP Interception to add span instrumentation
+            (function(send){
+                XMLHttpRequest.prototype.send = function (data) {
+                    let headers = XMLHttpRequest.prototype._opentracingHeaders;
+                    for (let key in headers) {
+                        this.setRequestHeader(key, headers[key]);
+                    }
+                    send.call(this, data);
+                }
+            })(XMLHttpRequest.prototype.send);
+
             (function(open) {
                 XMLHttpRequest.prototype.open = function(method, url, async, user, pass) {
+
                     var tracer = null;
                     var span = null;
-                    var extraHeaders = {};
+
+                    XMLHttpRequest.prototype._opentracingHeaders = {};
 
                     if (url.indexOf('/api/v0/reports') === -1) {
                         this.addEventListener("readystatechange", function() {
@@ -444,27 +455,28 @@
                                     .finish()
                             }
                         }, false);
+
+                        // Opentracing headers ingestion
+                        if (window.opentracing) {
+                            tracer = opentracing.globalTracer();
+                            span = tracer.startSpan('http_request');
+                            span
+                              .setTag(opentracing.Tags.HTTP_URL, url)
+                              .setTag(opentracing.Tags.HTTP_METHOD, method)
+                              .setTag(opentracing.Tags.SPAN_KIND, opentracing.Tags.SPAN_KIND_RPC_CLIENT)
+                              .setTag(opentracing.Tags.COMPONENT, 'zmon-controller-grafana-ui')
+                              .setTag('browser', true)
+                              .log({'ui-state': window.location.pathname});
+
+                            // Store OT headers to inject before send()
+                            var headers = {};
+                            tracer.inject(span.context(), opentracing.FORMAT_TEXT_MAP, headers);
+                            XMLHttpRequest.prototype._opentracingHeaders = headers;
+                        }
+
                     }
 
                     open.call(this, method, url, async, user, pass);
-
-                    // Opentracing headers ingestion
-                    if (window.opentracing && url.indexOf('/api/v0/reports') === -1) {
-                        tracer = opentracing.globalTracer();
-                        span = tracer.startSpan('http_request');
-                        span
-                          .setTag(opentracing.Tags.HTTP_URL, url)
-                          .setTag(opentracing.Tags.HTTP_METHOD, method)
-                          .setTag(opentracing.Tags.SPAN_KIND, opentracing.Tags.SPAN_KIND_RPC_CLIENT)
-                          .setTag(opentracing.Tags.COMPONENT, 'zmon-controller-grafana-ui')
-                          .setTag('browser', true)
-                          .log({'ui-state': window.location.pathname});
-
-                        // Inject OT headers
-                        var headersCarrier = {};
-                        tracer.inject(span.context(), opentracing.FORMAT_TEXT_MAP, headersCarrier)
-                        Object.assign(extraHeaders, headersCarrier)
-                    }
                 };
             })(XMLHttpRequest.prototype.open);
         }
