@@ -441,6 +441,7 @@
 
             (function(open) {
                 XMLHttpRequest.prototype.open = function(method, url, async, user, pass) {
+
                     var tracer = null;
                     var span = null;
 
