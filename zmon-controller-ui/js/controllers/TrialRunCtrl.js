@@ -342,20 +342,30 @@ var TrialRunCtrl = function ($scope, $interval, $timeout, timespanFilter, Commun
             }
 
             var obj = {};
-            obj.name = $scope.alert.name;
+            obj.name = $scope.alert.name.trim();
             obj.entities = $scope.alert.entities;
             obj.command = $scope.alert.check_command;
             obj.interval = $scope.alert.interval;
             obj.description = $scope.alert.description;
-            obj.owning_team = $scope.alert.owning_team;
+            obj.owning_team = $scope.alert.owning_team.trim();
             obj.technical_details = $scope.alert.technical_details;
             obj.status = "ACTIVE";
 
-            CommunicationService.updateCheckDefinition(obj).then(function(data) {
-                FeedbackMessageService.showSuccessMessage('Saved successfully; redirecting...', 500, function() {
-                    $location.path('/check-definitions/view/' + data.id);
-                });
-            });
+            MainAlertService.isValidCheckName(obj).then((valid)=>{
+                if(valid){
+                    CommunicationService.updateCheckDefinition(obj).then(function(data) {
+                        FeedbackMessageService.showSuccessMessage('Saved successfully; redirecting...', 500, function() {
+                            $location.path('/check-definitions/view/' + data.id);
+                        });
+                    });
+                }else{
+                    $("#alertModal .modal-body").html(`A check with name <b>${obj.name}</b> already exists for team <b>${obj.owning_team}</b>. Please select a different name to save.`)
+                    $("#alertModal").modal();  
+                   
+                }
+            })
+           
+            
         } else {
             $scope.trForm.submitted = true;
             $scope.focusedElement = null;

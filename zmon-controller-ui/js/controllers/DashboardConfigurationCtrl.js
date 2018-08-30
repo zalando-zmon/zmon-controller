@@ -41,16 +41,7 @@ angular.module('zmon2App').controller('DashboardConfigurationCtrl', ['$scope', '
             widget_configuration: [],
             alert_teams: null
         };
-        $scope.getAllDashboardNames = [];
-
-        $scope.onInit = function(){
-            CommunicationService.getAllDashboards().then(
-                function(data) {
-                    $scope.getAllDashboardNames = data.map(d=>d.name);
-                }
-            );
-        };
-        $scope.onInit();
+        
         $scope.loadDashboard = function(id) {
             CommunicationService.getDashboard(id).then(function(data) {
 
@@ -92,50 +83,37 @@ angular.module('zmon2App').controller('DashboardConfigurationCtrl', ['$scope', '
             $scope.ddForm.submitted = false;
             $location.path('/dashboards');
         };
-        $scope.onNameBlur = function(event){
-            alert("1")
-            $scope.isValidName(event.target.value);
-        };
-        $scope.isValidName = function(name){
-            if($scope.mode == "edit" && $scope.dashboard.name.trim() == name.trim()) {
-                var validName = true;
-            }else{
-                var validName  = $scope.getAllDashboardNames.indexOf(name.trim()) > -1 ? false:true;
-            
-            }
-            $scope.ddForm.name.$error.unique = !validName;
-           return validName;
-        };
+
         $scope.save = function() {
-            if ($scope.ddForm.$valid && !$scope.ddForm.name.$error.unique) {
+            if ($scope.ddForm.$valid) {
                 try {
-                    CommunicationService.getAllDashboards().then(
-                        function(data) {
-                                $scope.getAllDashboardNames = data.map(d=>d.name);
-                                if(!$scope.isValidName($scope.dashboardName)){                                  
-                                    return;
-                                }
-                        
-                                $scope.dashboard.widget_configuration = angular.toJson($scope.widgets);
-                                $scope.dashboard.alert_teams = JSON.parse($scope.teamsJson);
-                                $scope.dashboard.name = $scope.dashboardName;
-                                $scope.dashboard.view_mode = $scope.dashboardViewMode;
-                                $scope.dashboard.edit_option = $scope.dashboardEditOption;
+                        $scope.dashboard.widget_configuration = angular.toJson($scope.widgets);
+                        $scope.dashboard.alert_teams = JSON.parse($scope.teamsJson);
+                        $scope.dashboard.name = $scope.dashboardName;
+                        $scope.dashboard.view_mode = $scope.dashboardViewMode;
+                        $scope.dashboard.edit_option = $scope.dashboardEditOption;
 
-                                if ($scope.dashboard.alert_teams.length === 0) {
-                                    delete $scope.dashboard.alert_teams;
-                                }
+                        if ($scope.dashboard.alert_teams.length === 0) {
+                            delete $scope.dashboard.alert_teams;
+                        }
 
-                                if ($scope.mode == 'clone') {
-                                    delete $scope.dashboard.id;
-                                }
-                                
+                        if ($scope.mode == 'clone') {
+                            delete $scope.dashboard.id;
+                        }                       
 
+                        MainAlertService.isValidDashboardName($scope.dashboard).then((valid)=>{
+                            if(valid){                          
                                 CommunicationService.updateDashboard($scope.dashboard).then(function(data) {
                                     $scope.debug = data;
                                     $window.history.back();
                                 });
-                    });
+                            }else{
+                                $("#alertModal .modal-body").html(`A dashboard with name <b>${$scope.dashboard.name}</b> already exists. Please select a different name to save.`)
+                                $("#alertModal").modal();                          
+                            }
+                        });
+                        
+                
                 } catch (e) {
                     $scope.invalidFormat = true;
                     FeedbackMessageService.showErrorMessage('JSON format is incorrect' + e);

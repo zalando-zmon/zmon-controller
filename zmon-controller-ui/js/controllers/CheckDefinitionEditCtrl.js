@@ -61,11 +61,20 @@ angular.module('zmon2App').controller('CheckDefinitionEditCtrl', ['$scope', '$ro
                         $scope.check.entities = JSON.parse($scope.entityFilter.textEntityFilters);
                     }
 
-                    CommunicationService.updateCheckDefinition($scope.check).then(function(data) {
-                        FeedbackMessageService.showSuccessMessage('Saved successfully; redirecting...', 500, function() {
-                            $location.path('/check-definitions/view/' + data.id);
-                        });
-                    });
+
+                    MainAlertService.isValidCheckName($scope.check).then((valid)=>{
+                        if(valid){
+                            CommunicationService.updateCheckDefinition($scope.check).then(function(data) {
+                                FeedbackMessageService.showSuccessMessage('Saved successfully; redirecting...', 500, function() {
+                                    $location.path('/check-definitions/view/' + data.id);
+                                });
+                            });
+                        }else{
+                            $("#alertModal .modal-body").html(`A check with name <b>${$scope.check.name}</b> already exists for team <b>${$scope.check.owning_team}</b>. Please select a different name to save.`)
+                            $("#alertModal").modal();  
+                           
+                        }
+                    })      
                 } catch (ex) {
                     $scope.invalidFormat = true;
                     return FeedbackMessageService.showErrorMessage('JSON format is incorrect' + ex);
