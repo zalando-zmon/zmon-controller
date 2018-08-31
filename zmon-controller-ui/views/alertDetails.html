@@ -180,12 +180,12 @@
                                     <a href="#/entities?ef=id:{{::entityInstance.entity}}" title="{{::entityInstance.entity}}">{{::entityInstance.entity | entityName}}</a></td>
                                 <td>
                                     <div title="{{entityInstance.result.td * 1000|timespan}} {{entityInstance.result.worker}}">
-                                        <span ng-class="{'alert-is-too-old': timestampIsOld(entityInstance)}">{{entityInstance.result.ts|epochToUTCDate}} ({{entityInstance.result.ts | timeago}} ago)</span>
+                                        <span ng-class="{'alert-is-too-old': timestampIsOld(entityInstance)}"> {{entityInstance.result.ts | epochToDate | UTC | date:'medium'}} ({{entityInstance.result.ts | timeago}} ago)</span>
                                     </div>
                                 </td>
                                 <td>
                                     <div ng-if="entityInstance.result.start_time">
-                                        {{entityInstance.result.start_time | epochToUTCDate}}
+                                        {{entityInstance.result.start_time | epochToDate | UTC | date:'medium'}}
                                         ({{entityInstance.result.start_time | timeago}} ago)
                                     </div>
                                 </td>

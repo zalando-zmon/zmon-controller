@@ -35,8 +35,8 @@
         <tr class="warning" ng-repeat="downtimeInstance in downtimes | filter:alertDetailsSearch.str | orderBy:sortTypeDowntimes:sortOrderDowntimes | limitTo:limit">
             <td ng-if="userInfo['delete-downtime']" class="text-center"><input type="checkbox" ng-checked="downtimesSelected.indexOf(downtimeInstance.id) !== -1" ng-click="toggleSingleDeleteDowntime(downtimeInstance.id)"></td>
             <td>{{::downtimeInstance.entity}}</td>
-            <td>{{::downtimeInstance.start_time | epochToUTCDate}}</td>
-            <td>{{::downtimeInstance.end_time | epochToUTCDate}}</td>
+            <td>{{::downtimeInstance.start_time | epochToDate | UTC | date:'medium'}},</td>
+            <td>{{::downtimeInstance.end_time | epochToDate | UTC | date:'medium'}}</td>
             <td class="ellipsis" expand>{{::downtimeInstance.comment}}</td>
             <td>{{::downtimeInstance.created_by}}</td>
         </tr>
