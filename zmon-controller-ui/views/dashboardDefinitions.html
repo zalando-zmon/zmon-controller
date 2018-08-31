@@ -93,7 +93,9 @@
                 <td>{{def.created_by}}</td>
                 <td>{{def.last_modified_by}}</td>
                 <td>{{def.last_modified | date:'medium'}}</td>
-                <td>{{def.tags.join( ', ')}}</td>
+                <td>
+                    <div class="ellipsis cursor" tooltip-popup-delay='20' uib-tooltip="{{def.tags.join( ', ')}}">{{def.tags.join( ', ')}}</div>
+                </td>
                 <td>{{def.edit_option}}</td>
                 <td>{{def.alert_teams}}</td>
             </tr>

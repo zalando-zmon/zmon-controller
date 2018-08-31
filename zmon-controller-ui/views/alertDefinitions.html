@@ -94,7 +94,9 @@
                     <td><a href="#/check-definitions/view/{{def.check_definition_id}}">{{def.check_definition_id}}</a></td>
                     <td>{{def.team}}</td>
                     <td>{{def.responsible_team}}</td>
-                    <td>{{def.tags.join( ', ')}}</td>
+                    <td>
+                        <div class="ellipsis cursor" tooltip-popup-delay='20' uib-tooltip="{{def.tags.join( ', ')}}">{{def.tags.join( ', ')}}</div>
+                    </td>
                     <td class="text-center"><priority prio="def.priority"></priority></td>
                     <td><status status="def.status"></status><i id="star" class='fa fa-star' ng-show="def.star" title="new alert"></i></td>
                 </tr>
