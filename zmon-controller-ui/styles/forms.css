@@ -47,7 +47,7 @@
 
 .zmon-data-table th.actions-col
 {
-    width: 10%;
+    width: 5%;
     text-align: justify;
 }
 
@@ -92,7 +92,7 @@
 
 .zmon-data-table th.entities-col
 {
-    width: 16%;
+    width: 12%;
 }
 
 .zmon-data-table th.interval-col
@@ -114,10 +114,15 @@
 {
     width: 12%;
 }
+.zmon-data-table th.tags-col
+{
+    width: 12%;
+}
+
 
 .zmon-data-table th.responsible-team-col
 {
-    width: 14%;
+    width: 12%;
 }
 
 .zmon-data-table th.priority-col
