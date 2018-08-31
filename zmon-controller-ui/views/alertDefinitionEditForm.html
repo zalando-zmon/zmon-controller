@@ -26,7 +26,7 @@
     </div>
 
     <div class="form-group" ng-class="{'has-error': adForm.submitted && adForm.name.$error.required}">
-        <label for="inp-name" class="col-sm-2 control-label">Name</label>
+        <label for="inp-name" class="col-sm-2 control-label">Name *</label>
         <div class="col-sm-10">
             <div class="inheritance-overwrite">
                 <a ng-show="mode === 'inherit' || alertDefinition.parent_id" ng-class="{'semi-transparent':isInheriting('name'), 'clickable':!isInheriting('name')}" ng-attr-title="{{isInheriting('name') ? 'Name is being inherited from parent Alert' : 'Click to inherit value from parent Alert'}}" ng-click="inheritProperty('name')"><i class="fa fa-sitemap"></i></a>
@@ -36,7 +36,7 @@
     </div>
 
     <div class="form-group inp-description" ng-class="{'has-error': adForm.submitted && adForm.description.$error.required}">
-        <label for="inp-description" class="col-sm-2 control-label">Description</label>
+        <label for="inp-description" class="col-sm-2 control-label">Description *</label>
         <div class="col-sm-10">
             <div class="inheritance-overwrite">
                 <a ng-show="mode === 'inherit' || alertDefinition.parent_id" ng-class="{'semi-transparent':isInheriting('description'), 'clickable':!isInheriting('description')}" ng-attr-title="{{isInheriting('description') ? 'Description is being inherited from parent Alert' : 'Click to inherit value from parent Alert'}}" ng-click="inheritProperty('description')"><i class="fa fa-sitemap"></i></a>
@@ -72,7 +72,7 @@
     </div>
 
     <div class="form-group" ng-class="{'has-error': adForm.submitted && adForm.priority.$error.required}">
-        <label for="inp-priority" class="col-sm-2 control-label">Priority</label>
+        <label for="inp-priority" class="col-sm-2 control-label">Priority *</label>
         <div class="col-sm-10 inp-priority">
             <div class="inheritance-overwrite">
                 <a ng-show="mode === 'inherit' || alertDefinition.parent_id" ng-class="{'semi-transparent':isInheriting('priority'), 'clickable':!isInheriting('priority')}" ng-attr-title="{{isInheriting('priority') ? 'Priority is being inherited from parent Alert' : 'Click to inherit value from parent Alert'}}" ng-click="inheritProperty('priority')"><i class="fa fa-sitemap"></i></a>
@@ -91,7 +91,7 @@
     </div>
 
     <div class="form-group" ng-class="{'has-error': adForm.submitted && adForm.condition.$error.required}" ng-focus="adForm.submitted">
-        <label for="inp-condition" class="col-sm-2 control-label"><a href="https://docs.zmon.io/en/latest/user/alert-definitions.html#condition" rel="help" target="docs">Alert Condition</a></label>
+        <label for="inp-condition" class="col-sm-2 control-label"><a href="https://docs.zmon.io/en/latest/user/alert-definitions.html#condition" rel="help" target="docs">Alert Condition *</a></label>
         <div class="col-sm-10">
             <code-editor-modal code="alertDefinition.condition" title="Alert Condition" language="python"></code-editor-modal>
             <div class="inheritance-overwrite">
@@ -118,10 +118,10 @@
                     </div>
 
                     <div class="col-sm-2 name-col">
-                        <input type="text" class="form-control parameter" name="name" placeholder="Name" ng-model="param.name" ng-model-options="{ debounce: 200 }" ng-class="{'has-error': pForm.name.$error.required || !paramNameIsValid(param.name)}" ng-disabled="paramIsInParent(param.name)" ng-change="markAsOverwrittenParam(param.name)" model-change-blur required/>
+                        <input type="text" class="form-control parameter" name="name" placeholder="Name *" ng-model="param.name" ng-model-options="{ debounce: 200 }" ng-class="{'has-error': pForm.name.$error.required || !paramNameIsValid(param.name)}" ng-disabled="paramIsInParent(param.name)" ng-change="markAsOverwrittenParam(param.name)" model-change-blur required/>
                     </div>
                     <div class="col-sm-2">
-                        <input ng-if="param.type === undefined || param.type === 'str' || param.type === 'int' || param.type === 'float'" type="text" class="form-control parameter" name="value" placeholder="Value" ng-model="param.value" ng-model-options="{ debounce: 200 }" ng-class="{'has-error':pForm.value.$error.required}" ng-change="markAsOverwrittenParam(param.name)" required/>
+                        <input ng-if="param.type === undefined || param.type === 'str' || param.type === 'int' || param.type === 'float'" type="text" class="form-control parameter" name="value" placeholder="Value *" ng-model="param.value" ng-model-options="{ debounce: 200 }" ng-class="{'has-error':pForm.value.$error.required}" ng-change="markAsOverwrittenParam(param.name)" required/>
                         <select ng-if="param.type === 'bool'" class="form-control parameter" name="value" ng-model="param.value" ng-model-options="{ debounce: 200 }" ng-options="item.value as item.label for item in parameterTypeBooleanOptions" ng-change="markAsOverwrittenParam(param.name)"></select>
                     </div>
                     <div class="col-sm-4">
@@ -225,7 +225,7 @@
     </div>
 
     <div class="form-group" ng-class="{'has-error': adForm.submitted && adForm.team.$error.required}">
-        <label for="inp-team" class="col-sm-2 control-label">Team</label>
+        <label for="inp-team" class="col-sm-2 control-label">Team *</label>
         <div class="col-sm-10">
             <ui-select name="team" ng-model="alertDefinition.team" theme="select2" on-select="markAsOverwritten('team')" required>
                 <ui-select-match placeholder="Select or search a team in the list...">{{$select.selected}}</ui-select-match>
@@ -238,7 +238,7 @@
     </div>
 
     <div class="form-group" ng-class="{'has-error': adForm.submitted && adForm.responsible.$error.required}">
-        <label for="inp-responsible" class="col-sm-2 control-label">Responsible Team</label>
+        <label for="inp-responsible" class="col-sm-2 control-label">Responsible Team *</label>
         <div class="col-sm-10">
             <ui-select name="responsible" ng-model="alertDefinition.responsible_team" theme="select2" required on-select="markAsOverwritten('responsible_team')">
                 <ui-select-match placeholder="Select or search a team in the list...">{{$select.selected}}</ui-select-match>

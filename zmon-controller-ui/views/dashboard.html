@@ -69,9 +69,11 @@
         <div ng-class="compact ? 'col-md-10' : 'col-md-7'">
             <h1>
               <span class="fa fa-exclamation-triangle" title="Check execution for all entities that are in ALERT state now resulted in an exception!" ng-show="{{alertInstance.inException}}"></span>
-              <span class="fa fa-bell clickable" title="This alert has a notification" ng-show="!alertInstance.notifications_ack" ng-if="alertInstance.alert_definition.notifications.length" notification-modal alert="alertInstance"></span>
-              <span class="fa fa-bell-o" title="This alert notification has been taken care of!" ng-show="alertInstance.notifications_ack" ng-if="alertInstance.alert_definition.notifications.length"></span>
-              <span class="fa fa-check alert-notification-checked" title="This alert notification has been taken care of!" ng-show="alertInstance.notifications_ack" ng-if="alertInstance.alert_definition.notifications.length"></span>
+              <span class="notification-wrapper">
+                <span class="fa fa-bell clickable" title="This alert has a notification" ng-show="!alertInstance.notifications_ack" ng-if="alertInstance.alert_definition.notifications.length" notification-modal alert="alertInstance"></span>
+                <span class="fa fa-bell-o" title="This alert notification has been taken care of!" ng-show="alertInstance.notifications_ack" ng-if="alertInstance.alert_definition.notifications.length"></span>
+                <span class="fa fa-check alert-notification-checked" title="This alert notification has been taken care of!" ng-show="alertInstance.notifications_ack" ng-if="alertInstance.alert_definition.notifications.length"></span>
+              </span>
               <a ng-href="#/alert-details/{{alertInstance.alert_definition.id}}">{{alertInstance.message}}</a> <span ng-if="alertInstance.numEntitiesNotInDowntimeNow > 1">({{alertInstance.numEntitiesNotInDowntimeNow}})</span>
             </h1>
             <span ng-show="!compact" ng-repeat="entityInstance in truncateNonDowntimeEntities(alertInstance.entities)">

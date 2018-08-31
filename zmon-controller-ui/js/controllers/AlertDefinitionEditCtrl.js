@@ -248,6 +248,7 @@ angular.module('zmon2App').controller('AlertDefinitionEditCtrl', ['$scope', '$ro
             result.responsible_team = $scope.alertDefinition.responsible_team;
             result.status = $scope.alertDefinition.status;
             result.check_definition_id = $scope.alertDefinition.check_definition_id;
+            result.condition = $scope.alertDefinition.condition; 
             return result;
         };
 

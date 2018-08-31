@@ -896,7 +896,10 @@ below styles are active for a widget */
 .zmon-alert .alert-notification-checked
 {
     position: absolute;
-    left: 26px;
-    top: 2px;
+    left: 5px;
+    top: 10px;
     font-size: 30px;
+}
+.zmon-alert .notification-wrapper{
+    position:relative;
 }
