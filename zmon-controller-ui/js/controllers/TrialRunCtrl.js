@@ -1,4 +1,4 @@
-var TrialRunCtrl = function ($scope, $interval, $timeout, timespanFilter, CommunicationService, MainAlertService, FeedbackMessageService, UserInfoService, $window, $location) {
+var TrialRunCtrl = function ($scope, $interval, $timeout, timespanFilter, CommunicationService, MainAlertService, FeedbackMessageService, UserInfoService, $window, $location,$routeParams) {
 
     $scope.$parent.activePage = 'trial-run';
     MainAlertService.removeDataRefresh();
@@ -291,14 +291,32 @@ var TrialRunCtrl = function ($scope, $interval, $timeout, timespanFilter, Commun
        $scope.alert.parameters = formParametersObject($scope.TrialRunCtrl.parameters);
    }, true);
 
-    // Load values from querystrings.
-    if ($location.search().json) {
-        _.extend($scope.alert, JSON.parse($location.search().json));
-        if ($scope.alert.owning_team && trc.teams.indexOf($scope.alert.owning_team) === -1) {
-            trc.teams.push($scope.alert.owning_team);
-        }
+   if ($location.search().json) {
+    var urlJson =JSON.parse($location.search().json)
     }
 
+     if($routeParams.checkId){
+        $scope.checkId = $routeParams.checkId
+            CommunicationService.getCheckDefinition($scope.checkId).then(
+                function(response) {
+                    $scope.alert = response;
+                    $scope.alert.check_command = $scope.alert.command;
+
+                    if (urlJson) {
+                        _.extend($scope.alert, urlJson);
+                    }
+                    if ($scope.alert.owning_team && trc.teams.indexOf($scope.alert.owning_team) === -1) {
+                        trc.teams.push($scope.alert.owning_team);
+                    }
+
+                   
+                    }
+            );
+        
+    }else if (urlJson) {
+        _.extend($scope.alert, urlJson);
+    }
+    
     // One-time set of the entityFilter.formEntityFilters and entityFilter.textEntityFilters now that we have alert definition
     trc.entityFilter.formEntityFilters = $scope.alert.entities;
     trc.entityFilter.textEntityFilters = JSON.stringify($scope.alert.entities, null, trc.INDENT);
@@ -309,11 +327,12 @@ var TrialRunCtrl = function ($scope, $interval, $timeout, timespanFilter, Commun
     var tr = new TrialRun(trc);
 
     // save as new check
-    trc.save = function () {
+    trc.save = function (isNew) {
 
         if ($scope.trForm.$valid) {
-            try {
+            if(isNew){
 
+            try {
                 if (trc.entityFilter.textEntityFilters === '') {
                     delete $scope.alert.entities;
                 } else {
@@ -340,17 +359,21 @@ var TrialRunCtrl = function ($scope, $interval, $timeout, timespanFilter, Commun
                 trc.invalidFormat = true;
                 return FeedbackMessageService.showErrorMessage('JSON format is incorrect' + ex);
             }
-
-            var obj = {};
-            obj.name = $scope.alert.name.trim();
-            obj.entities = $scope.alert.entities;
-            obj.command = $scope.alert.check_command;
-            obj.interval = $scope.alert.interval;
-            obj.description = $scope.alert.description;
-            obj.owning_team = $scope.alert.owning_team.trim();
-            obj.technical_details = $scope.alert.technical_details;
-            obj.status = "ACTIVE";
-
+            
+           
+                var obj = {};
+                obj.name = $scope.alert.name.trim();
+                obj.entities = $scope.alert.entities;
+                obj.command = $scope.alert.check_command;
+                obj.interval = $scope.alert.interval;
+                obj.description = $scope.alert.description;
+                obj.owning_team = $scope.alert.owning_team.trim();
+                obj.technical_details = $scope.alert.technical_details;
+                obj.status = "ACTIVE";
+            }else{
+                var obj = $scope.alert;
+              
+            }
             MainAlertService.isValidCheckName(obj).then((valid)=>{
                 if(valid){
                     CommunicationService.updateCheckDefinition(obj).then(function(data) {
@@ -371,6 +394,11 @@ var TrialRunCtrl = function ($scope, $interval, $timeout, timespanFilter, Commun
             $scope.focusedElement = null;
         }
     };
+
+    // To update existing check
+    trc.updateCheck = function(){
+
+    }
 
     // Download implementation
     trc.download = function ($event) {
@@ -555,4 +583,4 @@ var TrialRunCtrl = function ($scope, $interval, $timeout, timespanFilter, Commun
 };
 
 
-angular.module('zmon2App').controller('TrialRunCtrl', ['$scope', '$interval', '$timeout', 'timespanFilter', 'CommunicationService', 'MainAlertService', 'FeedbackMessageService', 'UserInfoService', '$window', '$location', TrialRunCtrl]);
+angular.module('zmon2App').controller('TrialRunCtrl', ['$scope', '$interval', '$timeout', 'timespanFilter', 'CommunicationService', 'MainAlertService', 'FeedbackMessageService', 'UserInfoService', '$window', '$location','$routeParams', TrialRunCtrl]);
