@@ -135,6 +135,24 @@
         Loading...
     </div>
     <consent-modal title="{{title}}" content="{{content}}" th:if="${consentEnabled}"></consent-modal>
+    <div class="modal fade" id="alertModal" role="dialog">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title">Unique name required to save</h4>
+                </div>
+                <div class="modal-body">
+                  <p>Some text in the modal.</p>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-primary" data-dismiss="modal">Ok</button>
+                </div>
+              </div>
+              
+            </div>
+          </div>
+        </div>
+    
     <div tv-logout-modal id="tvLogoutModal" tv-mode="tvMode" th:if="${logoutUrl}"></div>
     <nav class="navbar navbar-inverse" role="navigation">
         <div class="span12">

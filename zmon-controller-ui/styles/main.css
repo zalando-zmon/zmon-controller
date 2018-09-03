@@ -8,7 +8,12 @@ html, body
     float: left;
     width: 75%;
 }
+#alertModal .modal-footer{
+    border: none;
+    padding: 10px;
+    margin: 0;
 
+}
 .navbar
 {
     z-index: 5;

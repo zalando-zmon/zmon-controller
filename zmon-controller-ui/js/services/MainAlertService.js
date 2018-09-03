@@ -295,6 +295,55 @@ angular.module('zmon2App').factory('MainAlertService', ['$http', '$q', '$log', '
             delete this.dataRefreshIntervalPromises[uniqId];
         };
 
+        service.isValidCheckName = function(obj){          
+            return new Promise(function(resolve, reject) {
+                CommunicationService.getCheckDefinitions(obj.owning_team.trim()).then(function(items) {
+                    var existingWithSameName = items.filter(item=>{
+                        return item.name.trim().toLowerCase() == obj.name.trim().toLowerCase() && obj.owning_team.trim().toLowerCase() == item.owning_team.trim().toLowerCase() && obj.id != item.id;
+                    });
+    
+                    if(existingWithSameName.length > 0){
+                      resolve(false)
+                    }else{
+                      resolve(true)
+                    }
+                });
+              });
+            
+        };
+        service.isValidAlertName = function(obj){          
+            return new Promise(function(resolve, reject) {
+                CommunicationService.getAlertDefinitions(obj.team.trim()).then(function(items) {
+                    var existingWithSameName = items.filter(item=>{
+                        return item.name.trim().toLowerCase() == obj.name.trim().toLowerCase() && obj.team.trim().toLowerCase() == item.team.trim().toLowerCase() && obj.id != item.id;
+                    });
+    
+                    if(existingWithSameName.length > 0){
+                       resolve(false)
+                    }else{
+                        resolve(true)
+                    }
+                });
+              });
+            
+        };
+        service.isValidDashboardName = function(obj){          
+            return new Promise(function(resolve, reject) {
+                CommunicationService.getAllDashboards().then(function(items) {
+                    var existingWithSameName = items.filter(item=>{
+                        return item.name.trim().toLowerCase() == obj.name.trim().toLowerCase() && obj.id != item.id; 
+                    });
+    
+                    if(existingWithSameName.length > 0){
+                       resolve(false)
+                    }else{
+                        resolve(true)
+                    }
+                });
+              });
+            
+        };
+
         return service;
     }
 ]);
