@@ -1378,3 +1378,6 @@ body.entities-page .type-col {
 {
     color: #ff4000;
 }
+.cursor{
+    cursor: pointer;
+}
