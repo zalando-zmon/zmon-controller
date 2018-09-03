@@ -192,23 +192,31 @@ angular.module('zmon2App').controller('AlertDefinitionEditCtrl', ['$scope', '$ro
                         $scope.alertDefinition.parameters = $scope.formParametersObject();
                     }
 
-                    var alert = $scope.alertDefinition;
+                    var alertObj = $scope.alertDefinition;
 
                     // Set period to empty string, in case it wasn't defined and its not being inherited.
-                    if (typeof alert.period === 'undefined') {
-                        alert.period = "";
+                    if (typeof alertObj.period === 'undefined') {
+                        alertObj.period = "";
                     }
 
                     // In case of an inherited alert, only send diff
                     if ($scope.alertDefinition.parent_id || $scope.mode === 'inherit') {
-                        alert = $scope.getInheritanceDiff();
+                        alertObj = $scope.getInheritanceDiff();
                     }
-
-                    CommunicationService.updateAlertDefinition(alert).then(function(data) {
-                        FeedbackMessageService.showSuccessMessage('Saved successfully; redirecting...', 500, function() {
-                            $location.path('/alert-details/' + data.id);
-                        });
+                    MainAlertService.isValidAlertName(alertObj).then((valid)=>{
+                        if(valid){                          
+                            CommunicationService.updateAlertDefinition(alertObj).then(function(data) {
+                                FeedbackMessageService.showSuccessMessage('Saved successfully; redirecting...', 500, function() {
+                                    $location.path('/alert-details/' + data.id);
+                                });
+                            });
+                        }else{
+                            $("#alertModal .modal-body").html(`An alert with name <b>${alertObj.name}</b> already exists for team <b>${alertObj.team}</b>. Please select a different name to save.`)
+                            $("#alertModal").modal();  
+                         }
                     });
+
+                    
                 } catch (ex) {
                     $scope.invalidFormat = true;
                     return FeedbackMessageService.showErrorMessage('JSON format is incorrect' + ex);

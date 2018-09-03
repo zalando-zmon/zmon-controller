@@ -93,6 +93,11 @@ angular.module('zmon2App', [
                     controller: 'TrialRunCtrl',
                     reloadOnSearch: false
                 })
+                .when('/trial-run/:checkId', {
+                    templateUrl: 'views/trialRun.html',
+                    controller: 'TrialRunCtrl',
+                    reloadOnSearch: false
+                })
                 .when('/changes', {
                     templateUrl: 'views/changes.html',
                     controller: 'ChangesCtrl'

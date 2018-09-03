@@ -41,7 +41,7 @@ angular.module('zmon2App').controller('DashboardConfigurationCtrl', ['$scope', '
             widget_configuration: [],
             alert_teams: null
         };
-
+        
         $scope.loadDashboard = function(id) {
             CommunicationService.getDashboard(id).then(function(data) {
 
@@ -63,6 +63,7 @@ angular.module('zmon2App').controller('DashboardConfigurationCtrl', ['$scope', '
 
                 $scope.dashboard = data;
             });
+            
         };
 
         if ($routeParams.dashboardId !== null && $routeParams.dashboardId > 0) {
@@ -86,24 +87,33 @@ angular.module('zmon2App').controller('DashboardConfigurationCtrl', ['$scope', '
         $scope.save = function() {
             if ($scope.ddForm.$valid) {
                 try {
-                    $scope.dashboard.widget_configuration = angular.toJson($scope.widgets);
-                    $scope.dashboard.alert_teams = JSON.parse($scope.teamsJson);
-                    $scope.dashboard.name = $scope.dashboardName;
-                    $scope.dashboard.view_mode = $scope.dashboardViewMode;
-                    $scope.dashboard.edit_option = $scope.dashboardEditOption;
+                        $scope.dashboard.widget_configuration = angular.toJson($scope.widgets);
+                        $scope.dashboard.alert_teams = JSON.parse($scope.teamsJson);
+                        $scope.dashboard.name = $scope.dashboardName;
+                        $scope.dashboard.view_mode = $scope.dashboardViewMode;
+                        $scope.dashboard.edit_option = $scope.dashboardEditOption;
 
-                    if ($scope.dashboard.alert_teams.length === 0) {
-                        delete $scope.dashboard.alert_teams;
-                    }
+                        if ($scope.dashboard.alert_teams.length === 0) {
+                            delete $scope.dashboard.alert_teams;
+                        }
 
-                    if ($scope.mode == 'clone') {
-                        delete $scope.dashboard.id;
-                    }
+                        if ($scope.mode == 'clone') {
+                            delete $scope.dashboard.id;
+                        }                       
 
-                    CommunicationService.updateDashboard($scope.dashboard).then(function(data) {
-                        $scope.debug = data;
-                        $window.history.back();
-                    });
+                        MainAlertService.isValidDashboardName($scope.dashboard).then((valid)=>{
+                            if(valid){                          
+                                CommunicationService.updateDashboard($scope.dashboard).then(function(data) {
+                                    $scope.debug = data;
+                                    $window.history.back();
+                                });
+                            }else{
+                                $("#alertModal .modal-body").html(`A dashboard with name <b>${$scope.dashboard.name}</b> already exists. Please select a different name to save.`)
+                                $("#alertModal").modal();                          
+                            }
+                        });
+                        
+                
                 } catch (e) {
                     $scope.invalidFormat = true;
                     FeedbackMessageService.showErrorMessage('JSON format is incorrect' + e);

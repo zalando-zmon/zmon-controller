@@ -47,7 +47,7 @@
                     <i class="fa fa-fw fa-sort-asc sort-arrow" ng-show="sortType === 'last_modified_by' && sortOrder"></i>
                     <i class="fa fa-fw fa-sort-desc sort-arrow" ng-show="sortType === 'last_modified_by' && !sortOrder"></i>
                 </th>
-                <th ng-click="sortType = 'last_modified'; sortOrder = !sortOrder">Last Modified
+                <th ng-click="sortType = 'last_modified'; sortOrder = !sortOrder">Last Modified (UTC)
                     <i class="fa fa-fw fa-sort-asc sort-arrow" ng-show="sortType === 'last_modified' && sortOrder"></i>
                     <i class="fa fa-fw fa-sort-desc sort-arrow" ng-show="sortType === 'last_modified' && !sortOrder"></i>
                 </th>
@@ -92,7 +92,7 @@
                 </td>
                 <td>{{def.created_by}}</td>
                 <td>{{def.last_modified_by}}</td>
-                <td>{{def.last_modified | date:'medium'}}</td>
+                <td>{{def.last_modified | UTC | date:'medium'}}</td>
                 <td>
                     <div class="ellipsis cursor" tooltip-popup-delay='20' uib-tooltip="{{def.tags.join( ', ')}}">{{def.tags.join( ', ')}}</div>
                 </td>
