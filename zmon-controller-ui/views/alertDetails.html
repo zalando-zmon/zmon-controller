@@ -135,11 +135,11 @@
                                     <i class="fa fa-fw fa-sort-asc sort-arrow" ng-show="sortType === 'entity' && sortOrder"></i>
                                     <i class="fa fa-fw fa-sort-desc sort-arrow" ng-show="sortType === 'entity' && !sortOrder"></i>
                                 </th>
-                                <th class="last-run-col" ng-click="sortType = 'result.ts'; sortOrder = !sortOrder">Last run
+                                <th class="last-run-col" ng-click="sortType = 'result.ts'; sortOrder = !sortOrder">Last run (UTC)
                                     <i class="fa fa-fw fa-sort-asc sort-arrow" ng-show="sortType === 'result.ts' && sortOrder"></i>
                                     <i class="fa fa-fw fa-sort-desc sort-arrow" ng-show="sortType === 'result.ts' && !sortOrder"></i>
                                 </th>
-                                <th class="active-since-col" ng-click="sortType = 'result.start_time'; sortOrder = !sortOrder">Active since
+                                <th class="active-since-col" ng-click="sortType = 'result.start_time'; sortOrder = !sortOrder">Active since (UTC)
                                     <i class="fa fa-fw fa-sort-asc sort-arrow" ng-show="sortType === 'result.start_time' && sortOrder"></i>
                                     <i class="fa fa-fw fa-sort-desc sort-arrow" ng-show="sortType === 'result.start_time' && !sortOrder"></i>
                                 </th>
@@ -182,12 +182,12 @@
                                     <a href="#/entities?ef=id:{{::entityInstance.entity}}" title="{{::entityInstance.entity}}">{{::entityInstance.entity | entityName}}</a></td>
                                 <td>
                                     <div title="{{entityInstance.result.td * 1000|timespan}} {{entityInstance.result.worker}}">
-                                        <span ng-class="{'alert-is-too-old': timestampIsOld(entityInstance)}">{{entityInstance.result.ts|datetime}} ({{entityInstance.result.ts | timeago}} ago)</span>
+                                        <span ng-class="{'alert-is-too-old': timestampIsOld(entityInstance)}"> {{entityInstance.result.ts | epochToDate | UTC | date:'medium'}} ({{entityInstance.result.ts | timeago}} ago)</span>
                                     </div>
                                 </td>
                                 <td>
                                     <div ng-if="entityInstance.result.start_time">
-                                        {{entityInstance.result.start_time | datetime}}
+                                        {{entityInstance.result.start_time | epochToDate | UTC | date:'medium'}}
                                         ({{entityInstance.result.start_time | timeago}} ago)
                                     </div>
                                 </td>
