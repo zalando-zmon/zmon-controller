@@ -907,7 +907,7 @@ below styles are active for a widget */
     width:5%!important;
 }
 .dashboard-table .name-col{
-    width:7%!important;
+    width:10%!important;
 }
 .dashboard-table .createdby-col{
     width:5%!important;
@@ -916,7 +916,7 @@ below styles are active for a widget */
     width:5%!important;
 }
 .dashboard-table .modifieddate-col{
-    width:6%!important;
+    width:7%!important;
 }
 .dashboard-table .tags-col{
     width:7%!important;
