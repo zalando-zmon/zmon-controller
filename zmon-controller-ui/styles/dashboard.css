@@ -933,6 +933,10 @@ below styles are active for a widget */
     {
         width: 10%!important;
     }
+    .dashboard-table th.name-col
+    {
+        width: 20%!important;
+    }
     .zmon-data-table td.actions-col div
     {
         padding-left: 0px; 
