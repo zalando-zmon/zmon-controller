@@ -67,11 +67,11 @@ angular.module('zmon2App').controller('AlertDetailsCtrl', [ '$location', '$route
             // owning_team: $scope.check.owning_team,
             // check_command: $scope.check.command,
              alert_condition: $scope.alert.condition,
-            // entities: $scope.entitiesFilter,
-            // entities_exclude: $scope.entitiesExcludeFilter,
-            // interval: $scope.check.interval,
-            // period: $scope.alert.period,
-            // parameters: $scope.alert.parameters || []
+            entities: $scope.entitiesFilter,
+            entities_exclude: $scope.entitiesExcludeFilter,
+            interval: $scope.check.interval,
+            period: $scope.alert.period,
+            parameters: $scope.alert.parameters || []
         };
         $scope.alertJson = window.encodeURIComponent(JSON.stringify(params));
     };
