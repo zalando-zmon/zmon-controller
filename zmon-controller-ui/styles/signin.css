@@ -37,6 +37,21 @@ div.demo:after {
 {
     padding-top: 20px;
 }
+.signin-error-message-div {
+  font-size: 16px;
+  position: fixed;
+  bottom: 50px;
+  width: 100%;
+  left: 0;
+  text-align: center
+}
+.signin-error-message-div .heading{
+  color: red;
+}
+.signin-error-message-div .message{
+
+}
+
 
 @keyframes ellipsis {
   from {
