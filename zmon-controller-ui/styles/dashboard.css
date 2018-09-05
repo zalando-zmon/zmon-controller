@@ -924,7 +924,7 @@ below styles are active for a widget */
 .dashboard-table .mode-col{
     width:5%!important;
 }
-@media (max-width: 767px){
+@media (max-width: 1200px){
     .zmon-data-table
     {
         min-width: 750px;
