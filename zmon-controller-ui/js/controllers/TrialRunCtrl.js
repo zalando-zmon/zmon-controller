@@ -302,19 +302,18 @@ var TrialRunCtrl = function ($scope, $interval, $timeout, timespanFilter, Commun
                     $scope.alert = response;
                     $scope.alert.check_command = $scope.alert.command;
                    
-                    trc.entityFilter.formEntityFilters = $scope.alert.entities;
-                    trc.entityFilter.textEntityFilters = JSON.stringify($scope.alert.entities, null, trc.INDENT);
-                    trc.entityExcludeFilter.formEntityFilters = $scope.alert.entities_exclude ? $scope.alert.entities_exclude:[];
-                    trc.entityExcludeFilter.textEntityFilters = $scope.alert.entities_exclude ? JSON.stringify($scope.alert.entities_exclude, null, trc.INDENT):"[]";
-                    trc.parameters = formParametersArray($scope.alert.parameters);
-                
-
                     if (urlJson) {
                         _.extend($scope.alert, urlJson);
                     }
                     if ($scope.alert.owning_team && trc.teams.indexOf($scope.alert.owning_team) === -1) {
                         trc.teams.push($scope.alert.owning_team);
                     }
+                    trc.entityFilter.formEntityFilters = $scope.alert.entities;
+                    trc.entityFilter.textEntityFilters = JSON.stringify($scope.alert.entities, null, trc.INDENT);
+                    trc.entityExcludeFilter.formEntityFilters = $scope.alert.entities_exclude ? $scope.alert.entities_exclude:[];
+                    trc.entityExcludeFilter.textEntityFilters = $scope.alert.entities_exclude ? JSON.stringify($scope.alert.entities_exclude, null, trc.INDENT):"[]";
+                    trc.parameters = formParametersArray($scope.alert.parameters);
+                
 
                    
                     }
