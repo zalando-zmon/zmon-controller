@@ -47,7 +47,7 @@
 
 .zmon-data-table th.actions-col
 {
-    width: 5%;
+    width: 8%;
     text-align: justify;
 }
 
@@ -184,7 +184,7 @@
     overflow: hidden;
 }
 
-@media (max-width: 767px){
+@media (max-width: 1200px){
     .zmon-data-table
     {
         min-width: 750px;
