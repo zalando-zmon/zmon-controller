@@ -47,7 +47,7 @@ public class ZmonResourceServerConfigurer extends ResourceServerConfigurerAdapte
 				.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
 		.and()
 			.requestMatchers()
-				.antMatchers("/api/v1/**")
+				.antMatchers("/api/v1/**", "/grafana", "/grafana/dashboard/db/**", "/rest/grafana", "/rest/kairosdbs/**")
 		.and()
 			.authorizeRequests()
 				.antMatchers(HttpMethod.GET, "/api/v1/**")

@@ -230,7 +230,7 @@ public class DefaultZMonPermissionService {
 
         if (!isAllowed) {
             throw new ZMonAuthorizationException(getUserName(), getUserAuthorities(),
-                    "Your are not allowed to create/edit this dashboard", dashboard);
+                    "You are not allowed to create/edit this dashboard", dashboard);
         }
     }
 
