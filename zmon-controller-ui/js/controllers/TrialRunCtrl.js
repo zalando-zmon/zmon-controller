@@ -388,8 +388,6 @@ var TrialRunCtrl = function ($scope, $interval, $timeout, timespanFilter, Commun
                    
                 }
             })
-           
-            
         } else {
             $scope.trForm.submitted = true;
             $scope.focusedElement = null;
