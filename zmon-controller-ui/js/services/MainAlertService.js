@@ -311,7 +311,7 @@ angular.module('zmon2App').factory('MainAlertService', ['$http', '$q', '$log', '
               });
             
         };
-        service.isValidAlertName = function(obj){          
+        service.isValidAlertName = function(obj){
             return new Promise(function(resolve, reject) {
                 CommunicationService.getAlertDefinitions(obj.team.trim()).then(function(items) {
                     var existingWithSameName = items.filter(item=>{
@@ -325,7 +325,7 @@ angular.module('zmon2App').factory('MainAlertService', ['$http', '$q', '$log', '
                     }
                 });
               });
-            
+
         };
         service.isValidDashboardName = function(obj){          
             return new Promise(function(resolve, reject) {

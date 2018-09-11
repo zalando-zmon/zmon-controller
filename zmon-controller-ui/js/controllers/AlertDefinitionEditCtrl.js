@@ -199,12 +199,12 @@ angular.module('zmon2App').controller('AlertDefinitionEditCtrl', ['$scope', '$ro
                         alertObj.period = "";
                     }
 
-                    // In case of an inherited alert, only send diff
-                    if ($scope.alertDefinition.parent_id || $scope.mode === 'inherit') {
-                        alertObj = $scope.getInheritanceDiff();
-                    }
                     MainAlertService.isValidAlertName(alertObj).then((valid)=>{
-                        if(valid){                          
+                        if(valid){
+                            // In case of an inherited alert, only send diff
+                            if ($scope.alertDefinition.parent_id || $scope.mode === 'inherit') {
+                                alertObj = $scope.getInheritanceDiff();
+                            }
                             CommunicationService.updateAlertDefinition(alertObj).then(function(data) {
                                 FeedbackMessageService.showSuccessMessage('Saved successfully; redirecting...', 500, function() {
                                     $location.path('/alert-details/' + data.id);
@@ -215,7 +215,6 @@ angular.module('zmon2App').controller('AlertDefinitionEditCtrl', ['$scope', '$ro
                             $("#alertModal").modal();  
                          }
                     });
-
                     
                 } catch (ex) {
                     $scope.invalidFormat = true;
