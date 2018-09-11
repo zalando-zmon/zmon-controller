@@ -336,8 +336,6 @@ var TrialRunCtrl = function ($scope, $interval, $timeout, timespanFilter, Commun
     trc.save = function (isNew) {
 
         if ($scope.trForm.$valid) {
-            if(isNew){
-
             try {
                 if (trc.entityFilter.textEntityFilters === '') {
                     delete $scope.alert.entities;
@@ -365,21 +363,18 @@ var TrialRunCtrl = function ($scope, $interval, $timeout, timespanFilter, Commun
                 trc.invalidFormat = true;
                 return FeedbackMessageService.showErrorMessage('JSON format is incorrect' + ex);
             }
-            
            
-                var obj = {};
-                obj.name = $scope.alert.name.trim();
-                obj.entities = $scope.alert.entities;
-                obj.command = $scope.alert.check_command;
-                obj.interval = $scope.alert.interval;
-                obj.description = $scope.alert.description;
-                obj.owning_team = $scope.alert.owning_team.trim();
-                obj.technical_details = $scope.alert.technical_details;
-                obj.status = "ACTIVE";
-            }else{
-                var obj = $scope.alert;
-              
-            }
+            var obj = {};
+            obj.name = $scope.alert.name.trim();
+            obj.entities = $scope.alert.entities;
+            obj.command = $scope.alert.check_command;
+            obj.interval = $scope.alert.interval;
+            obj.description = $scope.alert.description;
+            obj.owning_team = $scope.alert.owning_team.trim();
+            obj.technical_details = $scope.alert.technical_details;
+            obj.status = isNew ? "ACTIVE" : $scope.alert.status;
+            obj.id = isNew ? undefined : $scope.alert.id // this id is actually the check id
+
             MainAlertService.isValidCheckName(obj).then((valid)=>{
                 if(valid){
                     CommunicationService.updateCheckDefinition(obj).then(function(data) {
@@ -393,18 +388,11 @@ var TrialRunCtrl = function ($scope, $interval, $timeout, timespanFilter, Commun
                    
                 }
             })
-           
-            
         } else {
             $scope.trForm.submitted = true;
             $scope.focusedElement = null;
         }
     };
-
-    // To update existing check
-    trc.updateCheck = function(){
-
-    }
 
     // Download implementation
     trc.download = function ($event) {
