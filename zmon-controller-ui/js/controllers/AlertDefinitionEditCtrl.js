@@ -200,7 +200,7 @@ angular.module('zmon2App').controller('AlertDefinitionEditCtrl', ['$scope', '$ro
                     }
 
                     MainAlertService.isValidAlertName(alertObj).then((valid)=>{
-                        if(valid){
+                        if(alertObj.id || valid){
                             // In case of an inherited alert, only send diff
                             if ($scope.alertDefinition.parent_id || $scope.mode === 'inherit') {
                                 alertObj = $scope.getInheritanceDiff();
