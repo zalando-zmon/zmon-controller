@@ -22,8 +22,15 @@ angular.module("zmon2App").directive("codeEditor", ["$timeout",
                 session.setMode(editMode);
 
                 // Data binding to ngModel
-                ngModel.$render = function () {
-                    session.setValue(ngModel.$viewValue);
+                ngModel.$render = function () {  
+                    try{
+                       var value =   JSON.parse(ngModel.$viewValue);
+                        if(value.alertErrorMessage){                          
+                            ngModel.$viewValue = typeof value.alertErrorMessage == "string"? value.alertErrorMessage.replace(/\\n/g,"\r").replace(/\\n/g,"\r"):JSON.stringify(value.alertErrorMessage,null, 2);
+                        }
+                    }  
+                    catch(er){}                            
+                    session.setValue(ngModel.$viewValue)
                     session.setUseWrapMode(true);
                     editor.clearSelection();
                 };
