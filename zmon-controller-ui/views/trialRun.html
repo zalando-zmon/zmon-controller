@@ -225,7 +225,7 @@
                                     <i class="fa fa-fw fa-sort-asc sort-arrow" ng-show="sortType === 'entity.id' && sortOrder"></i>
                                     <i class="fa fa-fw fa-sort-desc sort-arrow" ng-show="sortType === 'entity.id' && !sortOrder"></i>
                                 </th>
-                                <th class="timestamp-col" ng-click="sortType = 'value.ts'; sortOrder = !sortOrder">Timestamp
+                                <th class="timestamp-col" ng-click="sortType = 'value.ts'; sortOrder = !sortOrder">Timestamp (UTC)
                                     <i class="fa fa-fw fa-sort-asc sort-arrow" ng-show="sortType === 'value.ts' && sortOrder"></i>
                                     <i class="fa fa-fw fa-sort-desc sort-arrow" ng-show="sortType === 'value.ts' && !sortOrder"></i>
                                 </th>
@@ -247,7 +247,7 @@
 
                             <tr ng-show="TrialRunCtrl.criticalAlerts" class="danger" ng-repeat="alert in TrialRunCtrl.alerts | filter:{is_alert:true} | filter:search | orderBy:sortType:sortOrder">
                                 <td>{{alert.entity.id}}</td>
-                                <td>{{alert.value.ts|datetime}} ({{TrialRunCtrl.timeAgo(alert.value.ts)}} ago)</td>
+                                <td>{{alert.value.ts*1000|UTC}} ({{TrialRunCtrl.timeAgo(alert.value.ts)}} ago)</td>
                                 <td class="text-right">{{alert.value.td * 1000|timespan}}</td>
                                 <td class="ellipsis" alert-value-modal name="alert.entity.id" value="alert.value.value">{{alert.value.value}}</td>
                                 <td>{{alert.captures}}</td>
@@ -255,7 +255,7 @@
 
                             <tr ng-show="TrialRunCtrl.normalAlerts" class="success" ng-repeat="alert in TrialRunCtrl.alerts | filter:{is_alert: false}| filter:search | orderBy:'entity.id'">
                                 <td>{{alert.entity.id}}</td>
-                                <td>{{alert.value.ts|datetime}}</td>
+                                <td>{{alert.value.ts*1000|UTC}}</td>
                                 <td class="text-right">{{alert.value.td * 1000|timespan}}</td>
                                 <td class="ellipsis" alert-value-modal name="alert.entity.id" value="alert.value.value">{{alert.value.value}}</td>
                                 <td>{{alert.captures}}</td>
