@@ -1,4 +1,4 @@
-angular.module('zmon2App').directive('alertValueModal', [ '$uibModal', 'APP_CONST', function($uibModal, APP_CONST) {
+angular.module('zmon2App').directive('alertValueModal', [ '$uibModal', 'APP_CONST','$timeout', function($uibModal, APP_CONST,$timeout) {
     return {
         restrict: 'A',
         scope: {
@@ -78,7 +78,7 @@ angular.module('zmon2App').directive('alertValueModal', [ '$uibModal', 'APP_CONS
                 });
 
                 modalInstance.opened.then(function() {
-                    setTimeout(()=>{
+                    $timeout(()=>{
                         $(".modal.in .modal-dialog").addClass("error-popup")
                     },0)
                     
