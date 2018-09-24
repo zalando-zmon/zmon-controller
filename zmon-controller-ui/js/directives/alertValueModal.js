@@ -1,4 +1,4 @@
-angular.module('zmon2App').directive('alertValueModal', [ '$uibModal', 'APP_CONST', function($uibModal, APP_CONST) {
+angular.module('zmon2App').directive('alertValueModal', [ '$uibModal', 'APP_CONST','$timeout', function($uibModal, APP_CONST,$timeout) {
     return {
         restrict: 'A',
         scope: {
@@ -70,9 +70,21 @@ angular.module('zmon2App').directive('alertValueModal', [ '$uibModal', 'APP_CONS
                             return scope.name;
                         },
                         value: function() {
-                            return scope.value;
+                            return {
+                                alertErrorMessage:scope.value
+                            }
                         }
                     }
+                });
+
+                modalInstance.opened.then(function() {
+                    $timeout(()=>{
+                        $(".modal.in .modal-dialog").addClass("error-popup")
+                    },0)
+                    
+                });
+                modalInstance.closed.then(function() {
+                    $(".modal.in .modal-dialog").removeClass("error-popup")               
                 });
             };
 
