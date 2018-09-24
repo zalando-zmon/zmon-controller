@@ -1381,3 +1381,11 @@ body.entities-page .type-col {
 .cursor{
     cursor: pointer;
 }
+  .modal.in .modal-dialog.error-popup{
+   
+    width: 90%!important; 
+     height: 94%!important; 
+     margin:   0 5%!important; 
+    position: fixed!important; 
+
+}
