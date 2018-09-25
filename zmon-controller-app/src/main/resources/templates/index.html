@@ -126,9 +126,8 @@
     <!-- Sentry -->
     <script th:inline="javascript" th:if="${sentryEnabled}" src="https://cdn.ravenjs.com/3.26.4/raven.min.js" crossorigin="anonymous"></script>
     <script th:inline="javascript" th:if="${sentryEnabled}">
-        console.log('Sentry Enabled')
-        // var sentryConfig = /*[[${sentryConfig}]]*/ "";
-        // Raven.config(sentryDsnUi, { release: '0.0.1'}).install()
+        var sentryConfig = /*[[${sentryConfig}]]*/ {};
+        Raven.config(sentryConfig.dsnUrl, { release: '0.0.1'}).install()
     </script>
 
     <script th:inline="javascript">
