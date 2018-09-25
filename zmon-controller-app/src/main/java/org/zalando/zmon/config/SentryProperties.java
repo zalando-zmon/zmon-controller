@@ -5,27 +5,19 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "sentry")
 public class SentryProperties {
 
-    private String dsn;
-    private String dsnUI;
+    private String dsnUrl;
     private String sampleRate;
     private String environment;
     private String servername;
     private String tags;
 
-    public String getDsn() {
-        return dsn;
+
+    public String getDsnUrl() {
+        return dsnUrl;
     }
 
-    public void setDsn(String dsn) {
-        this.dsn = dsn;
-    }
-
-    public String getDsnUI() {
-        return dsnUI;
-    }
-
-    public void setDsnUI(String dsnUI) {
-        this.dsnUI = dsnUI;
+    public void setDsnUrl(String dsnUrl) {
+        this.dsnUrl = dsnUrl;
     }
 
     public String getSampleRate() {
