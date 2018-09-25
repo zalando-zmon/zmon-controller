@@ -21,7 +21,4 @@ export ZMON_SIGNUP_GITHUB_ALLOWED_USERS=*
 export ZMON_SIGNUP_GITHUB_ALLOWED_ORGAS=*
 export ZMON_LOGOUT_URL="https://mail.google.com/mail/logout"
 
-export SENTRY_DSN_URL="https://0555be3b51274ac595b6e296f1f6add1@sentry.stups.zalan.do/4"
-export ZMON_ENABLE_SENTRY=true
-
 java -Xmx240m -jar zmon-controller-app/target/zmon-controller-1.0.1-SNAPSHOT.jar
