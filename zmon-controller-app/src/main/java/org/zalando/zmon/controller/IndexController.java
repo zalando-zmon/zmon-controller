@@ -49,6 +49,8 @@ public class IndexController {
     private static final String HAS_ADD_DASHBOARD_PERMISSION = "hasAddDashboardPermission";
     private static final String HAS_INSTANTANEOUS_ALERT_EVALUATION_PERMISSION =
             "hasInstantaneousAlertEvaluationPermission";
+    private static final String SENTRY_ENABLED="sentryEnabled";
+    private static final String SENTRY_CONFIG="sentryConfig";
 
     private static final String USER_NAME = "userName";
     private static final String TEAMS = "teams";
@@ -73,6 +75,9 @@ public class IndexController {
 
     @Autowired
     private EumTracingProperties eumTracingProperties;
+
+    @Autowired
+    private SentryProperties sentryProperties;
 
     @Value("${zmon.cloud.checkid}")
     private int cloudCheckId;
@@ -110,6 +115,8 @@ public class IndexController {
         model.addAttribute(GOOGLEANALYTICS_ENABLED, controllerProperties.enableGoogleanalytics);
         model.addAttribute(CONSENT_CONFIG, consentProperties);
         model.addAttribute(CONSENT_ENABLED, controllerProperties.enableConsent);
+        model.addAttribute(SENTRY_CONFIG, sentryProperties);
+        model.addAttribute(SENTRY_ENABLED, controllerProperties.enableSentry);
 
         return "index";
     }
