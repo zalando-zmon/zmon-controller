@@ -35,6 +35,8 @@ public class ControllerProperties {
 
     public boolean enableConsent = false;
 
+    public boolean enableSentry = false;
+
     public List<String> workerQueueKeys = Arrays.asList("zmon:queue:default");
 
     public List<String> getWorkerQueueKeys() {
@@ -180,5 +182,13 @@ public class ControllerProperties {
 
     public void setEnableEumTracing(boolean enableEumTracing) {
         this.enableEumTracing = enableEumTracing;
+    }
+
+    public boolean isEnableSentry() {
+        return enableSentry;
+    }
+
+    public void setEnableSentry(boolean enableSentry) {
+        this.enableSentry = enableSentry;
     }
 }
