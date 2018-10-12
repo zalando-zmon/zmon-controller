@@ -1389,3 +1389,7 @@ body.entities-page .type-col {
     position: fixed!important; 
 
 }
+
+code{
+    white-space: pre-wrap!important;
+}
