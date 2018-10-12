@@ -58,7 +58,15 @@ angular.module('zmon2App').controller('CheckDefinitionEditCtrl', ['$scope', '$ro
                     if ($scope.entityFilter.textEntityFilters === '') {
                         delete $scope.check.entities;
                     } else {
-                        $scope.check.entities = JSON.parse($scope.entityFilter.textEntityFilters);
+                        var entities = JSON.parse($scope.entityFilter.textEntityFilters);
+                        if(Array.isArray(entities) && entities.length > 0){
+                            $scope.check.entities = entities;
+                        }else{
+                            $("#alertModal .modal-header .modal-title").html("Included Entities Error");
+                            $("#alertModal .modal-body").html(`Please include alteast one entity.`)
+                            $("#alertModal").modal();  
+                            return;
+                        }
                     }
 
 
@@ -70,6 +78,7 @@ angular.module('zmon2App').controller('CheckDefinitionEditCtrl', ['$scope', '$ro
                                 });
                             });
                         }else{
+                            $("#alertModal .modal-header .modal-title").html("Unique name required to save"); 
                             $("#alertModal .modal-body").html(`A check with name <b>${$scope.check.name}</b> already exists for team <b>${$scope.check.owning_team}</b>. Please select a different name to save.`)
                             $("#alertModal").modal();  
                            

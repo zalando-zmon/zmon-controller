@@ -211,6 +211,7 @@ angular.module('zmon2App').controller('AlertDefinitionEditCtrl', ['$scope', '$ro
                                 });
                             });
                         }else{
+                            $("#alertModal .modal-header .modal-title").html("Unique name required to save"); 
                             $("#alertModal .modal-body").html(`An alert with name <b>${alertObj.name}</b> already exists for team <b>${alertObj.team}</b>. Please select a different name to save.`)
                             $("#alertModal").modal();  
                          }

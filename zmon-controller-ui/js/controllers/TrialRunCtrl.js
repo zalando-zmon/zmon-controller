@@ -340,7 +340,15 @@ var TrialRunCtrl = function ($scope, $interval, $timeout, timespanFilter, Commun
                 if (trc.entityFilter.textEntityFilters === '') {
                     delete $scope.alert.entities;
                 } else {
-                    $scope.alert.entities = JSON.parse(trc.entityFilter.textEntityFilters);
+                    var entities = JSON.parse(trc.entityFilter.textEntityFilters);
+                    if(Array.isArray(entities) && entities.length > 0){
+                        $scope.alert.entities = entities;
+                    }else{
+                        $("#alertModal .modal-header .modal-title").html("Included Entities Error");
+                        $("#alertModal .modal-body").html(`Please include alteast one entity.`)
+                        $("#alertModal").modal();  
+                        return;
+                    }                  
                 }
 
                 if (trc.entityExcludeFilter.textEntityFilters === '') {
@@ -383,6 +391,7 @@ var TrialRunCtrl = function ($scope, $interval, $timeout, timespanFilter, Commun
                         });
                     });
                 }else{
+                    $("#alertModal .modal-header .modal-title").html("Unique name required to save");                   
                     $("#alertModal .modal-body").html(`A check with name <b>${obj.name}</b> already exists for team <b>${obj.owning_team}</b>. Please select a different name to save.`)
                     $("#alertModal").modal();  
                    

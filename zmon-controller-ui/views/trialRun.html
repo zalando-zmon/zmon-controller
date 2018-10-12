@@ -115,10 +115,11 @@
 
                     <div class="form-group" ng-class="{'has-error': trForm.submitted && trForm.entities.$error['valid-json'] || trForm.entities.$error.required }">
                         <label for="inp-entities" class="col-sm-2 control-label">
-                            <a href="https://docs.zmon.io/en/latest/user/alert-definitions.html#entity-exclude-filter" rel="help" target="docs">Included Entities</a>
+                            <a href="https://docs.zmon.io/en/latest/user/alert-definitions.html#entity-exclude-filter" rel="help" target="docs">Included Entities *</a>
                             <div id="entity-filter-buttons">
+                                <div class="info-msg">(Add atleast one entity) </div>
                                 <button type="button" class="btn btn-primary fa fa-keyboard-o" ng-model="TrialRunCtrl.entityFilterInputMethod" uib-btn-radio="'text'" title="Plain text input"></button>
-                                <button type="button" class="btn btn-primary fa fa-check-square-o" ng-model="TrialRunCtrl.entityFilterInputMethod" uib-btn-radio="'form'" title="Form input"></button>
+                                <button type="button" class="btn btn-primary fa fa-check-square-o" ng-model="TrialRunCtrl.entityFilterInputMethod" uib-btn-radio="'form'" title="Form input"></button>                   
                             </div>
                         </label>
                         <div class="col-sm-10" ng-class="{'has-error': trForm.submitted && trForm.entities.$error['non-empty-json']}">

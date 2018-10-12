@@ -108,6 +108,7 @@ angular.module('zmon2App').controller('DashboardConfigurationCtrl', ['$scope', '
                                     $window.history.back();
                                 });
                             }else{
+                                $("#alertModal .modal-header .modal-title").html("Unique name required to save"); 
                                 $("#alertModal .modal-body").html(`A dashboard with name <b>${$scope.dashboard.name}</b> already exists. Please select a different name to save.`)
                                 $("#alertModal").modal();                          
                             }

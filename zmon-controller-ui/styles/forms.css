@@ -337,3 +337,9 @@ input.checkbox
 {
     border: none !important;
 }
+
+.info-msg{
+    font-size: 11px;
+    margin: 3px;
+    font-style: italic;
+}
