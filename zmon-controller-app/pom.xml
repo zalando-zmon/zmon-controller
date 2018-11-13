@@ -319,6 +319,7 @@
                         <version>2.18</version>
                         <configuration>
                             <skipTests>${unit.test.skip}</skipTests>
+                            <useSystemClassLoader>false</useSystemClassLoader>
                         </configuration>
                     </plugin>
                     <plugin>
