@@ -81,7 +81,7 @@ public class NotificationController {
         final String url = config.getUrl() + "/api/v1/users/" + authorityService.getUserName() + "/devices";
         HttpEntity entity = new StringEntity(mapper.writeValueAsString(body), "UTF-8");
         Request request = Request.Post(url).body(entity).addHeader("Authorization", "Bearer " + accessTokens.get("notification-service")).addHeader("Content-Type", "application/json");
-        executor.execute(request);
+        executor.execute(request).discardContent();
     }
 
     @ResponseBody
@@ -89,7 +89,7 @@ public class NotificationController {
     public void unregisterDevice(@RequestParam(name = "registration_token") String registrationToken) throws IOException {
         final String url = config.getUrl() + "/api/v1/device/" + registrationToken;
         Request request = Request.Delete(url).addHeader("Authorization", "Bearer " + accessTokens.get("notification-service")).addHeader("Content-Type", "application/json");
-        executor.execute(request);
+        executor.execute(request).discardContent();
     }
 
     @ResponseBody
@@ -98,7 +98,7 @@ public class NotificationController {
         final String url = config.getUrl() + "/api/v1/users/" + authorityService.getUserName() + "/teams";
         HttpEntity entity = new StringEntity(mapper.writeValueAsString(body), "UTF-8");
         Request request = Request.Post(url).body(entity).addHeader("Authorization", "Bearer " + accessTokens.get("notification-service")).addHeader("Content-Type", "application/json");
-        executor.execute(request);
+        executor.execute(request).discardContent();
     }
 
     @ResponseBody
@@ -116,7 +116,7 @@ public class NotificationController {
         final String url = config.getUrl() + "/api/v1/users/" + authorityService.getUserName() + "/teams";
         URI uri = new URIBuilder(url).addParameter("team", team).build();
         Request request = Request.Delete(uri).addHeader("Authorization", "Bearer " + accessTokens.get("notification-service")).addHeader("Content-Type", "application/json");
-        executor.execute(request);
+        executor.execute(request).discardContent();
     }
 
     @ResponseBody
@@ -143,7 +143,7 @@ public class NotificationController {
         final String url = config.getUrl() + "/api/v1/users/" + authorityService.getUserName() + "/priority";
         HttpEntity entity = new StringEntity(mapper.writeValueAsString(body), "UTF-8");
         Request request = Request.Post(url).body(entity).addHeader("Authorization", "Bearer " + accessTokens.get("notification-service")).addHeader("Content-Type", "application/json");
-        executor.execute(request);
+        executor.execute(request).discardContent();
     }
 
     @ResponseBody
@@ -153,7 +153,7 @@ public class NotificationController {
         final String alertBody = mapper.writeValueAsString(body);
         HttpEntity entity = new StringEntity(alertBody, "UTF-8");
         Request request = Request.Post(url).body(entity).addHeader("Authorization", "Bearer " + accessTokens.get("notification-service")).addHeader("Content-Type", "application/json");
-        executor.execute(request);
+        executor.execute(request).discardContent();
     }
 
     @ResponseBody
@@ -162,6 +162,6 @@ public class NotificationController {
         final String url = config.getUrl() + "/api/v1/users/" + authorityService.getUserName() + "/alerts";
         URI uri = new URIBuilder(url).addParameter("alertId", "" + alertId).build();
         Request request = Request.Delete(uri).addHeader("Authorization", "Bearer " + accessTokens.get("notification-service")).addHeader("Content-Type", "application/json");
-        executor.execute(request);
+        executor.execute(request).discardContent();
     }
 }
