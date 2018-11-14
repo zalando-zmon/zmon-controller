@@ -62,10 +62,12 @@ function (angular, _, sdk, dateMath, kbn) {
         if (!results) {
           console.log('=>=>=> set from lastResults');
           results = JSON.parse(this.lastResults);
-        } else {
+        } else if (this.lastResults) {
           console.log('=>=>=> update with new results');
           this.lastResults = JSON.stringify(results);
         }
+        console.log('=>=>=> results=', results);
+        console.log('=>=>=> lastResults=', this.lastResults);
         return results;
       })
       .then(handleKairosDBQueryResponseAlias, handleQueryError);
