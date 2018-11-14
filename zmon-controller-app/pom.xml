@@ -262,6 +262,10 @@
             <artifactId>sentry-spring</artifactId>
             <version>1.7.10</version>
         </dependency>
+        <dependency>
+            <groupId>net.jodah</groupId>
+            <artifactId>failsafe</artifactId>
+        </dependency>
     </dependencies>
     <build>
         <resources>
