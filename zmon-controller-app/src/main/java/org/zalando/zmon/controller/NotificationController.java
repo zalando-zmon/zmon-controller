@@ -12,6 +12,7 @@ import org.apache.http.entity.StringEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -49,7 +50,7 @@ public class NotificationController {
                                   NotificationServiceProperties config,
                                   AccessTokens accessTokens,
                                   ObjectMapper mapper,
-                                  HttpClient httpClient) {
+                                  @Qualifier("notificationServiceHttpClient") HttpClient httpClient) {
         this.authorityService = authorityService;
         this.config = config;
         this.accessTokens = accessTokens;
