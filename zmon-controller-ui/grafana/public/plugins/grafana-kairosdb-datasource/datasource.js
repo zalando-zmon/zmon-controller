@@ -19,7 +19,7 @@ function (angular, _, sdk, dateMath, kbn) {
     this.q = $q;
     this.backendSrv = backendSrv;
     this.templateSrv = templateSrv;
-    this.lastResult = '{}';
+    this.lastResults = '{}';
 
     self = this;
   }
