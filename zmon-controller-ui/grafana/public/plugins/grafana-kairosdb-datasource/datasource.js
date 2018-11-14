@@ -62,7 +62,7 @@ function (angular, _, sdk, dateMath, kbn) {
         if (!results) {
           console.log('=>=>=> set from lastResults');
           results = JSON.parse(self.lastResults);
-        } else if (self.lastResults) {
+        } else {
           console.log('=>=>=> update with new results');
           self.lastResults = JSON.stringify(results);
         }
