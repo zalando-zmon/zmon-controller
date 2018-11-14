@@ -54,7 +54,8 @@ function (angular, _, sdk, dateMath, kbn) {
     }
 
     // ZMON-HACK. Store lastResults to use when results fail to be fetched. (e.g. 500)
-    var lastResults = null;
+    var lastResults = {};
+    console.log('=>=>=> lastResults =', lastResults);
 
     return this.performTimeSeriesQuery(queries, start, end)
 
@@ -62,9 +63,11 @@ function (angular, _, sdk, dateMath, kbn) {
       .then(function(results) {
         console.log('=>=>=> performTimeSeriesQuery resolved with', results);
         if (!results) {
-          results = lastResults;
+          console.log('=>=>=> set from lastResults');
+          results = JSON.parse(lastResults);
         } else {
-          lastResults = results;
+          console.log('=>=>=> update with new results');
+          lastResults = JSON.stringify(results);
         }
         return results;
       })
