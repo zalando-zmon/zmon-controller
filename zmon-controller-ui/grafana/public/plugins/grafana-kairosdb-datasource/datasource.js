@@ -276,7 +276,7 @@ function (angular, _, sdk, dateMath, kbn) {
   }
 
   function handleKairosDBQueryResponse(plotParams, results) {
-    console.log('=>=>=> handleKairosDBQueryResponse', results);
+    console.log('=>=>=> handleKairosDBQueryResponse..', results);
 
     var output = [];
     var index = 0;
