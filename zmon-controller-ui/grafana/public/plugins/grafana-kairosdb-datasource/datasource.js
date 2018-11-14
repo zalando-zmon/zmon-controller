@@ -61,13 +61,13 @@ function (angular, _, sdk, dateMath, kbn) {
         console.log('=>=>=> performTimeSeriesQuery resolved with', results);
         if (!results) {
           console.log('=>=>=> set from lastResults');
-          results = JSON.parse(this.lastResults);
-        } else if (this.lastResults) {
+          results = JSON.parse(self.lastResults);
+        } else if (self.lastResults) {
           console.log('=>=>=> update with new results');
-          this.lastResults = JSON.stringify(results);
+          self.lastResults = JSON.stringify(results);
         }
         console.log('=>=>=> results=', results);
-        console.log('=>=>=> lastResults=', this.lastResults);
+        console.log('=>=>=> lastResults=', self.lastResults);
         return results;
       })
       .then(handleKairosDBQueryResponseAlias, handleQueryError);
