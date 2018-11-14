@@ -26,8 +26,6 @@ function (angular, _, sdk, dateMath, kbn) {
   // Called once per panel (graph)
   KairosDBDatasource.prototype.query = function(options) {
 
-    console.log('=>=>=> query', options);
-
     var start = options.rangeRaw.from;
     var end = options.rangeRaw.to;
 
@@ -49,21 +47,19 @@ function (angular, _, sdk, dateMath, kbn) {
     var handleKairosDBQueryResponseAlias = _.partial(handleKairosDBQueryResponse, plotParams);
 
     // No valid targets, return the empty result to save a round trip.
-    // if (_.isEmpty(queries)) {
-    //   var d = this.q.defer();
-    //   d.resolve({ data: [] });
-    //   return d.promise;
-    // }
+    if (_.isEmpty(queries)) {
+      var d = this.q.defer();
+      d.resolve({ data: [] });
+      return d.promise;
+    }
 
     // ZMON-HACK. Store lastResults to use when results fail to be fetched. (e.g. 500)
     var lastResults = null;
 
-    console.log('=>=>=> set lastResults null');
-
     return this.performTimeSeriesQuery(queries, start, end)
 
       // ZMON-HACK remove this .then() clause to chart-data-permanence hack.
-      .finally(function(results) {
+      .then(function(results) {
         console.log('=>=>=> performTimeSeriesQuery resolved with', results);
         if (!results) {
           results = lastResults;
@@ -280,7 +276,7 @@ function (angular, _, sdk, dateMath, kbn) {
   }
 
   function handleKairosDBQueryResponse(plotParams, results) {
-    console.log('=>=>=> handleKairosDBQueryResponse');
+    console.log('=>=>=> handleKairosDBQueryResponse', results);
 
     var output = [];
     var index = 0;
