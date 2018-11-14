@@ -19,6 +19,7 @@ function (angular, _, sdk, dateMath, kbn) {
     this.q = $q;
     this.backendSrv = backendSrv;
     this.templateSrv = templateSrv;
+    this.lastResult = '{}';
 
     self = this;
   }
@@ -53,10 +54,6 @@ function (angular, _, sdk, dateMath, kbn) {
       return d.promise;
     }
 
-    // ZMON-HACK. Store lastResults to use when results fail to be fetched. (e.g. 500)
-    var lastResults = {};
-    console.log('=>=>=> lastResults =', lastResults);
-
     return this.performTimeSeriesQuery(queries, start, end)
 
       // ZMON-HACK remove this .then() clause to chart-data-permanence hack.
@@ -64,10 +61,10 @@ function (angular, _, sdk, dateMath, kbn) {
         console.log('=>=>=> performTimeSeriesQuery resolved with', results);
         if (!results) {
           console.log('=>=>=> set from lastResults');
-          results = JSON.parse(lastResults);
+          results = JSON.parse(this.lastResults);
         } else {
           console.log('=>=>=> update with new results');
-          lastResults = JSON.stringify(results);
+          this.lastResults = JSON.stringify(results);
         }
         return results;
       })
