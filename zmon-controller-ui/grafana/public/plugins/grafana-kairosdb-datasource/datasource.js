@@ -58,23 +58,17 @@ function (angular, _, sdk, dateMath, kbn) {
 
       // ZMON-HACK remove this .then() clause to chart-data-permanence hack.
       .then(function(results) {
-        console.log('=>=>=> performTimeSeriesQuery resolved with', results);
         if (!results) {
-          console.log('=>=>=> set from lastResults');
           results = JSON.parse(self.lastResults);
         } else {
-          console.log('=>=>=> update with new results');
           self.lastResults = JSON.stringify(results);
         }
-        console.log('=>=>=> results=', results);
-        console.log('=>=>=> lastResults=', self.lastResults);
         return results;
       })
       .then(handleKairosDBQueryResponseAlias, handleQueryError);
   };
 
   KairosDBDatasource.prototype.performTimeSeriesQuery = function(queries, start, end) {
-    console.log('=>=>=> performTimeSeriesQuery')
     var reqBody = {
       metrics: queries,
       cache_time: 0
@@ -228,7 +222,6 @@ function (angular, _, sdk, dateMath, kbn) {
     }
 
     var responseTransform = function(result) {
-      console.log('responseTransform()', result);
       return _.map(result, function(value) {
         return {text: value};
       });
@@ -278,8 +271,6 @@ function (angular, _, sdk, dateMath, kbn) {
   }
 
   function handleKairosDBQueryResponse(plotParams, results) {
-    console.log('=>=>=> handleKairosDBQueryResponse..', results);
-
     var output = [];
     var index = 0;
     _.each(results.data.queries, function(series) {
