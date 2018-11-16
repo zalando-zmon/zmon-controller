@@ -71,7 +71,7 @@ public class SchedulerProperties {
     }
 
     /**
-     * get HttpClient with appropriate timeouts
+     * get HttpClient with appropriate timeouts and TTL
      * @return CloseableHttpClient
      */
     public CloseableHttpClient getHttpClient() {
