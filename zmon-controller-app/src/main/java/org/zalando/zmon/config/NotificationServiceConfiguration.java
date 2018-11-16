@@ -25,6 +25,7 @@ public class NotificationServiceConfiguration {
         return new TracingHttpClientBuilder().
                 setMaxConnPerRoute(props.getMaxConnPerRoute()).
                 setMaxConnTotal(props.getMaxConnTotal()).
+                setConnectionTimeToLive(props.getConnectionTimeToLive(), TimeUnit.MILLISECONDS).
                 setDefaultRequestConfig(config)
                 .build();
     }

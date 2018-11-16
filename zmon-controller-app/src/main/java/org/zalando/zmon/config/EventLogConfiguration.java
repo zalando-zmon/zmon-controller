@@ -19,6 +19,8 @@ import org.zalando.zmon.service.HistoryService;
 import org.zalando.zmon.service.impl.HistoryServiceImpl;
 import org.zalando.zmon.service.impl.NoOpEventLog;
 
+import java.util.concurrent.TimeUnit;
+
 /**
  * TODO, we have to replace EventLog.
  *
@@ -48,6 +50,7 @@ public class EventLogConfiguration {
                 .setSocketTimeout(config.getSocketTimeout())
                 .build();
         final CloseableHttpClient client = new TracingHttpClientBuilder().
+                setConnectionTimeToLive(config.getConnectionTimeToLive(), TimeUnit.MILLISECONDS).
                 setDefaultRequestConfig(requestConfig).build();
         return new HttpComponentsClientHttpRequestFactory(client);
     }
