@@ -223,10 +223,6 @@
             <version>1.7.10</version>
         </dependency>
         <dependency>
-            <groupId>net.jodah</groupId>
-            <artifactId>failsafe</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.zalando</groupId>
             <artifactId>riptide-httpclient</artifactId>
             <version>2.10.1</version>
