@@ -6,6 +6,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import java.net.URL;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by hjacobs on 2/5/16.
@@ -19,6 +20,7 @@ public class SchedulerProperties {
     private int socketTimeout = 5000; // 5 seconds
     private int maxConnectionsPerRoute = 100;
     private int maxConnectionsTotal = 200;
+    private long connectionTimeToLive = 2 * 60 * 1000; // 2 minutes
 
     public URL getUrl() {
         return url;
@@ -60,15 +62,27 @@ public class SchedulerProperties {
         this.maxConnectionsTotal = maxConnectionsTotal;
     }
 
+    public long getConnectionTimeToLive() {
+        return connectionTimeToLive;
+    }
+
+    public void setConnectionTimeToLive(long connectionTimeToLive) {
+        this.connectionTimeToLive = connectionTimeToLive;
+    }
+
     /**
      * get HttpClient with appropriate timeouts
-     * @return
+     * @return CloseableHttpClient
      */
     public CloseableHttpClient getHttpClient() {
-        RequestConfig config = RequestConfig.custom().setSocketTimeout(getSocketTimeout()).setConnectTimeout(getConnectTimeout()).build();
+        RequestConfig config = RequestConfig.custom().
+                setSocketTimeout(getSocketTimeout()).
+                setConnectTimeout(getConnectTimeout()).
+                build();
         return new TracingHttpClientBuilder().
                 setMaxConnPerRoute(maxConnectionsPerRoute).
                 setMaxConnTotal(maxConnectionsTotal).
+                setConnectionTimeToLive(getConnectionTimeToLive(), TimeUnit.MILLISECONDS).
                 setDefaultRequestConfig(config).build();
     }
 }

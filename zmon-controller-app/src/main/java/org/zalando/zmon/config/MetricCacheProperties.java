@@ -16,6 +16,7 @@ public class MetricCacheProperties {
     private int connectTimeout = 1000;
     private int maxConnPerRoute = 100;
     private int maxConnTotal = 200;
+    private long connectionTimeToLive = 2 * 60 * 1000;
 
     public int getNodes() {
         return nodes;
@@ -63,5 +64,13 @@ public class MetricCacheProperties {
 
     public void setMaxConnTotal(int maxConnTotal) {
         this.maxConnTotal = maxConnTotal;
+    }
+
+    public long getConnectionTimeToLive() {
+        return connectionTimeToLive;
+    }
+
+    public void setConnectionTimeToLive(long connectionTimeToLive) {
+        this.connectionTimeToLive = connectionTimeToLive;
     }
 }
