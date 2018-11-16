@@ -1,14 +1,11 @@
 package org.zalando.zmon.config;
 
 import io.opentracing.contrib.apache.http.client.TracingHttpClientBuilder;
-import net.jodah.failsafe.CircuitBreaker;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import java.util.concurrent.TimeUnit;
 
 /**
  * Created by hjacobs on 2/5/16.
@@ -28,13 +25,5 @@ public class NotificationServiceConfiguration {
                 setConnectionTimeToLive(props.getConnectionTimeToLive(), TimeUnit.MILLISECONDS).
                 setDefaultRequestConfig(config)
                 .build();
-    }
-
-    @Bean
-    public CircuitBreaker circuitBreaker() {
-        return new CircuitBreaker()
-                .withFailureThreshold(5)
-                .withSuccessThreshold(5)
-                .withDelay(1, TimeUnit.MINUTES);
     }
 }

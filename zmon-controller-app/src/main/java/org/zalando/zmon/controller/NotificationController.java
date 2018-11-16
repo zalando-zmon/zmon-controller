@@ -2,8 +2,6 @@ package org.zalando.zmon.controller;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import net.jodah.failsafe.CircuitBreaker;
-import net.jodah.failsafe.Failsafe;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.fluent.Executor;
@@ -47,21 +45,17 @@ public class NotificationController {
 
     private final Executor executor;
 
-    private final CircuitBreaker breaker;
-
     @Autowired
     public NotificationController(DefaultZMonPermissionService authorityService,
                                   NotificationServiceProperties config,
                                   AccessTokens accessTokens,
                                   ObjectMapper mapper,
-                                  @Qualifier("notificationServiceHttpClient") HttpClient httpClient,
-                                  CircuitBreaker breaker) {
+                                  @Qualifier("notificationServiceHttpClient") HttpClient httpClient) {
         this.authorityService = authorityService;
         this.config = config;
         this.accessTokens = accessTokens;
         this.mapper = mapper;
         this.executor = Executor.newInstance(httpClient);
-        this.breaker = breaker;
     }
 
     public static class DeviceRegistrationBody {
@@ -91,17 +85,17 @@ public class NotificationController {
         Request request = Request.Post(url).body(entity)
                 .addHeader("Authorization", "Bearer " + accessTokens.get("notification-service"))
                 .addHeader("Content-Type", "application/json");
-        Failsafe.with(breaker).run(() -> executor.execute(request).discardContent());
+        executor.execute(request).discardContent();
     }
 
     @ResponseBody
     @RequestMapping(path = "/devices", method = RequestMethod.DELETE)
-    public void unregisterDevice(@RequestParam(name = "registration_token") String registrationToken) {
+    public void unregisterDevice(@RequestParam(name = "registration_token") String registrationToken) throws IOException {
         final String url = config.getUrl() + "/api/v1/device/" + registrationToken;
         Request request = Request.Delete(url)
                 .addHeader("Authorization", "Bearer " + accessTokens.get("notification-service"))
                 .addHeader("Content-Type", "application/json");
-        Failsafe.with(breaker).run(() -> executor.execute(request).discardContent());
+        executor.execute(request).discardContent();
     }
 
     @ResponseBody
@@ -112,7 +106,7 @@ public class NotificationController {
         Request request = Request.Post(url).body(entity)
                 .addHeader("Authorization", "Bearer " + accessTokens.get("notification-service"))
                 .addHeader("Content-Type", "application/json");
-        Failsafe.with(breaker).run(() -> executor.execute(request).discardContent());
+        executor.execute(request).discardContent();
     }
 
     @ResponseBody
@@ -121,19 +115,19 @@ public class NotificationController {
         final String url = config.getUrl() + "/api/v1/users/" + authorityService.getUserName() + "/teams";
         Request request = Request.Get(url)
                 .addHeader("Authorization", "Bearer " + accessTokens.get("notification-service"));
-        Response r = Failsafe.with(breaker).get(() -> executor.execute(request));
+        Response r = executor.execute(request);
         return new ResponseEntity<>(mapper.readTree(r.returnContent().asString()), HttpStatus.OK);
     }
 
     @ResponseBody
     @RequestMapping(path = "/teams", method = RequestMethod.DELETE)
-    public void unsubscribeTeam(@RequestParam(name = "team") String team) throws URISyntaxException {
+    public void unsubscribeTeam(@RequestParam(name = "team") String team) throws IOException, URISyntaxException {
         final String url = config.getUrl() + "/api/v1/users/" + authorityService.getUserName() + "/teams";
         URI uri = new URIBuilder(url).addParameter("team", team).build();
         Request request = Request.Delete(uri)
                 .addHeader("Authorization", "Bearer " + accessTokens.get("notification-service"))
                 .addHeader("Content-Type", "application/json");
-        Failsafe.with(breaker).run(() -> executor.execute(request).discardContent());
+        executor.execute(request).discardContent();
     }
 
     @ResponseBody
@@ -142,7 +136,7 @@ public class NotificationController {
         final String url = config.getUrl() + "/api/v1/users/" + authorityService.getUserName() + "/alerts";
         Request request = Request.Get(url)
                 .addHeader("Authorization", "Bearer " + accessTokens.get("notification-service"));
-        Response r = Failsafe.with(breaker).get(() -> executor.execute(request));
+        Response r = executor.execute(request);
         return new ResponseEntity<>(mapper.readTree(r.returnContent().asString()), HttpStatus.OK);
     }
 
@@ -152,7 +146,7 @@ public class NotificationController {
         final String url = config.getUrl() + "/api/v1/users/" + authorityService.getUserName() + "/priority";
         Request request = Request.Get(url)
                 .addHeader("Authorization", "Bearer " + accessTokens.get("notification-service"));
-        Response r = Failsafe.with(breaker).get(() -> executor.execute(request));
+        Response r = executor.execute(request);
         return new ResponseEntity<>(mapper.readTree(r.returnContent().asString()), HttpStatus.OK);
     }
 
@@ -164,7 +158,7 @@ public class NotificationController {
         Request request = Request.Post(url).body(entity)
                 .addHeader("Authorization", "Bearer " + accessTokens.get("notification-service"))
                 .addHeader("Content-Type", "application/json");
-        Failsafe.with(breaker).run(() -> executor.execute(request).discardContent());
+        executor.execute(request).discardContent();
     }
 
     @ResponseBody
@@ -176,17 +170,17 @@ public class NotificationController {
         Request request = Request.Post(url).body(entity)
                 .addHeader("Authorization", "Bearer " + accessTokens.get("notification-service"))
                 .addHeader("Content-Type", "application/json");
-        Failsafe.with(breaker).run(() -> executor.execute(request).discardContent());
+        executor.execute(request).discardContent();
     }
 
     @ResponseBody
     @RequestMapping(path = "/alerts", method = RequestMethod.DELETE)
-    public void unsubscribeTeam(@RequestParam(name = "alert_id") int alertId) throws URISyntaxException {
+    public void unsubscribeTeam(@RequestParam(name = "alert_id") int alertId) throws IOException, URISyntaxException {
         final String url = config.getUrl() + "/api/v1/users/" + authorityService.getUserName() + "/alerts";
         URI uri = new URIBuilder(url).addParameter("alertId", "" + alertId).build();
         Request request = Request.Delete(uri)
                 .addHeader("Authorization", "Bearer " + accessTokens.get("notification-service"))
                 .addHeader("Content-Type", "application/json");
-        Failsafe.with(breaker).run(() -> executor.execute(request).discardContent());
+        executor.execute(request).discardContent();
     }
 }
