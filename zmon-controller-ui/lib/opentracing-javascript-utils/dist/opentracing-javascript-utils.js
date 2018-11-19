@@ -661,7 +661,7 @@ var _require = __webpack_require__(12),
   /**
    * get current working directory to load getDependencies
    */
-  var currentPath = function () {
+  var currentPath = function currentPath() {
     var scripts = Array.from(d.getElementsByTagName("script"));
     var ix = scripts.findIndex(function (s) {
       return s.src.indexOf('opentracing-javascript-utils.js') >= 0;
@@ -1029,15 +1029,15 @@ var libraries = exports.libraries = {
 
     src: [],
 
-    getCustomTracer: function () {}
+    getCustomTracer: function getCustomTracer() {}
   },
   lightstep: {
 
     class: 'lightstep',
 
-    src: ['https://rawgit.com/lightstep/lightstep-tracer-javascript/v0.20.3/dist/lightstep-tracer.min.js', 'https://rawgit.com/lightstep/lightstep-overlay/v1.1.4/dist/lightstep-overlay.min.js'],
+    src: ['https://unpkg.com/lightstep-tracer@0.20.13/dist/lightstep-tracer.min.js', 'https://unpkg.com/lightstep-overlay@1.1.4/dist/lightstep-overlay.min.js'],
 
-    getCustomTracer: function (config) {
+    getCustomTracer: function getCustomTracer(config) {
       var customTracer = new lightstep.Tracer(config.config);
 
       if (config.overlay) {
