@@ -1,29 +1,29 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.zalando</groupId>
-	<artifactId>zmon-controller-parent</artifactId>
-	<packaging>pom</packaging>
-	<name>ZMON Controller</name>
-	<version>1.0.1-SNAPSHOT</version>
-	<description>The ZMON Controller is responsible for managing check and alert definitions</description>
-	<url>https://github.com/zalando/zmon.git</url>
-	<organization>
-		<name>Zalando/Technology/Platform/Software</name>
-	</organization>
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<maven.build.timestamp.format>yyyyMMddHHmm</maven.build.timestamp.format>
-		<buildTime>${maven.build.timestamp}</buildTime>
-		<!-- remove this line once metrics are stable -->
-		<!-- <codemetrics.version>1.0.2</codemetrics.version> -->
-		<spring-boot.version>1.4.4.RELEASE</spring-boot.version>
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.zalando</groupId>
+    <artifactId>zmon-controller-parent</artifactId>
+    <packaging>pom</packaging>
+    <name>ZMON Controller</name>
+    <version>1.0.1-SNAPSHOT</version>
+    <description>The ZMON Controller is responsible for managing check and alert definitions</description>
+    <url>https://github.com/zalando/zmon.git</url>
+    <organization>
+        <name>Zalando/Technology/Platform/Software</name>
+    </organization>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <maven.build.timestamp.format>yyyyMMddHHmm</maven.build.timestamp.format>
+        <buildTime>${maven.build.timestamp}</buildTime>
+        <!-- remove this line once metrics are stable -->
+        <!-- <codemetrics.version>1.0.2</codemetrics.version> -->
+        <spring-boot.version>1.4.4.RELEASE</spring-boot.version>
         <postgresql-driver.version>9.3-1102-jdbc41</postgresql-driver.version>
-	</properties>
+    </properties>
 
-	<build>
+    <build>
         <pluginManagement>
             <plugins>
                 <plugin>
@@ -80,91 +80,91 @@
                 </plugin>
             </plugins>
         </pluginManagement>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.1</version>
-				<configuration>
-					<source>1.8</source>
-					<target>1.8</target>
-					<encoding>UTF-8</encoding>
-				</configuration>
-			</plugin>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.1</version>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                    <encoding>UTF-8</encoding>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
             </plugin>
-			<plugin>
-				<groupId>org.eluder.coveralls</groupId>
-				<artifactId>coveralls-maven-plugin</artifactId>
-				<version>3.0.1</version>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-dependency-plugin</artifactId>
-				<version>2.10</version>
-				<executions>
-					<execution>
-						<id>unpack-grafana</id>
-						<phase>generate-sources</phase>
-						<goals>
-							<goal>unpack</goal>
-						</goals>
-						<configuration>
-							<artifactItems>
-								<artifactItem>
-									<groupId>org.zalando</groupId>
-									<artifactId>grafana</artifactId>
-									<version>0.3</version>
-									<type>zip</type>
-									<overWrite>false</overWrite>
-									<outputDirectory>${project.build.directory}/zmon-controller-1.0.1-SNAPSHOT</outputDirectory>
-									<destFileName>grafana.zip</destFileName>
-									<includes>**/*</includes>
-								</artifactItem>
-							</artifactItems>
-							<includes>**/*</includes>
-							<outputDirectory>${project.build.directory}/grafana</outputDirectory>
-							<overWriteReleases>false</overWriteReleases>
-							<overWriteSnapshots>true</overWriteSnapshots>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
+            <plugin>
+                <groupId>org.eluder.coveralls</groupId>
+                <artifactId>coveralls-maven-plugin</artifactId>
+                <version>3.0.1</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>2.10</version>
+                <executions>
+                    <execution>
+                        <id>unpack-grafana</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>org.zalando</groupId>
+                                    <artifactId>grafana</artifactId>
+                                    <version>0.3</version>
+                                    <type>zip</type>
+                                    <overWrite>false</overWrite>
+                                    <outputDirectory>${project.build.directory}/zmon-controller-1.0.1-SNAPSHOT
+                                    </outputDirectory>
+                                    <destFileName>grafana.zip</destFileName>
+                                    <includes>**/*</includes>
+                                </artifactItem>
+                            </artifactItems>
+                            <includes>**/*</includes>
+                            <outputDirectory>${project.build.directory}/grafana</outputDirectory>
+                            <overWriteReleases>false</overWriteReleases>
+                            <overWriteSnapshots>true</overWriteSnapshots>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 
-		</plugins>
-	</build>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <!-- Import dependency management from Spring Boot -->
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${spring-boot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<!-- Import dependency management from Spring Boot -->
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-dependencies</artifactId>
-				<version>${spring-boot.version}</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
+    <scm>
+        <connection>scm:git:https://github.com/zalando-zmon/zmon-controller.git</connection>
+        <developerConnection>scm:git:https://github.com/zalando-zmon/zmon-controller.git</developerConnection>
+    </scm>
 
-	<scm>
-		<connection>scm:git:https://github.com/zalando-zmon/zmon-controller.git</connection>
-		<developerConnection>scm:git:https://github.com/zalando-zmon/zmon-controller.git</developerConnection>
-	</scm>
+    <modules>
+        <module>zmon-controller-ui</module>
+        <module>zmon-controller-app</module>
+        <module>zmon-zauth-integration</module>
+        <module>zmon-controller-it</module>
+        <module>zmon-github-integration</module>
+        <module>zmon-security-common</module>
+        <module>zmon-common</module>
+    </modules>
 
-	<modules>
-		<module>zmon-controller-ui</module>
-		<module>zmon-controller-app</module>
-		<module>zmon-zauth-integration</module>
-		<module>zmon-controller-it</module>
-		<module>zmon-github-integration</module>
-		<module>zmon-security-common</module>
-		<module>zmon-common</module>
-	</modules>
-
-	<repositories>
+    <repositories>
         <repository>
             <id>jcenter</id>
             <name>JCenter</name>
@@ -173,5 +173,5 @@
                 <enabled>false</enabled>
             </snapshots>
         </repository>
-	</repositories>
+    </repositories>
 </project>
