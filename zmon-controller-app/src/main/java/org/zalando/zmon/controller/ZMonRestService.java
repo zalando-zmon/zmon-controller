@@ -3,18 +3,17 @@ package org.zalando.zmon.controller;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
-import io.opentracing.contrib.apache.http.client.TracingHttpClientBuilder;
+import org.apache.http.client.HttpClient;
 import org.apache.http.client.fluent.Executor;
 import org.apache.http.client.fluent.Request;
-import org.apache.http.impl.client.CloseableHttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import org.zalando.stups.tokens.AccessTokens;
 import org.zalando.zmon.api.SearchAPI;
 import org.zalando.zmon.api.domain.EntityFilterRequest;
 import org.zalando.zmon.api.domain.EntityFilterResponse;
@@ -40,33 +39,36 @@ import java.util.Set;
 public class ZMonRestService extends AbstractZMonController {
 
     private final Logger log = LoggerFactory.getLogger(ZMonRestService.class);
+
+    private final ZMonService service;
+
+    private final MetricCacheProperties metricCacheProperties;
+
+    private final EntityApi entityApi;
+
+    private final DefaultZMonPermissionService authService;
+
+    private final SearchAPI searchAPI;
+
+    private final ObjectMapper mapper;
+
     private final Executor executor;
 
     @Autowired
-    private ZMonService service;
-
-    @Autowired
-    private MetricCacheProperties metricCacheProperties;
-
-    @Autowired
-    private EntityApi entityApi;
-
-    @Autowired
-    DefaultZMonPermissionService authService;
-
-    @Autowired
-    SearchAPI searchAPI;
-
-    @Autowired
-    ObjectMapper mapper;
-
-    @Autowired
-    AccessTokens accessTokens;
-
-    public ZMonRestService() {
-        // TODO: provide configuration to the client and probably extract it to configuration class (if needed)
-        final CloseableHttpClient client = new TracingHttpClientBuilder().build();
-        executor = Executor.newInstance(client);
+    public ZMonRestService(ZMonService service,
+                           MetricCacheProperties metricCacheProperties,
+                           EntityApi entityApi,
+                           DefaultZMonPermissionService authService,
+                           SearchAPI searchAPI,
+                           ObjectMapper mapper,
+                           @Qualifier("metricCacheHttpClient") HttpClient httpClient) {
+        this.service = service;
+        this.metricCacheProperties = metricCacheProperties;
+        this.entityApi = entityApi;
+        this.authService = authService;
+        this.searchAPI = searchAPI;
+        this.mapper = mapper;
+        this.executor = Executor.newInstance(httpClient);
     }
 
     @RequestMapping(value = "/status")
@@ -89,7 +91,7 @@ public class ZMonRestService extends AbstractZMonController {
     }
 
     @RequestMapping(value = "/updateCheckDefinition")
-    public ResponseEntity<CheckDefinition> updateCheckDefinition(@RequestBody(required = true) CheckDefinitionImport check) throws ZMonException {
+    public ResponseEntity<CheckDefinition> updateCheckDefinition(@RequestBody CheckDefinitionImport check) throws ZMonException {
         if (check.getOwningTeam() == null || "".equals(check.getOwningTeam())) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
@@ -104,7 +106,7 @@ public class ZMonRestService extends AbstractZMonController {
 
     @RequestMapping(value = "/checkDefinition")
     public ResponseEntity<CheckDefinition> getCheckDefinition (
-            @RequestParam(value = "check_id", required = true) final int checkId) throws ZMonException{
+            @RequestParam(value = "check_id") final int checkId) throws ZMonException{
 
         final List<CheckDefinition> checkDefinitions = service.getCheckDefinitions(null, Lists.newArrayList(checkId));
         if (checkDefinitions.isEmpty()) {
@@ -116,7 +118,7 @@ public class ZMonRestService extends AbstractZMonController {
 
     @RequestMapping(value = "/checkResults")
     public ResponseEntity<List<CheckResults>> getCheckResults(
-            @RequestParam(value = "check_id", required = true) final int checkId,
+            @RequestParam(value = "check_id") final int checkId,
             @RequestParam(value = "entity", required = false) final String entity,
             @RequestParam(value = "limit", defaultValue = "20") final int limit) {
 
@@ -125,8 +127,8 @@ public class ZMonRestService extends AbstractZMonController {
 
     @RequestMapping(value = "/checkResultsWithoutEntities")
     public ResponseEntity<List<CheckResults>> getCheckResultsWithoutEntities(
-            @RequestParam(value = "check_id", required = true) final int checkId,
-            @RequestParam(value = "entity", required = true) final String entity,
+            @RequestParam(value = "check_id") final int checkId,
+            @RequestParam(value = "entity") final String entity,
             @RequestParam(value = "limit", defaultValue = "20") final int limit) {
 
         return new ResponseEntity<>(service.getCheckResultsWithoutEntities(checkId, entity, limit), HttpStatus.OK);
@@ -134,7 +136,7 @@ public class ZMonRestService extends AbstractZMonController {
 
     @RequestMapping(value = "checkResultsChart")
     public ResponseEntity<CheckChartResult> getChartResults(
-            @RequestParam(value = "check_id", required = true) final int checkId,
+            @RequestParam(value = "check_id") final int checkId,
             @RequestParam(value = "entity", required = false) final String entity,
             @RequestParam(value = "limit", defaultValue = "20") final int limit) {
         return new ResponseEntity<>(service.getChartResults(checkId, entity, limit), HttpStatus.OK);
@@ -142,7 +144,7 @@ public class ZMonRestService extends AbstractZMonController {
 
     @RequestMapping(value = "/checkAlertResults")
     public ResponseEntity<List<CheckResults>> getCheckAlertResults(
-            @RequestParam(value = "alert_id", required = true) final int alertId,
+            @RequestParam(value = "alert_id") final int alertId,
             @RequestParam(value = "limit", defaultValue = "20") final int limit) {
         return new ResponseEntity<>(service.getCheckAlertResults(alertId, limit), HttpStatus.OK);
     }
@@ -182,7 +184,7 @@ public class ZMonRestService extends AbstractZMonController {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     @RequestMapping(value = "lastResults/{checkId}/{filter}")
-    public ResponseEntity<CheckChartResult> getLastResults(@PathVariable(value = "checkId") String checkId, @PathVariable(value = "filter") String filter, @RequestParam(value = "limit", defaultValue = "1") int limit) throws ZMonException {
+    public ResponseEntity<CheckChartResult> getLastResults(@PathVariable(value = "checkId") String checkId, @PathVariable(value = "filter") String filter, @RequestParam(value = "limit", defaultValue = "1") int limit) {
         CheckChartResult cr = service.getFilteredLastResults(checkId, filter, limit);
         return new ResponseEntity<>(cr, HttpStatus.OK);
     }
@@ -201,7 +203,7 @@ public class ZMonRestService extends AbstractZMonController {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     @RequestMapping(value = "entity-filters", method = RequestMethod.POST)
-    public ResponseEntity<EntityFilterResponse> getMatchingEntities(@RequestBody EntityFilterRequest filter) throws ZMonException {
+    public ResponseEntity<EntityFilterResponse> getMatchingEntities(@RequestBody EntityFilterRequest filter) {
         EntityFilterResponse response = service.getEntitiesMatchingFilters(filter);
         if (null == response) {
             return new ResponseEntity<>(new EntityFilterResponse("Exception encountered in filtering the entities. Please try again or validate the entity included/excluded filter"), HttpStatus.BAD_REQUEST);
