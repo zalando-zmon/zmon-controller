@@ -87,7 +87,10 @@
 
     <!-- AngularJS Bootstrap -->
     <script type="text/javascript">
+        var bootstrapped = false;
         var bootstrap = function() {
+            if (bootstrapped) return;
+            bootstrapped = true;
             angular.element(function() {
                 angular.bootstrap(document, ['zmon2App']);
             });
@@ -99,6 +102,10 @@
     <script th:inline="javascript" th:if="${eumTracingEnabled}">
       var eumTracingConfig = /*[[${eumZmonTracingConfig}]]*/  { name: "noop", config: {} };
       eumTracingConfig = JSON.parse(eumTracingConfig);
+
+      // initialize app if OT takes longer than 2s to load and initialize
+      var timeout = setTimeout( () => bootstrap(), 2000);
+
       opentracingJavascriptUtils.initOpenTracing(eumTracingConfig)
                                     .then((e) => {
                                         console.log('Opentracing Initialized');
@@ -106,6 +113,7 @@
                                         console.log("Couldn't initialize Opentracing.", e)
                                     })
                                     .then( () => {
+                                        clearTimeout(timeout);
                                         bootstrap();
                                     })
     </script>
