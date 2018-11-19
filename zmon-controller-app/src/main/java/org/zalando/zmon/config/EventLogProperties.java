@@ -20,6 +20,7 @@ public class EventLogProperties {
     private int requestConnectTimeout;
 
     private int socketTimeout;
+    private long connectionTimeToLive = 2 * 60 * 1000;
 
 
     public URL getUrl() {
@@ -68,5 +69,13 @@ public class EventLogProperties {
 
     public void setSocketTimeout(final int socketTimeout) {
         this.socketTimeout = socketTimeout;
+    }
+
+    public long getConnectionTimeToLive() {
+        return connectionTimeToLive;
+    }
+
+    public void setConnectionTimeToLive(long connectionTimeToLive) {
+        this.connectionTimeToLive = connectionTimeToLive;
     }
 }

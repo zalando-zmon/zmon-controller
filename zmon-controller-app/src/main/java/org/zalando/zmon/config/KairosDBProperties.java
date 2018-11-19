@@ -3,12 +3,11 @@ package org.zalando.zmon.config;
 import io.opentracing.contrib.apache.http.client.TracingHttpClientBuilder;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
-import org.apache.http.impl.nio.client.HttpAsyncClients;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * FIXME: hardcoded config for Vagrant box
@@ -21,7 +20,7 @@ public class KairosDBProperties {
     public static class KairosDBServiceConfig {
         private String name;
         private String url;
-        private boolean oauth2=false;
+        private boolean oauth2 = false;
         private int maxWindowLength = 0;
 
         public KairosDBServiceConfig() {
@@ -66,6 +65,7 @@ public class KairosDBProperties {
     private int socketTimeout = 30000; // 30 seconds
     private int maxConnectionsPerRoute = 100;
     private int maxConnectionsTotal = 200;
+    private long connectionTimeToLive = 2 * 60 * 1000; // 2 minutes
 
     private List<KairosDBServiceConfig> kairosdbs = new ArrayList<>(1);
 
@@ -117,20 +117,29 @@ public class KairosDBProperties {
         this.connectTimeout = connectTimeout;
     }
 
-    /**
-     * get HttpClient with appropriate timeouts
-     * @return
-     */
-    public CloseableHttpClient getHttpClient() {
-        RequestConfig config = RequestConfig.custom().setSocketTimeout(getSocketTimeout()).setConnectTimeout(getConnectTimeout()).build();
-        return new TracingHttpClientBuilder().
-                setMaxConnPerRoute(maxConnectionsPerRoute).
-                setMaxConnTotal(maxConnectionsTotal).
-                setDefaultRequestConfig(config).build();
+    public long getConnectionTimeToLive() {
+        return connectionTimeToLive;
     }
 
-    public CloseableHttpAsyncClient getHttpAsyncClient() {
-        RequestConfig config = RequestConfig.custom().setSocketTimeout(getSocketTimeout()).setConnectTimeout(getConnectTimeout()).build();
-        return HttpAsyncClients.custom().setMaxConnPerRoute(maxConnectionsPerRoute).setMaxConnTotal(maxConnectionsTotal).setDefaultRequestConfig(config).build();
+    public void setConnectionTimeToLive(long connectionTimeToLive) {
+        this.connectionTimeToLive = connectionTimeToLive;
+    }
+
+    /**
+     * get HttpClient with appropriate timeouts and TTL
+     *
+     * @return CloseableHttpClient
+     */
+    public CloseableHttpClient getHttpClient() {
+        RequestConfig config = RequestConfig.custom().
+                setSocketTimeout(getSocketTimeout()).
+                setConnectTimeout(getConnectTimeout()).
+                build();
+        return new TracingHttpClientBuilder().
+                setMaxConnPerRoute(getMaxConnectionsPerRoute()).
+                setMaxConnTotal(getMaxConnectionsTotal()).
+                setConnectionTimeToLive(getConnectionTimeToLive(), TimeUnit.MILLISECONDS).
+                setDefaultRequestConfig(config).
+                build();
     }
 }

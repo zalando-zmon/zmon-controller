@@ -13,6 +13,7 @@ public class NotificationServiceProperties {
     private int connectTimeout = 1000;
     private int maxConnPerRoute = 100;
     private int maxConnTotal = 200;
+    private long connectionTimeToLive = 2 * 60 * 1000;
 
     public String getUrl() {
         return url;
@@ -52,5 +53,13 @@ public class NotificationServiceProperties {
 
     public void setMaxConnTotal(int maxConnTotal) {
         this.maxConnTotal = maxConnTotal;
+    }
+
+    public long getConnectionTimeToLive() {
+        return connectionTimeToLive;
+    }
+
+    public void setConnectionTimeToLive(long connectionTimeToLive) {
+        this.connectionTimeToLive = connectionTimeToLive;
     }
 }
