@@ -11,7 +11,7 @@ function (angular, _, sdk, dateMath, kbn) {
 
   var self;
 
-  function KairosDBDatasource(instanceSettings, $q, backendSrv, templateSrv) {
+  function KairosDBDatasource($rootScope, instanceSettings, $q, backendSrv, templateSrv) {
     this.type = instanceSettings.type;
     this.url = instanceSettings.url;
     this.name = instanceSettings.name;
@@ -19,12 +19,18 @@ function (angular, _, sdk, dateMath, kbn) {
     this.q = $q;
     this.backendSrv = backendSrv;
     this.templateSrv = templateSrv;
+    this.lastResults = {};
+
+    $rootScope.onAppEvent('dashboard-initialized', function() {
+      self.lastResults = {};
+    }, $rootScope);
 
     self = this;
   }
 
   // Called once per panel (graph)
   KairosDBDatasource.prototype.query = function(options) {
+
     var start = options.rangeRaw.from;
     var end = options.rangeRaw.to;
 
@@ -53,6 +59,17 @@ function (angular, _, sdk, dateMath, kbn) {
     }
 
     return this.performTimeSeriesQuery(queries, start, end)
+
+      // ZMON-HACK remove this .then() clause to chart-data-permanence hack.
+      .then(function(results) {
+        var h = JSON.stringify(queries).hashCode();
+        if (!results) {
+          results = JSON.parse(self.lastResults[h] || '{}');
+        } else {
+          self.lastResults[h] = JSON.stringify(results);
+        }
+        return results;
+      })
       .then(handleKairosDBQueryResponseAlias, handleQueryError);
   };
 
