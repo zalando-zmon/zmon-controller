@@ -12,6 +12,7 @@ function (angular, _, sdk, dateMath, kbn) {
   var self;
 
   function KairosDBDatasource(instanceSettings, $q, backendSrv, templateSrv) {
+    console.log('KairosDBDatasource init');
     this.type = instanceSettings.type;
     this.url = instanceSettings.url;
     this.name = instanceSettings.name;
@@ -59,13 +60,11 @@ function (angular, _, sdk, dateMath, kbn) {
       // ZMON-HACK remove this .then() clause to chart-data-permanence hack.
       .then(function(results) {
         var h = JSON.stringify(queries).hashCode();
-        console.log('hash=>', h);
         if (!results) {
           results = JSON.parse(self.lastResults[h]);
         } else {
           self.lastResults[h] = JSON.stringify(results);
         }
-        console.log('lastResults=>', self.lastResults);
         return results;
       })
       .then(handleKairosDBQueryResponseAlias, handleQueryError);
