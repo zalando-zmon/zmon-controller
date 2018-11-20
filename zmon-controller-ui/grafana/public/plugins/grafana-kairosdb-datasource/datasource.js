@@ -19,7 +19,7 @@ function (angular, _, sdk, dateMath, kbn) {
     this.q = $q;
     this.backendSrv = backendSrv;
     this.templateSrv = templateSrv;
-    this.lastResults = '{}';
+    this.lastResults = {};
 
     self = this;
   }
@@ -58,11 +58,14 @@ function (angular, _, sdk, dateMath, kbn) {
 
       // ZMON-HACK remove this .then() clause to chart-data-permanence hack.
       .then(function(results) {
+        var h = JSON.stringify(queries).hashCode();
+        console.log('hash=>', h);
         if (!results) {
-          results = JSON.parse(self.lastResults);
+          results = JSON.parse(self.lastResults[h]);
         } else {
-          self.lastResults = JSON.stringify(results);
+          self.lastResults[h] = JSON.stringify(results);
         }
+        console.log('lastResults=>', lastResults);
         return results;
       })
       .then(handleKairosDBQueryResponseAlias, handleQueryError);
