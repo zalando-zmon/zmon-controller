@@ -65,7 +65,7 @@ function (angular, _, sdk, dateMath, kbn) {
         } else {
           self.lastResults[h] = JSON.stringify(results);
         }
-        console.log('lastResults=>', lastResults);
+        console.log('lastResults=>', self.lastResults);
         return results;
       })
       .then(handleKairosDBQueryResponseAlias, handleQueryError);
