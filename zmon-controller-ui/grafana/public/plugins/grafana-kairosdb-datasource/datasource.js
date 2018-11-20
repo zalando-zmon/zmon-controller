@@ -22,7 +22,6 @@ function (angular, _, sdk, dateMath, kbn) {
     this.lastResults = {};
 
     $rootScope.onAppEvent('dashboard-initialized', function() {
-      console.log('dashboard-initialized');
       self.lastResults = {};
     }, $rootScope);
 
@@ -69,7 +68,6 @@ function (angular, _, sdk, dateMath, kbn) {
         } else {
           self.lastResults[h] = JSON.stringify(results);
         }
-        console.log('lastResults=>', self.lastResults);
         return results;
       })
       .then(handleKairosDBQueryResponseAlias, handleQueryError);
