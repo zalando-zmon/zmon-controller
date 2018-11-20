@@ -11,8 +11,7 @@ function (angular, _, sdk, dateMath, kbn) {
 
   var self;
 
-  function KairosDBDatasource(instanceSettings, $q, backendSrv, templateSrv) {
-    console.log('KairosDBDatasource init');
+  function KairosDBDatasource($rootScope, instanceSettings, $q, backendSrv, templateSrv) {
     this.type = instanceSettings.type;
     this.url = instanceSettings.url;
     this.name = instanceSettings.name;
@@ -21,6 +20,10 @@ function (angular, _, sdk, dateMath, kbn) {
     this.backendSrv = backendSrv;
     this.templateSrv = templateSrv;
     this.lastResults = {};
+
+    $rootScope.onAppEvent('dashboard-initialized', function() {
+      self.lastResults = {};
+    }, $rootScope);
 
     self = this;
   }
