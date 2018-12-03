@@ -8,6 +8,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.zalando.zmon.domain.AlertDefinition;
 import org.zalando.zmon.domain.CheckDefinition;
 import org.zalando.zmon.domain.DefinitionStatus;
 import org.zalando.zmon.exception.ZMonAuthorizationException;
@@ -18,8 +19,7 @@ import java.util.Arrays;
 import java.util.Collections;
 
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DefaultZMonPermissionServiceTest {
@@ -65,7 +65,7 @@ public class DefaultZMonPermissionServiceTest {
         Authentication auth = mock(Authentication.class);
         // Access is never granted to ViewerAuthority
         ZMonAuthority authority = new ZMonViewerAuthority("foo", ImmutableSet.of("bar"));
-        Mockito.doReturn(Collections.singletonList(authority))
+        doReturn(Collections.singletonList(authority))
                 .when(auth).getAuthorities();
 
         SecurityContext context = mock(SecurityContext.class);
@@ -84,7 +84,7 @@ public class DefaultZMonPermissionServiceTest {
         Authentication auth = mock(Authentication.class);
         // Access is always granted to AdminAuthority
         ZMonAuthority authority = new ZMonAdminAuthority("foo", ImmutableSet.of("bar"));
-        Mockito.doReturn(Collections.singletonList(authority))
+        doReturn(Collections.singletonList(authority))
                 .when(auth).getAuthorities();
 
         SecurityContext context = mock(SecurityContext.class);
@@ -93,6 +93,59 @@ public class DefaultZMonPermissionServiceTest {
 
         when(checkDefinitionSProc.getCheckDefinitions(any(), any())).thenReturn(Arrays.asList(def));
         service.verifyDeleteUnusedCheckDefinitionPermission(100500);
+    }
+
+    @Test
+    public void testVerifyEditAlertDefinitionPermission_AddAlert() {
+        Authentication auth = mock(Authentication.class);
+
+        ZMonAuthority authority = new ZMonUserAuthority("foo", ImmutableSet.of("bar"));
+        doReturn(Collections.singletonList(authority)).when(auth).getAuthorities();
+
+        SecurityContext context = mock(SecurityContext.class);
+        when(context.getAuthentication()).thenReturn(auth);
+        SecurityContextHolder.setContext(context);
+
+        final AlertDefinition newAlertDefinition = new AlertDefinition();
+        newAlertDefinition.setTeam("bar");
+        service.verifyEditAlertDefinitionPermission(newAlertDefinition);
+    }
+
+    @Test
+    public void testVerifyEditAlertDefinitionPermission_EditAlert() {
+        Authentication auth = mock(Authentication.class);
+
+        ZMonAuthority authority = new ZMonUserAuthority("foo", ImmutableSet.of("bar"));
+        doReturn(Collections.singletonList(authority)).when(auth).getAuthorities();
+
+        SecurityContext context = mock(SecurityContext.class);
+        when(context.getAuthentication()).thenReturn(auth);
+        SecurityContextHolder.setContext(context);
+
+
+        final AlertDefinition alertDefinition = new AlertDefinition();
+        alertDefinition.setId(1);
+        alertDefinition.setTeam("bar");
+
+        doReturn(Collections.singletonList(alertDefinition))
+                .when(alertDefinitionSProc).getAlertDefinitions(null, Collections.singletonList(1));
+        service.verifyEditAlertDefinitionPermission(alertDefinition);
+    }
+
+    @Test(expected = ZMonAuthorizationException.class)
+    public void testVerifyEditAlertDefinitionPermission_NotAllowed() {
+        Authentication auth = mock(Authentication.class);
+
+        ZMonAuthority authority = new ZMonUserAuthority("foo", ImmutableSet.of("bar"));
+        doReturn(Collections.singletonList(authority)).when(auth).getAuthorities();
+
+        SecurityContext context = mock(SecurityContext.class);
+        when(context.getAuthentication()).thenReturn(auth);
+        SecurityContextHolder.setContext(context);
+
+        final AlertDefinition newAlertDefinition = new AlertDefinition();
+        newAlertDefinition.setTeam("buz");
+        service.verifyEditAlertDefinitionPermission(newAlertDefinition);
     }
 }
 
