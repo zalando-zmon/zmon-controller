@@ -2,29 +2,33 @@ package org.zalando.zauth.zmon.config;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.util.Assert;
 import org.zalando.stups.oauth2.spring.server.DefaultAuthenticationExtractor;
 import org.zalando.zmon.security.AuthorityService;
+import org.zalando.zmon.security.TeamService;
 import org.zalando.zmon.security.authority.ZMonUserAuthority;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 
+import static com.google.common.collect.Lists.newArrayList;
+
 /**
- * 
  * @author jbellmann
- *
  */
 public class ZmonAuthenticationExtractor extends DefaultAuthenticationExtractor {
 
     private static final String UID = "uid";
     private static final String REALM = "realm";
     private final AuthorityService userService;
+    private final TeamService teamService;
 
-    public ZmonAuthenticationExtractor(AuthorityService userService) {
+    ZmonAuthenticationExtractor(AuthorityService userService, TeamService teamService) {
         this.userService = userService;
+        this.teamService = teamService;
     }
 
     @Override
@@ -35,10 +39,11 @@ public class ZmonAuthenticationExtractor extends DefaultAuthenticationExtractor 
         Assert.hasText(uid, "'uid' should never be null or empty.");
 
         if ("/employees".equals(realm)) {
-            return (List<GrantedAuthority>) userService.getAuthorities(uid);
+            return newArrayList(userService.getAuthorities(uid));
+        } else {
+            final Set<String> teams = teamService.getTeams(uid);
+            return newArrayList(new ZMonUserAuthority(uid, ImmutableSet.<String>builder().addAll(teams).build()));
         }
-
-        return Lists.newArrayList(new ZMonUserAuthority(uid, ImmutableSet.of()));
     }
 
 }

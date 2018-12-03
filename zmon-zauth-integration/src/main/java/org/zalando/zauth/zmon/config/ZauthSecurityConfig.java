@@ -51,23 +51,28 @@ public class ZauthSecurityConfig extends WebSecurityConfigurerAdapter {
     private static final String LOGIN_PAGE_URL = "/signin";
     public static final String LOGIN_COOKIE_NAME = "JSESSIONID";
 
-    @Autowired
-    private AuthorityService authorityService;
+    private final AuthorityService authorityService;
+
+    private final Environment environment;
+
+    private final TvTokenService TvTokenService;
+
+    private final JWTService jwtService;
+
+    private final TeamService teamService;
 
     @Autowired
-    private Environment environment;
-
-    @Autowired
-    private TvTokenService TvTokenService;
-
-    @Autowired
-    private JWTService jwtService;
-
-    @Autowired
-    private TeamService teamService;
-
-    @Autowired
-    private ZauthProperties config;
+    public ZauthSecurityConfig(AuthorityService authorityService,
+                               Environment environment,
+                               TvTokenService TvTokenService,
+                               JWTService jwtService,
+                               TeamService teamService) {
+        this.authorityService = authorityService;
+        this.environment = environment;
+        this.TvTokenService = TvTokenService;
+        this.jwtService = jwtService;
+        this.teamService = teamService;
+    }
 
     @Autowired
     public void configureGlobal(final AuthenticationManagerBuilder auth) throws Exception {
@@ -75,7 +80,7 @@ public class ZauthSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Override
-    public void configure(final WebSecurity web) throws Exception {
+    public void configure(final WebSecurity web) {
         web.ignoring().antMatchers(HttpMethod.OPTIONS, "/**").antMatchers(WebSecurityConstants.IGNORED_PATHS);
     }
 
@@ -149,9 +154,10 @@ public class ZauthSecurityConfig extends WebSecurityConfigurerAdapter {
     public ResourceServerConfigurer zmonResourceServerConfigurer() {
         String tokenInfoUri = environment.getProperty("security.oauth2.resource.userInfoUri");
 
+        final ZmonAuthenticationExtractor extractor = new ZmonAuthenticationExtractor(authorityService, teamService);
         final List<ResourceServerTokenServices> chain = ImmutableList.of(
                 new PresharedTokensResourceServerTokenServices(authorityService, environment),
-                new TokenInfoResourceServerTokenServices(tokenInfoUri, new ZmonAuthenticationExtractor(authorityService)));
+                new TokenInfoResourceServerTokenServices(tokenInfoUri, extractor));
 
         return new ZmonResourceServerConfigurer(new ChainedResourceServerTokenServices(chain));
     }
