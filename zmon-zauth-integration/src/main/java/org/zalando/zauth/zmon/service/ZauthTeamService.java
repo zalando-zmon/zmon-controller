@@ -75,7 +75,7 @@ public class ZauthTeamService implements TeamService {
         }
 
         Map<String, List<String>> teamExtension;
-        Optional<Map<String, List<String>>> dynTeamExtension = dynamicTeamService.getTeamExension();
+        Optional<Map<String, List<String>>> dynTeamExtension = dynamicTeamService.getTeamExtension();
         if (dynTeamExtension.isPresent()) {
             teamExtension = dynTeamExtension.get();
         }
