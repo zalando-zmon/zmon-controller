@@ -26,7 +26,7 @@ public class ZmonAuthenticationExtractor extends DefaultAuthenticationExtractor 
     private final AuthorityService userService;
     private final TeamService teamService;
 
-    ZmonAuthenticationExtractor(AuthorityService userService, TeamService teamService) {
+    public ZmonAuthenticationExtractor(AuthorityService userService, TeamService teamService) {
         this.userService = userService;
         this.teamService = teamService;
     }

@@ -44,11 +44,11 @@ public class ZauthAuthorityService implements AuthorityService {
         restTemplate.getInterceptors().add(new TracingRestTemplateInterceptor());
     }
 
-    private Set<String> getGroups(String username) {
+    protected Set<String> getGroups(String username) {
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(zauthProperties.getUserServiceUrl().toString()).path("/api/employees/" + username + "/groups");
 
         Group[] groups = restTemplate.getForObject(builder.build().toUri(), Group[].class);
-        return Arrays.asList(groups).stream().map(Group::getName).collect(Collectors.toSet());
+        return Arrays.stream(groups).map(Group::getName).collect(Collectors.toSet());
     }
 
 
