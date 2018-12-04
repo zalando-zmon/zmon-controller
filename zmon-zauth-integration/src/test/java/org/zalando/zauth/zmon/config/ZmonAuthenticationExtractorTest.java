@@ -7,7 +7,6 @@ import java.util.Map;
 import org.assertj.core.api.Assertions;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.springframework.security.core.GrantedAuthority;
 import org.zalando.zauth.zmon.service.ZauthAuthorityService;
 import org.zalando.zmon.security.TeamService;
@@ -25,7 +24,7 @@ public class ZmonAuthenticationExtractorTest {
     public void setUp() {
         userService = mock(ZauthAuthorityService.class);
         teamService = mock(TeamService.class);
-        zmonAuthenticationExtractor = new ZmonAuthenticationExtractor(userService, teamService);
+        zmonAuthenticationExtractor = new ZmonAuthenticationExtractor(userService);
     }
 
     @Test(expected = IllegalArgumentException.class)

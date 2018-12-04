@@ -45,7 +45,9 @@ public class ZauthAuthorityService implements AuthorityService {
     }
 
     protected Set<String> getGroups(String username) {
-        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(zauthProperties.getUserServiceUrl().toString()).path("/api/employees/" + username + "/groups");
+        UriComponentsBuilder builder = UriComponentsBuilder
+                .fromHttpUrl(zauthProperties.getUserServiceUrl().toString())
+                .path("/api/employees/" + username + "/groups");
 
         Group[] groups = restTemplate.getForObject(builder.build().toUri(), Group[].class);
         return Arrays.stream(groups).map(Group::getName).collect(Collectors.toSet());
@@ -56,20 +58,15 @@ public class ZauthAuthorityService implements AuthorityService {
     public Collection<? extends GrantedAuthority> getAuthorities(String username) {
         Set<String> groups = getGroups(username);
 
-        List<ZMonAuthority> result = Lists.newArrayList();
-        ZMonAuthority authority = null;
+        ZMonAuthority authority;
         if (groups.contains(zauthProperties.getAdminsGroup())) {
             authority = new ZMonAdminAuthority(username, ImmutableSet.copyOf(teamService.getTeams(username)));
-        } else if (groups.contains(zauthProperties.getUsersGroup())) {
+        } else {
             authority = new ZMonUserAuthority(username, ImmutableSet.copyOf(teamService.getTeams(username)));
         }
 
-        if (authority != null) {
-            result = Lists.newArrayList(authority);
-            log.info("User {} has authority {} and teams {}", username, authority.getAuthority(),
-                    authority.getTeams());
-        }
+        log.info("User {} has authority {} and teams {}", username, authority.getAuthority(), authority.getTeams());
 
-        return result;
+        return Lists.newArrayList(authority);
     }
 }

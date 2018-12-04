@@ -29,9 +29,6 @@ public class DefaultZMonPermissionServiceTest {
     @Mock
     private CheckDefinitionSProcService checkDefinitionSProc;
 
-    @Mock
-    private DashboardSProcService dashboardSProc;
-
     @InjectMocks
     private DefaultZMonPermissionService service;
 
@@ -53,7 +50,7 @@ public class DefaultZMonPermissionServiceTest {
         final CheckDefinition def = new CheckDefinition();
         def.setStatus(DefinitionStatus.DELETED);
 
-        when(checkDefinitionSProc.getCheckDefinitions(any(), any())).thenReturn(Arrays.asList(def));
+        when(checkDefinitionSProc.getCheckDefinitions(any(), any())).thenReturn(Collections.singletonList(def));
         service.verifyDeleteUnusedCheckDefinitionPermission(100500);
     }
 
@@ -72,7 +69,7 @@ public class DefaultZMonPermissionServiceTest {
         when(context.getAuthentication()).thenReturn(auth);
         SecurityContextHolder.setContext(context);
 
-        when(checkDefinitionSProc.getCheckDefinitions(any(), any())).thenReturn(Arrays.asList(def));
+        when(checkDefinitionSProc.getCheckDefinitions(any(), any())).thenReturn(Collections.singletonList(def));
         service.verifyDeleteUnusedCheckDefinitionPermission(100500);
     }
 
@@ -91,7 +88,7 @@ public class DefaultZMonPermissionServiceTest {
         when(context.getAuthentication()).thenReturn(auth);
         SecurityContextHolder.setContext(context);
 
-        when(checkDefinitionSProc.getCheckDefinitions(any(), any())).thenReturn(Arrays.asList(def));
+        when(checkDefinitionSProc.getCheckDefinitions(any(), any())).thenReturn(Collections.singletonList(def));
         service.verifyDeleteUnusedCheckDefinitionPermission(100500);
     }
 

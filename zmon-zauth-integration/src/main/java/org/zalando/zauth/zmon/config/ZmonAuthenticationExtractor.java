@@ -22,28 +22,20 @@ import static com.google.common.collect.Lists.newArrayList;
 public class ZmonAuthenticationExtractor extends DefaultAuthenticationExtractor {
 
     private static final String UID = "uid";
-    private static final String REALM = "realm";
-    private final AuthorityService userService;
-    private final TeamService teamService;
 
-    public ZmonAuthenticationExtractor(AuthorityService userService, TeamService teamService) {
+    private final AuthorityService userService;
+
+    public ZmonAuthenticationExtractor(AuthorityService userService) {
         this.userService = userService;
-        this.teamService = teamService;
     }
 
     @Override
     protected List<GrantedAuthority> createAuthorityList(Map<String, Object> tokenInfoResponse) {
         Assert.notNull(tokenInfoResponse, "'tokenInfoResponse' should never be null");
-        String realm = (String) tokenInfoResponse.getOrDefault(REALM, "unknown");
-        String uid = (String) tokenInfoResponse.get(UID);
+        String uid = tokenInfoResponse.get(UID).toString();
         Assert.hasText(uid, "'uid' should never be null or empty.");
 
-        if ("/employees".equals(realm)) {
-            return newArrayList(userService.getAuthorities(uid));
-        } else {
-            final Set<String> teams = teamService.getTeams(uid);
-            return newArrayList(new ZMonUserAuthority(uid, ImmutableSet.<String>builder().addAll(teams).build()));
-        }
+        return newArrayList(userService.getAuthorities(uid));
     }
 
 }

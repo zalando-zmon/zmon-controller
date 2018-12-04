@@ -154,7 +154,7 @@ public class ZauthSecurityConfig extends WebSecurityConfigurerAdapter {
     public ResourceServerConfigurer zmonResourceServerConfigurer() {
         String tokenInfoUri = environment.getProperty("security.oauth2.resource.userInfoUri");
 
-        final ZmonAuthenticationExtractor extractor = new ZmonAuthenticationExtractor(authorityService, teamService);
+        final ZmonAuthenticationExtractor extractor = new ZmonAuthenticationExtractor(authorityService);
         final List<ResourceServerTokenServices> chain = ImmutableList.of(
                 new PresharedTokensResourceServerTokenServices(authorityService, environment),
                 new TokenInfoResourceServerTokenServices(tokenInfoUri, extractor));
