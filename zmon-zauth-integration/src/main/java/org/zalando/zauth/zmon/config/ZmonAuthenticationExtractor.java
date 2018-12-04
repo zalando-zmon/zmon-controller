@@ -32,7 +32,7 @@ public class ZmonAuthenticationExtractor extends DefaultAuthenticationExtractor 
     @Override
     protected List<GrantedAuthority> createAuthorityList(Map<String, Object> tokenInfoResponse) {
         Assert.notNull(tokenInfoResponse, "'tokenInfoResponse' should never be null");
-        String uid = tokenInfoResponse.get(UID).toString();
+        String uid = tokenInfoResponse.getOrDefault(UID, "").toString();
         Assert.hasText(uid, "'uid' should never be null or empty.");
 
         return newArrayList(userService.getAuthorities(uid));
