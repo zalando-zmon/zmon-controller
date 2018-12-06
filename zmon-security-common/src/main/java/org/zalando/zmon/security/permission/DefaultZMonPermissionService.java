@@ -157,24 +157,26 @@ public class DefaultZMonPermissionService {
                 "You are not allowed to delete this check definition", checkDefinitionId);
     }
 
-    public void verifyEditAlertDefinitionPermission(final AlertDefinition alertDefinition) {
-        Preconditions.checkNotNull(alertDefinition, "alertDefinition");
+    public void verifyEditAlertDefinitionPermission(final AlertDefinition newAlertDefinition) {
+        Preconditions.checkNotNull(newAlertDefinition, "newAlertDefinition");
 
         boolean isAllowed = false;
-        if (alertDefinition.getId() == null) {
-            isAllowed = hasAnyAuthority(new HasAddAlertDefinitionPermission(alertDefinition));
+        if (newAlertDefinition.getId() == null) {
+            isAllowed = hasAnyAuthority(new HasAddAlertDefinitionPermission(newAlertDefinition));
         } else {
-
             // that's an update... load current alert definition
             final List<AlertDefinition> definitions = alertDefinitionSProc.getAlertDefinitions(null,
-                    Collections.singletonList(alertDefinition.getId()));
+                    Collections.singletonList(newAlertDefinition.getId()));
 
-            isAllowed = definitions.size() == 1 && hasAnyAuthority(new HasUpdateAlertDefinitionPermission(alertDefinition));
+            if (definitions.size() == 1) {
+                final AlertDefinition currentAlertDefinition = definitions.get(0);
+                isAllowed = hasAnyAuthority(new HasUpdateAlertDefinitionPermission(currentAlertDefinition, newAlertDefinition));
+            }
         }
 
         if (!isAllowed) {
             throw new ZMonAuthorizationException(getUserName(), getUserAuthorities(),
-                    "Edit denied. Please check documentation for more details: /docs/permissions.html", alertDefinition);
+                    "Edit denied. Please check documentation for more details: /docs/permissions.html", newAlertDefinition);
         }
     }
 

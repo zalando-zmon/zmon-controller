@@ -1,32 +1,36 @@
 package org.zalando.zauth.zmon.config;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
 import org.assertj.core.api.Assertions;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.springframework.security.core.GrantedAuthority;
-import org.zalando.zauth.zmon.config.ZmonAuthenticationExtractor;
+import org.zalando.stups.tokens.AccessTokens;
 import org.zalando.zauth.zmon.service.ZauthAuthorityService;
 import org.zalando.zmon.security.TeamService;
-import org.zalando.zmon.security.authority.ZMonAdminAuthority;
+import org.zalando.zmon.security.authority.ZMonAuthority;
 import org.zalando.zmon.security.authority.ZMonUserAuthority;
 
-import com.google.common.collect.Sets;
+import static java.util.Collections.singletonList;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
 
 public class ZmonAuthenticationExtractorTest {
 
-    private ZauthAuthorityService userService;
     private ZmonAuthenticationExtractor zmonAuthenticationExtractor;
 
     @Before
     public void setUp() {
-        userService = Mockito.mock(ZauthAuthorityService.class);
+        ZauthAuthorityService userService = mock(ZauthAuthorityService.class);
+        doReturn(singletonList(new ZMonUserAuthority("klaus", ImmutableSet.of())))
+                .when(userService).getAuthorities(eq("klaus"));
         zmonAuthenticationExtractor = new ZmonAuthenticationExtractor(userService);
     }
 
@@ -52,8 +56,10 @@ public class ZmonAuthenticationExtractorTest {
         Map<String, Object> tokenInfoResponse = new HashMap<>();
         tokenInfoResponse.put("uid", "klaus");
         List<GrantedAuthority> authorities = zmonAuthenticationExtractor.createAuthorityList(tokenInfoResponse);
-        assertAuthorityList(authorities);
-        ZMonUserAuthority cast = (ZMonUserAuthority)authorities.get(0);
+        Assertions.assertThat(authorities).isNotEmpty();
+        Assertions.assertThat(authorities.size()).isEqualTo(1);
+        Assertions.assertThat(authorities.get(0)).isInstanceOf(ZMonUserAuthority.class);
+        ZMonUserAuthority cast = (ZMonUserAuthority) authorities.get(0);
         Assertions.assertThat(cast.getTeams()).isEmpty();
     }
 
@@ -63,12 +69,6 @@ public class ZmonAuthenticationExtractorTest {
 
     @Test
     public void testExtractorUidAndNoTeams() {
-    }
-
-    protected void assertAuthorityList(List<GrantedAuthority> authorities) {
-        Assertions.assertThat(authorities).isNotEmpty();
-        Assertions.assertThat(authorities.size()).isEqualTo(1);
-        Assertions.assertThat(authorities.get(0)).isInstanceOf(ZMonUserAuthority.class);
     }
 
 }

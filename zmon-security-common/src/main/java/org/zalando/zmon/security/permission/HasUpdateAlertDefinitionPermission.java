@@ -5,13 +5,16 @@ import org.zalando.zmon.security.authority.ZMonAuthority;
 
 class HasUpdateAlertDefinitionPermission extends AlertDefinitionPermission {
 
-	HasUpdateAlertDefinitionPermission(AlertDefinition alertDefinition) {
-		super(alertDefinition);
-	}
+    private AlertDefinition newAlertDefinition;
 
-	@Override
-	public Boolean apply(ZMonAuthority input) {
-		return input.hasAddAlertDefinitionPermission(alertDefinition);
-	}
+    HasUpdateAlertDefinitionPermission(AlertDefinition currentAlertDefinition, AlertDefinition newAlertDefinition) {
+        super(currentAlertDefinition);
+        this.newAlertDefinition = newAlertDefinition;
+    }
+
+    @Override
+    public Boolean apply(ZMonAuthority input) {
+        return input.hasUpdateAlertDefinitionPermission(alertDefinition, newAlertDefinition);
+    }
 
 }

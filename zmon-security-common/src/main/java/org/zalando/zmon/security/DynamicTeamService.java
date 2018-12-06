@@ -57,7 +57,7 @@ public class DynamicTeamService {
         return Optional.of(teams);
     }
 
-    public Optional<Map<String, List<String>>> getTeamExension() {
+    public Optional<Map<String, List<String>>> getTeamExtension() {
         if (null == config ) {
             return Optional.empty();
         }
@@ -68,14 +68,14 @@ public class DynamicTeamService {
     @Scheduled(fixedRate = 300_000)
     public void refreshTeamConfig() {
         try {
-            doRefersh();
+            doRefresh();
         }
         catch(Throwable t) {
             log.error("Failed to refresh dynamic team configuration from entityId=zmon-team-config", t.getMessage());
         }
     }
 
-    public void doRefersh() throws IOException {
+    public void doRefresh() throws IOException {
         List<String> entities = entityService.getEntities("[{\"type\":\"zmon_config\", \"id\":\"zmon-team-config\"}]");
         if (entities.size() != 1) {
             return;
