@@ -21,6 +21,7 @@ import org.zalando.zauth.zmon.config.ZauthProperties;
 import org.zalando.zauth.zmon.config.ZmonAuthenticationExtractor;
 import org.zalando.zauth.zmon.service.ZauthAuthorityService;
 import org.zalando.zmon.security.AuthorityService;
+import org.zalando.zmon.security.DynamicTeamService;
 import org.zalando.zmon.security.TeamService;
 import org.zalando.zmon.security.ZmonResourceServerConfigurer;
 import org.zalando.zmon.security.service.ChainedResourceServerTokenServices;
@@ -29,6 +30,7 @@ import org.zalando.zmon.security.service.PresharedTokensResourceServerTokenServi
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collections;
+import java.util.Optional;
 import java.util.Set;
 
 import static org.mockito.Matchers.eq;
@@ -55,9 +57,11 @@ public class TestSecurityConfig {
 
         final TeamService teamServiceMock = mock(TeamService.class);
         doReturn(ImmutableSet.of("test-team")).when(teamServiceMock).getTeams("test-employee");
-        doReturn(ImmutableSet.of("test-team")).when(teamServiceMock).getTeams("test-service");
 
-        final AuthorityService authorityService = new ZauthAuthorityService(zauthProperties, teamServiceMock, accessTokens) {
+        final DynamicTeamService dynamicTeamServiceMock = mock(DynamicTeamService.class);
+        doReturn(Optional.of(Collections.singletonList("test-team"))).when(dynamicTeamServiceMock).getTeams("test-service");
+
+        final AuthorityService authorityService = new ZauthAuthorityService(zauthProperties, teamServiceMock, dynamicTeamServiceMock, accessTokens) {
             @Override
             protected Set<String> getGroups(String username) {
                 return "test-employee".equals(username) ? ImmutableSet.of("Apps/ZMON/Users") : Collections.emptySet();
