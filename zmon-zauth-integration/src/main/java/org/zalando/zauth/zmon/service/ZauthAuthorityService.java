@@ -49,8 +49,12 @@ public class ZauthAuthorityService implements AuthorityService {
                 .fromHttpUrl(zauthProperties.getUserServiceUrl().toString())
                 .path("/api/employees/" + username + "/groups");
 
-        Group[] groups = restTemplate.getForObject(builder.build().toUri(), Group[].class);
-        return Arrays.stream(groups).map(Group::getName).collect(Collectors.toSet());
+        try {
+            Group[] groups = restTemplate.getForObject(builder.build().toUri(), Group[].class);
+            return Arrays.stream(groups).map(Group::getName).collect(Collectors.toSet());
+        } catch (Exception e) {
+            return ImmutableSet.of();
+        }
     }
 
 
