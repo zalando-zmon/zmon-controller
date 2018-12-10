@@ -59,7 +59,7 @@ public class TestSecurityConfig {
         doReturn(ImmutableSet.of("test-team")).when(teamServiceMock).getTeams("test-employee");
 
         final DynamicTeamService dynamicTeamServiceMock = mock(DynamicTeamService.class);
-        doReturn(Optional.of(Collections.singletonList("test-team"))).when(dynamicTeamServiceMock).getTeams("test-service");
+        doReturn(Optional.of(Collections.singletonList("test-team"))).when(dynamicTeamServiceMock).getTeams(anyString());
 
         final AuthorityService authorityService = new ZauthAuthorityService(zauthProperties, teamServiceMock, dynamicTeamServiceMock, accessTokens) {
             @Override
