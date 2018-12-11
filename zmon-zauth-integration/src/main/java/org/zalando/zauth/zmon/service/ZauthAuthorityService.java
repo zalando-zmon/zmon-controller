@@ -22,7 +22,6 @@ import org.zalando.zmon.security.authority.ZMonUserAuthority;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -34,7 +33,9 @@ public class ZauthAuthorityService implements AuthorityService {
     private final TeamService teamService;
     private final RestTemplate restTemplate;
 
-    public ZauthAuthorityService(ZauthProperties zauthProperties, TeamService teamService, AccessTokens accessTokens) {
+    public ZauthAuthorityService(ZauthProperties zauthProperties,
+                                 TeamService teamService,
+                                 AccessTokens accessTokens) {
         Preconditions.checkNotNull(zauthProperties.getUserServiceUrl(), "User Service URL must be set");
 
         this.zauthProperties = zauthProperties;
@@ -60,7 +61,7 @@ public class ZauthAuthorityService implements AuthorityService {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities(String username) {
-        Set<String> groups = getGroups(username);
+        final Set<String> groups = getGroups(username);
 
         ZMonAuthority authority;
         if (groups.contains(zauthProperties.getAdminsGroup())) {
