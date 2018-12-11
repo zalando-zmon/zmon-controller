@@ -36,7 +36,7 @@ public class ZauthAuthorityServiceTest {
         final DynamicTeamService dynamicTeamServiceMock = mock(DynamicTeamService.class);
         doReturn(Optional.of(Collections.singletonList("test-team"))).when(dynamicTeamServiceMock).getTeams("test-service");
 
-        service = new ZauthAuthorityService(zauthProperties, teamServiceMock, dynamicTeamServiceMock, mock(AccessTokens.class)) {
+        service = new ZauthAuthorityService(zauthProperties, teamServiceMock, mock(AccessTokens.class)) {
             @Override
             protected Set<String> getGroups(String username) {
                 return "test-admin".equals(username) ?

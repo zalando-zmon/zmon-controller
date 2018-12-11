@@ -42,6 +42,6 @@ public class ZauthAutoConfiguration {
 
     @Bean
     public AuthorityService authorityService(TeamService teamService, AccessTokens accessTokens) {
-        return new ZauthAuthorityService(zauthProperties, teamService, dynamicTeamService, accessTokens);
+        return new ZauthAuthorityService(zauthProperties, teamService, accessTokens);
     }
 }

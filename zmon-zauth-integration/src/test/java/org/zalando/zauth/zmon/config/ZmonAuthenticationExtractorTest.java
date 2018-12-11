@@ -1,21 +1,17 @@
 package org.zalando.zauth.zmon.config;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.google.common.collect.ImmutableSet;
 import org.assertj.core.api.Assertions;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.security.core.GrantedAuthority;
-import org.zalando.stups.tokens.AccessTokens;
 import org.zalando.zauth.zmon.service.ZauthAuthorityService;
-import org.zalando.zmon.security.TeamService;
-import org.zalando.zmon.security.authority.ZMonAuthority;
+import org.zalando.zmon.security.DynamicTeamService;
 import org.zalando.zmon.security.authority.ZMonUserAuthority;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static java.util.Collections.singletonList;
 import static org.mockito.Matchers.eq;
@@ -31,7 +27,9 @@ public class ZmonAuthenticationExtractorTest {
         ZauthAuthorityService userService = mock(ZauthAuthorityService.class);
         doReturn(singletonList(new ZMonUserAuthority("klaus", ImmutableSet.of())))
                 .when(userService).getAuthorities(eq("klaus"));
-        zmonAuthenticationExtractor = new ZmonAuthenticationExtractor(userService);
+
+        final DynamicTeamService dynamicTeamServiceMock = mock(DynamicTeamService.class);
+        zmonAuthenticationExtractor = new ZmonAuthenticationExtractor(userService, dynamicTeamServiceMock);
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -55,6 +53,7 @@ public class ZmonAuthenticationExtractorTest {
     public void testExtractorUid() {
         Map<String, Object> tokenInfoResponse = new HashMap<>();
         tokenInfoResponse.put("uid", "klaus");
+        tokenInfoResponse.put("realm", "/employees");
         List<GrantedAuthority> authorities = zmonAuthenticationExtractor.createAuthorityList(tokenInfoResponse);
         Assertions.assertThat(authorities).isNotEmpty();
         Assertions.assertThat(authorities.size()).isEqualTo(1);

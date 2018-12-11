@@ -1,8 +1,5 @@
 package org.zalando.zauth.zmon.config;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.google.common.collect.ImmutableList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -37,6 +34,9 @@ import org.zalando.zmon.security.service.SimpleSocialUserDetailsService;
 import org.zalando.zmon.security.tvtoken.TvTokenService;
 import org.zalando.zmon.security.tvtoken.ZMonTvRememberMeServices;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @author jbellmann
  */
@@ -61,17 +61,21 @@ public class ZauthSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final TeamService teamService;
 
+    private final DynamicTeamService dynamicTeamService;
+
     @Autowired
     public ZauthSecurityConfig(AuthorityService authorityService,
                                Environment environment,
                                TvTokenService TvTokenService,
                                JWTService jwtService,
-                               TeamService teamService) {
+                               TeamService teamService,
+                               DynamicTeamService dynamicTeamService) {
         this.authorityService = authorityService;
         this.environment = environment;
         this.TvTokenService = TvTokenService;
         this.jwtService = jwtService;
         this.teamService = teamService;
+        this.dynamicTeamService = dynamicTeamService;
     }
 
     @Autowired
@@ -154,7 +158,7 @@ public class ZauthSecurityConfig extends WebSecurityConfigurerAdapter {
     public ResourceServerConfigurer zmonResourceServerConfigurer() {
         String tokenInfoUri = environment.getProperty("security.oauth2.resource.userInfoUri");
 
-        final ZmonAuthenticationExtractor extractor = new ZmonAuthenticationExtractor(authorityService);
+        final ZmonAuthenticationExtractor extractor = new ZmonAuthenticationExtractor(authorityService, dynamicTeamService);
         final List<ResourceServerTokenServices> chain = ImmutableList.of(
                 new PresharedTokensResourceServerTokenServices(authorityService, environment),
                 new TokenInfoResourceServerTokenServices(tokenInfoUri, extractor));

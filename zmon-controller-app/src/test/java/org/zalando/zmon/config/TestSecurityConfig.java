@@ -58,17 +58,17 @@ public class TestSecurityConfig {
         final TeamService teamServiceMock = mock(TeamService.class);
         doReturn(ImmutableSet.of("test-team")).when(teamServiceMock).getTeams("test-employee");
 
-        final DynamicTeamService dynamicTeamServiceMock = mock(DynamicTeamService.class);
-        doReturn(Optional.of(Collections.singletonList("test-team"))).when(dynamicTeamServiceMock).getTeams(anyString());
-
-        final AuthorityService authorityService = new ZauthAuthorityService(zauthProperties, teamServiceMock, dynamicTeamServiceMock, accessTokens) {
+        final AuthorityService authorityService = new ZauthAuthorityService(zauthProperties, teamServiceMock, accessTokens) {
             @Override
             protected Set<String> getGroups(String username) {
                 return "test-employee".equals(username) ? ImmutableSet.of("Apps/ZMON/Users") : Collections.emptySet();
             }
         };
 
-        final ZmonAuthenticationExtractor extractor = new ZmonAuthenticationExtractor(authorityService);
+        final DynamicTeamService dynamicTeamServiceMock = mock(DynamicTeamService.class);
+        doReturn(Optional.of(Collections.singletonList("test-team"))).when(dynamicTeamServiceMock).getTeams(anyString());
+
+        final ZmonAuthenticationExtractor extractor = new ZmonAuthenticationExtractor(authorityService, dynamicTeamServiceMock);
 
         final TokenInfoRequestExecutor requestExecutorMock = mock(TokenInfoRequestExecutor.class);
         doReturn(ImmutableMap.of("uid", "test-employee", "realm", "/employees"))
