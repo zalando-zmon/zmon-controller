@@ -213,6 +213,11 @@
             <version>0.1.6</version>
         </dependency>
         <dependency>
+            <groupId>com.lightstep.tracer</groupId>
+            <artifactId>tracer-grpc</artifactId>
+            <version>0.15.9</version>
+        </dependency>
+        <dependency>
             <groupId>io.opentracing.contrib</groupId>
             <artifactId>opentracing-apache-httpclient</artifactId>
             <version>0.1.0</version>
