@@ -53,7 +53,7 @@
         <dependency>
             <groupId>org.zalando.zmon</groupId>
             <artifactId>zmon-actuator</artifactId>
-            <version>0.9.5</version>
+            <version>0.9.9</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
