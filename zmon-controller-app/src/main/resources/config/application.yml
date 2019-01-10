@@ -33,13 +33,13 @@ zmon:
       username: ${POSTGRES_USERNAME:postgres}
       password: ${POSTGRES_PASSWORD:postgres}
       initSQL: "SET search_path to zzm_api${zzm_api_version}, public;"
-      idleConnectionTestPeriodInMinutes: 5
+      idleConnectionTestPeriodInMinutes: 1
       idleMaxAgeInMinutes: 15
       maxConnectionsPerPartition: 8
       minConnectionsPerPartition: 1
       partitionCount: 2
       acquireIncrement: 2
-      acquireRetryAttempts: 3
+      acquireRetryAttempts: 10
       acquireRetryDelayInMs: 500
       releaseHelperThreads: 2
       connectionTimeoutInMs: 5000
