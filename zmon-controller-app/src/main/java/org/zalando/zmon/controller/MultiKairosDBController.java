@@ -25,9 +25,9 @@ import static org.zalando.zmon.config.KairosDBProperties.KairosDBServiceConfig;
 /**
  * NOTE: we inject the AUTHORIZATION-HEADER manually. Better would be to use an
  * Interceptor. But this is coming with Spring 4.3,<br/>
- * @see <a href="https://jira.spring.io/browse/SPR-12538">issue</a>
  *
  * @author jbellmann
+ * @see <a href="https://jira.spring.io/browse/SPR-12538">issue</a>
  */
 @RestController
 @RequestMapping(value = "/rest/kairosdbs/")
@@ -91,7 +91,7 @@ public class MultiKairosDBController extends AbstractZMonController {
 
         final String url = kairosProperties.getUrl() + QUERY_SUFFIX;
         final ListenableFuture<ResponseEntity<JsonNode>> lf =
-                asyncRestTemplate.exchange(url, HttpMethod.POST,httpEntity, JsonNode.class);
+                asyncRestTemplate.exchange(url, HttpMethod.POST, httpEntity, JsonNode.class);
         lf.addCallback(new StopTimerCallback(timer));
         return lf;
     }
@@ -133,14 +133,14 @@ public class MultiKairosDBController extends AbstractZMonController {
 
     private void fixMetricNames(final JsonNode node) {
         for (final JsonNode metric : node.get("metrics")) {
-            final JsonNode tags = metric.get("tags");
-            final Optional<JsonNode> keyNode = Optional.ofNullable(tags.get("key"));
+            final Optional<JsonNode> tags = Optional.ofNullable(metric.get("tags"));
+            final Optional<JsonNode> keyNode = tags.map(t -> t.get("key"));
             if (keyNode.isPresent()) {
                 final String prefix = metric.get("name").textValue();
                 final String suffix = keyNode.get().textValue();
                 final String metricName = prefix + "." + suffix;
                 ((ObjectNode) metric).put("name", metricName);
-                ((ObjectNode) tags).remove("key");
+                ((ObjectNode) tags.get()).remove("key");
             }
         }
     }
