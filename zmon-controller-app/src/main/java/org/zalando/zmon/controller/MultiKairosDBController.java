@@ -103,7 +103,8 @@ public class MultiKairosDBController extends AbstractZMonController {
             return null;
         }
         final KairosDBServiceConfig kairosProperties = kairosdbServices.get(kairosDB);
-        final HttpEntity<String> httpEntity = new HttpEntity<>(setUpHeaders(kairosProperties));
+        fixMetricNames(node);
+        final HttpEntity<String> httpEntity = new HttpEntity<>(node.toString(), setUpHeaders(kairosProperties));
 
         final String url = kairosProperties.getUrl() + TAGS_QUERY_SUFFIX;
         return asyncRestTemplate.exchange(url, HttpMethod.POST, httpEntity, JsonNode.class);
@@ -134,7 +135,7 @@ public class MultiKairosDBController extends AbstractZMonController {
     private void fixMetricNames(final JsonNode node) {
         for (final JsonNode metric : node.get("metrics")) {
             final Optional<JsonNode> tags = Optional.ofNullable(metric.get("tags"));
-            final Optional<JsonNode> keyNode = tags.map(t -> t.get("key"));
+            final Optional<JsonNode> keyNode = tags.map(t -> t.get("key")).filter(k -> !k.textValue().isEmpty());
             if (keyNode.isPresent()) {
                 final String prefix = metric.get("name").textValue();
                 final String suffix = keyNode.get().textValue();
