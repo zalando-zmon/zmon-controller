@@ -133,7 +133,12 @@ public class MultiKairosDBController extends AbstractZMonController {
     }
 
     private void fixMetricNames(final JsonNode node) {
-        for (final JsonNode metric : node.get("metrics")) {
+        final JsonNode metrics = node.get("metrics");
+        if (metrics == null || !metrics.isArray()) {
+            return;
+        }
+
+        for (final JsonNode metric : metrics) {
             final Optional<JsonNode> tags = Optional.ofNullable(metric.get("tags"));
             final Optional<JsonNode> keyNode = tags.map(t -> t.get("key")).filter(k -> !k.textValue().isEmpty());
             if (keyNode.isPresent()) {
