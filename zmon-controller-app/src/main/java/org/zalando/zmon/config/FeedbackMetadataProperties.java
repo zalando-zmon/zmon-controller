@@ -3,7 +3,7 @@ package org.zalando.zmon.config;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @ConfigurationProperties(prefix = "zmon.feedback")
-public class FeedbackProperties {
+public class FeedbackMetadataProperties {
     private String url;
 
     public String getUrl() { return this.url; }

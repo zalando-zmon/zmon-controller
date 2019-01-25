@@ -1,10 +1,10 @@
 package org.zalando.zmon.domain;
 
-public class Feedback {
+public class FeedbackMetadata {
 
     private String url;
 
-    public Feedback(String url) {
+    public FeedbackMetadata(String url) {
         this.url = url;
     }
 
