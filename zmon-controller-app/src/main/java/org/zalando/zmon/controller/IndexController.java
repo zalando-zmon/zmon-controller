@@ -1,11 +1,7 @@
 package org.zalando.zmon.controller;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,7 +11,6 @@ import org.zalando.zmon.security.permission.DefaultZMonPermissionService;
 
 import com.google.common.base.Joiner;
 
-import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -55,6 +50,9 @@ public class IndexController {
     private static final String USER_NAME = "userName";
     private static final String TEAMS = "teams";
 
+    private static final String FEEDBACK_REDIRECT_URL = "";
+
+
     @Autowired
     private DefaultZMonPermissionService authorityService;
 
@@ -78,6 +76,9 @@ public class IndexController {
 
     @Autowired
     private SentryProperties sentryProperties;
+
+    @Autowired
+    private FeedbackMetadataProperties feedbackMetadataProperties;
 
     @Value("${zmon.cloud.checkid}")
     private int cloudCheckId;
@@ -117,6 +118,7 @@ public class IndexController {
         model.addAttribute(CONSENT_ENABLED, controllerProperties.enableConsent);
         model.addAttribute(SENTRY_CONFIG, sentryProperties);
         model.addAttribute(SENTRY_ENABLED, controllerProperties.enableSentry);
+        model.addAttribute("feedbackRedirectUrl", feedbackMetadataProperties.getUrl());
 
         return "index";
     }
