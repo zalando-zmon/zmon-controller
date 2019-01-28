@@ -50,8 +50,8 @@ public class IndexController {
     private static final String USER_NAME = "userName";
     private static final String TEAMS = "teams";
 
-    private static final String FEEDBACK_REDIRECT_URL = "";
-
+    private static final String FEEDBACK_REDIRECT_URL = "feedbackRedirectUrl";
+    private static final String FEEDBACK_ENABLED = "feedbackEnabled";
 
     @Autowired
     private DefaultZMonPermissionService authorityService;
@@ -118,7 +118,8 @@ public class IndexController {
         model.addAttribute(CONSENT_ENABLED, controllerProperties.enableConsent);
         model.addAttribute(SENTRY_CONFIG, sentryProperties);
         model.addAttribute(SENTRY_ENABLED, controllerProperties.enableSentry);
-        model.addAttribute("feedbackRedirectUrl", feedbackMetadataProperties.getUrl());
+        model.addAttribute(FEEDBACK_ENABLED, feedbackMetadataProperties.feedbackEnabled);
+        model.addAttribute(FEEDBACK_REDIRECT_URL, feedbackMetadataProperties.getUrl());
 
         return "index";
     }
