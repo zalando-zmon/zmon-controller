@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
+import org.springframework.util.StringUtils;
 import org.springframework.util.concurrent.ListenableFuture;
 import org.springframework.util.concurrent.ListenableFutureCallback;
 import org.springframework.web.bind.annotation.*;
@@ -140,7 +141,7 @@ public class MultiKairosDBController extends AbstractZMonController {
 
         for (final JsonNode metric : metrics) {
             final Optional<JsonNode> tags = Optional.ofNullable(metric.get("tags"));
-            final Optional<JsonNode> keyNode = tags.map(t -> t.get("key")).filter(k -> !k.textValue().isEmpty());
+            final Optional<JsonNode> keyNode = tags.map(t -> t.get("key")).filter(k -> StringUtils.hasText(k.textValue()));
             if (keyNode.isPresent()) {
                 final String prefix = metric.get("name").textValue();
                 final String suffix = keyNode.get().textValue();
