@@ -58,7 +58,7 @@ zmon:
     # Here is where you should set the link to your feedback form
     feedback:
       enabled: ${ZMON_FEEDBACK_ENABLED:false}
-      url: ${ZMON_FEEDBACK_URL:"https://www.google.com/forms/about/"}
+      url: ${ZMON_FEEDBACK_URL:https://www.google.com/forms/about/}
 
     kairosdb:
         enabled: true
