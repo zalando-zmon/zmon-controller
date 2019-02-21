@@ -596,6 +596,16 @@ a.non-href-anchor
     cursor: pointer;
 }
 
+.navbar-nav > li > a.feedback-link {
+    background: #f08533;
+    color: white;
+}
+
+.navbar-nav > li > a.feedback-link:hover {
+    background: #e86f11;
+    color: white;
+}
+
 .modal-content
 {
     padding-left: 10px;
