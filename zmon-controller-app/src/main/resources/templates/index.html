@@ -190,7 +190,7 @@
                         <!--/** </sec:authorize> **/-->
                         <li th:if="${hasTrialRunPermission}" ng-class="{'active-page': activePage == 'trial-run'}"><a href="#trial-run" >Trial Run</a></li>
                         <li th:if="${feedbackEnabled and feedbackRedirectUrl!=''}">
-                            <a th:href="${feedbackRedirectUrl}" class="feedback-link">Give feedback !</a>
+                            <a th:href="${feedbackRedirectUrl}" class="feedback-link" target="_blank">Give feedback !</a>
                         </li>
                     </ul>
                 </div>
