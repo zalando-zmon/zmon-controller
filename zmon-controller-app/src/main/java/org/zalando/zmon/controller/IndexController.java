@@ -51,7 +51,6 @@ public class IndexController {
     private static final String TEAMS = "teams";
 
     private static final String FEEDBACK_REDIRECT_URL = "feedbackRedirectUrl";
-    private static final String FEEDBACK_ENABLED = "feedbackEnabled";
 
     @Autowired
     private DefaultZMonPermissionService authorityService;
