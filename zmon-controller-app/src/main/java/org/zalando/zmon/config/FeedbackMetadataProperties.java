@@ -4,15 +4,15 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @ConfigurationProperties(prefix = "zmon.feedback")
 public class FeedbackMetadataProperties {
-    private String url;
+    public String url;
 
-    private boolean enabled;
+    public boolean enableFeedback;
 
     public String getUrl() { return this.url; }
 
     public void setUrl(String url) { this.url = url; }
 
-    public boolean getEnabled() { return enabled; }
+    public boolean getEnableFeedback() { return enableFeedback; }
 
-    public void setEnabled(boolean enabled) { this.enabled = enabled; }
+    public void setEnableFeedback(boolean enableFeedback) { this.enableFeedback = enableFeedback; }
 }
