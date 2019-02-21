@@ -189,7 +189,7 @@
                             <li sec:authorize="isAuthenticated()" ng-class="{'active-page': activePage == 'alert-definitions'}"><a href="#/alert-definitions" >Alert defs</a></li>
                         <!--/** </sec:authorize> **/-->
                         <li th:if="${hasTrialRunPermission}" ng-class="{'active-page': activePage == 'trial-run'}"><a href="#trial-run" >Trial Run</a></li>
-                        <li th:if="${feedbackEnabled}">
+                        <li th:if="${#strings.length(feedbackRedirectUrl) > 0}">
                             <a th:href="${feedbackRedirectUrl}" class="feedback-link" target="_blank">Give feedback !</a>
                         </li>
                     </ul>

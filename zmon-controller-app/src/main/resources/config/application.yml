@@ -57,8 +57,7 @@ zmon:
         checkHistoryEventsFilter: [213254,213255,213256,213257]
     # Here is where you should set the link to your feedback form
     feedback:
-      enableFeedback: ${ZMON_FEEDBACK_ENABLED:false}
-      url: ${ZMON_FEEDBACK_URL}
+      url: ${ZMON_FEEDBACK_URL:}
 
     kairosdb:
         enabled: true
