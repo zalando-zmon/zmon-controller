@@ -12,7 +12,7 @@ public class FeedbackMetadataProperties {
 
     public void setUrl(String url) { this.url = url; }
 
-    public boolean getFeedbackEnabled() { return enabled; }
+    public boolean getEnabled() { return enabled; }
 
-    public void setFeedbackEnabled(boolean feedbackEnabled) { this.enabled = feedbackEnabled; }
+    public void setEnabled(boolean enabled) { this.enabled = enabled; }
 }
