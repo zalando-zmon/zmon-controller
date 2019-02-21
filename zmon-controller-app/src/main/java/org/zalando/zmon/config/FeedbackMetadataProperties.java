@@ -6,13 +6,13 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class FeedbackMetadataProperties {
     private String url;
 
-    public boolean feedbackEnabled = false;
+    private boolean enabled;
 
     public String getUrl() { return this.url; }
 
     public void setUrl(String url) { this.url = url; }
 
-    public boolean getFeedbackEnabled() { return feedbackEnabled; }
+    public boolean getFeedbackEnabled() { return enabled; }
 
-    public void setFeedbackEnabled(boolean feedbackEnabled) { this.feedbackEnabled = feedbackEnabled; }
+    public void setFeedbackEnabled(boolean feedbackEnabled) { this.enabled = feedbackEnabled; }
 }

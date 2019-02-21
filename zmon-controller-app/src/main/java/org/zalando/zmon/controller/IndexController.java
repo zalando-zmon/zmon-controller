@@ -118,7 +118,7 @@ public class IndexController {
         model.addAttribute(CONSENT_ENABLED, controllerProperties.enableConsent);
         model.addAttribute(SENTRY_CONFIG, sentryProperties);
         model.addAttribute(SENTRY_ENABLED, controllerProperties.enableSentry);
-        model.addAttribute(FEEDBACK_ENABLED, feedbackMetadataProperties.feedbackEnabled);
+        model.addAttribute(FEEDBACK_ENABLED, feedbackMetadataProperties.getFeedbackEnabled());
         model.addAttribute(FEEDBACK_REDIRECT_URL, feedbackMetadataProperties.getUrl());
 
         return "index";
