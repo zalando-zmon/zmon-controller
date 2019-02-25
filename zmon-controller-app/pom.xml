@@ -347,6 +347,28 @@
                         </executions>
                     </plugin>
                     <plugin>
+                        <artifactId>maven-assembly-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>make-assembly</id>
+                                <goals>
+                                    <goal>single</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>single</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <descriptorRefs>
+                                <descriptorRef>jar-with-dependencies</descriptorRef>
+                            </descriptorRefs>
+                        </configuration>
+                    </plugin>
+                    <plugin>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>sql-maven-plugin</artifactId>
                         <version>1.5</version>
@@ -399,30 +421,6 @@
                                     <onError>continue</onError>
                                 </configuration>
                             </execution>
-                            <!--
-                            <execution>
-                                <id>create-data</id>
-                                <phase>process-test-resources</phase>
-                                <goals>
-                                    <goal>execute</goal>
-                                </goals>
-                                <configuration>
-                                    <delimiterType>row</delimiterType>
-                                    <keepFormat>true</keepFormat>
-                                    <orderFile>ascending</orderFile>
-                                    <fileset>
-                                        <basedir>../</basedir>
-                                        <includes>
-                                            <include>database/zmon/**/*.sql</include>
-                                            <include>database/*.sql</include>
-                                        </includes>
-                                        <excludes>
-                                            <exclude>database/*/db_diffs/**/*</exclude>
-                                        </excludes>
-                                    </fileset>
-                                </configuration>
-                            </execution>
-                            -->
                         </executions>
                     </plugin>
                 </plugins>
