@@ -10,19 +10,7 @@
 	<properties>
 		<maven.build.timestamp.format>yyyyMMddHHmm</maven.build.timestamp.format>
 		<buildTime>${maven.build.timestamp}</buildTime>
-        <maven.deploy.skip>false</maven.deploy.skip>
     </properties>
-
-    <distributionManagement>
-        <repository>
-            <id>releases</id>
-            <url>https://maven.zalando.net/repository/releases</url>
-        </repository>
-        <snapshotRepository>
-            <id>snapshots</id>
-            <url>https://maven.zalando.net/repository/snapshots</url>
-        </snapshotRepository>
-    </distributionManagement>
 
     <dependencies>
         <dependency>
@@ -32,6 +20,7 @@
             as zalando-sprocwrapper is broken with 9.4.. JDBC driver -->
             <version>${postgresql-driver.version}</version>
         </dependency>
+
         <dependency>
             <groupId>org.zalando.stups</groupId>
             <artifactId>tokens-spring-boot-starter</artifactId>
@@ -299,7 +288,20 @@
                 </excludes>
             </resource>
         </resources>
-
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>${spring-boot.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
     </build>
     <profiles>
         <profile>
@@ -345,28 +347,6 @@
                                 </goals>
                             </execution>
                         </executions>
-                    </plugin>
-                    <plugin>
-                        <artifactId>maven-assembly-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>make-assembly</id>
-                                <goals>
-                                    <goal>single</goal>
-                                </goals>
-                            </execution>
-                            <execution>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>single</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                        <configuration>
-                            <descriptorRefs>
-                                <descriptorRef>jar-with-dependencies</descriptorRef>
-                            </descriptorRefs>
-                        </configuration>
                     </plugin>
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>
@@ -421,6 +401,30 @@
                                     <onError>continue</onError>
                                 </configuration>
                             </execution>
+                            <!--
+                            <execution>
+                                <id>create-data</id>
+                                <phase>process-test-resources</phase>
+                                <goals>
+                                    <goal>execute</goal>
+                                </goals>
+                                <configuration>
+                                    <delimiterType>row</delimiterType>
+                                    <keepFormat>true</keepFormat>
+                                    <orderFile>ascending</orderFile>
+                                    <fileset>
+                                        <basedir>../</basedir>
+                                        <includes>
+                                            <include>database/zmon/**/*.sql</include>
+                                            <include>database/*.sql</include>
+                                        </includes>
+                                        <excludes>
+                                            <exclude>database/*/db_diffs/**/*</exclude>
+                                        </excludes>
+                                    </fileset>
+                                </configuration>
+                            </execution>
+                            -->
                         </executions>
                     </plugin>
                 </plugins>
