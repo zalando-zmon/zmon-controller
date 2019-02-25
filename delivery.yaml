@@ -14,7 +14,7 @@ pipeline:
 
       - desc: "Build maven package"
         cmd: |
-          ./mvnw clean package
+          ./mvnw clean deploy
 
       - desc: "Push Docker Image"
         cmd: |
