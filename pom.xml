@@ -21,7 +21,7 @@
         <!-- <codemetrics.version>1.0.2</codemetrics.version> -->
         <spring-boot.version>1.4.4.RELEASE</spring-boot.version>
         <postgresql-driver.version>9.3-1102-jdbc41</postgresql-driver.version>
-        <guava.version>20.0</guava.version>
+        <guava.version>25.1-jre</guava.version>
     </properties>
 
     <build>
