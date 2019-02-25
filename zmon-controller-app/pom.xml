@@ -10,7 +10,19 @@
 	<properties>
 		<maven.build.timestamp.format>yyyyMMddHHmm</maven.build.timestamp.format>
 		<buildTime>${maven.build.timestamp}</buildTime>
+        <maven.deploy.skip>false</maven.deploy.skip>
     </properties>
+
+    <distributionManagement>
+        <repository>
+            <id>releases</id>
+            <url>https://maven.zalando.net/repository/releases</url>
+        </repository>
+        <snapshotRepository>
+            <id>snapshots</id>
+            <url>https://maven.zalando.net/repository/snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
 
     <dependencies>
         <dependency>
@@ -20,7 +32,6 @@
             as zalando-sprocwrapper is broken with 9.4.. JDBC driver -->
             <version>${postgresql-driver.version}</version>
         </dependency>
-
         <dependency>
             <groupId>org.zalando.stups</groupId>
             <artifactId>tokens-spring-boot-starter</artifactId>
