@@ -28,4 +28,3 @@ pipeline:
           fi
           docker build --tag "$AGENT_IMAGE" .
           docker push "$AGENT_IMAGE"
-          git gh-tag ${RELEASE_VERSION:-CDP_BUILD_VERSION}
