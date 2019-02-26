@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Profile;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.zalando.stups.tokens.AccessTokens;
 import org.zalando.zauth.zmon.service.ZauthAuthorityService;
 import org.zalando.zauth.zmon.service.ZauthTeamService;
@@ -24,11 +25,15 @@ import org.zalando.zmon.security.TeamService;
 @Profile("zauth")
 public class ZauthAutoConfiguration {
 
-    @Autowired
-    private ZauthProperties zauthProperties;
+    private final ZauthProperties zauthProperties;
+    private final DynamicTeamService dynamicTeamService;
 
     @Autowired
-    private DynamicTeamService dynamicTeamService;
+    public ZauthAutoConfiguration(final ZauthProperties zauthProperties,
+                                  final DynamicTeamService dynamicTeamService) {
+        this.zauthProperties = zauthProperties;
+        this.dynamicTeamService = dynamicTeamService;
+    }
 
     @Bean
     public SigninController signinController() {
@@ -36,12 +41,20 @@ public class ZauthAutoConfiguration {
     }
 
     @Bean
-    public TeamService teamService(AccessTokens accessTokens) {
+    public TeamService teamService(final AccessTokens accessTokens) {
         return new ZauthTeamService(zauthProperties, accessTokens, dynamicTeamService);
     }
 
     @Bean
-    public AuthorityService authorityService(TeamService teamService, AccessTokens accessTokens) {
+    public AuthorityService authorityService(final TeamService teamService, final AccessTokens accessTokens) {
         return new ZauthAuthorityService(zauthProperties, teamService, accessTokens);
+    }
+
+    @Bean
+    public ThreadPoolTaskScheduler threadPoolTaskScheduler() {
+        ThreadPoolTaskScheduler threadPoolTaskScheduler = new ThreadPoolTaskScheduler();
+        threadPoolTaskScheduler.setPoolSize(5);
+        threadPoolTaskScheduler.setThreadNamePrefix("ThreadPoolTaskScheduler");
+        return threadPoolTaskScheduler;
     }
 }
