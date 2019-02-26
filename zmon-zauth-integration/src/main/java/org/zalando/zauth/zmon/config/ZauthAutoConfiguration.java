@@ -1,11 +1,14 @@
 package org.zalando.zauth.zmon.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Profile;
+import org.springframework.scheduling.TaskScheduler;
+import org.springframework.scheduling.concurrent.ConcurrentTaskScheduler;
 import org.zalando.stups.tokens.AccessTokens;
 import org.zalando.zauth.zmon.service.ZauthAuthorityService;
 import org.zalando.zauth.zmon.service.ZauthTeamService;
@@ -24,11 +27,15 @@ import org.zalando.zmon.security.TeamService;
 @Profile("zauth")
 public class ZauthAutoConfiguration {
 
-    @Autowired
-    private ZauthProperties zauthProperties;
+    private final ZauthProperties zauthProperties;
+    private final DynamicTeamService dynamicTeamService;
 
     @Autowired
-    private DynamicTeamService dynamicTeamService;
+    public ZauthAutoConfiguration(final ZauthProperties zauthProperties,
+                                  final DynamicTeamService dynamicTeamService) {
+        this.zauthProperties = zauthProperties;
+        this.dynamicTeamService = dynamicTeamService;
+    }
 
     @Bean
     public SigninController signinController() {
@@ -36,12 +43,19 @@ public class ZauthAutoConfiguration {
     }
 
     @Bean
-    public TeamService teamService(AccessTokens accessTokens) {
+    public TeamService teamService(@Qualifier("accessTokensBean") final AccessTokens accessTokens) {
         return new ZauthTeamService(zauthProperties, accessTokens, dynamicTeamService);
     }
 
     @Bean
-    public AuthorityService authorityService(TeamService teamService, AccessTokens accessTokens) {
+    public AuthorityService authorityService(final TeamService teamService,
+                                             @Qualifier("accessTokensBean") final AccessTokens accessTokens) {
         return new ZauthAuthorityService(zauthProperties, teamService, accessTokens);
     }
+
+    @Bean
+    public TaskScheduler threadPoolTaskScheduler() {
+        return new ConcurrentTaskScheduler();
+    }
+
 }
