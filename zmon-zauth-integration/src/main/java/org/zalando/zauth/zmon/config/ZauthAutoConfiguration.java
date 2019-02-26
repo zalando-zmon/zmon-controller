@@ -7,7 +7,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Profile;
-import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.TaskScheduler;
+import org.springframework.scheduling.concurrent.ConcurrentTaskScheduler;
 import org.zalando.stups.tokens.AccessTokens;
 import org.zalando.zauth.zmon.service.ZauthAuthorityService;
 import org.zalando.zauth.zmon.service.ZauthTeamService;
@@ -21,7 +22,6 @@ import org.zalando.zmon.security.TeamService;
  * @author jbellmann
  */
 @Configuration
-@EnableScheduling
 @EnableConfigurationProperties({ZmonOAuth2Properties.class, ZauthProperties.class})
 @Import({ZauthSecurityConfig.class, ZauthSocialConfigurer.class})
 @Profile("zauth")
@@ -52,4 +52,10 @@ public class ZauthAutoConfiguration {
                                              @Qualifier("accessTokensBean") final AccessTokens accessTokens) {
         return new ZauthAuthorityService(zauthProperties, teamService, accessTokens);
     }
+
+    @Bean
+    public TaskScheduler threadPoolTaskScheduler() {
+        return new ConcurrentTaskScheduler();
+    }
+
 }
