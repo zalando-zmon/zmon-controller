@@ -1,4 +1,4 @@
-angular.module('zmon2App').directive('alertValueModal', [ '$uibModal', 'APP_CONST','$timeout', function($uibModal, APP_CONST,$timeout) {
+angular.module('zmon2App').directive('alertValueModal', [ '$uibModal', 'APP_CONST','$timeout', 'jsonSortFilter', function($uibModal, APP_CONST,$timeout, jsonSortFilter) {
     return {
         restrict: 'A',
         scope: {
@@ -10,7 +10,7 @@ angular.module('zmon2App').directive('alertValueModal', [ '$uibModal', 'APP_CONS
 
             if (typeof scope.value === 'string') {
                 try {
-                    scope.value = JSON.parse(scope.value);
+                    scope.value = jsonSortFilter(scope.value);
                 } catch(e) {}
             }
 
