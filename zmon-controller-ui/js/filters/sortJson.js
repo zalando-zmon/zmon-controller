@@ -42,12 +42,12 @@ angular.module('zmon2App')
 
       function getSortedJsonValue(value) {
         const ops = {
-          number: (val) => val,
-          boolean: (val) => val,
-          array: arrayToArrayOfJsonObjects,
-          object: sortJson,
-          string: val => `"${val}"`,
-          null: val => null
+          'number': (val) => val,
+          'boolean': (val) => val,
+          'array': arrayToArrayOfJsonObjects,
+          'object': sortJson,
+          'string': val => `"${val}"`,
+          'null': val => null
         };
         const stringifyingFn = ops[getType(value)];
         return stringifyingFn(value);
