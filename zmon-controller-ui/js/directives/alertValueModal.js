@@ -7,12 +7,7 @@ angular.module('zmon2App').directive('alertValueModal', [ '$uibModal', 'APP_CONS
             open: '&'
         },
         link: function(scope, elem, attrs) {
-
-            if (typeof scope.value === 'string') {
-                try {
-                    scope.value = jsonSortFilter(scope.value);
-                } catch(e) {}
-            }
+            scope.value = jsonSortFilter(scope.value);
 
             var modalCtrl = function($scope, $uibModalInstance, name, value) {
                 $scope.filter = '';
