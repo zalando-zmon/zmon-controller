@@ -69,7 +69,9 @@ angular.module('zmon2App')
         const map = new Map();
 
         Object.keys(obj).forEach(key => map.set(key, obj[key]));
-        const objAsArray = [...map.entries()].sort();
+        const objAsArray = [...map.entries()].sort((a, b) => {
+          return a.toLowerCase().localeCompare(b.toLowerCase());
+        });
 
         return objAsArray;
       }
