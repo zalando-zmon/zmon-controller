@@ -9,6 +9,7 @@ angular.module('zmon2App').directive('alertValueModal', [ '$uibModal', 'APP_CONS
         link: function(scope, elem, attrs) {
 
             try {
+                scope.value = JSON.parse(scope.value)
                 scope.value = jsonSortFilter(scope.value);
             } catch(e) {}
 
