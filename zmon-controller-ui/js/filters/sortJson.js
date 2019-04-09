@@ -1,6 +1,9 @@
 angular.module('zmon2App')
   .filter('jsonSort', function() {
- 
+
+      /**
+       * Returns a stringified array of objects of any kind
+       */
       function arrayToArrayOfJsonObjects(array) {
         return wrapInBrackets(
           array.reduce((jsonString, item, index) => {
@@ -20,6 +23,9 @@ angular.module('zmon2App')
         return `{${wrapped}}`;
       }
 
+      /**
+       *  returns a stringified object and append a comma if it is the last object of a collection 
+       */
       function chainJson(obj, index, length) {
         if (index !== length - 1) {
           return obj + ',';
@@ -42,23 +48,30 @@ angular.module('zmon2App')
         return typeof(value);
       }
 
+      /**
+       * Returns an Object stringified depending on it's type
+       */
       function getSortedJsonValue(value) {
         const ops = {
           'number': (val) => val,
           'boolean': (val) => val,
           'array': arrayToArrayOfJsonObjects,
-          'object': sortJson,
+          'object': sortObject,
           'string': val => `"${val}"`,
           'null': val => null
         };
         const stringifyingFn = ops[getType(value)];
+
         return stringifyingFn(value);
       }
 
       function stringifyKeyValue([key, value]) {
         return `"${key}":${getSortedJsonValue(value)}`;
       }
-
+      
+      /**
+       * Concatenates key value pairs, in order to return a stringified Objects
+       */
       function stringifyArrayOfKeyValue(arrayOfKeyValue) {
         return arrayOfKeyValue.reduce((json, keyValue, index) => {
           const jsonRow = stringifyKeyValue(keyValue);
@@ -67,8 +80,11 @@ angular.module('zmon2App')
         }, '');
       }
 
+      /**
+       * Given an object, returns an array of key value pairs sorted by key
+       * @param {Object} obj - the object which's keys have to be sorted
+       */
       function getSortedObjAsArray(obj) {  
-
         const map = new Map();
 
         Object.keys(obj).forEach(key => map.set(key, obj[key]));
@@ -83,7 +99,7 @@ angular.module('zmon2App')
         return x => fns.reduce((v, f) => f(v), x);
       }
 
-      function sortJson(obj) {
+      function sortObject(obj) {
         return pipe(
           getSortedObjAsArray,
           stringifyArrayOfKeyValue,
