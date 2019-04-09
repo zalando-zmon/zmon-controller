@@ -2,12 +2,14 @@ angular.module('zmon2App')
   .filter('jsonSort', function() {
  
       function arrayToArrayOfJsonObjects(array) {
-        return wrapInBrackets(array.reduce((jsonString, item, index) => {
-          let jsonRow = sortJson(item);
+        return wrapInBrackets(
+          array.reduce((jsonString, item, index) => {
+            let jsonRow = getSortedJsonValue(item);
 
-          jsonRow = chainJson(jsonRow, index, array.length);
-          return jsonString.concat(jsonRow);
-        }, ''));
+            jsonRow = chainJson(jsonRow, index, array.length);
+            return jsonString.concat(jsonRow);
+          }, '')
+        );
       }
 
       function wrapInBrackets(wrapped) {
@@ -66,6 +68,7 @@ angular.module('zmon2App')
       }
 
       function getSortedObjAsArray(obj) {  
+
         const map = new Map();
 
         Object.keys(obj).forEach(key => map.set(key, obj[key]));
