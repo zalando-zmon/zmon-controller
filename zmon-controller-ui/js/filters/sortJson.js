@@ -24,7 +24,8 @@ angular.module('zmon2App')
       }
 
       /**
-       *  returns a stringified object and append a comma if it is the last object of a collection 
+       *  returns a stringified object to which a comma is appended 
+       *  if it is the last object of the collection it belongs to 
        */
       function chainJson(obj, index, length) {
         if (index !== length - 1) {
@@ -49,7 +50,11 @@ angular.module('zmon2App')
       }
 
       /**
+       * @param {any} value - The object that has to be serialized to a string
        * Returns an Object stringified depending on it's type
+       * This is where the recursion takes place in case of nested objects
+       * by calling either arrayToArrayOfJsonObjects in case the object passed is an array
+       * or sortObject in case it is an plain object
        */
       function getSortedJsonValue(value) {
         const ops = {
