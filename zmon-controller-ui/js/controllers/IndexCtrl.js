@@ -10,6 +10,8 @@ angular.module('zmon2App').controller('IndexCtrl', ['$scope', '$window', '$locat
         $scope.globalSearchVisible = false;
         $scope.tvMode = false;
 
+        console.log(hello.world);
+
         // Consent Dialog; data injected from controller
         $scope.title = consent.title;
         $scope.content = consent.content;
