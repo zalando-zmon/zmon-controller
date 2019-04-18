@@ -12,8 +12,10 @@ angular.module('zmon2App', [
     'hljs',
     'ngDebounce'
 ])
-    .config(['$routeProvider', '$compileProvider',
-        function($routeProvider, $compileProvider) {
+    .config(['$routeProvider', '$compileProvider', '$locationProvider',
+        function($routeProvider, $compileProvider, $locationProvider) {
+            $locationProvider.html5Mode({enabled: true});
+
             // Whitelist "blob:" URLs for the anchor "href" to download check-definition YAML file in Trial Runs page
             $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|tel|file|blob):/);
 
