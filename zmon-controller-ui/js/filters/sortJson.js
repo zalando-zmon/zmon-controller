@@ -32,4 +32,4 @@ angular.module('zmon2App')
     }
     
     return sort;
-  })
+})
