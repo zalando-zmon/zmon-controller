@@ -21,4 +21,4 @@ export ZMON_SIGNUP_GITHUB_ALLOWED_USERS=*
 export ZMON_SIGNUP_GITHUB_ALLOWED_ORGAS=*
 export ZMON_LOGOUT_URL="https://mail.google.com/mail/logout"
 
-java -Xmx240m -jar zmon-controller-app/target/zmon-controller-1.0.1-SNAPSHOT.jar
+java -Xmx240m -jar zmon-controller-app/target/zmon-controller-1.0.1-SNAPSHOT-exec.jar
