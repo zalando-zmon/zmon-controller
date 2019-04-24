@@ -127,8 +127,11 @@ public class EntityApi {
     @RequestMapping(value = {"/{id}/", "/{id}"}, method = RequestMethod.DELETE)
     public int deleteEntity(@PathVariable(value = "id") String id) {
         List<String> teams = Lists.newArrayList(authService.getTeams());
-        log.info("Deleting entity {} from user {} with teams {}", id, authService.getUserName(), teams);
         List<String> ids = entitySprocs.deleteEntity(id, teams, authService.getUserName());
+
+        if (!ids.isEmpty()) {
+            log.info("Deleted entity {} by user {} with teams {}", id, authService.getUserName(), teams);
+        }
         return ids.size();
     }
 
