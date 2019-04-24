@@ -128,6 +128,7 @@ public class EntityApi {
     public int deleteEntity(@PathVariable(value = "id") String id) {
         List<String> teams = Lists.newArrayList(authService.getTeams());
         List<String> ids = entitySprocs.deleteEntity(id, teams, authService.getUserName());
+
         if (!ids.isEmpty()) {
             log.info("Deleted entity {} by user {} with teams {}", id, authService.getUserName(), teams);
         }
