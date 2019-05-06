@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,14 +26,16 @@ import java.util.List;
 @RequestMapping("/api/v1/grafana")
 public class GrafanaDashboardAPI {
 
-    @Autowired
     DefaultZMonPermissionService authService;
-
-    @Autowired
     GrafanaDashboardSprocService grafanaService;
+    ObjectMapper mapper;
 
     @Autowired
-    ObjectMapper mapper;
+    public GrafanaDashboardAPI(GrafanaDashboardSprocService grafanaDashboardSprocService, ObjectMapper mapper, DefaultZMonPermissionService authService) {
+        this.authService = authService;
+        this.grafanaService = grafanaDashboardSprocService;
+        this.mapper = mapper;
+    }
 
     private Logger log = LoggerFactory.getLogger(GrafanaDashboardAPI.class);
 
@@ -96,6 +97,8 @@ public class GrafanaDashboardAPI {
             hit.put("_type", "dashboard");
             hits.add(hit);
         }
+
+        r.set("hits", hits);
         return r;
     }
 }
