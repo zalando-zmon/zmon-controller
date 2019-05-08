@@ -86,7 +86,6 @@ body.dashboard
 
 .dashboard-widget .widget-contents
 {
-    position: relative;
     height: 210px;
 }
 
@@ -98,7 +97,6 @@ body.dashboard
 .dashboard-widget h5
 {
     font-size: 17px;
-    position: absolute;
     text-align: center;
     top: 10px;
     margin: 0;
@@ -226,13 +224,12 @@ below styles are active for a widget */
 .dashboard-widget-trend
 {
     text-align: center;
-    height: 210px;
+    /*height: 210px;*/
 }
 
 .dashboard-widget-chart .widget-contents chart
 {
     position: relative;
-    top: 30px;
     height: 150px;
 }
 

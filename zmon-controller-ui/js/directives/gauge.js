@@ -11,7 +11,7 @@ angular.module('zmon2App').directive('gauge', ['FormatService', function(FormatS
         link: function(scope, elem, attrs) {
             GAUGE_LAST_ID++;
             var gaugeId = GAUGE_LAST_ID;
-            elem.append('<div class="gauge-wrapper" id="gauge-' + gaugeId + '"></div>');
+            elem.append('<div id="gauge-' + gaugeId + '"></div>');
 
             var g = null;
             scope._options = {min: 0, max: null, reverse: false};
