@@ -1,11 +1,11 @@
 <div class="dashboard-widget dashboard-widget-{{config.type}} {{config.css}}" ng-switch="config.type">
-    <div class="widget-contents" ng-class="{warning:isOutdated}" style="display: flex; flex-direction: column; justify-content: space-evenly; padding: 10px;">
-        <div ng-if="config.title" style="flex: 1; padding: 10px;">
+    <div class="widget-contents" ng-class="{warning:isOutdated}">
+        <div class="widget-header" ng-if="config.title">
             <h5 title="{{config.title}}">{{ config.title }}</h5>
             <span class="fa fa-exclamation-triangle chart-data-warning" title="Chart presents incomplete data. Points that resulted in exception are ignored" ng-show="hasNonPlottableValues"></span>
         </div>
 
-        <div style="flex: 1 1 auto;">
+        <div class="widget-body">
                 <div class="chart-widget-container" ng-switch-when="chart">
                     <chart chart-data="chartData" options="config.options" />
                  </div>
