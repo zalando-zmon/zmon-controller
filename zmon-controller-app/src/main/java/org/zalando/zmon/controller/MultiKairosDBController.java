@@ -8,10 +8,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
+import org.springframework.ui.ModelMap;
 import org.springframework.util.concurrent.ListenableFuture;
 import org.springframework.util.concurrent.ListenableFutureCallback;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.AsyncRestTemplate;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
 import org.zalando.stups.tokens.AccessTokens;
 import org.zalando.zmon.config.KairosDBProperties;
 
@@ -129,6 +132,24 @@ public class MultiKairosDBController extends AbstractZMonController {
         HttpEntity<String> httpEntity = new HttpEntity<>(headers);
 
         return asyncRestTemplate.exchange(kairosdbServices.get(kairosDB).getUrl() + METRIC_NAMES_SUFFIX, HttpMethod.GET, httpEntity, JsonNode.class);
+    }
+
+    @ExceptionHandler(HttpClientErrorException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    public ModelMap handleClientErrorException(final Exception e) {
+        log.warn("Functional problem [{}] occurred: [{}]", e.getClass().getSimpleName(), e.getMessage());
+
+        return new ModelMap().addAttribute(ERROR_MESSAGE_KEY, e.getMessage());
+    }
+
+    @ExceptionHandler(HttpServerErrorException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ResponseBody
+    public ModelMap handleServerErrorException(final Exception e) {
+        log.error("Technical problem occurred", e);
+
+        return new ModelMap().addAttribute(ERROR_MESSAGE_KEY, e.getMessage());
     }
 
     private HttpHeaders prepareHeaders(final String kairosDB) {
