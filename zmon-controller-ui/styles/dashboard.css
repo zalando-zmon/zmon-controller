@@ -86,8 +86,10 @@ body.dashboard
 
 .dashboard-widget .widget-contents
 {
-    position: relative;
     height: 210px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
 }
 
 .dashboard-widget .widget-contents.warning
@@ -98,7 +100,6 @@ body.dashboard
 .dashboard-widget h5
 {
     font-size: 17px;
-    position: absolute;
     text-align: center;
     top: 10px;
     margin: 0;
@@ -204,7 +205,6 @@ below styles are active for a widget */
     text-align: right;
     padding: 8px;
     overflow: hidden;
-    line-height: 190px;
 }
 
 /* TREND WIDGET */
@@ -226,13 +226,11 @@ below styles are active for a widget */
 .dashboard-widget-trend
 {
     text-align: center;
-    height: 210px;
 }
 
 .dashboard-widget-chart .widget-contents chart
 {
     position: relative;
-    top: 30px;
     height: 150px;
 }
 
@@ -891,6 +889,15 @@ below styles are active for a widget */
 .dashboard-tags .tag-placeholder
 {
     padding-left: 10px;
+}
+
+.widget-header {
+    flex: 1;
+    padding: 10px;
+}
+
+.widget-body {
+    flex: 1 1 auto;
 }
 
 .zmon-alert .alert-notification-checked
