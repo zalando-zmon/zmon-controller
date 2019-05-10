@@ -3,6 +3,7 @@ package org.zalando.zmon.controller;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +20,7 @@ import org.zalando.stups.tokens.AccessTokens;
 import org.zalando.zmon.config.KairosDBProperties;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -54,14 +56,20 @@ public class MultiKairosDBController extends AbstractZMonController {
 
     private final AccessTokens accessTokens;
 
+    private final ObjectMapper mapper;
+
     private final Map<String, KairosDBProperties.KairosDBServiceConfig> kairosdbServices = new HashMap<>();
 
     @Autowired
-    public MultiKairosDBController(KairosDBProperties kairosDBProperties, MetricRegistry metricRegistry,
-                                   AsyncRestTemplate asyncRestTemplate, AccessTokens accessTokens) {
+    public MultiKairosDBController(KairosDBProperties kairosDBProperties,
+                                   MetricRegistry metricRegistry,
+                                   AsyncRestTemplate asyncRestTemplate,
+                                   AccessTokens accessTokens,
+                                   ObjectMapper mapper) {
         this.metricRegistry = metricRegistry;
         this.asyncRestTemplate = asyncRestTemplate;
         this.accessTokens = accessTokens;
+        this.mapper = mapper;
 
         for (KairosDBProperties.KairosDBServiceConfig c : kairosDBProperties.getKairosdbs()) {
             kairosdbServices.put(c.getName(), c);
@@ -137,10 +145,17 @@ public class MultiKairosDBController extends AbstractZMonController {
     @ExceptionHandler(HttpClientErrorException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
-    public ModelMap handleClientErrorException(final Exception e) {
+    public ModelMap handleClientErrorException(final HttpClientErrorException e) {
         log.warn("Functional problem [{}] occurred: [{}]", e.getClass().getSimpleName(), e.getMessage());
-
-        return new ModelMap().addAttribute(ERROR_MESSAGE_KEY, e.getMessage());
+        try {
+            final JsonNode jsonNode = mapper.readTree(e.getResponseBodyAsString());
+            final JsonNode errorsArray = jsonNode.withArray("errors");
+            final String errorText = Optional.ofNullable(errorsArray.get(0)).map(JsonNode::asText).orElse("");
+            return new ModelMap().addAttribute(ERROR_MESSAGE_KEY, errorText);
+        } catch (IOException ex) {
+            log.error("Error while parsing response from KairosDB", ex);
+            return new ModelMap().addAttribute(ERROR_MESSAGE_KEY, e.getMessage());
+        }
     }
 
     @ExceptionHandler(HttpServerErrorException.class)
