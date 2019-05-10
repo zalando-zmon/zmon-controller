@@ -89,7 +89,7 @@ function (angular, _, coreModule, config) {
           });
         }
 
-        $timeout(self._handleError(err), 50);
+        $timeout(self._handleError(err), 10000);
         throw err;
       });
     };
