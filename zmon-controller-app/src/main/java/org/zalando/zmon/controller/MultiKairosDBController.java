@@ -151,10 +151,10 @@ public class MultiKairosDBController extends AbstractZMonController {
             final JsonNode jsonNode = mapper.readTree(e.getResponseBodyAsString());
             final JsonNode errorsArray = jsonNode.withArray("errors");
             final String errorText = Optional.ofNullable(errorsArray.get(0)).map(JsonNode::asText).orElse("");
-            return new ModelMap().addAttribute(ERROR_MESSAGE_KEY, errorText);
+            return errorModelMap(errorText);
         } catch (IOException ex) {
             log.error("Error while parsing response from KairosDB", ex);
-            return new ModelMap().addAttribute(ERROR_MESSAGE_KEY, e.getMessage());
+            return errorModelMap(e.getMessage());
         }
     }
 
@@ -164,7 +164,11 @@ public class MultiKairosDBController extends AbstractZMonController {
     public ModelMap handleServerErrorException(final Exception e) {
         log.error("Technical problem occurred", e);
 
-        return new ModelMap().addAttribute(ERROR_MESSAGE_KEY, e.getMessage());
+        return errorModelMap(e.getMessage());
+    }
+
+    private ModelMap errorModelMap(String message) {
+        return new ModelMap().addAttribute(ERROR_MESSAGE_KEY, message).addAttribute("queries", "");
     }
 
     private HttpHeaders prepareHeaders(final String kairosDB) {
