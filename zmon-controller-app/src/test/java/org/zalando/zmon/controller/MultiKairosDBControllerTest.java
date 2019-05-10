@@ -14,6 +14,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.concurrent.TimeUnit;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -42,12 +43,12 @@ public class MultiKairosDBControllerTest {
     private MetricRegistry metricsRegistry;
 
     @Before
-    public void setUp() throws MalformedURLException {
+    public void setUp() {
 
         wireMockRule.stubFor(post(urlPathEqualTo("/api/v1/datapoints/query/tags"))
                 .willReturn(aResponse().withStatus(200).withBody("{\"key\":\"value\"}").withHeader("Content-Type", "application/json").withFixedDelay(100)));
         wireMockRule.stubFor(post(urlPathEqualTo("/api/v1/metricnames"))
-                .willReturn(aResponse().withStatus(200).withBody("{}").withHeader("Content-Type","appplication/json").withFixedDelay(100)));
+                .willReturn(aResponse().withStatus(200).withBody("{}").withHeader("Content-Type", "appplication/json").withFixedDelay(100)));
 
         this.metricsRegistry = new MetricRegistry();
 
@@ -61,9 +62,10 @@ public class MultiKairosDBControllerTest {
         c.setOauth2(false);
         properties.getKairosdbs().add(c);
 
-        this.mockMvc = MockMvcBuilders
-                .standaloneSetup(new MultiKairosDBController(properties, metricsRegistry,
-                        new AsyncRestTemplate(new HttpComponentsAsyncClientHttpRequestFactory()), accessTokens))
+        final AsyncRestTemplate restTemplate = new AsyncRestTemplate(new HttpComponentsAsyncClientHttpRequestFactory());
+        final MultiKairosDBController controller = new MultiKairosDBController(
+                properties, metricsRegistry, restTemplate, accessTokens, new ObjectMapper());
+        this.mockMvc = MockMvcBuilders.standaloneSetup(controller)
                 .alwaysDo(MockMvcResultHandlers.print())
                 .build();
     }
