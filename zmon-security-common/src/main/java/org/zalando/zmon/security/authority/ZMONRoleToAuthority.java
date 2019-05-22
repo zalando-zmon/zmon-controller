@@ -21,6 +21,7 @@ public final class ZMONRoleToAuthority {
         factories.put(ZMonRole.LEAD.getRoleName(), ZMonLeadAuthority.FACTORY);
         factories.put(ZMonRole.USER.getRoleName(), ZMonUserAuthority.FACTORY);
         factories.put(ZMonRole.VIEWER.getRoleName(), ZMonViewerAuthority.FACTORY);
+        factories.put(ZMonRole.KAIROS_READER.getRoleName(), ZMonKairosReaderAuthority.FACTORY);
     }
 
     public static GrantedAuthority createAutority(String rolename, String username, Set<String> teams) {

@@ -18,6 +18,7 @@ public class JWTServiceProperties {
     private final Logger log = LoggerFactory.getLogger(JWTServiceProperties.class);
 
     private String secret;
+    private String kairosdbSignKey;
 
     public String getSecret() {
         return secret;
@@ -27,6 +28,14 @@ public class JWTServiceProperties {
         this.secret = secret;
     }
 
+    public String getKairosdbSignKey() {
+        return kairosdbSignKey;
+    }
+
+    public void setKairosdbSignKey(String kairosdbSignKey) {
+        this.kairosdbSignKey = kairosdbSignKey;
+    }
+
     @PostConstruct
     public void postConstruct() {
         if (StringUtils.isEmpty(secret)) {
@@ -34,5 +43,6 @@ public class JWTServiceProperties {
             secret = UUID.randomUUID().toString();
         }
         Assert.isTrue(ByteUtils.bitLength(secret.length()) >= 256, "'secret'-bit-length should be at least 256");
+        Assert.isTrue(ByteUtils.bitLength(kairosdbSignKey.length()) >= 256, "'secret'-bit-length should be at least 256");
     }
 }

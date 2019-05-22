@@ -7,7 +7,8 @@ public enum ZMonRole {
     USER("ZMON_USER"),
     VIEWER("ZMON_VIEWER"),
     API_READER("ZMON_API_READER"),
-    API_WRITER("ZMON_API_WRITER");
+    API_WRITER("ZMON_API_WRITER"),
+    KAIROS_READER("ZMON_KAIROS_READER");
 
     private final String roleName;
 

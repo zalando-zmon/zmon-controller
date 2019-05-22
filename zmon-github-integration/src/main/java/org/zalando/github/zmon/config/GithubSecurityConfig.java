@@ -28,6 +28,10 @@ import org.zalando.github.zmon.security.IsAllowedOrgaSignupCondition;
 import org.zalando.github.zmon.security.IsAllowedUserSignupCondition;
 import org.zalando.github.zmon.service.GithubResourceServerTokenServices;
 import org.zalando.zmon.security.*;
+import org.zalando.zmon.security.authority.ZMONRoleToAuthority;
+import org.zalando.zmon.security.authority.ZMonRole;
+import org.zalando.zmon.security.grafanatoken.GrafanaRememberMeServices;
+import org.zalando.zmon.security.grafanatoken.GrafanaTokenService;
 import org.zalando.zmon.security.jwt.JWTRememberMeServices;
 import org.zalando.zmon.security.jwt.JWTService;
 import org.zalando.zmon.security.rememberme.MultiRememberMeServices;
@@ -38,6 +42,7 @@ import org.zalando.zmon.security.tvtoken.TvTokenService;
 import org.zalando.zmon.security.tvtoken.ZMonTvRememberMeServices;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -65,6 +70,9 @@ public class GithubSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private JWTService jwtService;
+
+    @Autowired
+    private GrafanaTokenService grafanaTokenService;
 
     @Autowired
     private TeamService teamService;
@@ -99,7 +107,10 @@ public class GithubSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure( HttpSecurity http) throws Exception {
 
-        http = http.authenticationProvider(new RememberMeAuthenticationProvider("ZMON_TV")).authenticationProvider(new RememberMeAuthenticationProvider("ZMON_JWT"));
+        http = http
+                .authenticationProvider(new RememberMeAuthenticationProvider("ZMON_TV"))
+                .authenticationProvider(new RememberMeAuthenticationProvider("ZMON_JWT"))
+                .authenticationProvider(new RememberMeAuthenticationProvider("GRAFANA_JWT"));
 
         http
             .apply(new SpringSocialConfigurer())
@@ -119,11 +130,16 @@ public class GithubSecurityConfig extends WebSecurityConfigurerAdapter {
                     .permitAll()
             .and()
                 .authorizeRequests()
-                .antMatchers("/**")
+                .antMatchers("/rest/kairosdbs/**")
                     .authenticated()
+                .anyRequest()
+                    .access("authenticated AND !hasAuthority('"+ZMonRole.KAIROS_READER.getRoleName()+"')")
             .and()
                 .rememberMe()
-                .rememberMeServices(new MultiRememberMeServices(new JWTRememberMeServices(jwtService),new ZMonTvRememberMeServices(TvTokenService)))
+                .rememberMeServices(new MultiRememberMeServices(
+                        new JWTRememberMeServices(jwtService),
+                        new GrafanaRememberMeServices(grafanaTokenService),
+                        new ZMonTvRememberMeServices(TvTokenService)))
             .and()
                 .csrf()
                     .disable()

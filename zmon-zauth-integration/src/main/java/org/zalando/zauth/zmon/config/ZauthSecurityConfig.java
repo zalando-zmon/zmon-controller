@@ -25,6 +25,9 @@ import org.springframework.social.security.SocialUserDetailsService;
 import org.springframework.social.security.SpringSocialConfigurer;
 import org.zalando.stups.oauth2.spring.server.TokenInfoResourceServerTokenServices;
 import org.zalando.zmon.security.*;
+import org.zalando.zmon.security.authority.ZMonRole;
+import org.zalando.zmon.security.grafanatoken.GrafanaRememberMeServices;
+import org.zalando.zmon.security.grafanatoken.GrafanaTokenService;
 import org.zalando.zmon.security.jwt.JWTRememberMeServices;
 import org.zalando.zmon.security.jwt.JWTService;
 import org.zalando.zmon.security.rememberme.MultiRememberMeServices;
@@ -59,6 +62,8 @@ public class ZauthSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final JWTService jwtService;
 
+    private final GrafanaTokenService grafanaTokenService;
+
     private final TeamService teamService;
 
     private final DynamicTeamService dynamicTeamService;
@@ -68,12 +73,14 @@ public class ZauthSecurityConfig extends WebSecurityConfigurerAdapter {
                                Environment environment,
                                TvTokenService TvTokenService,
                                JWTService jwtService,
+                               GrafanaTokenService grafanaTokenService,
                                TeamService teamService,
                                DynamicTeamService dynamicTeamService) {
         this.authorityService = authorityService;
         this.environment = environment;
         this.TvTokenService = TvTokenService;
         this.jwtService = jwtService;
+        this.grafanaTokenService = grafanaTokenService;
         this.teamService = teamService;
         this.dynamicTeamService = dynamicTeamService;
     }
@@ -99,7 +106,10 @@ public class ZauthSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
-        http = http.authenticationProvider(new RememberMeAuthenticationProvider("ZMON_TV")).authenticationProvider(new RememberMeAuthenticationProvider("ZMON_JWT"));
+        http = http
+                .authenticationProvider(new RememberMeAuthenticationProvider("ZMON_TV"))
+                .authenticationProvider(new RememberMeAuthenticationProvider("ZMON_JWT"))
+                .authenticationProvider(new RememberMeAuthenticationProvider("GRAFANA_JWT"));
 
         http
         .apply(new SpringSocialConfigurer())
@@ -119,11 +129,17 @@ public class ZauthSecurityConfig extends WebSecurityConfigurerAdapter {
                 .permitAll()
         .and()
             .authorizeRequests()
-                .antMatchers("/**")
-                .authenticated()
+                .antMatchers("/rest/kairosdbs/**")
+                    .authenticated()
+                .anyRequest()
+                    .access("authenticated AND !hasAuthority('"+ZMonRole.KAIROS_READER.getRoleName()+"')")
         .and()
             .rememberMe()
-            .rememberMeServices(new MultiRememberMeServices(new JWTRememberMeServices(jwtService), new ZMonTvRememberMeServices(TvTokenService)))
+            .rememberMeServices(new MultiRememberMeServices(
+                    new JWTRememberMeServices(jwtService),
+                    new ZMonTvRememberMeServices(TvTokenService),
+                    new GrafanaRememberMeServices(grafanaTokenService)
+            ))
         .and()
             .csrf()
                 .disable()
