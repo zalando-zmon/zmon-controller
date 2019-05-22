@@ -43,12 +43,14 @@ public class JWTServiceTest {
         // default service for tests
         JWTServiceProperties props = new JWTServiceProperties();
         props.setSecret("28PI9q068f2qCbT38hnGX279Wei5YU5n");
+        props.setKairosdbSignKey("28PI9q068f2qCbT38hnGX279Wei5YU5n");
         service = new JWTService(props);
     }
 
     @Test
     public void testJwtServicePropertiesNullSecret() {
         JWTServiceProperties props = new JWTServiceProperties();
+        props.setKairosdbSignKey("28PI9q068f2qCbT38hnGX279Wei5YU5n");
         // normally invoked by spring
         props.postConstruct();
         assertThat(props.getSecret()).hasSameSizeAs(UUID.randomUUID().toString());
@@ -66,6 +68,7 @@ public class JWTServiceTest {
     public void testJwtServicePropertiesSecret() {
         JWTServiceProperties props = new JWTServiceProperties();
         props.setSecret("28PI9q068f2qCbT38hnGX279Wei5YU5n");
+        props.setKairosdbSignKey("28PI9q068f2qCbT38hnGX279Wei5YU5n");
         // normally invoked by spring
         props.postConstruct();
     }
