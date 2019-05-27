@@ -33,6 +33,8 @@ public class KairosDBConfiguration {
         final AsyncRestTemplate restTemplate = new AsyncRestTemplate(new RestAsyncClientHttpRequestFactory(client, executor));
 
         restTemplate.getInterceptors().add(new TracingAsyncRestTemplateInterceptor());
+        // Since we set our own CORS headers (CorsConfiguration), strip them from KairosDB response
+        restTemplate.getInterceptors().add(new CorsHeadersCleanerInterceptors());
 
         return restTemplate;
     }
