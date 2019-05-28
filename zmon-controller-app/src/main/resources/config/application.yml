@@ -67,6 +67,9 @@ zmon:
           oauth2: false
     grafana-min-interval: 60
 
+    jwt:
+      kairosdb-sign-key: 28PI9q068f2qCbT38hnGX279Wei5YU5n
+
     redis:
       write:
         host: ${REDIS_WRITE_HOST:${REDIS_HOST:localhost}}
