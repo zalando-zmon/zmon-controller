@@ -130,7 +130,7 @@ public class GithubSecurityConfig extends WebSecurityConfigurerAdapter {
                     .permitAll()
             .and()
                 .authorizeRequests()
-                .antMatchers("/rest/kairosdbs/**")
+                .antMatchers("/rest/kairosdbs/**", "/rest/checkAlertResults", "/rest/alertDetails", "/rest/alertHistory")
                     .authenticated()
                 .anyRequest()
                     .access("authenticated AND !hasAuthority('"+ZMonRole.KAIROS_READER.getRoleName()+"')")
