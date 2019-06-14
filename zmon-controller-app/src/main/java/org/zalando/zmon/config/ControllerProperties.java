@@ -25,6 +25,8 @@ public class ControllerProperties {
     public int emailTokenLength = 15;
     public int emailPort = 465;
 
+    public String grafanaHost = "";
+
     public boolean enableFirebase = false;
 
     public boolean enableEumTracing = false;
