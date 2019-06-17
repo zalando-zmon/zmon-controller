@@ -25,6 +25,8 @@ public class ControllerProperties {
     public int emailTokenLength = 15;
     public int emailPort = 465;
 
+    public String grafanaHost = "";
+
     public boolean enableFirebase = false;
 
     public boolean enableEumTracing = false;
@@ -190,5 +192,13 @@ public class ControllerProperties {
 
     public void setEnableSentry(boolean enableSentry) {
         this.enableSentry = enableSentry;
+    }
+
+    public String getGrafanaHost() {
+        return grafanaHost;
+    }
+
+    public void setGrafanaHost(String grafanaHost) {
+        this.grafanaHost = grafanaHost;
     }
 }
