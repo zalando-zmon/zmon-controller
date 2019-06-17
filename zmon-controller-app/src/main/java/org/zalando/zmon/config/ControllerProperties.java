@@ -193,4 +193,12 @@ public class ControllerProperties {
     public void setEnableSentry(boolean enableSentry) {
         this.enableSentry = enableSentry;
     }
+
+    public String getGrafanaHost() {
+        return grafanaHost;
+    }
+
+    public void setGrafanaHost(String grafanaHost) {
+        this.grafanaHost = grafanaHost;
+    }
 }
