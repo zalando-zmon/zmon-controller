@@ -86,6 +86,10 @@ public class GrafanaUIController {
     @RequestMapping(value = "/grafana6/**")
     public String grafana6Redirect(HttpServletRequest request) {
         String redirect = controllerProperties.grafanaHost + request.getRequestURI().replace("/grafana6/", "");
+        String query = request.getQueryString();
+        if(null != query) {
+            redirect += "?" + query;
+        }
         return "redirect:" + redirect;
     }
 }
