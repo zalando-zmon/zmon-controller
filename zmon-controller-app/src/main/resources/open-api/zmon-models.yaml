@@ -1,0 +1,78 @@
+---
+openapi: "3.0.0"
+components:
+  schemas:
+    AlertDefinition:
+      type: object
+      required:
+        - id
+        - name
+        - description
+        - team
+        - responsible_team
+        - condition
+        - check_definition_id
+        - status
+        - priority
+      properties:
+        id:
+          type: integer
+          format: int32
+          readOnly: true
+        name:
+          type: string
+        description:
+          type: string
+        team:
+          type: string
+        responsible_team:
+          type: string
+        entities:
+          type: array
+          items:
+            $ref: '#/components/schemas/EntityFilter'
+        entities_exclude:
+          type: array
+          items:
+            $ref: '#/components/schemas/EntityFilter'
+        condition:
+          type: string
+          description: |
+            This is the python condition that will be evaluated to decide when an alert is required to be triggered
+        notifications:
+          type: array
+          items:
+            type: string
+        check_definition_id:
+          type: integer
+          format: int32
+        status:
+          type: string
+          enum:
+            - ACTIVE
+            - INACTIVE
+            - REJECTED
+            - DELETED
+        priority:
+          type: integer
+          format: int32
+        period:
+          type: string
+    EntityFilter:
+      type: object
+      required:
+        - alias
+        - provider
+        - lifecycle_status
+        - type
+      properties:
+        alias:
+          type: string
+        provider:
+          type: string
+        lifecycle_status:
+          type: string
+        type:
+          type: string
+
+
