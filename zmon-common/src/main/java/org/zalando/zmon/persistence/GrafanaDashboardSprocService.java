@@ -68,4 +68,6 @@ public interface GrafanaDashboardSprocService {
     @SProcCall
     List<String> unstarGrafanaDashboard(@SProcParam String id, @SProcParam String user);
 
+    @SProcCall
+    String getGrafanaMapping(@SProcParam String id);
 }
