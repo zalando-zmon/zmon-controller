@@ -140,4 +140,22 @@ public class GrafanaUIControllerTest {
                 .andExpect(status().isNotFound())
                 .andReturn();
     }
+
+    @Test
+    public void TestGrafana6HomeRedirect() throws Exception {
+        GrafanaUIController controller = new GrafanaUIController(
+                mock(KairosDBProperties.class),
+                mock(ControllerProperties.class),
+                mock(AppdynamicsProperties.class),
+                mock(EumTracingProperties.class),
+                mock(GrafanaDashboardSprocService.class)
+        );
+
+        MockMvc mockMvc = MockMvcBuilders.standaloneSetup(controller).alwaysDo(print()).build();
+
+        MvcResult result = mockMvc.perform(get("/grafana6")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is3xxRedirection())
+                .andReturn();
+    }
 }
