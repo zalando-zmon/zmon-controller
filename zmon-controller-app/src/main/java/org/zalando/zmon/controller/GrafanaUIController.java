@@ -102,4 +102,9 @@ public class GrafanaUIController {
         }
         return "redirect:" + redirect;
     }
+
+    @RequestMapping(value = "/grafana6")
+    public String grafana6HomeRedirect(HttpServletRequest request) {
+        return "redirect:" + controllerProperties.grafanaHost;
+    }
 }
