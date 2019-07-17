@@ -160,7 +160,7 @@
 								<input ng-if="userInfo['schedule-downtime']" class="set-downtime-checkbox" type="checkbox" ng-checked="downtimeEntities.indexOf(entityInstance.entity) !== -1" ng-click="toggleAlertForDowntime(entityInstance.entity)">
 							</div>
 							<div>
-								<a href="/visualization/script?checkId={{::check.id}}&entityName={{ ::entityInstance.entity }}&checkName={{ ::check.name}}"><i class="fa fa-fw fa-bar-chart-o"></i></a>
+								<a target="_blank" href="/visualization/script?checkId={{::check.id}}&entityName={{ ::entityInstance.entity }}&checkName={{ ::check.name}}"><i class="fa fa-fw fa-bar-chart-o"></i></a>
 							</div>
 							<div ng-if="entityInstance.entityMeta && entityInstance.entityMeta.type && entityInstance.entityMeta.type == 'instance'" >
 								<a target="_new"href="https://{{::entityInstance.entityMeta.region}}.console.aws.amazon.com/ec2/v2/home?region={{::entityInstance.entityMeta.region}}#Instances:search={{::entityInstance.entityMeta.aws_id}};sort=Name" title="ip: {{::entityInstance.entityMeta.ip}}"><i class="fa fa-fw fa-cloud"></i></a>
