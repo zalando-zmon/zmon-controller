@@ -1,5 +1,8 @@
 package org.zalando.zmon.service;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import org.springframework.http.ResponseEntity;
+
 import java.util.Map;
 
 public interface VisualizationService {
@@ -7,13 +10,11 @@ public interface VisualizationService {
 
     String dynamicDashboardRedirect(Map<String, String> params);
 
+    ResponseEntity<JsonNode> getDashboard(String id);
+
     void getAllDashboards();
 
-    void getDashboard(String id);
+    ResponseEntity<JsonNode> upsertDashboard(String dashboard);
 
-    void createDashboard();
-
-    void updateDashboard();
-
-    void deleteDashboard(String id);
+    ResponseEntity<JsonNode> deleteDashboard(String id);
 }
