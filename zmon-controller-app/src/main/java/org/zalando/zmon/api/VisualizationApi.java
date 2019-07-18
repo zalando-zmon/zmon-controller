@@ -1,4 +1,4 @@
-package org.zalando.zmon.controller;
+package org.zalando.zmon.api;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,15 +13,15 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
 @Controller
-@RequestMapping(value = "/visualization")
-public class VisualizationController {
+@RequestMapping(value = "/api/v1/visualization")
+public class VisualizationApi {
 
     private VisualizationService visualizationService;
     private DefaultZMonPermissionService authService;
 
     @Autowired
-    public VisualizationController(VisualizationService visualizationService,
-                                   DefaultZMonPermissionService authService) {
+    public VisualizationApi(VisualizationService visualizationService,
+                            DefaultZMonPermissionService authService) {
         this.visualizationService = visualizationService;
         this.authService = authService;
     }
@@ -37,7 +37,7 @@ public class VisualizationController {
     }
 
     @ResponseBody
-    @RequestMapping(value = "/api/dashboard/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/dashboard/{id}", method = RequestMethod.GET)
     public ResponseEntity<JsonNode> getDashboard(@PathVariable(value = "id") String id) {
         if (!authService.hasUserAuthority()) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
@@ -46,7 +46,7 @@ public class VisualizationController {
     }
 
     @ResponseBody
-    @RequestMapping(value = "/api/dashboard/{id}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/dashboard/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<JsonNode> deleteDashboard(@PathVariable(value = "id") String id) {
         if (!authService.hasUserAuthority()) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
@@ -55,12 +55,12 @@ public class VisualizationController {
     }
 
     @ResponseBody
-    @RequestMapping(value = "/api/dashboard", method = RequestMethod.POST)
+    @RequestMapping(value = "/dashboard", method = RequestMethod.POST)
     public ResponseEntity<JsonNode> upsertDashboard(@RequestBody(required = true) String body) {
         return visualizationService.upsertDashboard(body);
     }
 
-    @RequestMapping(value = "/api/dashboard/search")
+    @RequestMapping(value = "/dashboard/search")
     public String searchDashboards(@PathVariable(value = "id") String id) {
         return "";
     }
