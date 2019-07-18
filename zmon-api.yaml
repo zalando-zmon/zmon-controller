@@ -1,0 +1,114 @@
+openapi: '3.0.2'
+info:
+  title: ZMON API
+  description: Zalando Monitoring Controller API
+  version: '0.0.1'
+  x-api-id: b4aef63e-e8b8-47c2-b28d-2024247333e7
+  x-audience: business-unit-internal
+  contact:
+    name: Team EagleEye
+    url: https://github.com/zalando-zmon/zmon-controller/issues
+    email: team-eagleeye@zalando.de
+servers:
+  - url: 'https://infrastructure-zmon-monitoring.zalandoapis.com'
+    description: Production ZMON API
+paths:
+  '/alert-results':
+    get:
+      summary: Returns latest alert results by entity.
+      parameters:
+        - $ref: '#/components/parameters/ApplicationId'
+      security:
+        - oauth2:
+          - uid
+      responses:
+        200:
+          description: Set of alert results
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AlertResults'
+        default:
+          description: a specific error occurred - see status code for more information.
+          content:
+            application/problem+json:
+              schema:
+                $ref: 'https://zalando.github.io/problem/schema.yaml#/Problem'
+components:
+
+  securitySchemes:
+    oauth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://identity.zalando.com/oauth2/token
+          scopes:
+            uid: Unique identifier of the user accessing the service.
+
+  parameters:
+    ApplicationId:
+      name: application_id
+      required: true
+      in: query
+      schema:
+        type: string
+      description: Application ID as registered in Kio
+      example: 'api-monitoring-controller'
+
+  schemas:
+    AlertResults:
+      description: Set of Alert instances
+      required:
+        - alert_instances
+      properties:
+        alert_instances:
+          type: array
+          items:
+            $ref: '#/components/schemas/AlertResult'
+    AlertResult:
+      description: Latest result of an executed alert matching on entitiy associated with given application id.
+      required:
+        - alert_definition_id
+        - check_definition_id
+        - entity_id
+        - title
+        - application_id
+        - priority
+        - triggered
+      properties:
+        alert_definition_id:
+          description: Alert definition id
+          type: string
+          example: '12313'
+        entity_id:
+          description: Entity id
+          type: string
+          example: 'api-monitoring-controller_apparel_zalan_do[481:c]'
+        entity_type:
+          description: Entity type
+          type: string
+          example: 'ingress_host'
+        check_definition_id:
+          description: Check definition id
+          type: string
+          example: '123'
+        title:
+          description: Alert title
+          type: string
+          example: 'Application down'
+        application_id:
+          description: Application id as registered in Kio
+          type: string
+          example: 'api-monitoring-controller'
+        triggered:
+          description: Status if alert is triggered
+          type: boolean
+          example: true
+        priority:
+          description: Priority level of alert where 1 is very high and 3 very low.
+          type: string
+          x-extensible-enum:
+            - 3
+            - 2
+            - 1
+          example: 1
