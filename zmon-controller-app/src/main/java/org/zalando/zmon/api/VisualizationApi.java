@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.*;
 import org.zalando.zmon.security.permission.DefaultZMonPermissionService;
 import org.zalando.zmon.service.VisualizationService;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
 @Controller
@@ -63,8 +62,8 @@ public class VisualizationApi {
     @ResponseBody
     @RequestMapping(value = "/dashboard/search", method = RequestMethod.DELETE)
     public ResponseEntity<JsonNode> searchDashboards(
-            @RequestParam (name="query", defaultValue = "") String query,
-            @RequestParam (name="limit", defaultValue = "25") int limit) {
-        return visualizationService.searchDashboards(query,limit);
+            @RequestParam(name = "query", defaultValue = "") String query,
+            @RequestParam(name = "limit", defaultValue = "25") int limit) {
+        return visualizationService.searchDashboards(query, limit);
     }
 }
