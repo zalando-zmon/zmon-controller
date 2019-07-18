@@ -27,12 +27,12 @@ public class VisualizationApi {
     }
 
     @RequestMapping(value = "/")
-    public String visualizationHomeRedirect(HttpServletRequest request) {
+    public String visualizationHomeRedirect() {
         return visualizationService.homeRedirect();
     }
 
     @RequestMapping(value = "/script")
-    public String grafanaScriptedDashboardRedirect(HttpServletRequest request, @RequestParam Map<String, String> params) {
+    public String grafanaScriptedDashboardRedirect(@RequestParam Map<String, String> params) {
         return visualizationService.dynamicDashboardRedirect(params);
     }
 
@@ -60,8 +60,11 @@ public class VisualizationApi {
         return visualizationService.upsertDashboard(body);
     }
 
-    @RequestMapping(value = "/dashboard/search")
-    public String searchDashboards(@PathVariable(value = "id") String id) {
-        return "";
+    @ResponseBody
+    @RequestMapping(value = "/dashboard/search", method = RequestMethod.DELETE)
+    public ResponseEntity<JsonNode> searchDashboards(
+            @RequestParam (name="query", defaultValue = "") String query,
+            @RequestParam (name="limit", defaultValue = "25") int limit) {
+        return visualizationService.searchDashboards(query,limit);
     }
 }

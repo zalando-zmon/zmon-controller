@@ -12,7 +12,7 @@ public interface VisualizationService {
 
     ResponseEntity<JsonNode> getDashboard(String id);
 
-    void getAllDashboards();
+    ResponseEntity<JsonNode> searchDashboards(String query, int limit);
 
     ResponseEntity<JsonNode> upsertDashboard(String dashboard);
 

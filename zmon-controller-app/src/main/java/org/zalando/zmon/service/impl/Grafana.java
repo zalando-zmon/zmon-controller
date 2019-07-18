@@ -25,6 +25,7 @@ import org.zalando.zmon.security.permission.DefaultZMonPermissionService;
 import org.zalando.zmon.service.VisualizationService;
 
 import java.io.IOException;
+import java.net.URLEncoder;
 import java.util.Map;
 
 @Service
@@ -36,6 +37,7 @@ public class Grafana implements VisualizationService {
     private final String dynamicDashboardEndpoint = "/dashboard/script/zmon-check.js";
     private final String getDashboardByUidEndpoint = "/api/dashboards/uid/";
     private final String deleteDashboardByUidEndpoint = "/api/dashboards/uid/";
+    private final String searchDashboardEndpoint = "/api/search/";
 
 
     @Autowired
@@ -82,8 +84,23 @@ public class Grafana implements VisualizationService {
     }
 
     @Override
-    public void getAllDashboards() {
+    public ResponseEntity<JsonNode> searchDashboards(String query, int limit) {
+        log.info("Searching grafana dashboard: Query={} User={}", query, authService.getUserName());
+        final Executor executor = Executor.newInstance(visualizationProperties.getHttpClient());
 
+        try {
+            UriComponents url = UriComponentsBuilder.newInstance()
+                    .host(visualizationProperties.getUrl())
+                    .path(searchDashboardEndpoint)
+                    .queryParam("query", URLEncoder.encode(query, "UTF-8"))
+                    .queryParam("limit", limit)
+                    .build();
+            HttpResponse response = executor.execute(Request.Get(url.toUri())).returnResponse();
+            return toResponseEntity(response);
+        } catch (Exception ex) {
+            log.error("Get grafana dashboard creation/update {} failed", ex);
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @Override
