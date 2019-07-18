@@ -27,8 +27,6 @@ public class ControllerProperties {
 
     public String grafanaHost = "";
 
-    public String visualizationHost = "";
-
     public boolean enableFirebase = false;
 
     public boolean enableEumTracing = false;
@@ -202,13 +200,5 @@ public class ControllerProperties {
 
     public void setGrafanaHost(String grafanaHost) {
         this.grafanaHost = grafanaHost;
-    }
-
-    public String getVisualizationHost() {
-        return visualizationHost;
-    }
-
-    public void setVisualizationHost(String visualizationHost) {
-        this.visualizationHost = visualizationHost;
     }
 }
