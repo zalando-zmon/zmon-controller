@@ -56,6 +56,9 @@ public class VisualizationApi {
     @ResponseBody
     @RequestMapping(value = "/dashboard", method = RequestMethod.POST)
     public ResponseEntity<JsonNode> upsertDashboard(@RequestBody(required = true) String body) {
+        if (!authService.hasUserAuthority()) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
         return visualizationService.upsertDashboard(body);
     }
 
@@ -64,6 +67,9 @@ public class VisualizationApi {
     public ResponseEntity<JsonNode> searchDashboards(
             @RequestParam(name = "query", defaultValue = "") String query,
             @RequestParam(name = "limit", defaultValue = "25") int limit) {
+        if (!authService.hasUserAuthority()) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
         return visualizationService.searchDashboards(query, limit);
     }
 }

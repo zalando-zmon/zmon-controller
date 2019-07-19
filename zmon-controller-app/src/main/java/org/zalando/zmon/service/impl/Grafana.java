@@ -35,7 +35,6 @@ public class Grafana implements VisualizationService {
     private final String deleteDashboardByUidEndpoint = "/api/dashboards/uid/";
     private final String searchDashboardEndpoint = "/api/search/";
 
-
     @Autowired
     private VisualizationProperties visualizationProperties;
 
@@ -71,11 +70,13 @@ public class Grafana implements VisualizationService {
         final String url = visualizationProperties.getUrl() + getDashboardByUidEndpoint + uid;
 
         try {
-            HttpResponse response = executor.execute(Request.Get(url)).returnResponse();
+            Request request = Request.Get(url);
+            request.addHeader("Authorization", "Bearer " + authService.getUserName());
+            HttpResponse response = executor.execute(request).returnResponse();
             return toResponseEntity(response);
         } catch (Exception ex) {
-            log.error("Get grafana dashboard {} failed", uid, ex);
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+            log.error("Get grafana dashboard: {} failed", uid, ex);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -91,11 +92,13 @@ public class Grafana implements VisualizationService {
                     .queryParam("query", URLEncoder.encode(query, "UTF-8"))
                     .queryParam("limit", limit)
                     .build();
-            HttpResponse response = executor.execute(Request.Get(url.toUri())).returnResponse();
+            Request request = Request.Get(url.toUri());
+            request.addHeader("Authorization", "Bearer " + authService.getUserName());
+            HttpResponse response = executor.execute(request).returnResponse();
             return toResponseEntity(response);
         } catch (Exception ex) {
-            log.error("Get grafana dashboard creation/update {} failed", ex);
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+            log.error("Search grafana dashboard failed", ex);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -106,13 +109,15 @@ public class Grafana implements VisualizationService {
         final String url = visualizationProperties.getUrl() + upsertDashboardEndpoint;
 
         try {
-
-            HttpResponse response = executor.execute(Request.Post(url).bodyString(mapper.writeValueAsString(dashboard),
-                    ContentType.APPLICATION_JSON)).returnResponse();
+            Request request = Request.Post(url);
+            request.addHeader("Authorization", "Bearer " + authService.getUserName());
+            HttpResponse response = executor.execute(request.bodyString(
+                    mapper.writeValueAsString(dashboard), ContentType.APPLICATION_JSON))
+                    .returnResponse();
             return toResponseEntity(response);
         } catch (Exception ex) {
-            log.error("Get grafana dashboard creation/update {} failed", ex);
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+            log.error("Create/Update grafana dashboard failed", ex);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -124,21 +129,24 @@ public class Grafana implements VisualizationService {
         final String url = visualizationProperties.getUrl() + deleteDashboardByUidEndpoint + uid;
 
         try {
-            HttpResponse response = executor.execute(Request.Delete(url)).returnResponse();
+            Request request = Request.Delete(url);
+            request.addHeader("Authorization", "Bearer " + authService.getUserName());
+            HttpResponse response = executor.execute(request).returnResponse();
             return toResponseEntity(response);
         } catch (Exception ex) {
-            log.error("Get grafana dashboard {} failed", uid, ex);
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+            log.error("Delete grafana dashboard: {} failed", uid, ex.getMessage());
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     private ResponseEntity<JsonNode> toResponseEntity(HttpResponse response) throws IOException {
+        int status = response.getStatusLine().getStatusCode();
         HttpEntity entity = response.getEntity();
-        JsonNode node = null;
         if (entity != null) {
             String dashboard = EntityUtils.toString(entity);
-            node = mapper.readTree(dashboard);
+            JsonNode node = mapper.readTree(dashboard);
+            return new ResponseEntity<>(node, HttpStatus.valueOf(status));
         }
-        return new ResponseEntity<>(node, HttpStatus.valueOf(response.getStatusLine().getStatusCode()));
+        return new ResponseEntity<>(HttpStatus.valueOf(status));
     }
 }
