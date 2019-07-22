@@ -10,11 +10,11 @@ public interface VisualizationService {
 
     String dynamicDashboardRedirect(Map<String, String> params);
 
-    ResponseEntity<JsonNode> getDashboard(String id);
+    ResponseEntity<JsonNode> getDashboard(String id, String token);
 
-    ResponseEntity<JsonNode> searchDashboards(String query, int limit);
+    ResponseEntity<JsonNode> searchDashboards(String query, int limit, String token);
 
-    ResponseEntity<JsonNode> upsertDashboard(String dashboard);
+    ResponseEntity<JsonNode> upsertDashboard(String dashboard, String token);
 
-    ResponseEntity<JsonNode> deleteDashboard(String id);
+    ResponseEntity<JsonNode> deleteDashboard(String id, String token);
 }

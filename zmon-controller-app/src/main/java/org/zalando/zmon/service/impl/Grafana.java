@@ -65,13 +65,13 @@ public class Grafana implements VisualizationService {
     }
 
     @Override
-    public ResponseEntity<JsonNode> getDashboard(String uid) {
+    public ResponseEntity<JsonNode> getDashboard(String uid, String token) {
         final Executor executor = Executor.newInstance(visualizationProperties.getHttpClient());
         final String url = visualizationProperties.getUrl() + getDashboardByUidEndpoint + uid;
 
         try {
             Request request = Request.Get(url);
-            request.addHeader("Authorization", "Bearer " + authService.getUserName());
+            request.addHeader("Authorization", "Bearer " + token);
             HttpResponse response = executor.execute(request).returnResponse();
             return toResponseEntity(response);
         } catch (Exception ex) {
@@ -81,7 +81,7 @@ public class Grafana implements VisualizationService {
     }
 
     @Override
-    public ResponseEntity<JsonNode> searchDashboards(String query, int limit) {
+    public ResponseEntity<JsonNode> searchDashboards(String query, int limit, String token) {
         log.info("Searching grafana dashboard: Query={} User={}", query, authService.getUserName());
         final Executor executor = Executor.newInstance(visualizationProperties.getHttpClient());
 
@@ -93,7 +93,7 @@ public class Grafana implements VisualizationService {
                     .queryParam("limit", limit)
                     .build();
             Request request = Request.Get(url.toUri());
-            request.addHeader("Authorization", "Bearer " + authService.getUserName());
+            request.addHeader("Authorization", "Bearer " + token);
             HttpResponse response = executor.execute(request).returnResponse();
             return toResponseEntity(response);
         } catch (Exception ex) {
@@ -103,14 +103,14 @@ public class Grafana implements VisualizationService {
     }
 
     @Override
-    public ResponseEntity<JsonNode> upsertDashboard(String dashboard) {
+    public ResponseEntity<JsonNode> upsertDashboard(String dashboard, String token) {
         log.info("Creating/Updating grafana dashboard: user={}", authService.getUserName());
         final Executor executor = Executor.newInstance(visualizationProperties.getHttpClient());
         final String url = visualizationProperties.getUrl() + upsertDashboardEndpoint;
 
         try {
             Request request = Request.Post(url);
-            request.addHeader("Authorization", "Bearer " + authService.getUserName());
+            request.addHeader("Authorization", "Bearer " + token);
             HttpResponse response = executor.execute(request.bodyString(
                     mapper.writeValueAsString(dashboard), ContentType.APPLICATION_JSON))
                     .returnResponse();
@@ -122,7 +122,7 @@ public class Grafana implements VisualizationService {
     }
 
     @Override
-    public ResponseEntity<JsonNode> deleteDashboard(String uid) {
+    public ResponseEntity<JsonNode> deleteDashboard(String uid, String token) {
         log.info("Deleting grafana dashboard: uid={} user={}", uid, authService.getUserName());
 
         final Executor executor = Executor.newInstance(visualizationProperties.getHttpClient());
@@ -130,7 +130,7 @@ public class Grafana implements VisualizationService {
 
         try {
             Request request = Request.Delete(url);
-            request.addHeader("Authorization", "Bearer " + authService.getUserName());
+            request.addHeader("Authorization", "Bearer " + token);
             HttpResponse response = executor.execute(request).returnResponse();
             return toResponseEntity(response);
         } catch (Exception ex) {

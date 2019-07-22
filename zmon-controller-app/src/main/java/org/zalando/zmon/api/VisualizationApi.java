@@ -1,6 +1,8 @@
 package org.zalando.zmon.api;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +19,8 @@ public class VisualizationApi {
 
     private VisualizationService visualizationService;
     private DefaultZMonPermissionService authService;
+    private final Logger log = LoggerFactory.getLogger(VisualizationApi.class);
+
 
     @Autowired
     public VisualizationApi(VisualizationService visualizationService,
@@ -37,39 +41,46 @@ public class VisualizationApi {
 
     @ResponseBody
     @RequestMapping(value = "/dashboard/{id}", method = RequestMethod.GET)
-    public ResponseEntity<JsonNode> getDashboard(@PathVariable(value = "id") String id) {
+    public ResponseEntity<JsonNode> getDashboard(@PathVariable(value = "id") String id, @RequestHeader("Authorization") String authHeader) {
         if (!authService.hasUserAuthority()) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
-        return visualizationService.getDashboard(id);
+        return visualizationService.getDashboard(id, extractToken(authHeader));
     }
 
     @ResponseBody
     @RequestMapping(value = "/dashboard/{id}", method = RequestMethod.DELETE)
-    public ResponseEntity<JsonNode> deleteDashboard(@PathVariable(value = "id") String id) {
+    public ResponseEntity<JsonNode> deleteDashboard(@PathVariable(value = "id") String id, @RequestHeader("Authorization") String authHeader) {
         if (!authService.hasUserAuthority()) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
-        return visualizationService.deleteDashboard(id);
+        return visualizationService.deleteDashboard(id, extractToken(authHeader));
     }
 
     @ResponseBody
     @RequestMapping(value = "/dashboard", method = RequestMethod.POST)
-    public ResponseEntity<JsonNode> upsertDashboard(@RequestBody(required = true) String body) {
+    public ResponseEntity<JsonNode> upsertDashboard(@RequestBody(required = true) String body, @RequestHeader("Authorization") String authHeader) {
         if (!authService.hasUserAuthority()) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
-        return visualizationService.upsertDashboard(body);
+        return visualizationService.upsertDashboard(body, extractToken(authHeader));
     }
 
     @ResponseBody
     @RequestMapping(value = "/dashboard/search", method = RequestMethod.DELETE)
     public ResponseEntity<JsonNode> searchDashboards(
             @RequestParam(name = "query", defaultValue = "") String query,
-            @RequestParam(name = "limit", defaultValue = "25") int limit) {
+            @RequestParam(name = "limit", defaultValue = "25") int limit,
+            @RequestHeader("Authorization") String authHeader) {
         if (!authService.hasUserAuthority()) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
-        return visualizationService.searchDashboards(query, limit);
+        return visualizationService.searchDashboards(query, limit, extractToken(authHeader));
+    }
+
+    private String extractToken(String authHeader) {
+        String [] auth = authHeader.split(" ");
+        log.info("Auth token: {}", auth[1]);
+        return auth[1];
     }
 }
