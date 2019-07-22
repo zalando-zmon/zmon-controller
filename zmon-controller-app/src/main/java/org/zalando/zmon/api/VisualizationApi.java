@@ -80,7 +80,6 @@ public class VisualizationApi {
 
     private String extractToken(String authHeader) {
         String [] auth = authHeader.split(" ");
-        log.info("Auth token: {}", auth[1]);
         return auth[1];
     }
 }
