@@ -141,11 +141,11 @@ public class Grafana implements VisualizationService {
 
     private ResponseEntity<JsonNode> toResponseEntity(HttpResponse response) throws IOException {
         int status = response.getStatusLine().getStatusCode();
-        HttpEntity entity = response.getEntity();
-        if (entity != null) {
+        if (status == 200) {
+            HttpEntity entity = response.getEntity();
             String dashboard = EntityUtils.toString(entity);
             JsonNode node = mapper.readTree(dashboard);
-            return new ResponseEntity<>(node, HttpStatus.valueOf(status));
+            return new ResponseEntity<>(node, HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.valueOf(status));
     }
