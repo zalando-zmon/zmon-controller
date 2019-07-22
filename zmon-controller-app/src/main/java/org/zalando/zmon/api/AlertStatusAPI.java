@@ -7,7 +7,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.zalando.zmon.api.domain.AlertResults;
 import org.zalando.zmon.domain.Alert;
 import org.zalando.zmon.domain.CheckResults;
 import org.zalando.zmon.domain.ExecutionStatus;
@@ -134,5 +141,12 @@ public class AlertStatusAPI {
                 : alertService.getAllAlertsByTeamAndTag(teams, tags);
 
         return new ResponseEntity<>(alerts, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/alert-results", method = RequestMethod.GET)
+    public ResponseEntity<AlertResults> getAlertInstances(
+        @RequestParam(value = "application_id") final String application
+    ) {
+        return new ResponseEntity<>(new AlertResults(service.getAlertResultsByApplication(application)), HttpStatus.OK);
     }
 }

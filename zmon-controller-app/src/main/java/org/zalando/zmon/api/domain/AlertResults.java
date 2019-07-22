@@ -2,10 +2,10 @@ package org.zalando.zmon.api.domain;
 
 import java.util.List;
 
-public class AlertInstances {
-    private final List<AlertInstance> alertInstances;
+public class AlertResults {
+    private final List<AlertResult> alertResults;
 
-    public AlertInstances(List<AlertInstance> alertInstances) {
-        this.alertInstances = alertInstances;
+    public AlertResults(List<AlertResult> alertResults) {
+        this.alertResults = alertResults;
     }
 }
