@@ -20,7 +20,7 @@ import de.zalando.typemapper.annotations.DatabaseField;
 import de.zalando.typemapper.annotations.DatabaseType;
 
 @XmlAccessorType(XmlAccessType.NONE)
-@DatabaseType(name = "check_definition_import")
+@DatabaseType(name = "check_definition_import", partial = true)
 public class CheckDefinitionImport {
 
     @XmlElement(required = false)
@@ -100,6 +100,10 @@ public class CheckDefinitionImport {
     @DatabaseField
     @NotNull(message = "user that modified the check definition is mandatory")
     private String lastModifiedBy;
+
+    @XmlElement
+    @DatabaseField
+    private DefinitionRuntime runtime;
 
     public String getName() {
         return name;
@@ -205,6 +209,14 @@ public class CheckDefinitionImport {
         this.lastModifiedBy = lastModifiedBy;
     }
 
+    public DefinitionRuntime getRuntime() {
+        return runtime;
+    }
+
+    public void setRuntime(DefinitionRuntime runtime) {
+        this.runtime = runtime;
+    }
+
     @Override
     public String toString() {
         final StringBuilder builder = new StringBuilder();
@@ -236,6 +248,8 @@ public class CheckDefinitionImport {
         builder.append(sourceUrl);
         builder.append(", lastModifiedBy=");
         builder.append(lastModifiedBy);
+        builder.append(", runtime=");
+        builder.append(runtime);
         builder.append("]");
         return builder.toString();
     }
