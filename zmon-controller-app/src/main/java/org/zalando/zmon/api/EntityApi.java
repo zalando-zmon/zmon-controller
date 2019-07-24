@@ -59,12 +59,12 @@ public class EntityApi {
     @RequestMapping(value = {"/", ""}, method = {RequestMethod.PUT, RequestMethod.POST})
     public ResponseEntity<String> addEntity(@RequestBody JsonNode entity) {
 
-        if (entity.has("type")){
-            if ("global".equals(entity.get("type").textValue().toLowerCase())){
+        if (entity.has("type")) {
+            if ("global".equals(entity.get("type").textValue().toLowerCase())) {
                 return new ResponseEntity<>("Creating entity with type - GLOBAL is not allowed.", HttpStatus.FORBIDDEN);
             }
 
-            if ("zmon_config".equals(entity.get("type").textValue())){
+            if ("zmon_config".equals(entity.get("type").textValue())) {
                 if (!authService.hasAdminAuthority()) {
                     throw new AccessDeniedException("No ADMIN privileges present to update configuration.");
                 }
@@ -88,10 +88,10 @@ public class EntityApi {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     @RequestMapping(value = {"/", ""}, method = RequestMethod.GET)
-    public List<EntityObject> getEntities(@RequestParam(value = "query", defaultValue = "[{}]") String data, @RequestParam(value="exclude", defaultValue="") String exclude) throws IOException {
+    public List<EntityObject> getEntities(@RequestParam(value = "query", defaultValue = "[{}]") String data, @RequestParam(value = "exclude", defaultValue = "") String exclude) throws IOException {
         List<String> entitiesString;
 
-        if (exclude != "") {
+        if (!exclude.isEmpty()) {
             entitiesString = entitySprocs.getEntitiesWithoutTag(exclude);
         } else {
             if (data.startsWith("{")) {
@@ -102,7 +102,7 @@ public class EntityApi {
         }
         List<EntityObject> list = new ArrayList<>(entitiesString.size());
 
-        for(String e : entitiesString) {
+        for (String e : entitiesString) {
             EntityObject o = mapper.readValue(e, EntityObject.class);
             list.add(o);
         }
