@@ -82,6 +82,10 @@ public class CheckDefinition implements StatusDiff {
     @DatabaseField
     private Date lastModified;
 
+    @XmlElement
+    @DatabaseField
+    private DefinitionRuntime runtime;
+
     public Date getLastModified() {
         return lastModified;
     }
@@ -202,6 +206,14 @@ public class CheckDefinition implements StatusDiff {
         this.lastModifiedBy = lastModifiedBy;
     }
 
+    public DefinitionRuntime getRuntime() {
+        return runtime;
+    }
+
+    public void setRuntime(DefinitionRuntime runtime) {
+        this.runtime = runtime;
+    }
+
     public boolean isDeleted() {
         return getStatus() == DefinitionStatus.DELETED;
     }
@@ -237,6 +249,8 @@ public class CheckDefinition implements StatusDiff {
         builder.append(sourceUrl);
         builder.append(", lastModifiedBy=");
         builder.append(lastModifiedBy);
+        builder.append(", runtime=");
+        builder.append(runtime);
         builder.append("]");
         return builder.toString();
     }
