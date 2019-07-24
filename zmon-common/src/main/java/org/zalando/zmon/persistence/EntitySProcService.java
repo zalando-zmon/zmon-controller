@@ -22,5 +22,8 @@ public interface EntitySProcService {
     List<String> getEntities(@SProcParam String filter);
 
     @SProcCall
+    List<String> getEntitiesWithoutTag(@SProcParam String filter);
+
+    @SProcCall
     List<String> deleteEntity(@SProcParam String id, @SProcParam List<String> teams, @SProcParam String userName);
 }

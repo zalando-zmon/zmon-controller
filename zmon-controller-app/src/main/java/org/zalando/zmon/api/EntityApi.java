@@ -88,13 +88,18 @@ public class EntityApi {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     @RequestMapping(value = {"/", ""}, method = RequestMethod.GET)
-    public List<EntityObject> getEntities(@RequestParam(value = "query", defaultValue = "[{}]") String data) throws IOException {
+    public List<EntityObject> getEntities(@RequestParam(value = "query", defaultValue = "[{}]") String data, @RequestParam(value="exclude", defaultValue="") String exclude) throws IOException {
+        List<String> entitiesString;
 
-        if (data.startsWith("{")) {
-            data = "[" + data + "]";
+        if (exclude != "") {
+            entitiesString = entitySprocs.getEntitiesWithoutTag(exclude);
+        } else {
+            if (data.startsWith("{")) {
+                data = "[" + data + "]";
+            }
+
+            entitiesString = entitySprocs.getEntities(data);
         }
-
-        List<String> entitiesString = entitySprocs.getEntities(data);
         List<EntityObject> list = new ArrayList<>(entitiesString.size());
 
         for(String e : entitiesString) {

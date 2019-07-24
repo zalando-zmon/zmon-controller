@@ -157,14 +157,14 @@ public class ZMonRestService extends AbstractZMonController {
 
     @ResponseBody
     @RequestMapping(value = "/entities")
-    public List<EntityObject> getEntities(@RequestParam(value = "query", defaultValue = "{}") String data) throws IOException {
-        return entityApi.getEntities(data);
+    public List<EntityObject> getEntities(@RequestParam(value = "query", defaultValue = "{}") String data, @RequestParam(value = "exclude", defaultValue="") String exclude) throws IOException {
+        return entityApi.getEntities(data, exclude);
     }
 
     @ResponseBody
     @RequestMapping(value = "/entities", method = RequestMethod.POST)
     public List<EntityObject> getEntitiesPost(@RequestBody JsonNode node) throws IOException {
-        return entityApi.getEntities(mapper.writeValueAsString(node));
+        return entityApi.getEntities(mapper.writeValueAsString(node), "");
     }
 
 
