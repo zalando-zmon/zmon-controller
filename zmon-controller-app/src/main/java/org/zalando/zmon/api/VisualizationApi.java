@@ -67,19 +67,18 @@ public class VisualizationApi {
     }
 
     @ResponseBody
-    @RequestMapping(value = "/dashboard/search", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/dashboard/search", method = RequestMethod.GET)
     public ResponseEntity<JsonNode> searchDashboards(
-            @RequestParam(name = "query", defaultValue = "") String query,
-            @RequestParam(name = "limit", defaultValue = "25") int limit,
+            @RequestParam Map<String, String> params,
             @RequestHeader("Authorization") String authHeader) {
         if (!authService.hasUserAuthority()) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
-        return visualizationService.searchDashboards(query, limit, extractToken(authHeader));
+        return visualizationService.searchDashboards(params, extractToken(authHeader));
     }
 
     private String extractToken(String authHeader) {
-        String [] auth = authHeader.split(" ");
+        String[] auth = authHeader.split(" ");
         return auth[1];
     }
 }

@@ -204,15 +204,20 @@ public class GrafanaTest {
 
     @Test
     public void testSearchDashboard() throws Exception {
-        ResponseEntity<JsonNode> response = grafana.searchDashboards("test", 1, VALID_TOKEN);
+        Map<String, String> validQuery = new HashMap<>();
+        validQuery.put("query", "test");
+        validQuery.put("limit", "1");
+        ResponseEntity<JsonNode> response = grafana.searchDashboards(validQuery, VALID_TOKEN);
         assertThat(response.getStatusCodeValue(), equalTo(200));
         assertThat(response.getBody().toString(), equalTo(VALID_JSON));
 
-        response = grafana.searchDashboards("notfound", 1, VALID_TOKEN);
-        assertThat(response.getStatusCodeValue(), equalTo(400));
-
-        response = grafana.searchDashboards("test", 1, INVALID_TOKEN);
+        response = grafana.searchDashboards(validQuery, INVALID_TOKEN);
         assertThat(response.getStatusCodeValue(), equalTo(401));
 
+        Map<String, String> invalidQuery = new HashMap<>();
+        invalidQuery.put("query", "notfound");
+        invalidQuery.put("limit", "1");
+        response = grafana.searchDashboards(invalidQuery, VALID_TOKEN);
+        assertThat(response.getStatusCodeValue(), equalTo(400));
     }
 }

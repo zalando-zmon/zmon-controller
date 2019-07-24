@@ -81,15 +81,18 @@ public class Grafana implements VisualizationService {
     }
 
     @Override
-    public ResponseEntity<JsonNode> searchDashboards(String query, int limit, String token) {
-        log.info("Searching grafana dashboard: Query={} User={}", query, authService.getUserName());
+    public ResponseEntity<JsonNode> searchDashboards(Map<String, String> params, String token) {
         final Executor executor = Executor.newInstance(visualizationProperties.getHttpClient());
 
         try {
+            log.info("Searching grafana dashboard: Query={} User={}",
+                    params.containsKey("query") ? URLEncoder.encode(params.get("query"), "UTF-8") : "",
+                    authService.getUserName());
             UriComponents url = UriComponentsBuilder.fromUriString(visualizationProperties.getUrl())
                     .path(searchDashboardEndpoint)
-                    .queryParam("query", URLEncoder.encode(query, "UTF-8"))
-                    .queryParam("limit", limit)
+                    .queryParam("query", params.containsKey("query") ? URLEncoder.encode(params.get("query"), "UTF-8") : "")
+                    .queryParam("tag", params.containsKey("tag") ? URLEncoder.encode(params.get("tag"), "UTF-8") : "")
+                    .queryParam("limit", params.containsKey("limit") ? params.get("limit") : "25")
                     .build();
             Request request = Request.Get(url.toUri());
             request.addHeader("Authorization", "Bearer " + token);
