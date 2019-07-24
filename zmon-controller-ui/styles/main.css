@@ -592,8 +592,7 @@ a.non-href-anchor
 }
 
 .navbar-nav > li > a.feedback-link {
-    background: #f08533;
-    color: white;
+    color: #f08533;
 }
 
 .navbar-nav > li > a.feedback-link:hover {

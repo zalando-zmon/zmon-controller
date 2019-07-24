@@ -69,7 +69,11 @@ public class WebMvcConfig {
                 converters.clear();
                 converters.add(new MappingJackson2HttpMessageConverter(objectMapper));
                 StringHttpMessageConverter converter = new StringHttpMessageConverter();
-                converter.setSupportedMediaTypes(Arrays.asList(new MediaType("text", "plain", Charset.forName("UTF-8"))));
+                List<MediaType> types = Arrays.asList(
+                        new MediaType("text", "plain", Charset.forName("UTF-8")),
+                        new MediaType("application", "javascript")
+                );
+                converter.setSupportedMediaTypes(types);
                 converters.add(converter);
             }
         };
