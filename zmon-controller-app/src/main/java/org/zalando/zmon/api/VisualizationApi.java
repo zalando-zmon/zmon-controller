@@ -40,7 +40,7 @@ public class VisualizationApi {
     }
 
     @ResponseBody
-    @RequestMapping(value = "/dashboard/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/dashboards/{id}", method = RequestMethod.GET)
     public ResponseEntity<JsonNode> getDashboard(@PathVariable(value = "id") String id, @RequestHeader("Authorization") String authHeader) {
         if (!authService.hasUserAuthority()) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
@@ -49,7 +49,7 @@ public class VisualizationApi {
     }
 
     @ResponseBody
-    @RequestMapping(value = "/dashboard/{id}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/dashboards/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<JsonNode> deleteDashboard(@PathVariable(value = "id") String id, @RequestHeader("Authorization") String authHeader) {
         if (!authService.hasUserAuthority()) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
@@ -58,7 +58,7 @@ public class VisualizationApi {
     }
 
     @ResponseBody
-    @RequestMapping(value = "/dashboard", method = RequestMethod.POST)
+    @RequestMapping(value = "/dashboards", method = RequestMethod.POST)
     public ResponseEntity<JsonNode> upsertDashboard(@RequestBody(required = true) String body, @RequestHeader("Authorization") String authHeader) {
         if (!authService.hasUserAuthority()) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
@@ -67,7 +67,7 @@ public class VisualizationApi {
     }
 
     @ResponseBody
-    @RequestMapping(value = "/dashboard/search", method = RequestMethod.GET)
+    @RequestMapping(value = "/dashboards/search", method = RequestMethod.GET)
     public ResponseEntity<JsonNode> searchDashboards(
             @RequestParam Map<String, String> params,
             @RequestHeader("Authorization") String authHeader) {
