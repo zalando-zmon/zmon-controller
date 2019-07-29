@@ -2,6 +2,7 @@ package org.zalando.zmon.api;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -27,6 +28,7 @@ import redis.clients.jedis.Pipeline;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -144,9 +146,42 @@ public class AlertStatusAPI {
     }
 
     @RequestMapping(value = "/alert-results", method = RequestMethod.GET)
-    public ResponseEntity<AlertResults> getAlertInstances(
-        @RequestParam(value = "application_id") final String application
+    public ResponseEntity getAlertResults(
+        @RequestParam(value = "filter") final String filters
     ) {
-        return new ResponseEntity<>(new AlertResults(service.getAlertResultsByApplication(application)), HttpStatus.OK);
+        final JsonNode filter = parseFilter(filters);
+        if (!hasAtLeastOneFilterSet(filter)) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        final ArrayNode filterArray = mapper.createArrayNode();
+        filterArray.add(filter);
+
+        return new ResponseEntity<>(new AlertResults(service.getAlertResults(filterArray)), HttpStatus.OK);
+    }
+
+    private boolean hasAtLeastOneFilterSet(JsonNode filter) {
+        if (filter == null || !filter.isObject()) return false;
+        final Iterator<String> keys = filter.fieldNames();
+
+        while(keys.hasNext()) {
+            String key = keys.next();
+            if (filter.get(key) != null && !filter.get(key).asText().isEmpty()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private JsonNode parseFilter(String filter) {
+        if (filter == null) return null;
+
+        JsonNode node = null;
+        try {
+            node = mapper.readTree(filter);
+        } catch (IOException ignored) {}
+
+        return node;
     }
 }

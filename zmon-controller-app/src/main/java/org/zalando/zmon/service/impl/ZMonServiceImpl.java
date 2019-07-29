@@ -618,8 +618,7 @@ public class ZMonServiceImpl implements ZMonService {
     }
 
     @Override
-    public List<AlertResult> getAlertResultsByApplication(final String application) {
-        final JsonNode filter = createApplicationFilter(application);
+    public List<AlertResult> getAlertResults(final JsonNode filter) {
         final List<EntityGroup> alertCoverage = parseAlertCoverage(getAlertCoverage(filter));
 
         final Set<Integer> alertIds = alertCoverage.stream()
@@ -631,11 +630,11 @@ public class ZMonServiceImpl implements ZMonService {
             .map(alert -> alert.getAlertDefinition().getId())
             .collect(Collectors.toSet());
 
-        return createAlertResults(alertCoverage, alertIds, activeAlertsIds, application);
+        return createAlertResults(alertCoverage, alertIds, activeAlertsIds);
     }
 
     @VisibleForTesting
-    List<AlertResult> createAlertResults(final List<EntityGroup> alertCoverage, final Set<Integer> alertIds, final Set<Integer> activeAlertsIds, final String application) {
+    List<AlertResult> createAlertResults(final List<EntityGroup> alertCoverage, final Set<Integer> alertIds, final Set<Integer> activeAlertsIds) {
         final Map<Integer, Alert> alerts = new HashMap<>();
         for(Alert a: alertService.fetchAlertsById(alertIds)) {
             alerts.put(a.getAlertDefinition().getId(), a);
@@ -652,7 +651,6 @@ public class ZMonServiceImpl implements ZMonService {
                         entityInfo.type,
                         checkDefinitionOrNull(alerts.get(alertInfo.id)),
                         checkAlertNameOrNull(alerts.get(alertInfo.id)),
-                        application,
                         activeAlertsIds.contains(alertInfo.id),
                         priorityOrNull(alerts.get(alertInfo.id))));
                 }
@@ -700,15 +698,6 @@ public class ZMonServiceImpl implements ZMonService {
             return Collections.emptyList();
         }
         return Arrays.asList(alertCoverage);
-    }
-
-    private JsonNode createApplicationFilter(final String application) {
-        final ArrayNode filter = mapper.createArrayNode();
-        final ObjectNode app = mapper.createObjectNode();
-        app.put("application", application);
-        filter.add(app);
-
-        return filter;
     }
 
     protected static class EntityGroup {

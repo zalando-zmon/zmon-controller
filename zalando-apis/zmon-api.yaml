@@ -17,7 +17,7 @@ paths:
     get:
       summary: Returns latest alert results by entity.
       parameters:
-        - $ref: '#/components/parameters/ApplicationId'
+        - $ref: '#/components/parameters/Filter'
       security:
         - oauth2:
           - uid
@@ -46,33 +46,34 @@ components:
             uid: Unique identifier of the user accessing the service.
 
   parameters:
-    ApplicationId:
-      name: application_id
+    Filter:
+      name: filter
       required: true
       in: query
       schema:
-        type: string
-      description: Application ID as registered in Kio
-      example: 'api-monitoring-controller'
+        type: object
+      description: |
+        Object of filter values, where key references to a entity property name, and value is the value of the property.
+        At least one filter must be set.
+      example: '{"application":"api-monitoring-controller"}'
 
   schemas:
     AlertResults:
       description: Set of Alert instances
       required:
-        - alert_instances
+        - alert_results
       properties:
-        alert_instances:
+        alert_results:
           type: array
           items:
             $ref: '#/components/schemas/AlertResult'
     AlertResult:
-      description: Latest result of an executed alert matching on entitiy associated with given application id.
+      description: Latest alert result.
       required:
         - alert_definition_id
         - check_definition_id
         - entity_id
         - title
-        - application_id
         - priority
         - triggered
       properties:
@@ -96,10 +97,6 @@ components:
           description: Alert title
           type: string
           example: 'Application down'
-        application_id:
-          description: Application id as registered in Kio
-          type: string
-          example: 'api-monitoring-controller'
         triggered:
           description: Status if alert is triggered
           type: boolean

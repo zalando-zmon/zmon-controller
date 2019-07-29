@@ -53,5 +53,5 @@ public interface ZMonService {
 
     Date getMaxCheckDefinitionLastModified();
 
-    List<AlertResult> getAlertResultsByApplication(String application);
+    List<AlertResult> getAlertResults(JsonNode filter);
 }

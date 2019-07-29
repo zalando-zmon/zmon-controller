@@ -6,17 +6,15 @@ public class AlertResult {
     private final String entityType;
     private final String checkDefinitionId;
     private final String title;
-    private final String applicationId;
     private final boolean triggered;
     private final String priority;
 
-    public AlertResult(String alertDefinitionId, String entityId, String entityType, String checkDefinitionId, String title, String applicationId, boolean triggered, String priority) {
+    public AlertResult(String alertDefinitionId, String entityId, String entityType, String checkDefinitionId, String title, boolean triggered, String priority) {
         this.alertDefinitionId = alertDefinitionId;
         this.entityId = entityId;
         this.entityType = entityType;
         this.checkDefinitionId = checkDefinitionId;
         this.title = title;
-        this.applicationId = applicationId;
         this.triggered = triggered;
         this.priority = priority;
     }
@@ -39,10 +37,6 @@ public class AlertResult {
 
     public String getTitle() {
         return title;
-    }
-
-    public String getApplicationId() {
-        return applicationId;
     }
 
     public boolean isTriggered() {

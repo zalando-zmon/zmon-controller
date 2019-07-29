@@ -100,7 +100,7 @@ public class ZMonServiceImplTest {
 
     @Test
     public void createAlertResultsShouldReturnEmptyListIfAlertCoverageIsNotAvailable() {
-        List<AlertResult> alertResults = service.createAlertResults(Lists.emptyList(), null, null, null);
+        List<AlertResult> alertResults = service.createAlertResults(Lists.emptyList(), null, null);
 
         MatcherAssert.assertThat(alertResults, IsNull.notNullValue());
         MatcherAssert.assertThat(alertResults.size(), Matchers.is(0));
@@ -108,7 +108,6 @@ public class ZMonServiceImplTest {
 
     @Test
     public void createAlertResults() {
-        String application = "zmon-controller";
         Set<Integer> alertIds = new HashSet<>(Arrays.asList(1, 2));
         Set<Integer> activeAlertsIds = new HashSet<>(Collections.singletonList(1));
         List<ZMonServiceImpl.EntityGroup> alertCoverage = new LinkedList<>();
@@ -128,13 +127,12 @@ public class ZMonServiceImplTest {
             Arrays.asList(alert(1, "ZMON is great", 1), alert(2, "ZMON is hot", 2))
         );
 
-        List<AlertResult> alertResults = service.createAlertResults(alertCoverage, alertIds, activeAlertsIds, application);
+        List<AlertResult> alertResults = service.createAlertResults(alertCoverage, alertIds, activeAlertsIds);
 
         MatcherAssert.assertThat(alertResults, IsNull.notNullValue());
         MatcherAssert.assertThat(alertResults.size(), Matchers.is(3));
 
         MatcherAssert.assertThat(alertResults.get(0).getAlertDefinitionId(), Matchers.is("1"));
-        MatcherAssert.assertThat(alertResults.get(0).getApplicationId(), Matchers.is("zmon-controller"));
         MatcherAssert.assertThat(alertResults.get(0).getCheckDefinitionId(), Matchers.is("1"));
         MatcherAssert.assertThat(alertResults.get(0).getEntityId(), Matchers.is("pod_1"));
         MatcherAssert.assertThat(alertResults.get(0).getEntityType(), Matchers.is("pod"));
@@ -143,7 +141,6 @@ public class ZMonServiceImplTest {
         MatcherAssert.assertThat(alertResults.get(0).isTriggered(), Matchers.is(true));
 
         MatcherAssert.assertThat(alertResults.get(1).getAlertDefinitionId(), Matchers.is("1"));
-        MatcherAssert.assertThat(alertResults.get(1).getApplicationId(), Matchers.is("zmon-controller"));
         MatcherAssert.assertThat(alertResults.get(1).getCheckDefinitionId(), Matchers.is("1"));
         MatcherAssert.assertThat(alertResults.get(1).getEntityId(), Matchers.is("pod_2"));
         MatcherAssert.assertThat(alertResults.get(1).getEntityType(), Matchers.is("pod"));
@@ -152,7 +149,6 @@ public class ZMonServiceImplTest {
         MatcherAssert.assertThat(alertResults.get(1).isTriggered(), Matchers.is(true));
 
         MatcherAssert.assertThat(alertResults.get(2).getAlertDefinitionId(), Matchers.is("2"));
-        MatcherAssert.assertThat(alertResults.get(2).getApplicationId(), Matchers.is("zmon-controller"));
         MatcherAssert.assertThat(alertResults.get(2).getCheckDefinitionId(), Matchers.is("2"));
         MatcherAssert.assertThat(alertResults.get(2).getEntityId(), Matchers.is("pod_a"));
         MatcherAssert.assertThat(alertResults.get(2).getEntityType(), Matchers.is("pod"));
