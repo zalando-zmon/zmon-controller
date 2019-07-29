@@ -54,7 +54,7 @@ components:
         type: object
       description: |
         Object of filter values, where key references to a entity property name, and value is the value of the property.
-        At least one filter must be set.
+        At least one filter must be set. Currently allowed filter keys are: `application`, `alias`, `infrastructure_account`.
       example: '{"application":"api-monitoring-controller"}'
 
   schemas:

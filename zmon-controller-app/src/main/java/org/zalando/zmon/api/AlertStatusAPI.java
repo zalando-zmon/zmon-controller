@@ -4,7 +4,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.common.annotations.VisibleForTesting;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -28,6 +30,8 @@ import redis.clients.jedis.Pipeline;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -43,11 +47,19 @@ import static java.util.function.Function.identity;
 @RequestMapping("/api/v1/status")
 public class AlertStatusAPI {
 
+    private static final List<String> DEFAULT_ALLOWED_FILTER_KEYS = Collections.singletonList("application");
+
     private final ZMonService service;
     private final JedisPool jedisPool;
     protected ObjectMapper mapper;
 
     private final AlertService alertService;
+
+    @Value("${zmon.rest.get-alert-results.allowed-filters")
+    private String[] allowedFilterKeysConfig;
+
+    @VisibleForTesting
+    List<String> allowedFilterKeys;
 
     @Autowired
     public AlertStatusAPI(final ZMonService service, final AlertService alertService, final JedisPool p, final ObjectMapper m) {
@@ -55,6 +67,7 @@ public class AlertStatusAPI {
         this.alertService = alertService;
         jedisPool = p;
         mapper = m;
+        this.allowedFilterKeys = allowedFilterKeysConfig != null ? Arrays.asList(allowedFilterKeysConfig) : DEFAULT_ALLOWED_FILTER_KEYS;
     }
 
     /**
@@ -150,7 +163,7 @@ public class AlertStatusAPI {
         @RequestParam(value = "filter") final String filters
     ) {
         final JsonNode filter = parseFilter(filters);
-        if (!hasAtLeastOneFilterSet(filter)) {
+        if (!isAllowed(filter)) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
@@ -160,18 +173,18 @@ public class AlertStatusAPI {
         return new ResponseEntity<>(new AlertResults(service.getAlertResults(filterArray)), HttpStatus.OK);
     }
 
-    private boolean hasAtLeastOneFilterSet(JsonNode filter) {
-        if (filter == null || !filter.isObject()) return false;
-        final Iterator<String> keys = filter.fieldNames();
+    private boolean isAllowed(JsonNode filter) {
+        if (filter == null || !filter.isObject() || filter.size() == 0) return false;
 
-        while(keys.hasNext()) {
+        final Iterator<String> keys = filter.fieldNames();
+        boolean hasAtLeastOneFilterSet = false;
+        while (keys.hasNext()) {
             String key = keys.next();
-            if (filter.get(key) != null && !filter.get(key).asText().isEmpty()) {
-                return true;
-            }
+            if (!this.allowedFilterKeys.contains(key)) return false;
+            hasAtLeastOneFilterSet = filter.get(key).asText() != null && !filter.get(key).asText().isEmpty();
         }
 
-        return false;
+        return hasAtLeastOneFilterSet;
     }
 
     private JsonNode parseFilter(String filter) {
@@ -180,7 +193,8 @@ public class AlertStatusAPI {
         JsonNode node = null;
         try {
             node = mapper.readTree(filter);
-        } catch (IOException ignored) {}
+        } catch (IOException ignored) {
+        }
 
         return node;
     }

@@ -30,11 +30,19 @@ public class AlertStatusAPITest {
         when(service.getAlertResults(any())).thenReturn(Collections.emptyList());
 
         api = new AlertStatusAPI(service, null, null, new ObjectMapper());
+        api.allowedFilterKeys = Collections.singletonList("application");
     }
 
     @Test
-    public void getAlertResultsShouldReturnBadRequestIfFilterNotSet() {
+    public void getAlertResultsShouldReturnBadRequestIfFiltersAreNull() {
         ResponseEntity response = api.getAlertResults(null);
+
+        MatcherAssert.assertThat(response.getStatusCode(), Matchers.is(HttpStatus.BAD_REQUEST));
+    }
+
+    @Test
+    public void getAlertResultsShouldReturnBadRequestIfNotFiltersSet() {
+        ResponseEntity response = api.getAlertResults("{}");
 
         MatcherAssert.assertThat(response.getStatusCode(), Matchers.is(HttpStatus.BAD_REQUEST));
     }
@@ -47,8 +55,15 @@ public class AlertStatusAPITest {
     }
 
     @Test
-    public void getAlertResultsShouldReturnBadRequestIfNoFilterHasANotEmptyValue() {
+    public void getAlertResultsShouldReturnBadRequestIfNoFilterHasANonEmptyValue() {
         ResponseEntity response = api.getAlertResults("{\"application\":\"\"}");
+
+        MatcherAssert.assertThat(response.getStatusCode(), Matchers.is(HttpStatus.BAD_REQUEST));
+    }
+
+    @Test
+    public void getAlertResultsShouldReturnBadRequestIfFilterKeyIsNotAllowed() {
+        ResponseEntity response = api.getAlertResults("{\"not-allowed-filter-key\":\"\"}");
 
         MatcherAssert.assertThat(response.getStatusCode(), Matchers.is(HttpStatus.BAD_REQUEST));
     }
