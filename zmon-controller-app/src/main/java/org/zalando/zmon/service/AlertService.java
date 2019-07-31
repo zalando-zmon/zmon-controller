@@ -60,4 +60,6 @@ public interface AlertService {
     List<String> getAllTags();
 
     Date getMaxLastModified();
+
+    List<Alert> fetchAlertsById(Set<Integer> ids);
 }

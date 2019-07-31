@@ -52,4 +52,6 @@ public interface ZMonService {
     EntityFilterResponse getEntitiesMatchingFilters(EntityFilterRequest request);
 
     Date getMaxCheckDefinitionLastModified();
+
+    List<AlertResult> getAlertResults(JsonNode filter);
 }
