@@ -17,7 +17,7 @@ public class SchedulerProperties {
     private URL url;
 
     private int connectTimeout = 1000; // 1 second
-    private int socketTimeout = 5000; // 5 seconds
+    private int socketTimeout = 15000; // 15 seconds
     private int maxConnectionsPerRoute = 100;
     private int maxConnectionsTotal = 200;
     private long connectionTimeToLive = 2 * 60 * 1000; // 2 minutes
