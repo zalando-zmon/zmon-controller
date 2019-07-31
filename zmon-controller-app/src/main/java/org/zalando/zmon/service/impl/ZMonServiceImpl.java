@@ -636,7 +636,7 @@ public class ZMonServiceImpl implements ZMonService {
     @VisibleForTesting
     List<AlertResult> createAlertResults(final List<EntityGroup> alertCoverage, final Set<Integer> alertIds, final Set<Integer> activeAlertsIds) {
         final Map<Integer, Alert> alerts = new HashMap<>();
-        for(Alert a: alertService.fetchAlertsById(alertIds)) {
+        for (Alert a: alertService.fetchAlertsById(alertIds)) {
             alerts.put(a.getAlertDefinition().getId(), a);
         }
 
