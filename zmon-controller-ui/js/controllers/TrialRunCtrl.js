@@ -183,6 +183,7 @@ var TrialRunCtrl = function ($scope, $interval, $timeout, timespanFilter, Commun
     trc.running = false;
     trc.progress = 0;
     trc.authorized = Object.keys(UserInfoService.get()).length > 0;
+    trc.checkRuntimeConfig = CommunicationService.getCheckRuntimeConfig();
 
     $scope.onRun = false;
 
@@ -198,10 +199,11 @@ var TrialRunCtrl = function ($scope, $interval, $timeout, timespanFilter, Commun
     };
 
     $scope.alert = _.extend($scope.alert || {}, {
-       entities: [],
-       entities_exclude: [],
-       parameters: [],
-       interval: 120
+        entities: [],
+        entities_exclude: [],
+        parameters: [],
+        interval: 120,
+        runtime
     });
 
     // Deep watch
