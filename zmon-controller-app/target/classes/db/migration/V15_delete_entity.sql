@@ -9,5 +9,5 @@ $$
         OR REPLACE((e_data -> 'team'::text)::text, '"', '') = ANY(teams)
         OR e_created_by = user_name
     )
-  RETURNING ((EXTRACT(EPOCH FROM e_created)::text));
+  RETURNING (( (e_data || ('{"created":' || EXTRACT(EPOCH FROM e_created) || '}')::jsonb)::text))
 $$ LANGUAGE 'sql' VOLATILE SECURITY DEFINER;

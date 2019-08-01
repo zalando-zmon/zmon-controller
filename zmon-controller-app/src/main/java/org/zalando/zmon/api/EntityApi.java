@@ -134,16 +134,12 @@ public class EntityApi {
     @RequestMapping(value = {"/{id}/", "/{id}"}, method = RequestMethod.DELETE)
     public int deleteEntity(@PathVariable(value = "id") String id) {
         List<String> teams = Lists.newArrayList(authService.getTeams());
-        List<String> createdTimestamps = entitySprocs.deleteEntity(id, teams, authService.getUserName());
+        List<String> deleted = entitySprocs.deleteEntity(id, teams, authService.getUserName());
 
-        if (!createdTimestamps.isEmpty()) {
-            Float created = 1000 * Float.parseFloat(createdTimestamps.get(0));
-            Date now = new Date();
-            Duration lifetime = Duration.between(new Date(created.longValue()).toInstant(), new Date().toInstant());
-            long lifeseconds = now.getTime() - created.longValue();
-            log.info("Deleted entity {} by user {} with teams {} lifetime {} ({})", id, authService.getUserName(), teams, lifeseconds, lifetime);
+        if (!deleted.isEmpty()) {
+            log.info("Deleted entity {} by user {} with teams {} => {})", id, authService.getUserName(), teams, deleted.get(0));
         }
-        return createdTimestamps.size();
+        return deleted.size();
     }
 
 }
