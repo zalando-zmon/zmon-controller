@@ -1,3 +1,5 @@
+SET SEARCH_PATH TO zzm_api;
+
 CREATE OR REPLACE FUNCTION delete_entity(id text, teams text[], user_name text) RETURNS SETOF text AS
 $$
  DELETE FROM zzm_data.entity
