@@ -1,3 +1,7 @@
+CREATE SCHEMA IF NOT EXISTS zzm_api;
+
+SET search_path TO zzm_api, public;
+
 CREATE OR REPLACE FUNCTION delete_entity(id text, teams text[], user_name text) RETURNS SETOF text AS
 $$
  DELETE FROM zzm_data.entity
@@ -9,3 +13,4 @@ $$
     )
   RETURNING (( (e_data || ('{"created":' || EXTRACT(EPOCH FROM e_created) || '}')::jsonb)::text))
 $$ LANGUAGE 'sql' VOLATILE SECURITY DEFINER;
+

@@ -23,6 +23,8 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Date;
+import java.time.Duration;
 
 /**
  * Created by jmussler on 1/28/15.
@@ -132,12 +134,12 @@ public class EntityApi {
     @RequestMapping(value = {"/{id}/", "/{id}"}, method = RequestMethod.DELETE)
     public int deleteEntity(@PathVariable(value = "id") String id) {
         List<String> teams = Lists.newArrayList(authService.getTeams());
-        List<String> ids = entitySprocs.deleteEntity(id, teams, authService.getUserName());
+        List<String> deleted = entitySprocs.deleteEntity(id, teams, authService.getUserName());
 
-        if (!ids.isEmpty()) {
-            log.info("Deleted entity {} by user {} with teams {}", id, authService.getUserName(), teams);
+        if (!deleted.isEmpty()) {
+            log.info("Deleted entity {} by user {} with teams {} => {})", id, authService.getUserName(), teams, deleted.get(0));
         }
-        return ids.size();
+        return deleted.size();
     }
 
 }
