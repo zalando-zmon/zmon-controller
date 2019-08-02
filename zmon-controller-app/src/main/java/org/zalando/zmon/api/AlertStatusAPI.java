@@ -55,7 +55,7 @@ public class AlertStatusAPI {
 
     private final AlertService alertService;
 
-    @Value("${zmon.rest.get-alert-results.allowed-filters")
+    @Value("${zmon.rest.get-alert-results.allowed-filters}")
     private String[] allowedFilterKeysConfig;
 
     @VisibleForTesting
