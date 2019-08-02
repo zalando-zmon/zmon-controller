@@ -41,3 +41,7 @@ zmon:
           - firstTeam
           - secondTeam
           - thirdTeam
+    rest:
+      get-alert-results:
+        allowed-filters: application
+
