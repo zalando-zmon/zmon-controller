@@ -28,7 +28,7 @@ public class SearchAPI {
     QuickSearchSprocService searchService;
 
     @Autowired
-    VisualizationService visualizationService;
+    private VisualizationService visualizationService;
 
     @Autowired
     private VisualizationProperties visualizationProperties;
@@ -66,11 +66,10 @@ public class SearchAPI {
 
     private List<QuickSearchResultItem> searchVisualizationDashboards(String search, String teams, int limit, String token) {
         List<QuickSearchResultItem> dashboards = new ArrayList<>();
+
         Map<String, String> searchParams = new HashMap<>();
         searchParams.put("query", search);
-        if (teams == null) {
-            searchParams.put("tag", "");
-        }
+        teams = teams != null ? teams : "";
         searchParams.put("tag", teams);
         searchParams.put("limit", String.valueOf(limit));
 
@@ -79,9 +78,10 @@ public class SearchAPI {
         if (responseEntity.getStatusCodeValue() == 200 && responseEntity.getBody().isArray()) {
             for (final JsonNode dashboardNode : responseEntity.getBody()) {
                 QuickSearchResultItem i = new QuickSearchResultItem();
-                i.setId(dashboardNode.get("uid").textValue());
-                i.setTitle(dashboardNode.get("title").textValue());
-                i.setUrl(visualizationProperties.getUrl() + dashboardNode.get("url").textValue());
+                i.setId(dashboardNode.hasNonNull("uid") ? dashboardNode.get("uid").textValue() : "");
+                i.setTitle(dashboardNode.hasNonNull("title") ? dashboardNode.get("title").textValue() : "");
+                i.setUrl(dashboardNode.hasNonNull("url") ?
+                        visualizationProperties.getUrl() + dashboardNode.get("url").textValue() : "");
                 dashboards.add(i);
             }
         }

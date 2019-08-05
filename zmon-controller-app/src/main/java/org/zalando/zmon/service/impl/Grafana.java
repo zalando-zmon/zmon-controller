@@ -2,6 +2,7 @@ package org.zalando.zmon.service.impl;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.ImmutableSet;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.fluent.Executor;
@@ -22,9 +23,8 @@ import org.zalando.zmon.service.VisualizationService;
 
 import java.io.IOException;
 import java.net.URLEncoder;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 @Service
 public class Grafana implements VisualizationService {
@@ -36,14 +36,25 @@ public class Grafana implements VisualizationService {
     private final String getAndDeleteDashboardEndPoint = "/api/dashboards/uid/";
     private final String searchDashboardEndpoint = "/api/search";
 
-    @Autowired
+    private final Executor executor;
     private VisualizationProperties visualizationProperties;
-
-    @Autowired
     private DefaultZMonPermissionService authService;
+    protected ObjectMapper mapper;
+
+    /* Allowed status code 412 - Reason being a possible status code for upsert-dashboard in Grafana is 412 with
+        reason of the failure inside the body:
+        https://grafana.com/docs/http_api/dashboard/#create-update-dashboard */
+    private final Set<Integer> allowedStatusCode = ImmutableSet.of(200, 412);
 
     @Autowired
-    protected ObjectMapper mapper;
+    public Grafana(VisualizationProperties visualizationProperties,
+                   DefaultZMonPermissionService authService,
+                   ObjectMapper mapper) {
+        this.visualizationProperties = visualizationProperties;
+        this.authService = authService;
+        this.mapper = mapper;
+        this.executor = Executor.newInstance(visualizationProperties.getHttpClient());
+    }
 
     @Override
     public String homeRedirect() {
@@ -66,7 +77,6 @@ public class Grafana implements VisualizationService {
 
     @Override
     public ResponseEntity<JsonNode> getDashboard(String uid, String token) {
-        final Executor executor = Executor.newInstance(visualizationProperties.getHttpClient());
         final String url = visualizationProperties.getUrl() + getAndDeleteDashboardEndPoint + uid;
 
         try {
@@ -82,8 +92,6 @@ public class Grafana implements VisualizationService {
 
     @Override
     public ResponseEntity<JsonNode> searchDashboards(Map<String, String> params, String token) {
-        final Executor executor = Executor.newInstance(visualizationProperties.getHttpClient());
-
         try {
             log.info("Searching grafana dashboard: Query={} User={}",
                     params.containsKey("query") ? URLEncoder.encode(params.get("query"), "UTF-8") : "",
@@ -107,7 +115,6 @@ public class Grafana implements VisualizationService {
     @Override
     public ResponseEntity<JsonNode> upsertDashboard(String dashboard, String token) {
         log.info("Creating/Updating grafana dashboard: user={}", authService.getUserName());
-        final Executor executor = Executor.newInstance(visualizationProperties.getHttpClient());
         final String url = visualizationProperties.getUrl() + upsertDashboardEndpoint;
 
         try {
@@ -126,8 +133,6 @@ public class Grafana implements VisualizationService {
     @Override
     public ResponseEntity<JsonNode> deleteDashboard(String uid, String token) {
         log.info("Deleting grafana dashboard: uid={} user={}", uid, authService.getUserName());
-
-        final Executor executor = Executor.newInstance(visualizationProperties.getHttpClient());
         final String url = visualizationProperties.getUrl() + getAndDeleteDashboardEndPoint + uid;
 
         try {
@@ -144,9 +149,8 @@ public class Grafana implements VisualizationService {
     private ResponseEntity<JsonNode> toResponseEntity(HttpResponse response) throws IOException {
         int status = response.getStatusLine().getStatusCode();
         HttpEntity entity = response.getEntity();
-        Integer allowedStatusCodes[] = {200, 412};
 
-        if (new HashSet<>(Arrays.asList(allowedStatusCodes)).contains(status) && entity != null) {
+        if (allowedStatusCode.contains(status) && entity != null) {
             String dashboard = EntityUtils.toString(entity);
             JsonNode node = mapper.readTree(dashboard);
             return new ResponseEntity<>(node, HttpStatus.valueOf(status));
