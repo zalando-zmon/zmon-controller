@@ -61,27 +61,13 @@ public class GrafanaUIController {
     }
 
     @RequestMapping(value = "/grafana")
-    public String grafana(Model model) {
-        model.addAttribute(IndexController.STATIC_URL, controllerProperties.getStaticUrl());
-        model.addAttribute(IndexController.KAIROSDB_SERVICES, kairosdbServices);
-        model.addAttribute(IndexController.APPDYNAMICS_CONFIG, appdynamicsProperties);
-        model.addAttribute(IndexController.APPDYNAMICS_ENABLED, controllerProperties.enableAppdynamics);
-        model.addAttribute(IndexController.EUM_TRACING_ENABLED, controllerProperties.enableEumTracing);
-        model.addAttribute(IndexController.EUM_GRAFANA_TRACING_CONFIG, eumTracingProperties.grafanaConfig);
-
-        return "grafana";
+    public String grafana(HttpServletRequest request) {
+        return "redirect:" + request.getRequestURI().replace("/grafana", "/grafana6");
     }
 
     @RequestMapping(value = {"/grafana/dashboard/db/**", "/grafana/dashboard-solo/db/**"})
-    public String grafanaDeepLinks(Model model) {
-        model.addAttribute(IndexController.STATIC_URL, controllerProperties.getStaticUrl());
-        model.addAttribute(IndexController.KAIROSDB_SERVICES, kairosdbServices);
-        model.addAttribute(IndexController.APPDYNAMICS_CONFIG, appdynamicsProperties);
-        model.addAttribute(IndexController.APPDYNAMICS_ENABLED, controllerProperties.enableAppdynamics);
-        model.addAttribute(IndexController.EUM_TRACING_ENABLED, controllerProperties.enableEumTracing);
-        model.addAttribute(IndexController.EUM_GRAFANA_TRACING_CONFIG, eumTracingProperties.grafanaConfig);
-
-        return "grafana";
+    public String grafanaDeepLinks(HttpServletRequest request) {
+        return "redirect:" + request.getRequestURI().replace("/grafana/", "/grafana6/");
     }
 
     @RequestMapping(value = "/grafana2/**")
