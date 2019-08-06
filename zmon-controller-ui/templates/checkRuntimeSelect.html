@@ -1,0 +1,17 @@
+<div class="form-group" ng-show="$ctrl.enabled">
+    <label for="inp-command" class="col-sm-2 control-label">Runtime *</label>
+    <div class="col-sm-10">
+        <ui-select
+                name="{{ $ctrl.name }}"
+                ng-model="$ctrl.choice"
+                theme="select2"
+                search-enabled="false"
+                on-select="$ctrl.onSelect()"
+                required>
+            <ui-select-match>{{ $select.selected.label }}</ui-select-match>
+            <ui-select-choices repeat="choice in $ctrl.choices">
+                <span ng-bind="choice.label"></span>
+            </ui-select-choices>
+        </ui-select>
+    </div>
+</div>
