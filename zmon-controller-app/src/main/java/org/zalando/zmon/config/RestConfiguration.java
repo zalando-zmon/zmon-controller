@@ -2,7 +2,8 @@ package org.zalando.zmon.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-import java.util.Collections;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @ConfigurationProperties(prefix = "zmon.rest")
@@ -18,7 +19,7 @@ public class RestConfiguration {
     }
 
     public static class GetAlertResults {
-        private List<String> allowedFilters = Collections.singletonList("application");
+        private List<String> allowedFilters = Arrays.asList("application");
 
         public List<String> getAllowedFilters() {
             return allowedFilters;

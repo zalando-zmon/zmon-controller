@@ -43,6 +43,4 @@ zmon:
           - thirdTeam
     rest:
       get-alert-results:
-        allowed-filters:
-          - application
-
+        allowed-filters: [ application ]

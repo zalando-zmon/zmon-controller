@@ -81,8 +81,7 @@ zmon:
           max-wait: -1
     rest:
       get-alert-results:
-        allowed-filters:
-          - application
+        allowed-filters: [ application ]
 #
 # OAuth2: only mock tokens by default
 #
