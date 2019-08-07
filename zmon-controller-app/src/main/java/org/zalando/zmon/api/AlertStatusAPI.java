@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.zalando.zmon.api.domain.AlertResults;
-import org.zalando.zmon.config.RestConfiguration;
+import org.zalando.zmon.config.AlertResultsConfig;
 import org.zalando.zmon.domain.Alert;
 import org.zalando.zmon.domain.CheckResults;
 import org.zalando.zmon.domain.ExecutionStatus;
@@ -42,7 +42,7 @@ import static java.util.function.Function.identity;
  * Created by jmussler on 11/17/14.
  */
 @Controller
-@EnableConfigurationProperties({ RestConfiguration.class })
+@EnableConfigurationProperties({ AlertResultsConfig.class })
 @RequestMapping("/api/v1/status")
 public class AlertStatusAPI {
 
@@ -52,15 +52,15 @@ public class AlertStatusAPI {
 
     private final AlertService alertService;
 
-    private final RestConfiguration restConfiguration;
+    private final AlertResultsConfig alertResultsConfig;
 
     @Autowired
-    public AlertStatusAPI(final ZMonService service, final AlertService alertService, final JedisPool p, final ObjectMapper m, final RestConfiguration rc) {
+    public AlertStatusAPI(final ZMonService service, final AlertService alertService, final JedisPool p, final ObjectMapper m, final AlertResultsConfig ar) {
         this.service = service;
         this.alertService = alertService;
         this.jedisPool = p;
         this.mapper = m;
-        this.restConfiguration = rc;
+        this.alertResultsConfig = ar;
     }
 
     /**
@@ -173,7 +173,7 @@ public class AlertStatusAPI {
         boolean hasAtLeastOneFilterSet = false;
         while (keys.hasNext()) {
             String key = keys.next();
-            if (!this.restConfiguration.getGetAlertResults().getAllowedFilters().contains(key)) return false;
+            if (!this.alertResultsConfig.getAllowedFilters().contains(key)) return false;
             hasAtLeastOneFilterSet = filter.get(key).asText() != null && !filter.get(key).asText().isEmpty();
         }
 
