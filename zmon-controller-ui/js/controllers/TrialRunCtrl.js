@@ -295,31 +295,28 @@ var TrialRunCtrl = function ($scope, $interval, $timeout, timespanFilter, Commun
     var urlJson =JSON.parse($location.search().json)
     }
 
-     if($routeParams.checkId){
-        $scope.checkId = $routeParams.checkId
-            CommunicationService.getCheckDefinition($scope.checkId).then(
-                function(response) {
-                    $scope.alert = response;
-                    $scope.alert.check_command = $scope.alert.command;
+    if ($routeParams.checkId) {
+        $scope.checkId = $routeParams.checkId;
+        CommunicationService.getCheckDefinition($scope.checkId).then(
+            function (response) {
+                $scope.alert = response;
+                $scope.alert.check_command = $scope.alert.command;
 
-                    if (urlJson) {
-                        _.extend($scope.alert, urlJson);
-                    }
-                    if ($scope.alert.owning_team && trc.teams.indexOf($scope.alert.owning_team) === -1) {
-                        trc.teams.push($scope.alert.owning_team);
-                    }
-                    trc.entityFilter.formEntityFilters = $scope.alert.entities;
-                    trc.entityFilter.textEntityFilters = JSON.stringify($scope.alert.entities, null, trc.INDENT);
-                    trc.entityExcludeFilter.formEntityFilters = $scope.alert.entities_exclude ? $scope.alert.entities_exclude:[];
-                    trc.entityExcludeFilter.textEntityFilters = $scope.alert.entities_exclude ? JSON.stringify($scope.alert.entities_exclude, null, trc.INDENT):"[]";
-                    trc.parameters = formParametersArray($scope.alert.parameters);
-                
+                if (urlJson) {
+                    _.extend($scope.alert, urlJson);
+                }
+                if ($scope.alert.owning_team && trc.teams.indexOf($scope.alert.owning_team) === -1) {
+                    trc.teams.push($scope.alert.owning_team);
+                }
+                trc.entityFilter.formEntityFilters = $scope.alert.entities;
+                trc.entityFilter.textEntityFilters = JSON.stringify($scope.alert.entities, null, trc.INDENT);
+                trc.entityExcludeFilter.formEntityFilters = $scope.alert.entities_exclude ? $scope.alert.entities_exclude : [];
+                trc.entityExcludeFilter.textEntityFilters = $scope.alert.entities_exclude ? JSON.stringify($scope.alert.entities_exclude, null, trc.INDENT) : "[]";
+                trc.parameters = formParametersArray($scope.alert.parameters);
+            }
+        );
 
-                   
-                    }
-            );
-        
-    }else if (urlJson) {
+    } else if (urlJson) {
         _.extend($scope.alert, urlJson);
     }
     
@@ -555,6 +552,10 @@ var TrialRunCtrl = function ($scope, $interval, $timeout, timespanFilter, Commun
     trc.paramNameIsValid = function(name) {
         var re = /^[_a-zA-Z][_a-zA-Z0-9]*/;
         return re.test(name);
+    };
+
+    trc.updateRuntime = function(event) {
+        $scope.alert.runtime = event.runtime;
     };
 
     trc.dateOptions = {

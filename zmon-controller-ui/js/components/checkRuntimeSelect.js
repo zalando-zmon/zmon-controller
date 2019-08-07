@@ -1,38 +1,51 @@
 angular.module('zmon2App').component('checkRuntimeSelect', {
     bindings: {
-        name: '<',
+        name: '@',
         allowedChoices: '@',
-        default: '@',
+        readOnly: '@',
+        default: '<',
         onUpdate: '&'
     },
     templateUrl: 'templates/checkRuntimeSelect.html',
-    controller: function (CommunicationService) {
+    controller: function ($q, CommunicationService) {
         var ctrl = this;
+        var initPromise;
+
+        var setDefaultChoice = function() {
+            initPromise.then(function (config) {
+                ctrl.choice = _.find(ctrl.choices || [], function (choice) {
+                    return choice.name === ctrl.default;
+                }) || config.default_runtime;
+            });
+        };
 
         ctrl.$onInit = function() {
-            ctrl.name = ctrl.name || 'runtime';
+            initPromise = CommunicationService.getCheckRuntimeConfig().then(function(config) {
+                ctrl.enabled = config.enabled;
+                if (!ctrl.enabled) {
+                    return;
+                }
 
-            CommunicationService.getCheckRuntimeConfig()
-                .then(function (response) {
-                    ctrl.enabled = response.enabled;
-                    if (!ctrl.enabled) {
-                        return;
-                    }
+                ctrl.name = ctrl.name || 'runtime';
+                ctrl.readOnly = ctrl.readOnly || false;
+                ctrl.choices = {
+                    create: config.allowed_runtimes_for_create,
+                    update: config.allowed_runtimes_for_update
+                }[ctrl.allowedChoices];
 
-                    ctrl.choices = {
-                        create: response.allowed_runtimes_for_create,
-                        update: response.allowed_runtimes_for_update
-                    }[ctrl.allowedChoices];
-                    ctrl.choice = _.find(ctrl.choices, function (choice) {
-                        return choice.name === ctrl.default;
-                    }) || response.default_runtime;
+                return config;
+            });
+            setDefaultChoice();
+        };
 
-                    ctrl.onSelect();
-                });
+        ctrl.$onChanges = function(changes) {
+            if (changes.default && !changes.default.isFirstChange()) {
+                setDefaultChoice();
+            }
         };
 
         ctrl.onSelect = function() {
-            ctrl.onUpdate({runtime: ctrl.choice.name});
-        }
+            ctrl.onUpdate({$event: {runtime: ctrl.choice.name}});
+        };
     }
 });

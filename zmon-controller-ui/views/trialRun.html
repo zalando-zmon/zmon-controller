@@ -76,9 +76,9 @@
                     </div>
 
                     <check-runtime-select
+                            default="alert.runtime"
                             allowed-choices="update"
-                            on-update="TrialRunCtrl.updateRuntime"
-                            ng-class="{'has-error': trForm.submitted && trForm.runtime.$error.required}">
+                            on-update="TrialRunCtrl.updateRuntime($event);">
                     </check-runtime-select>
 
                     <div class="form-group" ng-class="{'has-error': trForm.submitted && trForm.parameters.$error['valid-json'] || trForm.parameters.$error.required }">

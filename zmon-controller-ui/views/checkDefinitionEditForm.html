@@ -51,6 +51,12 @@
         </div>
     </div>
 
+    <check-runtime-select
+            default="check.runtime"
+            allowed-choices="update"
+            on-update="$ctrl.updateRuntime($event);">
+    </check-runtime-select>
+
     <div class="form-group" ng-class="{'has-error': cdForm.submitted && cdForm.entities.$error['valid-json'] || cdForm.entities.$error.required }">
         <label for="inp-entities" class="col-sm-2 control-label">
             <a href="https://docs.zmon.io/en/latest/user/check-definitions.html#entity-filter" rel="help" target="docs">Included Entities</a>

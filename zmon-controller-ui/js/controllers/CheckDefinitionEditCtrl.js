@@ -3,6 +3,7 @@ angular.module('zmon2App').controller('CheckDefinitionEditCtrl', ['$scope', '$ro
 
         MainAlertService.removeDataRefresh();
 
+        $scope.$ctrl = this;
         $scope.$parent.activePage = 'check-definitions';
         $scope.invalidFormat = false;
         $scope.allTags = [];
@@ -180,6 +181,10 @@ angular.module('zmon2App').controller('CheckDefinitionEditCtrl', ['$scope', '$ro
                 }
             }
         }, true);
+
+        this.updateRuntime = function(event) {
+            $scope.check.runtime = event.runtime;
+        }
     }
 ]);
 
