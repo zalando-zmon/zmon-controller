@@ -2,17 +2,18 @@ package org.zalando.zmon.api;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import org.zalando.zmon.controller.GrafanaController;
+import org.zalando.zmon.api.domain.ResourceNotFoundException;
 import org.zalando.zmon.exception.ZMonException;
+import org.zalando.zmon.persistence.GrafanaDashboardSprocService;
+import org.zalando.zmon.service.VisualizationService;
 
 import java.io.IOException;
-import java.util.List;
+import java.util.Map;
 
 /**
  * Created by jmussler on 3/25/15.
@@ -21,29 +22,43 @@ import java.util.List;
 @Controller
 @RequestMapping("/api/v1/grafana2-dashboards")
 public class Grafana2RestAPI {
-
     @Autowired
     ObjectMapper mapper;
 
     @Autowired
-    GrafanaController grafana2UI;
+    VisualizationService visualizationService;
+
+    @Autowired
+    GrafanaDashboardSprocService grafanaDashboardSprocService;
 
     @ResponseBody
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public ResponseEntity<JsonNode> getDashboard(@PathVariable(value = "id") String id) throws ZMonException, IOException {
-        return grafana2UI.getDashboard(id);
+    public ResponseEntity<JsonNode> getDashboard(@PathVariable(value = "id") String id, @RequestHeader("Authorization") String authHeader) throws ZMonException {
+        if (id.isEmpty()) {
+            throw new ResourceNotFoundException();
+        }
+        String uid = grafanaDashboardSprocService.getGrafanaMapping(id);
+        uid = null == uid || uid.isEmpty() ? id : uid;
+        return visualizationService.getDashboard(uid, extractToken(authHeader));
     }
 
     @ResponseBody
     @RequestMapping(value = "", method = RequestMethod.POST, produces = "application/json")
-    public ResponseEntity<JsonNode> saveDashboard(@RequestBody(required = true) final JsonNode grafanaData) throws IOException {
-        return grafana2UI.saveDashboard(grafanaData);
+    public ResponseEntity<JsonNode> saveDashboard(@RequestBody(required = true) final String grafanaData,
+                                                  @RequestHeader("Authorization") String authHeader) throws IOException {
+        return visualizationService.upsertDashboard(grafanaData, extractToken(authHeader));
     }
 
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     @RequestMapping(value = "", method = RequestMethod.GET)
-    public JsonNode g2getDashboards(@RequestParam(value = "query", required = false) String query, @RequestParam(value = "tag", required = false) List<String> tags, @RequestParam(value = "starred", defaultValue = "false") boolean starred) throws IOException, ZMonException {
-        return grafana2UI.searchDashboards(query, tags, starred);
+    public ResponseEntity<JsonNode> g2getDashboards(@RequestParam Map<String, String> params,
+                                                    @RequestHeader("Authorization") String authHeader) {
+        return visualizationService.searchDashboards(params, extractToken(authHeader));
+    }
+
+    private String extractToken(String authHeader) {
+        String[] auth = authHeader.split(" ");
+        return auth[1];
     }
 }
