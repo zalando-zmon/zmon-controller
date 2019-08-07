@@ -43,12 +43,7 @@ angular.module('zmon2App').component('checkRuntimeSelect', {
         };
 
         ctrl.doUpdate = function() {
-            if (!ctrl.readOnly) {
-                ctrl.warn = {
-                    PYTHON_2: true,
-                    PYTHON_3: false
-                }[ctrl.choice];
-            }
+            ctrl.warn = !ctrl.readOnly && (ctrl.choice === 'PYTHON_2');
             ctrl.onUpdate({$event: {runtime: ctrl.choice}});
         };
     }
