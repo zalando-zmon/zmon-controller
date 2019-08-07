@@ -7,8 +7,7 @@
                 ng-disabled="$ctrl.readOnly"
                 theme="select2"
                 search-enabled="false"
-                on-select="$ctrl.onSelect()"
-                required>
+                on-select="$ctrl.onSelect()">
             <ui-select-match>{{ $select.selected.label }}</ui-select-match>
             <ui-select-choices repeat="choice in $ctrl.choices">
                 <span ng-bind="choice.label"></span>

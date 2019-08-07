@@ -6,24 +6,23 @@ angular.module('zmon2App').component('checkRuntimeSelect', {
         default: '<',
         onUpdate: '&'
     },
-    templateUrl: 'templates/checkRuntimeSelect.html',
+    templateUrl: 'js/components/check-runtime-select/check-runtime-select.template.html',
     controller: function ($q, CommunicationService) {
         var ctrl = this;
         var initPromise;
 
-        var setDefaultChoice = function() {
-            initPromise.then(function (config) {
-                ctrl.choice = _.find(ctrl.choices || [], function (choice) {
-                    return choice.name === ctrl.default;
-                }) || config.default_runtime;
-            });
+        var setDefaultChoice = function(config) {
+            ctrl.choice = _.find(ctrl.choices || [], function (choice) {
+                return choice.name === ctrl.default;
+            }) || config.default_runtime;
+            ctrl.onSelect();
         };
 
         ctrl.$onInit = function() {
             initPromise = CommunicationService.getCheckRuntimeConfig().then(function(config) {
                 ctrl.enabled = config.enabled;
                 if (!ctrl.enabled) {
-                    return;
+                    return $q.reject();
                 }
 
                 ctrl.name = ctrl.name || 'runtime';
@@ -33,14 +32,15 @@ angular.module('zmon2App').component('checkRuntimeSelect', {
                     update: config.allowed_runtimes_for_update
                 }[ctrl.allowedChoices];
 
+                setDefaultChoice(config);
+
                 return config;
             });
-            setDefaultChoice();
         };
 
         ctrl.$onChanges = function(changes) {
             if (changes.default && !changes.default.isFirstChange()) {
-                setDefaultChoice();
+                initPromise.then(setDefaultChoice);
             }
         };
 
