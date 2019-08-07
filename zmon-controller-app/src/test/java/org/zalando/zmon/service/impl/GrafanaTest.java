@@ -38,7 +38,8 @@ public class GrafanaTest {
     private static final String VALID_JSON = "{\"dashboard\":\"1\"}";
     private static final String INVALID_JSON = "{\"dashboard\":\"1\"";
     private static final String PRECONDITION_MESSAGE = "{\"message\":\"Test message\"}";
-
+    private static final String grafanaUpgradeHint = "- Hints: 1.Use latest Grafana6 dashboard format. " +
+            "2.Upgrade your ZMON cli";
     @Mock
     private DefaultZMonPermissionService authorityService;
     @Mock
@@ -217,7 +218,7 @@ public class GrafanaTest {
 
         response = grafana.upsertDashboard("{\"dashboard\":\"3\"}", VALID_TOKEN);
         assertThat(response.getStatusCodeValue(), equalTo(412));
-        assertThat(response.getBody().toString(), equalTo("{\"message\":\"Test message\"}"));
+        assertThat(response.getBody().toString(), equalTo("{\"message\":\"Test message" + grafanaUpgradeHint + "\"}"));
     }
 
     @Test

@@ -2,6 +2,7 @@ package org.zalando.zmon.service.impl;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.ImmutableSet;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -35,6 +36,9 @@ public class Grafana implements VisualizationService {
     private final String dynamicDashboardEndpoint = "/dashboard/script/zmon-check.js";
     private final String getAndDeleteDashboardEndPoint = "/api/dashboards/uid/";
     private final String searchDashboardEndpoint = "/api/search";
+
+    private final String grafanaUpgradeHint = "- Hints: 1.Use latest Grafana6 dashboard format. " +
+            "2.Upgrade your ZMON cli";
 
     private final Executor executor;
     private VisualizationProperties visualizationProperties;
@@ -153,6 +157,13 @@ public class Grafana implements VisualizationService {
         if (allowedStatusCode.contains(status) && entity != null) {
             String dashboard = EntityUtils.toString(entity);
             JsonNode node = mapper.readTree(dashboard);
+
+            // Possible reason of 412 can be client is using a old Grafana dashboard JSON format
+            if (status == 412 && node.hasNonNull("message")) {
+                ((ObjectNode) node).put("message",
+                        node.get("message").textValue() + grafanaUpgradeHint);
+            }
+
             return new ResponseEntity<>(node, HttpStatus.valueOf(status));
         }
         return new ResponseEntity<>(HttpStatus.valueOf(status));
