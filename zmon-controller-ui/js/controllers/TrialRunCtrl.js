@@ -506,7 +506,8 @@ var TrialRunCtrl = function ($scope, $interval, $timeout, timespanFilter, Commun
             name: $scope.alert.name,
             description: $scope.alert.description || "TrialRun Test",
             status: 'ACTIVE',
-            interval: $scope.alert.interval
+            interval: $scope.alert.interval,
+            runtime: $scope.alert.runtime
         };
 
         if (typeof $scope.alert.entities !== 'undefined' && $scope.alert.entities.length) {

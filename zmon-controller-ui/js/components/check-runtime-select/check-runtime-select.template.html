@@ -1,17 +1,28 @@
-<div class="form-group" ng-show="$ctrl.enabled">
-    <label for="inp-command" class="col-sm-2 control-label">Runtime</label>
+<div class="form-group" ng-show="$ctrl.enabled" ng-class="{'has-warning': $ctrl.warn}">
+    <label for="runtime" class="col-sm-2 control-label">Runtime</label>
     <div class="col-sm-10">
-        <ui-select
-                name="{{ $ctrl.name }}"
-                ng-model="$ctrl.choice"
+        <select name="{{ $ctrl.name }}"
+                id="runtime"
+                class="form-control"
                 ng-disabled="$ctrl.readOnly"
-                theme="select2"
-                search-enabled="false"
-                on-select="$ctrl.onSelect()">
-            <ui-select-match>{{ $select.selected.label }}</ui-select-match>
-            <ui-select-choices repeat="choice in $ctrl.choices">
-                <span ng-bind="choice.label"></span>
-            </ui-select-choices>
-        </ui-select>
+                ng-change="$ctrl.doUpdate()"
+                ng-model="$ctrl.choice">
+            <option value="{{ choice.name }}"
+                    ng-repeat="choice in $ctrl.choices">
+                {{ choice.label }}
+            </option>
+        </select>
+        <div class="help-block" ng-switch="$ctrl.readOnly">
+            <p ng-show="$ctrl.warn">
+                <strong>
+                    This check uses Python 2 that is deprecated and will be soon discontinued.<br>
+                    Please follow <a href="#">the migration guide</a> in order to migrate it to Python 3.
+                </strong>
+            </p>
+            <p ng-switch-when="false">Python version that the check command and its alert conditions will be evaluated
+                with.</p>
+            <p ng-switch-when="true">Python version that the alert condition will be evaluated with. This value is
+                determined by the related check and cannot be adjusted per alert.</p>
+        </div>
     </div>
 </div>

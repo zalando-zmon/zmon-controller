@@ -12,10 +12,8 @@ angular.module('zmon2App').component('checkRuntimeSelect', {
         var initPromise;
 
         var setDefaultChoice = function(config) {
-            ctrl.choice = _.find(ctrl.choices || [], function (choice) {
-                return choice.name === ctrl.default;
-            }) || config.default_runtime;
-            ctrl.onSelect();
+            ctrl.choice = ctrl.default || config.default_runtime.name;
+            ctrl.doUpdate();
         };
 
         ctrl.$onInit = function() {
@@ -31,8 +29,8 @@ angular.module('zmon2App').component('checkRuntimeSelect', {
                     create: config.allowed_runtimes_for_create,
                     update: config.allowed_runtimes_for_update
                 }[ctrl.allowedChoices];
-
                 setDefaultChoice(config);
+                ctrl.warn = false;
 
                 return config;
             });
@@ -44,8 +42,14 @@ angular.module('zmon2App').component('checkRuntimeSelect', {
             }
         };
 
-        ctrl.onSelect = function() {
-            ctrl.onUpdate({$event: {runtime: ctrl.choice.name}});
+        ctrl.doUpdate = function() {
+            if (!ctrl.readOnly) {
+                ctrl.warn = {
+                    PYTHON_2: true,
+                    PYTHON_3: false
+                }[ctrl.choice];
+            }
+            ctrl.onUpdate({$event: {runtime: ctrl.choice}});
         };
     }
 });
