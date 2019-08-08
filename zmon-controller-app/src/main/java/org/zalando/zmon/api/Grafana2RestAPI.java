@@ -56,8 +56,6 @@ public class Grafana2RestAPI {
 
         String dashboard = mapper.writeValueAsString(grafanaData.get("dashboard"));
         dashboard = "{\"dashboard\": " + dashboard + "}";
-
-        log.info("Dashboard string: "+ dashboard);
         return visualizationService.upsertDashboard(dashboard, extractToken(authHeader));
     }
 
