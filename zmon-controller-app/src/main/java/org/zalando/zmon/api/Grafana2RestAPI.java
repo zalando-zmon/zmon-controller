@@ -54,8 +54,10 @@ public class Grafana2RestAPI {
     public ResponseEntity<JsonNode> saveDashboard(@RequestBody(required = true) final JsonNode grafanaData,
                                                   @RequestHeader("Authorization") String authHeader) throws IOException {
 
-        String dashboard = grafanaData.asText();
-        log.info(dashboard);
+        String dashboard = mapper.writeValueAsString(grafanaData.get("dashboard"));
+        dashboard = "{\"dashboard\": " + dashboard + "}";
+
+        log.info("Dashboard string: "+ dashboard);
         return visualizationService.upsertDashboard(dashboard, extractToken(authHeader));
     }
 
