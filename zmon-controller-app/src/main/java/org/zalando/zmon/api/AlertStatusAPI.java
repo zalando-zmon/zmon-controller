@@ -66,7 +66,7 @@ public class AlertStatusAPI {
         this.jedisPool = p;
         this.mapper = m;
         this.alertResultsConfig = ar;
-        log.warn("alert results config: {}", ar.getAllowedFilters());
+        log.info("alert results config: {}", ar.getAllowedFilters());
     }
 
     /**
