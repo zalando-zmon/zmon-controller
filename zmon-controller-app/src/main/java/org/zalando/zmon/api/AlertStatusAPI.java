@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.http.HttpStatus;
@@ -54,6 +56,9 @@ public class AlertStatusAPI {
 
     private final AlertResultsConfig alertResultsConfig;
 
+    private final Logger log = LoggerFactory.getLogger(EntityApi.class);
+
+
     @Autowired
     public AlertStatusAPI(final ZMonService service, final AlertService alertService, final JedisPool p, final ObjectMapper m, final AlertResultsConfig ar) {
         this.service = service;
@@ -61,6 +66,7 @@ public class AlertStatusAPI {
         this.jedisPool = p;
         this.mapper = m;
         this.alertResultsConfig = ar;
+        log.warn("alert results config: {}", ar.getAllowedFilters());
     }
 
     /**
