@@ -29,7 +29,7 @@ public class AlertStatusAPITest {
     public void setUp() {
         when(service.getAlertResults(any())).thenReturn(Collections.emptyList());
 
-        api = new AlertStatusAPI(service, null, null, new ObjectMapper(), null);
+        api = new AlertStatusAPI(service, null, null, new ObjectMapper(), Collections.singletonList("application"));
     }
 
     @Test
