@@ -1,5 +1,7 @@
 package org.zalando.zmon.api;
 
+import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.Timer;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
@@ -18,6 +20,7 @@ import org.zalando.zmon.api.domain.ResourceNotFoundException;
 import org.zalando.zmon.persistence.EntitySProcService;
 import org.zalando.zmon.security.permission.DefaultZMonPermissionService;
 
+import java.lang.Double;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.Writer;
@@ -25,6 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Date;
 import java.time.Duration;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by jmussler on 1/28/15.
@@ -35,6 +39,8 @@ public class EntityApi {
 
     private final Logger log = LoggerFactory.getLogger(EntityApi.class);
 
+    private final MetricRegistry metricRegistry;
+
     EntitySProcService entitySprocs;
 
     ObjectMapper mapper;
@@ -42,10 +48,11 @@ public class EntityApi {
     DefaultZMonPermissionService authService;
 
     @Autowired
-    public EntityApi(EntitySProcService entitySprocs, ObjectMapper mapper, DefaultZMonPermissionService authService) {
+    public EntityApi(EntitySProcService entitySprocs, ObjectMapper mapper, MetricRegistry metricRegistry, DefaultZMonPermissionService authService) {
         this.entitySprocs = entitySprocs;
         this.mapper = mapper;
         this.authService = authService;
+        this.metricRegistry = metricRegistry;
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
@@ -137,6 +144,16 @@ public class EntityApi {
         List<String> deleted = entitySprocs.deleteEntity(id, teams, authService.getUserName());
 
         if (!deleted.isEmpty()) {
+            try {
+                JsonNode e = mapper.readValue(deleted.get(0), JsonNode.class);
+                String type = e.get("type").textValue().toLowerCase();
+                Double created = new Double(e.get("created").doubleValue() * 1000);
+                long duration = (new Date()).getTime() - created.longValue();
+                Timer timer = metricRegistry.timer("controller.entity-lifetime." + type);
+                timer.update(duration, TimeUnit.MILLISECONDS);
+            } catch (IOException ex) {
+                log.error("", ex);
+            }
             log.info("Deleted entity {} by user {} with teams {} => {})", id, authService.getUserName(), teams, deleted.get(0));
         }
         return deleted.size();

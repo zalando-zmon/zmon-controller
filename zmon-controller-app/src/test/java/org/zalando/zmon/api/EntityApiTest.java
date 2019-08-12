@@ -1,5 +1,6 @@
 package org.zalando.zmon.api;
 
+import com.codahale.metrics.MetricRegistry;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
@@ -30,7 +31,7 @@ public class EntityApiTest {
     @Before
     public void setUp() {
         entitySProcService = Mockito.mock(EntitySProcService.class);
-        mockMvc = MockMvcBuilders.standaloneSetup(new EntityApi(entitySProcService, new ObjectMapper(), new DefaultZMonPermissionService()))
+        mockMvc = MockMvcBuilders.standaloneSetup(new EntityApi(entitySProcService, new ObjectMapper(), new MetricRegistry(), new DefaultZMonPermissionService()))
                 .alwaysDo(MockMvcResultHandlers.print()).build();
     }
 
