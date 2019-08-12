@@ -79,6 +79,9 @@ zmon:
           max-idle: 8
           min-idle: 0
           max-wait: -1
+    rest:
+      get-alert-results:
+        allowed-filters: [ application ]
 #
 # OAuth2: only mock tokens by default
 #

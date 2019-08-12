@@ -2,12 +2,22 @@ package org.zalando.zmon.api;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.zalando.zmon.api.domain.AlertResults;
+import org.zalando.zmon.config.RestConfiguration;
 import org.zalando.zmon.domain.Alert;
 import org.zalando.zmon.domain.CheckResults;
 import org.zalando.zmon.domain.ExecutionStatus;
@@ -20,6 +30,7 @@ import redis.clients.jedis.Pipeline;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -31,6 +42,7 @@ import static java.util.function.Function.identity;
  * Created by jmussler on 11/17/14.
  */
 @Controller
+@EnableConfigurationProperties({ RestConfiguration.class })
 @RequestMapping("/api/v1/status")
 public class AlertStatusAPI {
 
@@ -40,12 +52,15 @@ public class AlertStatusAPI {
 
     private final AlertService alertService;
 
+    private final RestConfiguration restConfiguration;
+
     @Autowired
-    public AlertStatusAPI(final ZMonService service, final AlertService alertService, final JedisPool p, final ObjectMapper m) {
+    public AlertStatusAPI(final ZMonService service, final AlertService alertService, final JedisPool p, final ObjectMapper m, final RestConfiguration rc) {
         this.service = service;
         this.alertService = alertService;
-        jedisPool = p;
-        mapper = m;
+        this.jedisPool = p;
+        this.mapper = m;
+        this.restConfiguration = rc;
     }
 
     /**
@@ -134,5 +149,46 @@ public class AlertStatusAPI {
                 : alertService.getAllAlertsByTeamAndTag(teams, tags);
 
         return new ResponseEntity<>(alerts, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/alert-results", method = RequestMethod.GET)
+    public ResponseEntity getAlertResults(
+        @RequestParam(value = "filter") final String filters
+    ) {
+        final JsonNode filter = parseFilter(filters);
+        if (!isAllowed(filter)) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        final ArrayNode filterArray = mapper.createArrayNode();
+        filterArray.add(filter);
+
+        return new ResponseEntity<>(new AlertResults(service.getAlertResults(filterArray)), HttpStatus.OK);
+    }
+
+    private boolean isAllowed(JsonNode filter) {
+        if (filter == null || !filter.isObject() || filter.size() == 0) return false;
+
+        final Iterator<String> keys = filter.fieldNames();
+        boolean hasAtLeastOneFilterSet = false;
+        while (keys.hasNext()) {
+            String key = keys.next();
+            if (!this.restConfiguration.getGetAlertResults().getAllowedFilters().contains(key)) return false;
+            hasAtLeastOneFilterSet = filter.get(key).asText() != null && !filter.get(key).asText().isEmpty();
+        }
+
+        return hasAtLeastOneFilterSet;
+    }
+
+    private JsonNode parseFilter(String filter) {
+        if (filter == null) return null;
+
+        JsonNode node = null;
+        try {
+            node = mapper.readTree(filter);
+        } catch (IOException ignored) {
+        }
+
+        return node;
     }
 }

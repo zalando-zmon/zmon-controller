@@ -23,6 +23,8 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Date;
+import java.time.Duration;
 
 /**
  * Created by jmussler on 1/28/15.
@@ -59,12 +61,12 @@ public class EntityApi {
     @RequestMapping(value = {"/", ""}, method = {RequestMethod.PUT, RequestMethod.POST})
     public ResponseEntity<String> addEntity(@RequestBody JsonNode entity) {
 
-        if (entity.has("type")){
-            if ("global".equals(entity.get("type").textValue().toLowerCase())){
+        if (entity.has("type")) {
+            if ("global".equals(entity.get("type").textValue().toLowerCase())) {
                 return new ResponseEntity<>("Creating entity with type - GLOBAL is not allowed.", HttpStatus.FORBIDDEN);
             }
 
-            if ("zmon_config".equals(entity.get("type").textValue())){
+            if ("zmon_config".equals(entity.get("type").textValue())) {
                 if (!authService.hasAdminAuthority()) {
                     throw new AccessDeniedException("No ADMIN privileges present to update configuration.");
                 }
@@ -88,10 +90,10 @@ public class EntityApi {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     @RequestMapping(value = {"/", ""}, method = RequestMethod.GET)
-    public List<EntityObject> getEntities(@RequestParam(value = "query", defaultValue = "[{}]") String data, @RequestParam(value="exclude", defaultValue="") String exclude) throws IOException {
+    public List<EntityObject> getEntities(@RequestParam(value = "query", defaultValue = "[{}]") String data, @RequestParam(value = "exclude", defaultValue = "") String exclude) throws IOException {
         List<String> entitiesString;
 
-        if (exclude != "") {
+        if (!exclude.isEmpty()) {
             entitiesString = entitySprocs.getEntitiesWithoutTag(exclude);
         } else {
             if (data.startsWith("{")) {
@@ -102,7 +104,7 @@ public class EntityApi {
         }
         List<EntityObject> list = new ArrayList<>(entitiesString.size());
 
-        for(String e : entitiesString) {
+        for (String e : entitiesString) {
             EntityObject o = mapper.readValue(e, EntityObject.class);
             list.add(o);
         }
@@ -132,12 +134,12 @@ public class EntityApi {
     @RequestMapping(value = {"/{id}/", "/{id}"}, method = RequestMethod.DELETE)
     public int deleteEntity(@PathVariable(value = "id") String id) {
         List<String> teams = Lists.newArrayList(authService.getTeams());
-        List<String> ids = entitySprocs.deleteEntity(id, teams, authService.getUserName());
+        List<String> deleted = entitySprocs.deleteEntity(id, teams, authService.getUserName());
 
-        if (!ids.isEmpty()) {
-            log.info("Deleted entity {} by user {} with teams {}", id, authService.getUserName(), teams);
+        if (!deleted.isEmpty()) {
+            log.info("Deleted entity {} by user {} with teams {} => {})", id, authService.getUserName(), teams, deleted.get(0));
         }
-        return ids.size();
+        return deleted.size();
     }
 
 }

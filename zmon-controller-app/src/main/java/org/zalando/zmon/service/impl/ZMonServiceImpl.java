@@ -1,10 +1,12 @@
 package org.zalando.zmon.service.impl;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.NumericNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
@@ -20,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.xerial.snappy.Snappy;
+import org.zalando.zmon.api.domain.AlertResult;
 import org.zalando.zmon.api.domain.CheckChartResult;
 import org.zalando.zmon.api.domain.EntityFilterRequest;
 import org.zalando.zmon.api.domain.EntityFilterResponse;
@@ -35,6 +38,7 @@ import org.zalando.zmon.persistence.CheckDefinitionSProcService;
 import org.zalando.zmon.persistence.ZMonSProcService;
 import org.zalando.zmon.redis.RedisPattern;
 import org.zalando.zmon.redis.ResponseHolder;
+import org.zalando.zmon.service.AlertService;
 import org.zalando.zmon.service.ZMonService;
 import org.zalando.zmon.util.DBUtil;
 import redis.clients.jedis.Jedis;
@@ -94,6 +98,9 @@ public class ZMonServiceImpl implements ZMonService {
 
     @Autowired
     private ControllerProperties config;
+
+    @Autowired
+    protected AlertService alertService;
 
     @Override
     public ExecutionStatus getStatus() {
@@ -608,5 +615,103 @@ public class ZMonServiceImpl implements ZMonService {
     @Override
     public Date getMaxCheckDefinitionLastModified() {
         return checkDefinitionSProc.getCheckLastModifiedMax();
+    }
+
+    @Override
+    public List<AlertResult> getAlertResults(final JsonNode filter) {
+        final List<EntityGroup> alertCoverage = parseAlertCoverage(getAlertCoverage(filter));
+
+        final Set<Integer> alertIds = alertCoverage.stream()
+            .map(entityGroup -> entityGroup.alerts)
+            .flatMap(alertInfos -> alertInfos.stream().map(alertInfo -> alertInfo.id))
+            .collect(Collectors.toSet());
+
+        final Set<Integer> activeAlertsIds = alertService.getAllAlerts().stream()
+            .map(alert -> alert.getAlertDefinition().getId())
+            .collect(Collectors.toSet());
+
+        return createAlertResults(alertCoverage, alertIds, activeAlertsIds);
+    }
+
+    @VisibleForTesting
+    List<AlertResult> createAlertResults(final List<EntityGroup> alertCoverage, final Set<Integer> alertIds, final Set<Integer> activeAlertsIds) {
+        final Map<Integer, Alert> alerts = new HashMap<>();
+        for (Alert a: alertService.fetchAlertsById(alertIds)) {
+            alerts.put(a.getAlertDefinition().getId(), a);
+        }
+
+        final List<AlertResult> alertResults = new LinkedList<>();
+
+        for (EntityGroup eg : alertCoverage) {
+            for (EntityInfo entityInfo : eg.entities) {
+                for (AlertInfo alertInfo : eg.alerts) {
+                    alertResults.add(new AlertResult(
+                        String.valueOf(alertInfo.id),
+                        String.valueOf(entityInfo.id),
+                        entityInfo.type,
+                        checkDefinitionOrNull(alerts.get(alertInfo.id)),
+                        checkAlertNameOrNull(alerts.get(alertInfo.id)),
+                        activeAlertsIds.contains(alertInfo.id),
+                        priorityOrNull(alerts.get(alertInfo.id))));
+                }
+            }
+        }
+
+        return alertResults;
+    }
+
+    private String checkDefinitionOrNull(Alert alert) {
+        if (alert == null || alert.getAlertDefinition() == null) {
+            return null;
+        }
+
+        return String.valueOf(alert.getAlertDefinition().getCheckDefinitionId());
+    }
+
+    private String checkAlertNameOrNull(Alert alert) {
+        if (alert == null || alert.getAlertDefinition() == null) {
+            return null;
+        }
+
+        return alert.getAlertDefinition().getName();
+    }
+
+    private String priorityOrNull(Alert alert) {
+        if (alert == null || alert.getAlertDefinition() == null) {
+            return null;
+        }
+
+        return String.valueOf(alert.getAlertDefinition().getPriority());
+    }
+
+    @VisibleForTesting
+    List<EntityGroup> parseAlertCoverage(final JsonNode coverage) {
+        if (coverage == null) {
+            return Collections.emptyList();
+        }
+
+        EntityGroup[] alertCoverage;
+        try {
+            alertCoverage = mapper.treeToValue(coverage,  EntityGroup[].class);
+        } catch (JsonProcessingException e) {
+            log.warn("failed to parse alert coverage", e);
+            return Collections.emptyList();
+        }
+        return Arrays.asList(alertCoverage);
+    }
+
+    protected static class EntityGroup {
+        public List<EntityInfo> entities;
+        public List<AlertInfo> alerts;
+    }
+
+    protected static class EntityInfo {
+        public String id;
+        public String type;
+    }
+
+    protected static class AlertInfo {
+        public String name;
+        public int id;
     }
 }

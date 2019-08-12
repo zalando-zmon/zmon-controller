@@ -200,8 +200,8 @@ public class AlertServiceImpl implements AlertService {
         }
     }
 
-    @VisibleForTesting
-    List<Alert> fetchAlertsById(final Set<Integer> ids) {
+    @Override
+    public List<Alert> fetchAlertsById(final Set<Integer> ids) {
         Preconditions.checkNotNull(ids, "ids");
 
         final List<Alert> alerts = new LinkedList<>();
