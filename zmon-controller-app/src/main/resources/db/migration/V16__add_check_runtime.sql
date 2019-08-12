@@ -4,7 +4,7 @@ CREATE TYPE zzm_data.definition_runtime AS ENUM(
 );
 
 -- This column will be added as null initially and backfilled later
--- for backward compatibility purposes
+-- for backward compatibility and performance purposes.
 ALTER TABLE zzm_data.check_definition
     ADD COLUMN cd_runtime definition_runtime NULL;
 

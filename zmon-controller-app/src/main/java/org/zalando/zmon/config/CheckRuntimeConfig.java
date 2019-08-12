@@ -13,8 +13,6 @@ import java.util.List;
 public class CheckRuntimeConfig {
     private boolean enabled = false;
     private DefinitionRuntime defaultRuntime = DefinitionRuntime.PYTHON_3;
-    private List<DefinitionRuntime> allowedRuntimesForCreate = Collections.singletonList(DefinitionRuntime.PYTHON_3);
-    private List<DefinitionRuntime> allowedRuntimesForUpdate = Arrays.asList(DefinitionRuntime.values());
 
     public boolean isEnabled() {
         return enabled;
@@ -30,21 +28,5 @@ public class CheckRuntimeConfig {
 
     public void setDefaultRuntime(DefinitionRuntime defaultRuntime) {
         this.defaultRuntime = defaultRuntime;
-    }
-
-    public List<DefinitionRuntime> getAllowedRuntimesForCreate() {
-        return allowedRuntimesForCreate;
-    }
-
-    public void setAllowedRuntimesForCreate(List<DefinitionRuntime> allowedRuntimesForCreate) {
-        this.allowedRuntimesForCreate = allowedRuntimesForCreate;
-    }
-
-    public List<DefinitionRuntime> getAllowedRuntimesForUpdate() {
-        return allowedRuntimesForUpdate;
-    }
-
-    public void setAllowedRuntimesForUpdate(List<DefinitionRuntime> allowedRuntimesForUpdate) {
-        this.allowedRuntimesForUpdate = allowedRuntimesForUpdate;
     }
 }

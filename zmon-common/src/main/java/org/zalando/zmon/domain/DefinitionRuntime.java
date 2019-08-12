@@ -1,8 +1,8 @@
 package org.zalando.zmon.domain;
 
-import java.util.HashMap;
-import java.util.List;
+import java.util.Arrays;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public enum DefinitionRuntime {
@@ -19,14 +19,10 @@ public enum DefinitionRuntime {
         return label;
     }
 
-    public static Map<String, String> asMap(DefinitionRuntime runtime) {
-        return new HashMap<String, String>() {{
-            put("name", runtime.name());
-            put("label", runtime.getLabel());
-        }};
-    }
-
-    public static List<Map<String, String>> asListOfMaps(List<DefinitionRuntime> runtimes) {
-        return runtimes.stream().map(DefinitionRuntime::asMap).collect(Collectors.toList());
+    public static Map<DefinitionRuntime, String> labeledValues() {
+        return Arrays.stream(DefinitionRuntime.values()).collect(Collectors.toMap(
+            Function.identity(),
+            DefinitionRuntime::getLabel
+        ));
     }
 }

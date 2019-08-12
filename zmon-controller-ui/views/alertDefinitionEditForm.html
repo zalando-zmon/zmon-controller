@@ -102,7 +102,7 @@
         </div>
     </div>
 
-    <check-runtime-select allowed-choices="update" default="checkDefinition.runtime" read-only="true"></check-runtime-select>
+    <check-runtime-select runtime="checkDefinition.runtime" read-only="true"></check-runtime-select>
 
     <div class="form-group" ng-class="{'has-error': adForm.submitted && adForm.parameters.$error['valid-json'] || adForm.parameters.$error.required }">
         <label for="inp-parameters" class="col-sm-2 control-label">

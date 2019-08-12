@@ -5,15 +5,15 @@
                 id="runtime"
                 class="form-control"
                 ng-disabled="$ctrl.readOnly"
-                ng-change="$ctrl.doUpdate()"
-                ng-model="$ctrl.choice">
-            <option value="{{ choice.name }}"
-                    ng-repeat="choice in $ctrl.choices">
-                {{ choice.label }}
+                ng-change="$ctrl.onChange()"
+                ng-model="$ctrl.runtime">
+            <option ng-repeat="(choice, label) in $ctrl.choices"
+                    value="{{ choice }}">
+                {{ label }}
             </option>
         </select>
         <div class="help-block" ng-switch="$ctrl.readOnly">
-            <p ng-show="$ctrl.warn">
+            <p ng-show="!$ctrl.readOnly && ($ctrl.runtime === 'PYTHON_2')">
                 <strong>
                     This check uses Python 2 that is deprecated and will be soon discontinued.<br>
                     Please follow <a href="#">the migration guide</a> in order to migrate it to Python 3.

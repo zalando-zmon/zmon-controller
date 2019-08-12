@@ -1,50 +1,68 @@
 angular.module('zmon2App').component('checkRuntimeSelect', {
     bindings: {
         name: '@',
-        allowedChoices: '@',
         readOnly: '@',
-        default: '<',
-        onUpdate: '&'
+        runtime: '='
     },
     templateUrl: 'js/components/check-runtime-select/check-runtime-select.template.html',
     controller: function ($q, CommunicationService) {
         var ctrl = this;
-        var initPromise;
+        var init;
+        var initialRuntime;
 
-        var setDefaultChoice = function(config) {
-            ctrl.choice = ctrl.default || config.default_runtime.name;
-            ctrl.doUpdate();
-        };
-
-        ctrl.$onInit = function() {
-            initPromise = CommunicationService.getCheckRuntimeConfig().then(function(config) {
-                ctrl.enabled = config.enabled;
-                if (!ctrl.enabled) {
-                    return $q.reject();
-                }
-
-                ctrl.name = ctrl.name || 'runtime';
-                ctrl.readOnly = ctrl.readOnly || false;
-                ctrl.choices = {
-                    create: config.allowed_runtimes_for_create,
-                    update: config.allowed_runtimes_for_update
-                }[ctrl.allowedChoices];
-                setDefaultChoice(config);
-                ctrl.warn = false;
-
-                return config;
-            });
-        };
-
-        ctrl.$onChanges = function(changes) {
-            if (changes.default && !changes.default.isFirstChange()) {
-                initPromise.then(setDefaultChoice);
+        init = CommunicationService.getCheckRuntimeConfig().then(function(config) {
+            ctrl.enabled = config.enabled;
+            if (!ctrl.enabled) {
+                return $q.reject();
             }
+
+            ctrl.name = ctrl.name || 'runtime';
+            ctrl.readOnly = ctrl.readOnly || false;
+            ctrl.choices = config.runtime_labels;
+        });
+
+        ctrl.onChange = function() {
+            console.log('Changed');
         };
 
-        ctrl.doUpdate = function() {
-            ctrl.warn = !ctrl.readOnly && (ctrl.choice === 'PYTHON_2');
-            ctrl.onUpdate({$event: {runtime: ctrl.choice}});
-        };
+        // ctrl.$doCheck = function() {
+        //     console.log('Run do check');
+        //     if (initialRuntime) {
+        //         return;
+        //     }
+        //
+        //     initialRuntime = _.copy(ctrl.runtime);
+        //     console.log('Initial runtime was: ' + initialRuntime);
+        // };
+        // var ctrl = this;
+        // var initPromise;
+
+        // var setDefaultChoice = function(config) {
+        //     var newValue = _.clone(ctrl.default) || config.default_runtime;
+        //     ctrl.choice = newValue;
+        //     if (newValue === config.default_runtime) {
+        //         ctrl.choices = _.pick(ctrl.choices, config.default_runtime);
+        //     }
+        //     console.log('Choice is now: ' + ctrl.choice);
+        //
+        //     ctrl.doUpdate();
+        // };
+        //
+        // ctrl.$onInit = function() {
+        //     initPromise = CommunicationService.getCheckRuntimeConfig().then(function(config) {
+        //         ctrl.enabled = config.enabled;
+        //         if (!ctrl.enabled) {
+        //             return $q.reject();
+        //         }
+        //
+        //         ctrl.name = ctrl.name || 'runtime';
+        //         ctrl.readOnly = ctrl.readOnly || false;
+        //         ctrl.warn = false;
+        //         ctrl.choices = config.runtime_labels;
+        //         setDefaultChoice(config);
+        //
+        //         return config;
+        //     });
+        // };
     }
 });
