@@ -12,6 +12,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.internal.util.collections.Sets;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.zalando.zmon.api.domain.AlertResult;
 import org.zalando.zmon.domain.Alert;
@@ -20,9 +21,11 @@ import org.zalando.zmon.service.AlertService;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import static org.mockito.Mockito.when;
@@ -108,8 +111,11 @@ public class ZMonServiceImplTest {
 
     @Test
     public void createAlertResults() {
-        Set<Integer> alertIds = new HashSet<>(Arrays.asList(1, 2));
-        Set<Integer> activeAlertsIds = new HashSet<>(Collections.singletonList(1));
+        Set<Integer> alertIds = new HashSet<>(Arrays.asList(1, 2, 3));
+        Map<Integer, Set<String>> triggeredEntitiesByAlertId = new HashMap<>();
+        triggeredEntitiesByAlertId.put(1, Sets.newSet("pod_1"));
+        triggeredEntitiesByAlertId.put(2, Sets.newSet("pod_b"));
+
         List<ZMonServiceImpl.EntityGroup> alertCoverage = new LinkedList<>();
 
         ZMonServiceImpl.EntityGroup entityGroup1 = new ZMonServiceImpl.EntityGroup();
@@ -120,17 +126,26 @@ public class ZMonServiceImplTest {
         entityGroup2.entities = Collections.singletonList(entityInfo("pod_a"));
         entityGroup2.alerts = Collections.singletonList(alertInfo(2));
 
+        ZMonServiceImpl.EntityGroup entityGroup3 = new ZMonServiceImpl.EntityGroup();
+        entityGroup3.entities = Collections.singletonList(entityInfo("pod_I"));
+        entityGroup3.alerts = Collections.singletonList(alertInfo(3));
+
         alertCoverage.add(entityGroup1);
         alertCoverage.add(entityGroup2);
+        alertCoverage.add(entityGroup3);
 
         when(service.alertService.fetchAlertsById(alertIds)).thenReturn(
-            Arrays.asList(alert(1, "ZMON is great", 1), alert(2, "ZMON is hot", 2))
+            Arrays.asList(
+                alert(1, "ZMON is great", 1),
+                alert(2, "ZMON is hot", 2),
+                alert(3, "ZMON is hot", 3)
+            )
         );
 
-        List<AlertResult> alertResults = service.createAlertResults(alertCoverage, alertIds, activeAlertsIds);
+        List<AlertResult> alertResults = service.createAlertResults(alertCoverage, alertIds, triggeredEntitiesByAlertId);
 
         MatcherAssert.assertThat(alertResults, IsNull.notNullValue());
-        MatcherAssert.assertThat(alertResults.size(), Matchers.is(3));
+        MatcherAssert.assertThat(alertResults.size(), Matchers.is(4));
 
         MatcherAssert.assertThat(alertResults.get(0).getAlertDefinitionId(), Matchers.is("1"));
         MatcherAssert.assertThat(alertResults.get(0).getCheckDefinitionId(), Matchers.is("1"));
@@ -146,7 +161,7 @@ public class ZMonServiceImplTest {
         MatcherAssert.assertThat(alertResults.get(1).getEntityType(), Matchers.is("pod"));
         MatcherAssert.assertThat(alertResults.get(1).getPriority(), Matchers.is("1"));
         MatcherAssert.assertThat(alertResults.get(1).getTitle(), Matchers.is("ZMON is great"));
-        MatcherAssert.assertThat(alertResults.get(1).isTriggered(), Matchers.is(true));
+        MatcherAssert.assertThat(alertResults.get(1).isTriggered(), Matchers.is(false));
 
         MatcherAssert.assertThat(alertResults.get(2).getAlertDefinitionId(), Matchers.is("2"));
         MatcherAssert.assertThat(alertResults.get(2).getCheckDefinitionId(), Matchers.is("2"));
@@ -155,6 +170,14 @@ public class ZMonServiceImplTest {
         MatcherAssert.assertThat(alertResults.get(2).getPriority(), Matchers.is("1"));
         MatcherAssert.assertThat(alertResults.get(2).getTitle(), Matchers.is("ZMON is hot"));
         MatcherAssert.assertThat(alertResults.get(2).isTriggered(), Matchers.is(false));
+
+        MatcherAssert.assertThat(alertResults.get(3).getAlertDefinitionId(), Matchers.is("3"));
+        MatcherAssert.assertThat(alertResults.get(3).getCheckDefinitionId(), Matchers.is("3"));
+        MatcherAssert.assertThat(alertResults.get(3).getEntityId(), Matchers.is("pod_I"));
+        MatcherAssert.assertThat(alertResults.get(3).getEntityType(), Matchers.is("pod"));
+        MatcherAssert.assertThat(alertResults.get(3).getPriority(), Matchers.is("1"));
+        MatcherAssert.assertThat(alertResults.get(3).getTitle(), Matchers.is("ZMON is hot"));
+        MatcherAssert.assertThat(alertResults.get(3).isTriggered(), Matchers.is(false));
     }
 
     private ZMonServiceImpl.AlertInfo alertInfo(int id) {
