@@ -4,8 +4,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -17,7 +19,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.zalando.zmon.api.domain.AlertResults;
-import org.zalando.zmon.config.RestConfiguration;
 import org.zalando.zmon.domain.Alert;
 import org.zalando.zmon.domain.CheckResults;
 import org.zalando.zmon.domain.ExecutionStatus;
@@ -42,25 +43,27 @@ import static java.util.function.Function.identity;
  * Created by jmussler on 11/17/14.
  */
 @Controller
-@EnableConfigurationProperties({ RestConfiguration.class })
 @RequestMapping("/api/v1/status")
 public class AlertStatusAPI {
 
     private final ZMonService service;
     private final JedisPool jedisPool;
     protected ObjectMapper mapper;
+    private final List<String> allowedFilters;
 
     private final AlertService alertService;
 
-    private final RestConfiguration restConfiguration;
+    private final Logger log = LoggerFactory.getLogger(EntityApi.class);
 
     @Autowired
-    public AlertStatusAPI(final ZMonService service, final AlertService alertService, final JedisPool p, final ObjectMapper m, final RestConfiguration rc) {
+    public AlertStatusAPI(final ZMonService service, final AlertService alertService, final JedisPool p,
+                          final ObjectMapper m,
+                          @Value("${zmon.alert-results.allowed-filters:application}") final List<String> allowedFilters) {
         this.service = service;
         this.alertService = alertService;
         this.jedisPool = p;
         this.mapper = m;
-        this.restConfiguration = rc;
+        this.allowedFilters = allowedFilters;
     }
 
     /**
@@ -83,15 +86,15 @@ public class AlertStatusAPI {
     @RequestMapping(value = {"/alert/{ids}/", "/alert/{ids}"})
     public JsonNode getAlertStatus(@PathVariable("ids") final List<String> ids) throws IOException {
         Map<String, List<ResponseHolder<String, String>>> results = ids.stream()
-                .collect(Collectors.toMap(identity(), id -> new ArrayList<>()));
+            .collect(Collectors.toMap(identity(), id -> new ArrayList<>()));
 
         try (Jedis jedis = jedisPool.getResource()) {
             List<ResponseHolder<String, Set<String>>> responses;
 
             try (Pipeline p = jedis.pipelined()) {
                 responses = ids.stream()
-                        .map(id -> ResponseHolder.create(id, p.smembers("zmon:alerts:" + id)))
-                        .collect(Collectors.toList());
+                    .map(id -> ResponseHolder.create(id, p.smembers("zmon:alerts:" + id)))
+                    .collect(Collectors.toList());
             }
 
             try (Pipeline p = jedis.pipelined()) {
@@ -138,15 +141,15 @@ public class AlertStatusAPI {
         final Alert alert = alertService.getAlert(alertId);
 
         return alert == null ? new ResponseEntity<>(HttpStatus.NOT_FOUND)
-                : new ResponseEntity<>(alert, HttpStatus.OK);
+            : new ResponseEntity<>(alert, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/active-alerts", method = RequestMethod.GET)
     public ResponseEntity<List<Alert>> getAllAlerts(
-            @RequestParam(value = "team", required = false) final Set<String> teams,
-            @RequestParam(value = "tags", required = false) final Set<String> tags) {
+        @RequestParam(value = "team", required = false) final Set<String> teams,
+        @RequestParam(value = "tags", required = false) final Set<String> tags) {
         final List<Alert> alerts = teams == null && tags == null ? alertService.getAllAlerts()
-                : alertService.getAllAlertsByTeamAndTag(teams, tags);
+            : alertService.getAllAlertsByTeamAndTag(teams, tags);
 
         return new ResponseEntity<>(alerts, HttpStatus.OK);
     }
@@ -173,7 +176,7 @@ public class AlertStatusAPI {
         boolean hasAtLeastOneFilterSet = false;
         while (keys.hasNext()) {
             String key = keys.next();
-            if (!this.restConfiguration.getGetAlertResults().getAllowedFilters().contains(key)) return false;
+            if (!this.allowedFilters.contains(key)) return false;
             hasAtLeastOneFilterSet = filter.get(key).asText() != null && !filter.get(key).asText().isEmpty();
         }
 

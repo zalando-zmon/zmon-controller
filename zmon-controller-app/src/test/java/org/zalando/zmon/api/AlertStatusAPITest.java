@@ -10,7 +10,6 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.zalando.zmon.config.RestConfiguration;
 import org.zalando.zmon.service.ZMonService;
 
 import java.util.Collections;
@@ -30,7 +29,7 @@ public class AlertStatusAPITest {
     public void setUp() {
         when(service.getAlertResults(any())).thenReturn(Collections.emptyList());
 
-        api = new AlertStatusAPI(service, null, null, new ObjectMapper(), new RestConfiguration());
+        api = new AlertStatusAPI(service, null, null, new ObjectMapper(), Collections.singletonList("application"));
     }
 
     @Test
