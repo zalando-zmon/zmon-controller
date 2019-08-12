@@ -51,6 +51,7 @@ import java.io.UncheckedIOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 // TODO remove CheckDefinitionImport and use CheckDefinition with optional id
@@ -622,43 +623,33 @@ public class ZMonServiceImpl implements ZMonService {
         final List<EntityGroup> alertCoverage = parseAlertCoverage(getAlertCoverage(filter));
 
         final Set<Integer> alertIds = alertCoverage.stream()
-            .map(entityGroup -> entityGroup.alerts)
-            .flatMap(alertInfos -> alertInfos.stream().map(alertInfo -> alertInfo.id))
-            .collect(Collectors.toSet());
+                   .map(entityGroup -> entityGroup.alerts)
+                   .flatMap(alertInfos -> alertInfos.stream().map(alertInfo -> alertInfo.id))
+                   .collect(Collectors.toSet());
 
-        final Map<Integer, Set<String>> alertEntities = new HashMap<>();
-        for (Alert alert : alertService.getAllAlerts()) {
-            alertEntities.put(alert.getAlertDefinition().getId(),
-                alert.getEntities().stream().map(LastCheckResult::getEntity).collect(Collectors.toSet()));
-        }
+        final Map<Integer, Alert> alerts = alertService.fetchAlertsById(alertIds).stream()
+            .collect(Collectors.toMap(a -> a.getAlertDefinition().getId(), Function.identity()));
 
-        return createAlertResults(alertCoverage, alertIds, alertEntities);
+        return createAlertResults(alertCoverage, alerts);
     }
 
     @VisibleForTesting
-    List<AlertResult> createAlertResults(final List<EntityGroup> alertCoverage,
-                                         final Set<Integer> alertIds,
-                                         final Map<Integer, Set<String>> triggeredEntitiesByAlertId) {
-        final Map<Integer, Alert> alerts = new HashMap<>();
-        for (Alert a : alertService.fetchAlertsById(alertIds)) {
-            alerts.put(a.getAlertDefinition().getId(), a);
-        }
-
+    List<AlertResult> createAlertResults(final List<EntityGroup> alertCoverage, final Map<Integer, Alert> alerts) {
         final List<AlertResult> alertResults = new LinkedList<>();
 
         for (EntityGroup eg : alertCoverage) {
-            for (EntityInfo entityInfo : eg.entities) {
-                for (AlertInfo alertInfo : eg.alerts) {
-                    Set<String> triggeredEntities = triggeredEntitiesByAlertId.get(alertInfo.id);
+            for (AlertInfo alertInfo : eg.alerts) {
+                Alert alert = alerts.get(alertInfo.id);
 
+                for (EntityInfo entityInfo : eg.entities) {
                     alertResults.add(new AlertResult(
                         String.valueOf(alertInfo.id),
                         String.valueOf(entityInfo.id),
                         entityInfo.type,
-                        checkDefinitionOrNull(alerts.get(alertInfo.id)),
-                        checkAlertNameOrNull(alerts.get(alertInfo.id)),
-                        triggeredEntities != null && triggeredEntities.contains(entityInfo.id),
-                        priorityOrNull(alerts.get(alertInfo.id))));
+                        checkDefinitionOrNull(alert),
+                        checkAlertNameOrNull(alert),
+                        isAlertTriggeredForEntity(alert, entityInfo.id),
+                        priorityOrNull(alert)));
                 }
             }
         }
@@ -680,6 +671,14 @@ public class ZMonServiceImpl implements ZMonService {
         }
 
         return alert.getAlertDefinition().getName();
+    }
+
+    private boolean isAlertTriggeredForEntity(Alert alert, String entityId) {
+        if (alert == null || alert.getEntities() == null) {
+            return false;
+        }
+
+        return alert.getEntities().stream().anyMatch(e -> e.getEntity().equals(entityId));
     }
 
     private String priorityOrNull(Alert alert) {
