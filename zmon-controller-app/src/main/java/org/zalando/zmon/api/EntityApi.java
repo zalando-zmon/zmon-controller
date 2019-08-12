@@ -151,7 +151,7 @@ public class EntityApi {
                 long duration = (new Date()).getTime() - created.longValue();
                 Timer timer = metricRegistry.timer("controller.entity-lifetime." + type);
                 timer.update(duration, TimeUnit.MILLISECONDS);
-            } catch (IOException ex) {
+            } catch (Exception ex) {
                 log.error("", ex);
             }
             log.info("Deleted entity {} by user {} with teams {} => {})", id, authService.getUserName(), teams, deleted.get(0));
