@@ -7,18 +7,13 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.*;
 import org.zalando.zmon.api.domain.AlertResults;
+import org.zalando.zmon.config.AlertResultsConfig;
 import org.zalando.zmon.domain.Alert;
 import org.zalando.zmon.domain.CheckResults;
 import org.zalando.zmon.domain.ExecutionStatus;
@@ -30,11 +25,7 @@ import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.Pipeline;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static java.util.function.Function.identity;
@@ -43,13 +34,15 @@ import static java.util.function.Function.identity;
  * Created by jmussler on 11/17/14.
  */
 @Controller
+@EnableConfigurationProperties({ AlertResultsConfig.class })
 @RequestMapping("/api/v1/status")
 public class AlertStatusAPI {
 
     private final ZMonService service;
     private final JedisPool jedisPool;
     protected ObjectMapper mapper;
-    private final List<String> allowedFilters;
+
+    private final AlertResultsConfig alertResultsConfig;
 
     private final AlertService alertService;
 
@@ -58,12 +51,17 @@ public class AlertStatusAPI {
     @Autowired
     public AlertStatusAPI(final ZMonService service, final AlertService alertService, final JedisPool p,
                           final ObjectMapper m,
-                          @Value("${zmon.alert-results.allowed-filters:application}") final List<String> allowedFilters) {
+                          final AlertResultsConfig alertResultsConfig) {
         this.service = service;
         this.alertService = alertService;
         this.jedisPool = p;
         this.mapper = m;
-        this.allowedFilters = allowedFilters;
+        this.alertResultsConfig = alertResultsConfig;
+        log.info("allowed filters: " + this.alertResultsConfig.getAllowedFilters());
+    }
+
+    AlertResultsConfig getAlertResultsConfig() {
+        return alertResultsConfig;
     }
 
     /**
@@ -176,7 +174,7 @@ public class AlertStatusAPI {
         boolean hasAtLeastOneFilterSet = false;
         while (keys.hasNext()) {
             String key = keys.next();
-            if (!this.allowedFilters.contains(key)) return false;
+            if (!this.alertResultsConfig.getAllowedFilters().contains(key)) return false;
             hasAtLeastOneFilterSet = filter.get(key).asText() != null && !filter.get(key).asText().isEmpty();
         }
 
