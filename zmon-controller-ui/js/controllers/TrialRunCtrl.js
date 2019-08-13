@@ -365,6 +365,7 @@ var TrialRunCtrl = function ($scope, $interval, $timeout, timespanFilter, Commun
             obj.name = $scope.alert.name.trim();
             obj.entities = $scope.alert.entities;
             obj.command = $scope.alert.check_command;
+            obj.runtime = $scope.alert.runtime;
             obj.interval = $scope.alert.interval;
             obj.description = $scope.alert.description;
             obj.owning_team = $scope.alert.owning_team.trim();

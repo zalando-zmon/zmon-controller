@@ -75,7 +75,7 @@
                         </div>
                     </div>
 
-                    <check-runtime-select runtime="alert.runtime"></check-runtime-select>
+                    <check-runtime-select runtime="alert.runtime" mode="checkId ? 'edit': 'create'"></check-runtime-select>
 
                     <div class="form-group" ng-class="{'has-error': trForm.submitted && trForm.parameters.$error['valid-json'] || trForm.parameters.$error.required }">
                         <label for="inp-parameters" class="col-sm-2 control-label">

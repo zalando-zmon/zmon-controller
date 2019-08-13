@@ -1,19 +1,18 @@
-<div class="form-group" ng-show="$ctrl.enabled" ng-class="{'has-warning': $ctrl.warn}">
+<div class="form-group" ng-show="enabled" ng-class="{'has-warning': warn}">
     <label for="runtime" class="col-sm-2 control-label">Runtime</label>
     <div class="col-sm-10">
-        <select name="{{ $ctrl.name }}"
+        <select name="{{ name }}"
                 id="runtime"
                 class="form-control"
-                ng-disabled="$ctrl.readOnly"
-                ng-change="$ctrl.onChange()"
-                ng-model="$ctrl.runtime">
-            <option ng-repeat="(choice, label) in $ctrl.choices"
-                    value="{{ choice }}">
+                ng-disabled="readOnly"
+                ng-model="runtime">
+            <option ng-repeat="(value, label) in choices"
+                    value="{{ value }}">
                 {{ label }}
             </option>
         </select>
-        <div class="help-block" ng-switch="$ctrl.readOnly">
-            <p ng-show="!$ctrl.readOnly && ($ctrl.runtime === 'PYTHON_2')">
+        <div class="help-block" ng-switch="readOnly">
+            <p ng-show="warn">
                 <strong>
                     This check uses Python 2 that is deprecated and will be soon discontinued.<br>
                     Please follow <a href="#">the migration guide</a> in order to migrate it to Python 3.
