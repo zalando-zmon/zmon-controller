@@ -2,7 +2,8 @@ CREATE OR REPLACE FUNCTION get_check_definition_history (
      IN p_check_definition_id int,
      IN p_limit               int,
      IN p_from                timestamptz,
-     IN p_to                  timestamptz
+     IN p_to                  timestamptz,
+     IN p_history_action      zzm_data.history_action
 ) RETURNS SETOF history_entry AS
 $BODY$
     SELECT cdh_id,
@@ -17,6 +18,7 @@ $BODY$
      WHERE cdh_check_definition_id = p_check_definition_id
        AND (p_from IS NULL OR cdh_timestamp >= p_from)
        AND (p_to IS NULL OR cdh_timestamp <= p_to)
+       AND (p_history_action IS NULL OR cdh_action = p_history_action)
   ORDER BY cdh_timestamp DESC, cdh_id DESC
      LIMIT p_limit;
 $BODY$

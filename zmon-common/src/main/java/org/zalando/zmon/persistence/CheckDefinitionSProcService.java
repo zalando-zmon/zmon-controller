@@ -43,7 +43,7 @@ public interface CheckDefinitionSProcService {
 
     @SProcCall
     List<HistoryEntry> getCheckDefinitionHistory(@SProcParam int checkDefinitionId, @SProcParam int limit,
-            @SProcParam Date from, @SProcParam Date to);
+            @SProcParam Date from, @SProcParam Date to, @SProcParam HistoryAction action);
 
     @SProcCall
     List<Integer> deleteUnusedCheckDefinition(@SProcParam int id);

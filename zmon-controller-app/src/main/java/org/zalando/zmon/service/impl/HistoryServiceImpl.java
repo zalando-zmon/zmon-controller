@@ -102,8 +102,14 @@ public class HistoryServiceImpl implements HistoryService {
     @Override
     public List<ActivityDiff> getCheckDefinitionHistory(final int checkDefinitionId, final Integer limit,
                                                         final Long from, final Long to) {
+        return getCheckDefinitionHistory(checkDefinitionId, limit, from, to, null);
+    }
+
+    @Override
+    public List<ActivityDiff> getCheckDefinitionHistory(final int checkDefinitionId, final Integer limit,
+                                                        final Long from, final Long to, final HistoryAction action) {
         final List<HistoryEntry> databaseHistory = checkDefinitionSProc.getCheckDefinitionHistory(checkDefinitionId,
-                resolveLimit(limit, from, to), secondsToDate(from), secondsToDate(to));
+                resolveLimit(limit, from, to), secondsToDate(from), secondsToDate(to), action);
 
         final List<ActivityDiff> history = new LinkedList<>();
         for (final HistoryEntry entry : databaseHistory) {
