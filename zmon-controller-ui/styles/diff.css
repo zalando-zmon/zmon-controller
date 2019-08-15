@@ -1,0 +1,20 @@
+.d2h-cntx {
+    background-color: #ffffff;
+}
+
+.d2h-code-linenumber {
+    width: 6em;
+}
+
+.d2h-file-header {
+    height: unset;
+}
+
+.d2h-file-name {
+    text-indent: 0.5em;
+}
+
+.restore-link {
+    cursor: pointer;
+    margin-left: auto;
+}

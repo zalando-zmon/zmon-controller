@@ -19,4 +19,6 @@ public interface HistoryService {
 
     List<ActivityDiff> getAlertDefinitionHistory(int alertDefinitionId, @Nullable Integer limit, @Nullable Long from,
             @Nullable Long to);
+
+    boolean restoreCheckDefinition(int checkDefinitionHistoryId);
 }

@@ -14,6 +14,7 @@ import org.springframework.web.client.RestOperations;
 import org.springframework.web.client.RestTemplate;
 import org.zalando.zmon.persistence.AlertDefinitionSProcService;
 import org.zalando.zmon.persistence.CheckDefinitionSProcService;
+import org.zalando.zmon.security.permission.DefaultZMonPermissionService;
 import org.zalando.zmon.service.EventLogService;
 import org.zalando.zmon.service.HistoryService;
 import org.zalando.zmon.service.impl.HistoryServiceImpl;
@@ -59,7 +60,8 @@ public class EventLogConfiguration {
     @Transactional
     public HistoryService historyService(final CheckDefinitionSProcService checkDefinitionSProc,
                                          final AlertDefinitionSProcService alertDefinitionSProc,
-                                         final EventLogService eventLog) {
-        return new HistoryServiceImpl(checkDefinitionSProc, alertDefinitionSProc, eventLog);
+                                         final EventLogService eventLog,
+                                         final DefaultZMonPermissionService authorityService) {
+        return new HistoryServiceImpl(checkDefinitionSProc, alertDefinitionSProc, eventLog, authorityService);
     }
 }

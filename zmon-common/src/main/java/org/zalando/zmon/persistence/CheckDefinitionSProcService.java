@@ -2,6 +2,7 @@ package org.zalando.zmon.persistence;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import org.zalando.zmon.domain.*;
 
@@ -33,6 +34,12 @@ public interface CheckDefinitionSProcService {
                                                               @SProcParam boolean isAdmin,
                                                               @SProcParam boolean isRuntimeEnabled,
                                                               @SProcParam DefinitionRuntime defaultRuntime);
+
+    @SProcCall
+    boolean restoreCheckDefinition(@SProcParam int checkDefinitionHistoryId,
+                                   @SProcParam String userName,
+                                   @SProcParam List<String> teams,
+                                   @SProcParam boolean isAdmin);
 
     @SProcCall
     CheckDefinition deleteCheckDefinition(@SProcParam String userName, @SProcParam String name,
