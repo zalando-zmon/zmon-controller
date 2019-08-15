@@ -35,6 +35,12 @@ public interface CheckDefinitionSProcService {
                                                               @SProcParam DefinitionRuntime defaultRuntime);
 
     @SProcCall
+    boolean restoreCheckDefinition(@SProcParam int checkDefinitionHistoryId,
+                                   @SProcParam String userName,
+                                   @SProcParam List<String> teams,
+                                   @SProcParam boolean isAdmin);
+
+    @SProcCall
     CheckDefinition deleteCheckDefinition(@SProcParam String userName, @SProcParam String name,
             @SProcParam String owningTeam);
 

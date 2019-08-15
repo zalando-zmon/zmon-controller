@@ -145,6 +145,7 @@ public class HistoryServiceImpl implements HistoryService {
 
     private ActivityDiff fillActivityDiff(final ActivityDiff activity, final HistoryEntry entry,
                                           final ZMonEventType eventType) {
+        activity.setHistoryId(entry.getId());
         activity.setTime(dateToSeconds(entry.getTimestamp()));
         activity.setTypeId(eventType.getId());
         activity.setTypeName(eventType.getName());

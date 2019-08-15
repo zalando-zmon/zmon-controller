@@ -11,7 +11,8 @@ CREATE OR REPLACE FUNCTION zzm_api.create_or_update_check_definition(
 ) AS
 $BODY$
 DECLARE
-    previous_runtime zzm_data.definition_runtime;
+    new_runtime text;
+    previous_runtime text;
 BEGIN
     -- Check if user has permissions to create/edit the check
     permission_denied = FALSE;
@@ -47,20 +48,27 @@ BEGIN
     entity.runtime              = check_definition_import.runtime;
 
     -- Find id for the check and then lock it for update
-    SELECT cd_id, cd_runtime
+    SELECT cd_id, COALESCE(cd_runtime::text, 'null')
     INTO entity.id, previous_runtime
     FROM zzm_data.check_definition
     WHERE (lower(cd_source_url) = lower(check_definition_import.source_url) AND check_definition_import.id IS NULL)
        OR (lower(cd_name) = lower(check_definition_import.name) AND lower(cd_owning_team) = lower(check_definition_import.owning_team) AND check_definition_import.id IS NULL)
        OR (cd_id = check_definition_import.id)
     FOR UPDATE;
+    new_runtime := COALESCE(check_definition_import.runtime::text, 'null');
 
     IF FOUND THEN
-        -- Prevent switching existing check's runtime back to the old value.
-        -- However it is possible to roll it back via restore.
-        IF runtime_enabled AND
-           check_definition_import.runtime != runtime_default AND
-           previous_runtime = runtime_default THEN
+        IF (
+           -- Runtime change but runtime is globally disabled.
+            NOT runtime_enabled AND
+            new_runtime != previous_runtime
+        ) OR (
+            -- Runtime changed back to the old value and runtime is globally enabled.
+            -- REMARK: Restore can be used if needed.
+            runtime_enabled
+            AND new_runtime != runtime_default::text
+            AND previous_runtime = runtime_default::text
+        ) THEN
             permission_denied := TRUE;
             RETURN;
         END IF;
@@ -85,9 +93,15 @@ BEGIN
         RETURNING cd_id INTO entity.id;
         new_entity := FALSE;
     ELSIF NOT FOUND AND check_definition_import.id IS NULL THEN
-        --- Prevent from creating new checks with the old runtime.
-        IF runtime_enabled AND
-           check_definition_import.runtime != runtime_default THEN
+        IF (
+            -- Runtime is set to the new default but it is globally disabled
+            NOT runtime_enabled
+            AND new_runtime = runtime_default::text
+        ) OR (
+            -- Runtime is not set to the default but is globally enabled
+            runtime_enabled
+            AND new_runtime != runtime_default::text
+        ) THEN
             permission_denied := TRUE;
             RETURN;
         END IF;

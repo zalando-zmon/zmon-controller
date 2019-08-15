@@ -3,6 +3,7 @@ package org.zalando.zmon.domain;
 import java.util.Map;
 
 public class ActivityDiff extends Activity {
+    private long historyId;
 
     private Integer recordId;
 
@@ -11,6 +12,14 @@ public class ActivityDiff extends Activity {
     private Map<String, String> changedAttributes;
 
     private String lastModifiedBy;
+
+    public long getHistoryId() {
+        return historyId;
+    }
+
+    public void setHistoryId(long historyId) {
+        this.historyId = historyId;
+    }
 
     public Integer getRecordId() {
         return recordId;
@@ -47,7 +56,8 @@ public class ActivityDiff extends Activity {
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("ActivityDiff{");
-        sb.append("recordId=").append(recordId);
+        sb.append("historyId=").append(historyId);
+        sb.append(", recordId=").append(recordId);
         sb.append(", action=").append(action);
         sb.append(", changedAttributes=").append(changedAttributes);
         sb.append(", lastModifiedBy='").append(lastModifiedBy).append('\'');
