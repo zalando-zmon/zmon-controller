@@ -26,6 +26,7 @@ import org.zalando.zmon.api.domain.AlertResult;
 import org.zalando.zmon.api.domain.CheckChartResult;
 import org.zalando.zmon.api.domain.EntityFilterRequest;
 import org.zalando.zmon.api.domain.EntityFilterResponse;
+import org.zalando.zmon.config.CheckRuntimeConfig;
 import org.zalando.zmon.config.ControllerProperties;
 import org.zalando.zmon.config.SchedulerProperties;
 import org.zalando.zmon.diff.CheckDefinitionsDiffFactory;
@@ -98,6 +99,9 @@ public class ZMonServiceImpl implements ZMonService {
 
     @Autowired
     private ControllerProperties config;
+
+    @Autowired
+    private CheckRuntimeConfig checkRuntimeConfig;
 
     @Autowired
     protected AlertService alertService;
@@ -214,7 +218,8 @@ public class ZMonServiceImpl implements ZMonService {
 
         checkDefinition.setLastModifiedBy(userName);
 
-        return checkDefinitionSProc.createOrUpdateCheckDefinition(checkDefinition, userName, teams, isAdmin);
+        return checkDefinitionSProc.createOrUpdateCheckDefinition(checkDefinition, userName, teams, isAdmin,
+                checkRuntimeConfig.isEnabled(), checkRuntimeConfig.getDefaultRuntime());
     }
 
     @Override
@@ -626,21 +631,17 @@ public class ZMonServiceImpl implements ZMonService {
             .flatMap(alertInfos -> alertInfos.stream().map(alertInfo -> alertInfo.id))
             .collect(Collectors.toSet());
 
-        final Map<Integer, Set<String>> alertEntities = new HashMap<>();
-        for (Alert alert : alertService.getAllAlerts()) {
-            alertEntities.put(alert.getAlertDefinition().getId(),
-                alert.getEntities().stream().map(LastCheckResult::getEntity).collect(Collectors.toSet()));
-        }
+        final Set<Integer> activeAlertsIds = alertService.getAllAlerts().stream()
+            .map(alert -> alert.getAlertDefinition().getId())
+            .collect(Collectors.toSet());
 
-        return createAlertResults(alertCoverage, alertIds, alertEntities);
+        return createAlertResults(alertCoverage, alertIds, activeAlertsIds);
     }
 
     @VisibleForTesting
-    List<AlertResult> createAlertResults(final List<EntityGroup> alertCoverage,
-                                         final Set<Integer> alertIds,
-                                         final Map<Integer, Set<String>> triggeredEntitiesByAlertId) {
+    List<AlertResult> createAlertResults(final List<EntityGroup> alertCoverage, final Set<Integer> alertIds, final Set<Integer> activeAlertsIds) {
         final Map<Integer, Alert> alerts = new HashMap<>();
-        for (Alert a : alertService.fetchAlertsById(alertIds)) {
+        for (Alert a: alertService.fetchAlertsById(alertIds)) {
             alerts.put(a.getAlertDefinition().getId(), a);
         }
 
@@ -649,15 +650,13 @@ public class ZMonServiceImpl implements ZMonService {
         for (EntityGroup eg : alertCoverage) {
             for (EntityInfo entityInfo : eg.entities) {
                 for (AlertInfo alertInfo : eg.alerts) {
-                    Set<String> triggeredEntities = triggeredEntitiesByAlertId.get(alertInfo.id);
-
                     alertResults.add(new AlertResult(
                         String.valueOf(alertInfo.id),
                         String.valueOf(entityInfo.id),
                         entityInfo.type,
                         checkDefinitionOrNull(alerts.get(alertInfo.id)),
                         checkAlertNameOrNull(alerts.get(alertInfo.id)),
-                        triggeredEntities != null && triggeredEntities.contains(entityInfo.id),
+                        activeAlertsIds.contains(alertInfo.id),
                         priorityOrNull(alerts.get(alertInfo.id))));
                 }
             }

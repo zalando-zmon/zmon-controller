@@ -7,7 +7,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 
 public class ObjectMapperProvider implements FactoryBean<ObjectMapper> {
-
     // share object mapper with non managed spring instances
     public static final ObjectMapper OBJECT_MAPPER = createObjectMapper();
 

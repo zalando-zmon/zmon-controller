@@ -3,11 +3,7 @@ package org.zalando.zmon.persistence;
 import java.util.Date;
 import java.util.List;
 
-import org.zalando.zmon.domain.CheckDefinition;
-import org.zalando.zmon.domain.CheckDefinitionImport;
-import org.zalando.zmon.domain.CheckDefinitions;
-import org.zalando.zmon.domain.DefinitionStatus;
-import org.zalando.zmon.domain.HistoryEntry;
+import org.zalando.zmon.domain.*;
 
 import de.zalando.sprocwrapper.SProcCall;
 import de.zalando.sprocwrapper.SProcParam;
@@ -31,7 +27,12 @@ public interface CheckDefinitionSProcService {
     CheckDefinitions getCheckDefinitionsDiff(@SProcParam Long lastSnapshotId);
 
     @SProcCall
-    CheckDefinitionImportResult createOrUpdateCheckDefinition(@SProcParam CheckDefinitionImport checkDefinition, @SProcParam String userName, @SProcParam List<String> teams, @SProcParam boolean isAdmin);
+    CheckDefinitionImportResult createOrUpdateCheckDefinition(@SProcParam CheckDefinitionImport checkDefinition,
+                                                              @SProcParam String userName,
+                                                              @SProcParam List<String> teams,
+                                                              @SProcParam boolean isAdmin,
+                                                              @SProcParam boolean isRuntimeEnabled,
+                                                              @SProcParam DefinitionRuntime defaultRuntime);
 
     @SProcCall
     CheckDefinition deleteCheckDefinition(@SProcParam String userName, @SProcParam String name,
