@@ -29,12 +29,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(MockitoJUnitRunner.class)
 public class GrafanaUIControllerTest {
 
-    @InjectMocks
-    private Grafana visualizationService;
-
-    @InjectMocks
-    private ZMonService zmonService;
-
     @Test
     public void TestGrafana6Redirect() throws Exception {
         GrafanaDashboardSprocService grafanaService = mock(GrafanaDashboardSprocService.class);
