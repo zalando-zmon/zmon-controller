@@ -1,6 +1,8 @@
 package org.zalando.zmon.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -10,11 +12,17 @@ import org.zalando.zmon.config.AppdynamicsProperties;
 import org.zalando.zmon.config.ControllerProperties;
 import org.zalando.zmon.config.EumTracingProperties;
 import org.zalando.zmon.config.KairosDBProperties;
+import org.zalando.zmon.domain.CheckDefinition;
 import org.zalando.zmon.persistence.GrafanaDashboardSprocService;
+import org.zalando.zmon.service.VisualizationService;
+import org.zalando.zmon.service.ZMonService;
+import org.zalando.zmon.service.impl.Grafana;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 public class GrafanaUIController {
@@ -23,6 +31,8 @@ public class GrafanaUIController {
     private ControllerProperties controllerProperties;
     private EumTracingProperties eumTracingProperties;
     private GrafanaDashboardSprocService grafanaService;
+    private VisualizationService visualizationService;
+    private ZMonService zMonService;
 
     public static class KairosDBEntry {
         public String name;
@@ -49,11 +59,15 @@ public class GrafanaUIController {
                                ControllerProperties controllerProperties,
                                AppdynamicsProperties appdynamicsProperties,
                                EumTracingProperties eumTracingProperties,
-                               GrafanaDashboardSprocService grafanaService) {
+                               GrafanaDashboardSprocService grafanaService,
+                               VisualizationService visualizationService,
+                               ZMonService zMonService) {
         this.controllerProperties = controllerProperties;
         this.appdynamicsProperties = appdynamicsProperties;
         this.eumTracingProperties = eumTracingProperties;
         this.grafanaService = grafanaService;
+        this.visualizationService = visualizationService;
+        this.zMonService = zMonService;
 
         for (KairosDBProperties.KairosDBServiceConfig c : kairosdbProperties.getKairosdbs()) {
             kairosdbServices.add(new KairosDBEntry(c.getName(), "/rest/kairosdbs/" + c.getName()));
@@ -104,6 +118,20 @@ public class GrafanaUIController {
 
     @RequestMapping(value = "/grafana6/dashboard/db/{id}")
     public String grafana6Redirect(HttpServletRequest request, @PathVariable(value = "id") String id) {
+        if (id.startsWith("zmon-check-")) {
+            String[] parts = id.split("-", 4);
+            String checkId = parts[2];
+            final Optional<String> entityId = parts.length > 3 ? Optional.of(parts[3]) : Optional.empty();
+            Optional<CheckDefinition> checkDefinitionOptional = zMonService.getCheckDefinitionById(Integer.valueOf(checkId));
+            if (checkDefinitionOptional.isPresent()) {
+                return visualizationService.dynamicDashboardRedirect(new HashMap<String, String>() {{
+                    this.put("checkId", checkId);
+                    this.put("entityName", entityId.orElse(""));
+                    this.put("checkName", checkDefinitionOptional.get().getName());
+                }});
+            }
+        }
+
         String uid = grafanaService.getGrafanaMapping(id);
         if (null == uid) {
             throw new ResourceNotFoundException();
