@@ -3,6 +3,7 @@ package org.zalando.zmon.controller;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
@@ -14,6 +15,9 @@ import org.zalando.zmon.config.ControllerProperties;
 import org.zalando.zmon.config.EumTracingProperties;
 import org.zalando.zmon.config.KairosDBProperties;
 import org.zalando.zmon.persistence.GrafanaDashboardSprocService;
+import org.zalando.zmon.service.VisualizationService;
+import org.zalando.zmon.service.ZMonService;
+import org.zalando.zmon.service.impl.Grafana;
 
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
@@ -25,6 +29,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(MockitoJUnitRunner.class)
 public class GrafanaUIControllerTest {
 
+    @InjectMocks
+    private Grafana visualizationService;
+
+    @InjectMocks
+    private ZMonService zmonService;
+
     @Test
     public void TestGrafana6Redirect() throws Exception {
         GrafanaDashboardSprocService grafanaService = mock(GrafanaDashboardSprocService.class);
@@ -33,7 +43,9 @@ public class GrafanaUIControllerTest {
                 mock(ControllerProperties.class),
                 mock(AppdynamicsProperties.class),
                 mock(EumTracingProperties.class),
-                grafanaService
+                grafanaService,
+                mock(VisualizationService.class),
+                mock(ZMonService.class)
         );
 
         when(grafanaService.getGrafanaMapping(anyString())).thenReturn("someuid");
@@ -54,7 +66,9 @@ public class GrafanaUIControllerTest {
                 mock(ControllerProperties.class),
                 mock(AppdynamicsProperties.class),
                 mock(EumTracingProperties.class),
-                mock(GrafanaDashboardSprocService.class)
+                mock(GrafanaDashboardSprocService.class),
+                mock(VisualizationService.class),
+                mock(ZMonService.class)
         );
 
         MockMvc mockMvc = MockMvcBuilders.standaloneSetup(controller).alwaysDo(print()).build();
@@ -72,7 +86,9 @@ public class GrafanaUIControllerTest {
                 mock(ControllerProperties.class),
                 mock(AppdynamicsProperties.class),
                 mock(EumTracingProperties.class),
-                mock(GrafanaDashboardSprocService.class)
+                mock(GrafanaDashboardSprocService.class),
+                mock(VisualizationService.class),
+                mock(ZMonService.class)
         );
 
         MockMvc mockMvc = MockMvcBuilders.standaloneSetup(controller).alwaysDo(print()).build();
