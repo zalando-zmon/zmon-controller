@@ -2,6 +2,7 @@ package org.zalando.zmon.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.zalando.zmon.api.domain.ResourceNotFoundException;
@@ -77,6 +78,28 @@ public class GrafanaUIController {
     @RequestMapping(value = "/grafana2/**")
     public String grafana2Redirect(HttpServletRequest request) {
         return "redirect:" + request.getRequestURI().replace("/grafana2/", "/grafana/");
+    }
+
+    @RequestMapping(value = "/grafana3")
+    public String grafana(Model model) {
+        model.addAttribute(IndexController.STATIC_URL, controllerProperties.getStaticUrl());
+        model.addAttribute(IndexController.KAIROSDB_SERVICES, kairosdbServices);
+        model.addAttribute(IndexController.APPDYNAMICS_CONFIG, appdynamicsProperties);
+        model.addAttribute(IndexController.APPDYNAMICS_ENABLED, controllerProperties.enableAppdynamics);
+        model.addAttribute(IndexController.EUM_TRACING_ENABLED, controllerProperties.enableEumTracing);
+        model.addAttribute(IndexController.EUM_GRAFANA_TRACING_CONFIG, eumTracingProperties.grafanaConfig);
+        return "grafana";
+    }
+
+    @RequestMapping(value = {"/grafana3/dashboard/db/**"})
+    public String grafanaDeepLinks(Model model) {
+        model.addAttribute(IndexController.STATIC_URL, controllerProperties.getStaticUrl());
+        model.addAttribute(IndexController.KAIROSDB_SERVICES, kairosdbServices);
+        model.addAttribute(IndexController.APPDYNAMICS_CONFIG, appdynamicsProperties);
+        model.addAttribute(IndexController.APPDYNAMICS_ENABLED, controllerProperties.enableAppdynamics);
+        model.addAttribute(IndexController.EUM_TRACING_ENABLED, controllerProperties.enableEumTracing);
+        model.addAttribute(IndexController.EUM_GRAFANA_TRACING_CONFIG, eumTracingProperties.grafanaConfig);
+        return "grafana";
     }
 
     @RequestMapping(value = "/grafana6/dashboard/db/{id}")
