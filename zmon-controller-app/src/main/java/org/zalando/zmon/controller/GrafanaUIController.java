@@ -2,7 +2,6 @@ package org.zalando.zmon.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.zalando.zmon.api.domain.ResourceNotFoundException;
@@ -67,7 +66,12 @@ public class GrafanaUIController {
 
     @RequestMapping(value = {"/grafana/dashboard/db/**", "/grafana/dashboard-solo/db/**"})
     public String grafanaDeepLinks(HttpServletRequest request) {
-        return "redirect:" + request.getRequestURI().replace("/grafana/", "/grafana6/");
+        String redirect = request.getRequestURI().replace("/grafana/", "/grafana6/");
+        String query = request.getQueryString();
+        if (null != query) {
+            redirect += "?" + query;
+        }
+        return "redirect:" + redirect;
     }
 
     @RequestMapping(value = "/grafana2/**")
@@ -78,12 +82,12 @@ public class GrafanaUIController {
     @RequestMapping(value = "/grafana6/dashboard/db/{id}")
     public String grafana6Redirect(HttpServletRequest request, @PathVariable(value = "id") String id) {
         String uid = grafanaService.getGrafanaMapping(id);
-        if(null == uid) {
+        if (null == uid) {
             throw new ResourceNotFoundException();
         }
         String redirect = controllerProperties.grafanaHost + "/d/" + uid;
         String query = request.getQueryString();
-        if(null != query) {
+        if (null != query) {
             redirect += "?" + query;
         }
         return "redirect:" + redirect;
