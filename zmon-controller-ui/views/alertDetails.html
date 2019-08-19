@@ -1,281 +1,281 @@
 <window-title title="Alert {{::alert.id}} - {{::alert.name}}"></window-title>
 
 <div class="row">
-    <div class="col-md-6">
-        <h1>Alert: {{alert.name}} <small ng-show="alert.template">Template</small><priority prio="alert.priority" /></h1>
-    </div>
-    <div class="col-md-6 text-right">
-        <div>
-            ID: {{alert.id}},
-            Status: <status status="alert.status"/>,
-            Team: {{alert.team}}
-        </div>
-        <div class="top-links">
-            <a ng-show="alert.editable && alert.status != 'DELETED'" href="#/alert-definitions/edit/{{alert.id}}" title="Edit alert definition"><i class="fa fa-fw fa-edit"></i> Edit</a>
-            <span ng-hide="alert.editable || alert.status == 'DELETED'"><i class="fa fa-fw fa-edit semi-transparent"></i> Edit</span>
-            <a ng-show="alert.cloneable && alert.status != 'DELETED'" href="#/alert-definitions/clone/{{alert.id}}" title="Clone alert definition"><i class="fa fa-fw fa-copy"></i> Clone</a>
-            <span ng-hide="alert.cloneable || alert.status == 'DELETED'"><i class="fa fa-fw fa-copy semi-transparent"></i> Clone</span>
-            <a ng-show="alert.cloneable && alert.status != 'DELETED'" href="#/alert-definitions/inherit/{{alert.id}}" title="Inherit alert definition"><i class="fa fa-fw fa-sitemap"></i> Inherit</a>
-            <span ng-hide="alert.cloneable || alert.status == 'DELETED'"><i class="fa fa-fw fa-sitemap semi-transparent"></i> Inherit</span>
-            <a ng-show="alert.deletable" href="" alert-delete alert="alert" title="Delete alert definition"><i class="fa fa-fw fa-trash-o"></i> Delete</a>
-            <span ng-hide="alert.deletable"><i class="fa fa-fw fa-trash-o semi-transparent"></i> Delete</span>
-            <a href="#/changes?alert_definition_id={{alert.id}}"><i class="fa fa-clock-o"></i> Changes</a>
-            <a class="clickable" href="#/trial-run/{{alert.check_definition_id}}?json={{alertJson}}"><i class="fa fa-play"></i> Trial Run</a>
-            <a class="clickable" ng-if="userInfo['instantaneous-alert-evaluation']" ng-click="forceAlertEvaluation()"><i class="fa fa-play"></i> Evaluate</a>
-            <a class="clickable" ng-if="userInfo['instantaneous-alert-evaluation']" ng-click="forceAlertCleanup()"><i class="fa fa-eraser"></i> Cleanup</a>
-            <a class="clickable" ng-if="userInfo['add-comment']" comment-modal alert-id="alertId" count="commentsCount">
-                <i class="fa fa-fw fa-comments-o"></i>Comments
-                <span ng-show="commentsCount <= 10">({{commentsCount}})</span>
-                <span ng-show="commentsCount > 10">(10+)</span>
-            </a>
-        </div>
-    </div>
+	<div class="col-md-6">
+		<h1>Alert: {{alert.name}} <small ng-show="alert.template">Template</small><priority prio="alert.priority" /></h1>
+	</div>
+	<div class="col-md-6 text-right">
+		<div>
+			ID: {{alert.id}},
+			Status: <status status="alert.status"/>,
+			Team: {{alert.team}}
+		</div>
+		<div class="top-links">
+			<a ng-show="alert.editable && alert.status != 'DELETED'" href="#/alert-definitions/edit/{{alert.id}}" title="Edit alert definition"><i class="fa fa-fw fa-edit"></i> Edit</a>
+			<span ng-hide="alert.editable || alert.status == 'DELETED'"><i class="fa fa-fw fa-edit semi-transparent"></i> Edit</span>
+			<a ng-show="alert.cloneable && alert.status != 'DELETED'" href="#/alert-definitions/clone/{{alert.id}}" title="Clone alert definition"><i class="fa fa-fw fa-copy"></i> Clone</a>
+			<span ng-hide="alert.cloneable || alert.status == 'DELETED'"><i class="fa fa-fw fa-copy semi-transparent"></i> Clone</span>
+			<a ng-show="alert.cloneable && alert.status != 'DELETED'" href="#/alert-definitions/inherit/{{alert.id}}" title="Inherit alert definition"><i class="fa fa-fw fa-sitemap"></i> Inherit</a>
+			<span ng-hide="alert.cloneable || alert.status == 'DELETED'"><i class="fa fa-fw fa-sitemap semi-transparent"></i> Inherit</span>
+			<a ng-show="alert.deletable" href="" alert-delete alert="alert" title="Delete alert definition"><i class="fa fa-fw fa-trash-o"></i> Delete</a>
+			<span ng-hide="alert.deletable"><i class="fa fa-fw fa-trash-o semi-transparent"></i> Delete</span>
+			<a href="#/changes?alert_definition_id={{alert.id}}"><i class="fa fa-clock-o"></i> Changes</a>
+			<a class="clickable" href="#/trial-run/{{alert.check_definition_id}}?json={{alertJson}}"><i class="fa fa-play"></i> Trial Run</a>
+			<a class="clickable" ng-if="userInfo['instantaneous-alert-evaluation']" ng-click="forceAlertEvaluation()"><i class="fa fa-play"></i> Evaluate</a>
+			<a class="clickable" ng-if="userInfo['instantaneous-alert-evaluation']" ng-click="forceAlertCleanup()"><i class="fa fa-eraser"></i> Cleanup</a>
+			<a class="clickable" ng-if="userInfo['add-comment']" comment-modal alert-id="alertId" count="commentsCount">
+				<i class="fa fa-fw fa-comments-o"></i>Comments
+				<span ng-show="commentsCount <= 10">({{commentsCount}})</span>
+				<span ng-show="commentsCount > 10">(10+)</span>
+			</a>
+		</div>
+	</div>
 </div>
 
 <div class="panel panel-default">
-    <div class="panel-body">
-        <dl class="dl-horizontal">
-            <dt>Description</dt>
-            <dd class="form-control" ng-bind-html="alert.description | markdown"></dd>
-            <dt>Condition</dt>
-            <dd><div hljs hljs-source="alert.condition" hljs-language="python"></div></dd>
-            <dt>Responsible Team</dt>
-            <dd>{{alert.responsible_team}}</dd>
-        </dl>
-    </div>
+	<div class="panel-body">
+		<dl class="dl-horizontal">
+			<dt>Description</dt>
+			<dd class="form-control" ng-bind-html="alert.description | markdown"></dd>
+			<dt>Condition</dt>
+			<dd><div hljs hljs-source="alert.condition" hljs-language="python"></div></dd>
+			<dt>Responsible Team</dt>
+			<dd>{{alert.responsible_team}}</dd>
+		</dl>
+	</div>
 </div>
 
 <div class="panel panel-default details" ng-class="{'panel-collapsed': !showDetails}">
-    <div class="panel-heading panel-toggle" ng-click="showDetails = !showDetails"><i class="fa fa-fw fa-toggle-{{ showDetails ? 'up' : 'down' }}"></i> Details</div>
-    <div class="panel-body">
-        <dl class="dl-horizontal">
-            <dt ng-if="check.potential_impact" >Potential Impact</dt>
-            <dd ng-if="check.potential_impact" ng-bind-html="check.potential_impact | markdown"></dd>
-            <dt ng-if="check.potential_analysis">Potential Analysis</dt>
-            <dd ng-if="check.potential_analysis" ng-bind-html="check.potential_analysis | markdown"></dd>
-            <dt ng-if="check.potential_solution">Potential Solution</dt>
-            <dd ng-if="check.potential_solution" ng-bind-html="check.potential_solution | markdown"></dd>
-            <dt ng-if="check.technical_details">Technical Details</dt>
-            <dd ng-if="check.technical_details" ng-bind-html="check.technical_details | markdown"></dd>
-            <dt ng-if="alert.parent_id">Inherits from</dt>
-            <dd ng-if="alert.parent_id"><a href="#/alert-details/{{alert.parent_id}}">{{parentAlertDefinition.name || "(no name)"}}</a>, ID: <a href="#/alert-details/{{alert.parent_id}}">{{alert.parent_id}}</a></dd>
-            <dt>Check Name, ID, Changes</dt>
-            <dd><a href="#/check-definitions/view/{{check.id}}">{{check.name}}</a>, ID: {{check.id}}, <a href="#/changes?check_definition_id={{check.id}}">Changes</a></dd>
-            <dt>Check Team</dt>
-            <dd>{{check.owning_team}}</dd>
-            <dt>Check Command</dt>
-            <dd><div hljs hljs-source="check.command" hljs-language="python"></div></dd>
-            <dt>Check Interval</dt>
-            <dd>{{check.interval|timespan:'s'}}</dd>
-            <dt>Check Entities</dt>
-            <dd ng-bind-html="check.entities | entities"></dd>
-            <dt>Parameters</dt>
-            <dd class="text-muted" ng-if="alert.parameters == null">(no parameters)</dd>
-            <dd ng-repeat="(name, parameter) in alert.parameters">
-                {{name}} = {{parameter.value}}
-            </dd>
-            <dt>Entities Filter</dt>
-            <dd><span class="text-muted" ng-show="alert.entities.length === 0">(no entities)</span>
-            <div ng-bind-html="alert.entities | entities"></div></dd>
-            <dt>Excluded Entities Filter</dt>
-            <dd><span class="text-muted" ng-show="alert.entities_exclude === undefined || alert.entities_exclude.length === 0">(no excluded entities)</span>
-            <div ng-bind-html="alert.entities_exclude | entities"></div></dd>
-            <dt>Notifications</dt>
-            <dd><span class="text-muted" ng-show="alert.notifications.length === 0">(no notifications defined)</span><code ng-repeat="notification in alert.notifications">{{notification}}</code></dd>
-            <dt>Time Period</dt>
-            <dd><span class="text-muted" ng-show="!alert.period">(no time periods defined)</span>{{alert.period}}</dd>
-            <dt><label class="select2-details">Tags</label></dt>
-            <dd>
-                <ui-select class="borderless" multiple tagging ng-model="alert.tags" theme="select2" sortable="true" title="Tags" ng-disabled="true">
-                    <ui-select-match>{{$item}}</ui-select-match>
-                    <ui-select-choices repeat="tag in alert.tags">{{tag}}</ui-select-choices>
-                </ui-select>
-            </dd>
-        </dl>
-    </div>
+	<div class="panel-heading panel-toggle" ng-click="showDetails = !showDetails"><i class="fa fa-fw fa-toggle-{{ showDetails ? 'up' : 'down' }}"></i> Details</div>
+	<div class="panel-body">
+		<dl class="dl-horizontal">
+			<dt ng-if="check.potential_impact" >Potential Impact</dt>
+			<dd ng-if="check.potential_impact" ng-bind-html="check.potential_impact | markdown"></dd>
+			<dt ng-if="check.potential_analysis">Potential Analysis</dt>
+			<dd ng-if="check.potential_analysis" ng-bind-html="check.potential_analysis | markdown"></dd>
+			<dt ng-if="check.potential_solution">Potential Solution</dt>
+			<dd ng-if="check.potential_solution" ng-bind-html="check.potential_solution | markdown"></dd>
+			<dt ng-if="check.technical_details">Technical Details</dt>
+			<dd ng-if="check.technical_details" ng-bind-html="check.technical_details | markdown"></dd>
+			<dt ng-if="alert.parent_id">Inherits from</dt>
+			<dd ng-if="alert.parent_id"><a href="#/alert-details/{{alert.parent_id}}">{{parentAlertDefinition.name || "(no name)"}}</a>, ID: <a href="#/alert-details/{{alert.parent_id}}">{{alert.parent_id}}</a></dd>
+			<dt>Check Name, ID, Changes</dt>
+			<dd><a href="#/check-definitions/view/{{check.id}}">{{check.name}}</a>, ID: {{check.id}}, <a href="#/changes?check_definition_id={{check.id}}">Changes</a></dd>
+			<dt>Check Team</dt>
+			<dd>{{check.owning_team}}</dd>
+			<dt>Check Command</dt>
+			<dd><div hljs hljs-source="check.command" hljs-language="python"></div></dd>
+			<dt>Check Interval</dt>
+			<dd>{{check.interval|timespan:'s'}}</dd>
+			<dt>Check Entities</dt>
+			<dd ng-bind-html="check.entities | entities"></dd>
+			<dt>Parameters</dt>
+			<dd class="text-muted" ng-if="alert.parameters == null">(no parameters)</dd>
+			<dd ng-repeat="(name, parameter) in alert.parameters">
+				{{name}} = {{parameter.value}}
+			</dd>
+			<dt>Entities Filter</dt>
+			<dd><span class="text-muted" ng-show="alert.entities.length === 0">(no entities)</span>
+				<div ng-bind-html="alert.entities | entities"></div></dd>
+			<dt>Excluded Entities Filter</dt>
+			<dd><span class="text-muted" ng-show="alert.entities_exclude === undefined || alert.entities_exclude.length === 0">(no excluded entities)</span>
+				<div ng-bind-html="alert.entities_exclude | entities"></div></dd>
+			<dt>Notifications</dt>
+			<dd><span class="text-muted" ng-show="alert.notifications.length === 0">(no notifications defined)</span><code ng-repeat="notification in alert.notifications">{{notification}}</code></dd>
+			<dt>Time Period</dt>
+			<dd><span class="text-muted" ng-show="!alert.period">(no time periods defined)</span>{{alert.period}}</dd>
+			<dt><label class="select2-details">Tags</label></dt>
+			<dd>
+				<ui-select class="borderless" multiple tagging ng-model="alert.tags" theme="select2" sortable="true" title="Tags" ng-disabled="true">
+					<ui-select-match>{{$item}}</ui-select-match>
+					<ui-select-choices repeat="tag in alert.tags">{{tag}}</ui-select-choices>
+				</ui-select>
+			</dd>
+		</dl>
+	</div>
 </div>
 
-    <div ng-if="alert.status == 'ACTIVE'">
-        <uib-tabset>
-            <uib-tab id="alerts-tab" heading="Alerts/Checks">
-                <div class="zmon-controls row">
-                    <div class="col-md-8">
-                        <button class="btn" ng-class="{'active-page': selection.activeAlerts && allActiveAlertsCount > 0}" ng-disabled="allActiveAlertsCount === 0" ng-click="selection.activeAlerts = !selection.activeAlerts">Alerts ({{allActiveAlertsCount}})</button>
-                        <button class="btn" ng-class="{'active-page': selection.alertsInDowntime && allDowntimeAlertsCount > 0}" ng-disabled="allDowntimeAlertsCount === 0" ng-click="selection.alertsInDowntime = !selection.alertsInDowntime">In downtime ({{allDowntimeAlertsCount}})</button>
-                        <button class="btn" ng-class="{'active-page': selection.checkResults && checkResultsCount > 0}" ng-disabled="checkResultsCount === 0" ng-click="selection.checkResults = !selection.checkResults">OK ({{checkResultsCount || 0}})</button>
-                    </div>
-                    <div class="col-md-4 text-right">
-                        <form id="searchbar" class="form-inline">
-                            <div class="form-group">
-                                <div class="input-group">
+<div ng-if="alert.status == 'ACTIVE'">
+	<uib-tabset>
+		<uib-tab id="alerts-tab" heading="Alerts/Checks">
+			<div class="zmon-controls row">
+				<div class="col-md-8">
+					<button class="btn" ng-class="{'active-page': selection.activeAlerts && allActiveAlertsCount > 0}" ng-disabled="allActiveAlertsCount === 0" ng-click="selection.activeAlerts = !selection.activeAlerts">Alerts ({{allActiveAlertsCount}})</button>
+					<button class="btn" ng-class="{'active-page': selection.alertsInDowntime && allDowntimeAlertsCount > 0}" ng-disabled="allDowntimeAlertsCount === 0" ng-click="selection.alertsInDowntime = !selection.alertsInDowntime">In downtime ({{allDowntimeAlertsCount}})</button>
+					<button class="btn" ng-class="{'active-page': selection.checkResults && checkResultsCount > 0}" ng-disabled="checkResultsCount === 0" ng-click="selection.checkResults = !selection.checkResults">OK ({{checkResultsCount || 0}})</button>
+				</div>
+				<div class="col-md-4 text-right">
+					<form id="searchbar" class="form-inline">
+						<div class="form-group">
+							<div class="input-group">
                                     <span class="input-group-btn">
                                         <button class="btn btn-primary"><i class="fa fa-fw fa-search"></i></button>
                                     </span>
-                                    <input class="form-control alert-details-search" placeholder="Filter entities"  type="text" ng-model="alertDetailsSearch.str" autofocus />
-                                        <i class="clear-input clickable fa fa-times" ng-if="alertDetailsSearch.str" ng-click="alertDetailsSearch.str = ''"></i>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-                <div class="table-responsive">
-                    <table class="zmon-data-table table table-striped table-bordered table-hover table-condensed">
-                        <thead>
-                            <tr>
-                                <th class="actions-col">
-                                    <div ng-if="userInfo['schedule-downtime']">
-                                        <button id="set-downtimes-button" downtime-modal alert-id="alertId" downtime-entities="downtimeEntities" class="fa fa-flag btn btn-primary" title="Schedule downtime for {{downtimeEntities.length}} alerts" ng-disabled="!!!downtimeEntities.length">
-                                            <sup ng-if="downtimeEntities.length && downtimeEntities.length < 100" class="counter">{{downtimeEntities.length}}</sup>
-                                            <sup ng-if="downtimeEntities.length && downtimeEntities.length >= 100" class="counter">99+</sup>
-                                        </button>
-                                        <input id="select-all-schedule-downtimes" class="set-downtime-checkbox" type="checkbox" ng-checked="areAllAlertsMarkedForDowntime()" ng-click="toggleAllAlertsForDowntime()">
-                                    </div>
-                                </th>
-                                <th class="name-col" ng-click="sortType = 'entity'; sortOrder = !sortOrder">Name
-                                    <i class="fa fa-fw fa-sort-asc sort-arrow" ng-show="sortType === 'entity' && sortOrder"></i>
-                                    <i class="fa fa-fw fa-sort-desc sort-arrow" ng-show="sortType === 'entity' && !sortOrder"></i>
-                                </th>
-                                <th class="last-run-col" ng-click="sortType = 'result.ts'; sortOrder = !sortOrder">Last run (UTC)
-                                    <i class="fa fa-fw fa-sort-asc sort-arrow" ng-show="sortType === 'result.ts' && sortOrder"></i>
-                                    <i class="fa fa-fw fa-sort-desc sort-arrow" ng-show="sortType === 'result.ts' && !sortOrder"></i>
-                                </th>
-                                <th class="active-since-col" ng-click="sortType = 'result.start_time'; sortOrder = !sortOrder">Active since (UTC)
-                                    <i class="fa fa-fw fa-sort-asc sort-arrow" ng-show="sortType === 'result.start_time' && sortOrder"></i>
-                                    <i class="fa fa-fw fa-sort-desc sort-arrow" ng-show="sortType === 'result.start_time' && !sortOrder"></i>
-                                </th>
-                                <th class="value-col" ng-click="sortType = 'result.value'; sortOrder = !sortOrder">Value
-                                    <i class="fa fa-fw fa-sort-asc sort-arrow" ng-show="sortType === 'result.value' && sortOrder"></i>
-                                    <i class="fa fa-fw fa-sort-desc sort-arrow" ng-show="sortType === 'result.value' && !sortOrder"></i>
-                                </th>
-                                <th class="captures-col" ng-click="sortType = 'result.captures'; sortOrder = !sortOrder">Captures
-                                    <i class="fa fa-fw fa-sort-asc sort-arrow" ng-show="sortType === 'result.captures' && sortOrder"></i>
-                                    <i class="fa fa-fw fa-sort-desc sort-arrow" ng-show="sortType === 'result.captures' && !sortOrder"></i>
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody infinite-scroll="incLimit()">
-                            <tr ng-repeat="entityInstance in allAlerts | orderBy:sortType:sortOrder track by entityInstance.entity" ng-class="{'danger': entityInstance.isActiveAlert == true, 'active-downtime': entityInstance.isAlertInDowntime == true, 'success': entityInstance.isCheckResult == true}">
-                                <td class="actions-col">
-                                    <div>
-                                        <input ng-if="userInfo['schedule-downtime']" class="set-downtime-checkbox" type="checkbox" ng-checked="downtimeEntities.indexOf(entityInstance.entity) !== -1" ng-click="toggleAlertForDowntime(entityInstance.entity)">
-                                    </div>
-                                    <div>
-                                      <a href="/grafana/dashboard/db/zmon-check-{{::check.id}}-{{ ::entityInstance.entity }}"><i class="fa fa-fw fa-bar-chart-o"></i></a>
-                                    </div>
-                                    <div ng-if="entityInstance.entityMeta && entityInstance.entityMeta.type && entityInstance.entityMeta.type == 'instance'" >
-                                      <a target="_new"href="https://{{::entityInstance.entityMeta.region}}.console.aws.amazon.com/ec2/v2/home?region={{::entityInstance.entityMeta.region}}#Instances:search={{::entityInstance.entityMeta.aws_id}};sort=Name" title="ip: {{::entityInstance.entityMeta.ip}}"><i class="fa fa-fw fa-cloud"></i></a>
-                                    </div>
-                                    <div ng-if="entityInstance.entityMeta && entityInstance.entityMeta.type && entityInstance.entityMeta.type == 'elb'">
-                                      <a target="_new" href="https://{{::entityInstance.entityMeta.region}}.console.aws.amazon.com/ec2/v2/home?region={{::entityInstance.entityMeta.region}}#LoadBalancers:search={{::entityInstance.entityMeta.name}}"><i class="fa fa-fw fa-cloud"></i></a>
-                                    </div>
-                                    <div ng-if="entityInstance.entityMeta && entityInstance.entityMeta.deeplink1">
-                                      <a target="_new"href="https://{{::entityInstance.entityMeta.deeplink1}}"><i class="fa fa-fw {{::entityInstance.entityMeta.icon1}}"></i></a>
-                                    </div>
-                                    <div ng-if="entityInstance.entityMeta && entityInstance.entityMeta.deeplink2">
-                                      <a target="_new" href="https://{{::entityInstance.entityMeta.deeplink2}}"><i class="fa fa-fw {{::entityInstance.entityMeta.icon2}}"></i></a>
-                                    </div>
-                                    <div ng-if="entityInstance.entityMeta && entityInstance.entityMeta.ip">
-                                      <i class="fa fa-clipboard clickable" ngclipboard data-clipboard-text={{entityInstance.entityMeta.ip}} ng-click="copyToClipboard(entityInstance.entityMeta.ip)" title="Copy IP to Clipboard"></i>
-                                    </div>
-                                </td>
-                                <td>
-                                    <a href="#/entities?ef=id:{{::entityInstance.entity}}" title="{{::entityInstance.entity}}">{{::entityInstance.entity | entityName}}</a></td>
-                                <td>
-                                    <div title="{{entityInstance.result.td * 1000|timespan}} {{entityInstance.result.worker}}">
-                                        <span ng-class="{'alert-is-too-old': timestampIsOld(entityInstance)}"> {{entityInstance.result.ts | epochToDate | UTC }} ({{entityInstance.result.ts | timeago}} ago)</span>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div ng-if="entityInstance.result.start_time">
-                                        {{entityInstance.result.start_time | epochToDate | UTC }}
-                                        ({{entityInstance.result.start_time | timeago}} ago)
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="ellipsis" alert-value-modal name="entityInstance.entity" value="entityInstance.result.value">{{entityInstance.result.value}}
-                                        <div ng-if="entityInstance.isAlertInDowntime == true">
-                                            {{entityInstance.result.downtimes | downtimeReasons}}
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="ellipsis" alert-value-modal value="entityInstance.result.captures">{{entityInstance.result.captures}}</div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <p class="warning-text" ng-if="limit >= maxLimit">{{entitiesNotDisplayed}}+ Entities not displayed. Please filter your results!</p>
-                </div>
-            </uib-tab>
-            <uib-tab id="downtimes-tab" heading="Downtimes ({{downtimes.length}})" disabled="downtimes.length == 0">
-                <alert-downtimes alert-id="alertId" downtimes="downtimes"></alert-downtimes>
-            </uib-tab>
-            <uib-tab heading="History">
-                <alert-history alert-id="alertId"></alert-history>
-             </uib-tab>
-            <uib-tab id="children-tab" heading="Children ({{alert.children.length}})" disabled="alert.children.length == 0">
-                <table class="zmon-data-table table table-striped table-bordered table-hover table-condensed">
-                    <thead>
-                        <tr>
-                            <th class="name-col" ng-click="sortType = 'name'; sortOrder = !sortOrder">Name
-                                    <i class="fa fa-fw fa-sort-asc sort-arrow" ng-show="sortType === 'name' && sortOrder"></i>
-                                    <i class="fa fa-fw fa-sort-desc sort-arrow" ng-show="sortType === 'name' && !sortOrder"></i>
-                            </th>
-                            <th ng-click="sortType = 'condition'; sortOrder = !sortOrder">Condition
-                                    <i class="fa fa-fw fa-sort-asc sort-arrow" ng-show="sortType === 'condition' && sortOrder"></i>
-                                    <i class="fa fa-fw fa-sort-desc sort-arrow" ng-show="sortType === 'condition' && !sortOrder"></i>
-                            </th>
-                            <th>Parameters</th>
-                            <th class="entities-col" ng-click="sortType = 'entities'; sortOrder = !sortOrder">Entities
-                                    <i class="fa fa-fw fa-sort-asc sort-arrow" ng-show="sortType === 'entities' && sortOrder"></i>
-                                    <i class="fa fa-fw fa-sort-desc sort-arrow" ng-show="sortType === 'entities' && !sortOrder"></i>
-                            </th>
-                            <th class="check-id-col" ng-click="sortType = 'check_definition_id'; sortOrder = !sortOrder">Check ID
-                                    <i class="fa fa-fw fa-sort-asc sort-arrow" ng-show="sortType === 'check_definition_id' && sortOrder"></i>
-                                    <i class="fa fa-fw fa-sort-desc sort-arrow" ng-show="sortType === 'check_definition_id' && !sortOrder"></i>
-                            </th>
-                            <th class="team-col" ng-click="sortType = 'team'; sortOrder = !sortOrder">Team
-                                    <i class="fa fa-fw fa-sort-asc sort-arrow" ng-show="sortType === 'team' && sortOrder"></i>
-                                    <i class="fa fa-fw fa-sort-desc sort-arrow" ng-show="sortType === 'team' && !sortOrder"></i>
-                            </th>
-                            <th class="responsible-team-col" ng-click="sortType = 'responsible_team'; sortOrder = !sortOrder">Responsible Team
-                                    <i class="fa fa-fw fa-sort-asc sort-arrow" ng-show="sortType === 'responsible_team' && sortOrder"></i>
-                                    <i class="fa fa-fw fa-sort-desc sort-arrow" ng-show="sortType === 'responsible_team' && !sortOrder"></i>
-                            </th>
-                            <th class="priority-col" ng-click="sortType = 'priority'; sortOrder = !sortOrder">Priority
-                                    <i class="fa fa-fw fa-sort-asc sort-arrow" ng-show="sortType === 'priority' && sortOrder"></i>
-                                    <i class="fa fa-fw fa-sort-desc sort-arrow" ng-show="sortType === 'priority' && !sortOrder"></i>
-                            </th>
-                            <th class="status-col" ng-click="sortType = 'status'; sortOrder = !sortOrder">Status
-                                    <i class="fa fa-fw fa-sort-asc sort-arrow" ng-show="sortType === 'status' && sortOrder"></i>
-                                    <i class="fa fa-fw fa-sort-desc sort-arrow" ng-show="sortType === 'status' && !sortOrder"></i>
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr ng-repeat="def in alert.children | orderBy:sortTypeChildren:sortOrderChildren" repeat-monitor last="$last">
-                            <td><a uib-tooltip-html-unsafe="{{::def.description | markdown}}" tooltip-placement="right" href="#/alert-details/{{::def.id}}">{{::def.name || '(no name)'}}</a></td>
-                            <td class="ellipsis" expand>{{::def.condition}}</td>
-                            <td><dd ng-repeat="(name, parameter) in def.parameters">{{name}} = {{parameter.value}}</dd></td>
-                            <td><span class="text-muted" ng-show="def.entities.length === 0">(no entity filter)</span><div ng-bind-html="def.entities | entities"></div></td>
-                            <td><a href="#/check-definitions/view/{{::def.check_definition_id}}">{{::def.check_definition_id}}</a></td>
-                            <td>{{::def.team}}</td>
-                            <td>{{::def.responsible_team}}</td>
-                            <td class="text-center"><priority prio="def.priority"></priority></td>
-                            <td>
-                                <status status="def.status"></status><i id="star" class='fa fa-star' ng-show="def.star" title="new alert"></i>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </uib-tab>
-        </uib-tabset>
-    </div>
+								<input class="form-control alert-details-search" placeholder="Filter entities"  type="text" ng-model="alertDetailsSearch.str" autofocus />
+								<i class="clear-input clickable fa fa-times" ng-if="alertDetailsSearch.str" ng-click="alertDetailsSearch.str = ''"></i>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+			<div class="table-responsive">
+				<table class="zmon-data-table table table-striped table-bordered table-hover table-condensed">
+					<thead>
+					<tr>
+						<th class="actions-col">
+							<div ng-if="userInfo['schedule-downtime']">
+								<button id="set-downtimes-button" downtime-modal alert-id="alertId" downtime-entities="downtimeEntities" class="fa fa-flag btn btn-primary" title="Schedule downtime for {{downtimeEntities.length}} alerts" ng-disabled="!!!downtimeEntities.length">
+									<sup ng-if="downtimeEntities.length && downtimeEntities.length < 100" class="counter">{{downtimeEntities.length}}</sup>
+									<sup ng-if="downtimeEntities.length && downtimeEntities.length >= 100" class="counter">99+</sup>
+								</button>
+								<input id="select-all-schedule-downtimes" class="set-downtime-checkbox" type="checkbox" ng-checked="areAllAlertsMarkedForDowntime()" ng-click="toggleAllAlertsForDowntime()">
+							</div>
+						</th>
+						<th class="name-col" ng-click="sortType = 'entity'; sortOrder = !sortOrder">Name
+							<i class="fa fa-fw fa-sort-asc sort-arrow" ng-show="sortType === 'entity' && sortOrder"></i>
+							<i class="fa fa-fw fa-sort-desc sort-arrow" ng-show="sortType === 'entity' && !sortOrder"></i>
+						</th>
+						<th class="last-run-col" ng-click="sortType = 'result.ts'; sortOrder = !sortOrder">Last run (UTC)
+							<i class="fa fa-fw fa-sort-asc sort-arrow" ng-show="sortType === 'result.ts' && sortOrder"></i>
+							<i class="fa fa-fw fa-sort-desc sort-arrow" ng-show="sortType === 'result.ts' && !sortOrder"></i>
+						</th>
+						<th class="active-since-col" ng-click="sortType = 'result.start_time'; sortOrder = !sortOrder">Active since (UTC)
+							<i class="fa fa-fw fa-sort-asc sort-arrow" ng-show="sortType === 'result.start_time' && sortOrder"></i>
+							<i class="fa fa-fw fa-sort-desc sort-arrow" ng-show="sortType === 'result.start_time' && !sortOrder"></i>
+						</th>
+						<th class="value-col" ng-click="sortType = 'result.value'; sortOrder = !sortOrder">Value
+							<i class="fa fa-fw fa-sort-asc sort-arrow" ng-show="sortType === 'result.value' && sortOrder"></i>
+							<i class="fa fa-fw fa-sort-desc sort-arrow" ng-show="sortType === 'result.value' && !sortOrder"></i>
+						</th>
+						<th class="captures-col" ng-click="sortType = 'result.captures'; sortOrder = !sortOrder">Captures
+							<i class="fa fa-fw fa-sort-asc sort-arrow" ng-show="sortType === 'result.captures' && sortOrder"></i>
+							<i class="fa fa-fw fa-sort-desc sort-arrow" ng-show="sortType === 'result.captures' && !sortOrder"></i>
+						</th>
+					</tr>
+					</thead>
+					<tbody infinite-scroll="incLimit()">
+					<tr ng-repeat="entityInstance in allAlerts | orderBy:sortType:sortOrder track by entityInstance.entity" ng-class="{'danger': entityInstance.isActiveAlert == true, 'active-downtime': entityInstance.isAlertInDowntime == true, 'success': entityInstance.isCheckResult == true}">
+						<td class="actions-col">
+							<div>
+								<input ng-if="userInfo['schedule-downtime']" class="set-downtime-checkbox" type="checkbox" ng-checked="downtimeEntities.indexOf(entityInstance.entity) !== -1" ng-click="toggleAlertForDowntime(entityInstance.entity)">
+							</div>
+							<div>
+								<a target="_blank" href="/api/v1/visualization/script?checkId={{::check.id}}&entityName={{ ::entityInstance.entity }}&checkName={{ ::check.name}}"><i class="fa fa-fw fa-bar-chart-o"></i></a>
+							</div>
+							<div ng-if="entityInstance.entityMeta && entityInstance.entityMeta.type && entityInstance.entityMeta.type == 'instance'" >
+								<a target="_new"href="https://{{::entityInstance.entityMeta.region}}.console.aws.amazon.com/ec2/v2/home?region={{::entityInstance.entityMeta.region}}#Instances:search={{::entityInstance.entityMeta.aws_id}};sort=Name" title="ip: {{::entityInstance.entityMeta.ip}}"><i class="fa fa-fw fa-cloud"></i></a>
+							</div>
+							<div ng-if="entityInstance.entityMeta && entityInstance.entityMeta.type && entityInstance.entityMeta.type == 'elb'">
+								<a target="_new" href="https://{{::entityInstance.entityMeta.region}}.console.aws.amazon.com/ec2/v2/home?region={{::entityInstance.entityMeta.region}}#LoadBalancers:search={{::entityInstance.entityMeta.name}}"><i class="fa fa-fw fa-cloud"></i></a>
+							</div>
+							<div ng-if="entityInstance.entityMeta && entityInstance.entityMeta.deeplink1">
+								<a target="_new"href="https://{{::entityInstance.entityMeta.deeplink1}}"><i class="fa fa-fw {{::entityInstance.entityMeta.icon1}}"></i></a>
+							</div>
+							<div ng-if="entityInstance.entityMeta && entityInstance.entityMeta.deeplink2">
+								<a target="_new" href="https://{{::entityInstance.entityMeta.deeplink2}}"><i class="fa fa-fw {{::entityInstance.entityMeta.icon2}}"></i></a>
+							</div>
+							<div ng-if="entityInstance.entityMeta && entityInstance.entityMeta.ip">
+								<i class="fa fa-clipboard clickable" ngclipboard data-clipboard-text={{entityInstance.entityMeta.ip}} ng-click="copyToClipboard(entityInstance.entityMeta.ip)" title="Copy IP to Clipboard"></i>
+							</div>
+						</td>
+						<td>
+							<a href="#/entities?ef=id:{{::entityInstance.entity}}" title="{{::entityInstance.entity}}">{{::entityInstance.entity | entityName}}</a></td>
+						<td>
+							<div title="{{entityInstance.result.td * 1000|timespan}} {{entityInstance.result.worker}}">
+								<span ng-class="{'alert-is-too-old': timestampIsOld(entityInstance)}"> {{entityInstance.result.ts | epochToDate | UTC }} ({{entityInstance.result.ts | timeago}} ago)</span>
+							</div>
+						</td>
+						<td>
+							<div ng-if="entityInstance.result.start_time">
+								{{entityInstance.result.start_time | epochToDate | UTC }}
+								({{entityInstance.result.start_time | timeago}} ago)
+							</div>
+						</td>
+						<td>
+							<div class="ellipsis" alert-value-modal name="entityInstance.entity" value="entityInstance.result.value">{{entityInstance.result.value}}
+								<div ng-if="entityInstance.isAlertInDowntime == true">
+									{{entityInstance.result.downtimes | downtimeReasons}}
+								</div>
+							</div>
+						</td>
+						<td>
+							<div class="ellipsis" alert-value-modal value="entityInstance.result.captures">{{entityInstance.result.captures}}</div>
+						</td>
+					</tr>
+					</tbody>
+				</table>
+				<p class="warning-text" ng-if="limit >= maxLimit">{{entitiesNotDisplayed}}+ Entities not displayed. Please filter your results!</p>
+			</div>
+		</uib-tab>
+		<uib-tab id="downtimes-tab" heading="Downtimes ({{downtimes.length}})" disabled="downtimes.length == 0">
+			<alert-downtimes alert-id="alertId" downtimes="downtimes"></alert-downtimes>
+		</uib-tab>
+		<uib-tab heading="History">
+			<alert-history alert-id="alertId"></alert-history>
+		</uib-tab>
+		<uib-tab id="children-tab" heading="Children ({{alert.children.length}})" disabled="alert.children.length == 0">
+			<table class="zmon-data-table table table-striped table-bordered table-hover table-condensed">
+				<thead>
+				<tr>
+					<th class="name-col" ng-click="sortType = 'name'; sortOrder = !sortOrder">Name
+						<i class="fa fa-fw fa-sort-asc sort-arrow" ng-show="sortType === 'name' && sortOrder"></i>
+						<i class="fa fa-fw fa-sort-desc sort-arrow" ng-show="sortType === 'name' && !sortOrder"></i>
+					</th>
+					<th ng-click="sortType = 'condition'; sortOrder = !sortOrder">Condition
+						<i class="fa fa-fw fa-sort-asc sort-arrow" ng-show="sortType === 'condition' && sortOrder"></i>
+						<i class="fa fa-fw fa-sort-desc sort-arrow" ng-show="sortType === 'condition' && !sortOrder"></i>
+					</th>
+					<th>Parameters</th>
+					<th class="entities-col" ng-click="sortType = 'entities'; sortOrder = !sortOrder">Entities
+						<i class="fa fa-fw fa-sort-asc sort-arrow" ng-show="sortType === 'entities' && sortOrder"></i>
+						<i class="fa fa-fw fa-sort-desc sort-arrow" ng-show="sortType === 'entities' && !sortOrder"></i>
+					</th>
+					<th class="check-id-col" ng-click="sortType = 'check_definition_id'; sortOrder = !sortOrder">Check ID
+						<i class="fa fa-fw fa-sort-asc sort-arrow" ng-show="sortType === 'check_definition_id' && sortOrder"></i>
+						<i class="fa fa-fw fa-sort-desc sort-arrow" ng-show="sortType === 'check_definition_id' && !sortOrder"></i>
+					</th>
+					<th class="team-col" ng-click="sortType = 'team'; sortOrder = !sortOrder">Team
+						<i class="fa fa-fw fa-sort-asc sort-arrow" ng-show="sortType === 'team' && sortOrder"></i>
+						<i class="fa fa-fw fa-sort-desc sort-arrow" ng-show="sortType === 'team' && !sortOrder"></i>
+					</th>
+					<th class="responsible-team-col" ng-click="sortType = 'responsible_team'; sortOrder = !sortOrder">Responsible Team
+						<i class="fa fa-fw fa-sort-asc sort-arrow" ng-show="sortType === 'responsible_team' && sortOrder"></i>
+						<i class="fa fa-fw fa-sort-desc sort-arrow" ng-show="sortType === 'responsible_team' && !sortOrder"></i>
+					</th>
+					<th class="priority-col" ng-click="sortType = 'priority'; sortOrder = !sortOrder">Priority
+						<i class="fa fa-fw fa-sort-asc sort-arrow" ng-show="sortType === 'priority' && sortOrder"></i>
+						<i class="fa fa-fw fa-sort-desc sort-arrow" ng-show="sortType === 'priority' && !sortOrder"></i>
+					</th>
+					<th class="status-col" ng-click="sortType = 'status'; sortOrder = !sortOrder">Status
+						<i class="fa fa-fw fa-sort-asc sort-arrow" ng-show="sortType === 'status' && sortOrder"></i>
+						<i class="fa fa-fw fa-sort-desc sort-arrow" ng-show="sortType === 'status' && !sortOrder"></i>
+					</th>
+				</tr>
+				</thead>
+				<tbody>
+				<tr ng-repeat="def in alert.children | orderBy:sortTypeChildren:sortOrderChildren" repeat-monitor last="$last">
+					<td><a uib-tooltip-html-unsafe="{{::def.description | markdown}}" tooltip-placement="right" href="#/alert-details/{{::def.id}}">{{::def.name || '(no name)'}}</a></td>
+					<td class="ellipsis" expand>{{::def.condition}}</td>
+					<td><dd ng-repeat="(name, parameter) in def.parameters">{{name}} = {{parameter.value}}</dd></td>
+					<td><span class="text-muted" ng-show="def.entities.length === 0">(no entity filter)</span><div ng-bind-html="def.entities | entities"></div></td>
+					<td><a href="#/check-definitions/view/{{::def.check_definition_id}}">{{::def.check_definition_id}}</a></td>
+					<td>{{::def.team}}</td>
+					<td>{{::def.responsible_team}}</td>
+					<td class="text-center"><priority prio="def.priority"></priority></td>
+					<td>
+						<status status="def.status"></status><i id="star" class='fa fa-star' ng-show="def.star" title="new alert"></i>
+					</td>
+				</tr>
+				</tbody>
+			</table>
+		</uib-tab>
+	</uib-tabset>
+</div>
 
-    <div ng-if="alert.status === 'INACTIVE'" class="alert alert-info">
-        This alert definition has status {{ ::alert.status }}. Change the status to ACTIVE to enable alerting and see alert entities.
-    </div>
+<div ng-if="alert.status === 'INACTIVE'" class="alert alert-info">
+	This alert definition has status {{ ::alert.status }}. Change the status to ACTIVE to enable alerting and see alert entities.
+</div>
 
-    <div ng-if="alert.status === 'DELETED'" class="alert alert-info">
-        This alert definition has status {{ ::alert.status }}. To finalize alert deletion please <a ng-show="alert.deletable" href=""ng-click="showDeleteAlertDefinitionModal()" title="Delete alert definition"><em>click here</em> <i class="fa fa-fw fa-trash-o"></i></a> and confirm your choice.
-    </div>
+<div ng-if="alert.status === 'DELETED'" class="alert alert-info">
+	This alert definition has status {{ ::alert.status }}. To finalize alert deletion please <a ng-show="alert.deletable" href=""ng-click="showDeleteAlertDefinitionModal()" title="Delete alert definition"><em>click here</em> <i class="fa fa-fw fa-trash-o"></i></a> and confirm your choice.
+</div>
