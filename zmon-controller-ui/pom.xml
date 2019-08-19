@@ -50,11 +50,11 @@
             </resource>
             <resource>
                 <directory>${project.build.directory}/zmon-controller-${project.version}/grafana</directory>
-                <targetPath>${output-directory}/grafana</targetPath>
+                <targetPath>${output-directory}/grafana3</targetPath>
             </resource>
             <resource>
                 <directory>grafana</directory>
-                <targetPath>${output-directory}/grafana</targetPath>
+                <targetPath>${output-directory}/grafana3</targetPath>
             </resource>
             <resource>
                 <directory>grafana2</directory>
