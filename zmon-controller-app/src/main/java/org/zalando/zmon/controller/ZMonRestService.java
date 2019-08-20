@@ -81,7 +81,7 @@ public class ZMonRestService extends AbstractZMonController {
         return new ResponseEntity<>(service.getAllTeams(), HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/checkDefinitions")
+    @GetMapping(value = "/checkDefinitions")
     public ResponseEntity<List<CheckDefinition>> getAllCheckDefinitions(
             @RequestParam(value = "team", required = false) final Set<String> teams) {
         final List<CheckDefinition> defs = teams == null ? service.getCheckDefinitions(null).getCheckDefinitions()
@@ -90,7 +90,7 @@ public class ZMonRestService extends AbstractZMonController {
         return new ResponseEntity<>(defs, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/updateCheckDefinition")
+    @RequestMapping(value = "/updateCheckDefinition", method = RequestMethod.POST)
     public ResponseEntity<CheckDefinition> updateCheckDefinition(@RequestBody CheckDefinitionImport check) throws ZMonException {
         if (check.getOwningTeam() == null || "".equals(check.getOwningTeam())) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -104,7 +104,7 @@ public class ZMonRestService extends AbstractZMonController {
         return new ResponseEntity<>(result.getEntity(), HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/checkDefinition")
+    @GetMapping(value = "/checkDefinition")
     public ResponseEntity<CheckDefinition> getCheckDefinition (
             @RequestParam(value = "check_id") final int checkId) throws ZMonException{
 
@@ -116,7 +116,7 @@ public class ZMonRestService extends AbstractZMonController {
         return new ResponseEntity<>(checkDefinitions.get(0), HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/checkResults")
+    @GetMapping(value = "/checkResults")
     public ResponseEntity<List<CheckResults>> getCheckResults(
             @RequestParam(value = "check_id") final int checkId,
             @RequestParam(value = "entity", required = false) final String entity,
@@ -125,7 +125,7 @@ public class ZMonRestService extends AbstractZMonController {
         return new ResponseEntity<>(service.getCheckResults(checkId, entity, limit), HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/checkResultsWithoutEntities")
+    @GetMapping(value = "/checkResultsWithoutEntities")
     public ResponseEntity<List<CheckResults>> getCheckResultsWithoutEntities(
             @RequestParam(value = "check_id") final int checkId,
             @RequestParam(value = "entity") final String entity,
@@ -134,7 +134,7 @@ public class ZMonRestService extends AbstractZMonController {
         return new ResponseEntity<>(service.getCheckResultsWithoutEntities(checkId, entity, limit), HttpStatus.OK);
     }
 
-    @RequestMapping(value = "checkResultsChart")
+    @GetMapping(value = "checkResultsChart")
     public ResponseEntity<CheckChartResult> getChartResults(
             @RequestParam(value = "check_id") final int checkId,
             @RequestParam(value = "entity", required = false) final String entity,
@@ -142,7 +142,7 @@ public class ZMonRestService extends AbstractZMonController {
         return new ResponseEntity<>(service.getChartResults(checkId, entity, limit), HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/checkAlertResults")
+    @GetMapping(value = "/checkAlertResults")
     public ResponseEntity<List<CheckResults>> getCheckAlertResults(
             @RequestParam(value = "alert_id") final int alertId,
             @RequestParam(value = "limit", defaultValue = "20") final int limit) {
@@ -169,7 +169,7 @@ public class ZMonRestService extends AbstractZMonController {
 
 
     @ResponseBody
-    @RequestMapping(value = "cloud-view-endpoints", produces = "application/json")
+    @GetMapping(value = "cloud-view-endpoints", produces = "application/json")
     public void cloudViewEndpoints(@RequestParam(value = "application_id") String applicationId, final Writer writer,
                                    final HttpServletResponse response) throws IOException {
         final String dataServiceQuery = metricCacheProperties.getUrl() + "/api/v1/rest-api-metrics/kairosdb-format?application_id=" + applicationId;
@@ -183,7 +183,7 @@ public class ZMonRestService extends AbstractZMonController {
 
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    @RequestMapping(value = "lastResults/{checkId}/{filter}")
+    @GetMapping(value = "lastResults/{checkId}/{filter}")
     public ResponseEntity<CheckChartResult> getLastResults(@PathVariable(value = "checkId") String checkId, @PathVariable(value = "filter") String filter, @RequestParam(value = "limit", defaultValue = "1") int limit) {
         CheckChartResult cr = service.getFilteredLastResults(checkId, filter, limit);
         return new ResponseEntity<>(cr, HttpStatus.OK);

@@ -50,14 +50,14 @@ public class AlertController extends AbstractZMonController {
         return new ResponseEntity<>(alerts, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/alertsById")
+    @GetMapping(value = "/alertsById")
     public ResponseEntity<List<Alert>> getAlertsById(
             @RequestParam(value = "id", required = true) final Set<Integer> ids) {
 
         return new ResponseEntity<>(service.getAllAlertsById(ids), HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/alertDetails")
+    @GetMapping(value = "/alertDetails")
     public ResponseEntity<Alert> getAlert(@RequestParam(value = "alert_id", required = true) final Integer alertId) throws ZMonException{
         final Alert alert = service.getAlert(alertId);
 
@@ -67,7 +67,7 @@ public class AlertController extends AbstractZMonController {
             return new ResponseEntity<>(alert, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/alertDefinitions")
+    @GetMapping(value = "/alertDefinitions")
     public ResponseEntity<List<AlertDefinitionAuth>> getAllAlertDefinitions(
             @RequestParam(value = "team", required = false) final Set<String> teams,
             @RequestParam(value = "check_id", required = false) final Integer checkId) {
@@ -94,7 +94,7 @@ public class AlertController extends AbstractZMonController {
                 authorityService.hasDeleteAlertDefinitionPermission(def));
     }
 
-    @RequestMapping(value = "/alertDefinition")
+    @GetMapping(value = "/alertDefinition")
     public ResponseEntity<AlertDefinitionAuth> getAlertDefinition(
             @RequestParam(value = "id", required = true) final int id) throws ZMonException{
 
@@ -107,7 +107,7 @@ public class AlertController extends AbstractZMonController {
         return new ResponseEntity<>(resolveAlertDefinitionAuth(def), HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/alertDefinitionNode")
+    @GetMapping(value = "/alertDefinitionNode")
     public ResponseEntity<AlertDefinitionAuth> getAlertDefinitionNode(
             @RequestParam(value = "id", required = true) final int id) {
 
@@ -119,7 +119,7 @@ public class AlertController extends AbstractZMonController {
         return new ResponseEntity<>(resolveAlertDefinitionAuth(node), HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/alertDefinitionChildren")
+    @GetMapping(value = "/alertDefinitionChildren")
     public ResponseEntity<List<AlertDefinitionAuth>> getAlertDefinitionChildren(
             @RequestParam(value = "id", required = true) final int id) {
 
@@ -208,7 +208,7 @@ public class AlertController extends AbstractZMonController {
         service.forceAlertEvaluation(request.getAlertDefinitionId());
     }
 
-    @RequestMapping(value = "/allTags")
+    @GetMapping(value = "/allTags")
     public ResponseEntity<List<String>> getAllTags() {
         return new ResponseEntity<>(service.getAllTags(), HttpStatus.OK);
     }
