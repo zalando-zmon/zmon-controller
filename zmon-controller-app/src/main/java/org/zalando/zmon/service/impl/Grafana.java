@@ -108,6 +108,8 @@ public class Grafana implements VisualizationService {
                     .build();
             Request request = Request.Get(url.toUri());
             request.addHeader("Authorization", "Bearer " + token);
+            log.info("Making grafana search - {}", url.toUri());
+
             HttpResponse response = executor.execute(request).returnResponse();
             return toResponseEntity(response);
         } catch (Exception ex) {
