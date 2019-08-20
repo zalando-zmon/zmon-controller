@@ -33,7 +33,7 @@ public class CorsConfiguration {
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
                         .allowedOrigins(StringUtils.commaDelimitedListToStringArray(corsAllowedOrigins))
-                        .allowedMethods("PUT", "DELETE", "GET", "POST", "OPTIONS")
+                        .allowedMethods("PUT", "DELETE", "GET", "POST")
                         .allowCredentials(enableCredentials)
                         .maxAge(3600);
             }
