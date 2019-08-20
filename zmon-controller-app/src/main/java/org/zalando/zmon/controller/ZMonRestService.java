@@ -71,7 +71,7 @@ public class ZMonRestService extends AbstractZMonController {
         this.executor = Executor.newInstance(httpClient);
     }
 
-    @RequestMapping(value = "/status")
+    @GetMapping(value = "/status")
     public ResponseEntity<ExecutionStatus> getStatus() {
         return new ResponseEntity<>(service.getStatus(), HttpStatus.OK);
     }
