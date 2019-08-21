@@ -1,6 +1,8 @@
 package org.zalando.zmon.api;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +15,7 @@ import org.zalando.zmon.config.VisualizationProperties;
 import org.zalando.zmon.persistence.QuickSearchResultItem;
 import org.zalando.zmon.persistence.QuickSearchSprocService;
 import org.zalando.zmon.service.VisualizationService;
+import org.zalando.zmon.service.impl.Grafana;
 
 import java.util.*;
 
@@ -32,6 +35,8 @@ public class SearchAPI {
 
     @Autowired
     private VisualizationProperties visualizationProperties;
+
+    private final Logger log = LoggerFactory.getLogger(Grafana.class);
 
     public static class QuickSearchResult extends HashMap<String, List<QuickSearchResultItem>> {
     }
@@ -84,6 +89,8 @@ public class SearchAPI {
                         visualizationProperties.getUrl() + dashboardNode.get("url").textValue() : "");
                 dashboards.add(i);
             }
+        } else {
+            log.error("Failed to search dashboard in visualization provider. Status: {}", responseEntity.getStatusCodeValue());
         }
         return dashboards;
     }
