@@ -23,7 +23,6 @@ import org.zalando.zmon.security.permission.DefaultZMonPermissionService;
 import org.zalando.zmon.service.VisualizationService;
 
 import java.io.IOException;
-import java.net.URI;
 import java.net.URLEncoder;
 import java.util.Map;
 import java.util.Set;
@@ -113,9 +112,7 @@ public class Grafana implements VisualizationService {
                 urlBuilder.queryParam("tag", URLEncoder.encode(params.get("tag"), "UTF-8"));
             }
 
-            URI uri = urlBuilder.build().toUri();
-            log.info("Grafana Search URL - {}", uri);
-            Request request = Request.Get(uri);
+            Request request = Request.Get(urlBuilder.build().toUri());
             request.addHeader("Authorization", "Bearer " + token);
             HttpResponse response = executor.execute(request).returnResponse();
 
@@ -155,7 +152,7 @@ public class Grafana implements VisualizationService {
             HttpResponse response = executor.execute(request).returnResponse();
             return toResponseEntity(response);
         } catch (Exception ex) {
-            log.error("Delete grafana dashboard: {} failed", uid, ex.getMessage());
+            log.error("Delete grafana dashboard: {} failed. {}", uid, ex.getMessage());
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
