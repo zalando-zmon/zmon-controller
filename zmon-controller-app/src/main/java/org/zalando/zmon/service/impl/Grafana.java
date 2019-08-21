@@ -97,18 +97,25 @@ public class Grafana implements VisualizationService {
     @Override
     public ResponseEntity<JsonNode> searchDashboards(Map<String, String> params, String token) {
         try {
-            log.info("Searching grafana dashboard: Query={} User={}",
+            log.info("Searching grafana dashboard: Query={} Tag={} User={}",
                     params.containsKey("query") ? URLEncoder.encode(params.get("query"), "UTF-8") : "",
+                    params.containsKey("tag") ? URLEncoder.encode(params.get("tag"), "UTF-8") : "",
                     authService.getUserName());
-            UriComponents url = UriComponentsBuilder.fromUriString(visualizationProperties.getUrl())
+
+            UriComponentsBuilder urlBuilder = UriComponentsBuilder.fromUriString(visualizationProperties.getUrl())
                     .path(searchDashboardEndpoint)
-                    .queryParam("query", params.containsKey("query") ? URLEncoder.encode(params.get("query"), "UTF-8") : "")
-                    .queryParam("tag", params.containsKey("tag") ? URLEncoder.encode(params.get("tag"), "UTF-8") : "")
-                    .queryParam("limit", params.containsKey("limit") ? params.get("limit") : "25")
-                    .build();
-            Request request = Request.Get(url.toUri());
+                    .queryParam("query", params.containsKey("query") ?
+                            URLEncoder.encode(params.get("query"), "UTF-8") : "")
+                    .queryParam("limit", params.containsKey("limit") ? params.get("limit") : "25");
+
+            if (params.containsKey("tag") && !params.get("tag").isEmpty()) {
+                urlBuilder.queryParam("tag", URLEncoder.encode(params.get("tag"), "UTF-8"));
+            }
+
+            Request request = Request.Get(urlBuilder.build().toUri());
             request.addHeader("Authorization", "Bearer " + token);
             HttpResponse response = executor.execute(request).returnResponse();
+
             return toResponseEntity(response);
         } catch (Exception ex) {
             log.error("Search grafana dashboard failed", ex);
@@ -145,7 +152,7 @@ public class Grafana implements VisualizationService {
             HttpResponse response = executor.execute(request).returnResponse();
             return toResponseEntity(response);
         } catch (Exception ex) {
-            log.error("Delete grafana dashboard: {} failed", uid, ex.getMessage());
+            log.error("Delete grafana dashboard: {} failed. {}", uid, ex.getMessage());
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
