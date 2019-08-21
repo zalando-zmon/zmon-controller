@@ -23,6 +23,7 @@ import org.zalando.zmon.security.permission.DefaultZMonPermissionService;
 import org.zalando.zmon.service.VisualizationService;
 
 import java.io.IOException;
+import java.net.URI;
 import java.net.URLEncoder;
 import java.util.Map;
 import java.util.Set;
@@ -112,7 +113,9 @@ public class Grafana implements VisualizationService {
                 urlBuilder.queryParam("tag", URLEncoder.encode(params.get("tag"), "UTF-8"));
             }
 
-            Request request = Request.Get(urlBuilder.build().toUri());
+            URI uri = urlBuilder.build().toUri();
+            log.info("Grafana Search URL - {}", uri);
+            Request request = Request.Get(uri);
             request.addHeader("Authorization", "Bearer " + token);
             HttpResponse response = executor.execute(request).returnResponse();
 
