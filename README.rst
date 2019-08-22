@@ -28,7 +28,7 @@ ZMON Controller
 
 ZMON Controller is the frontend UI and REST API for Zalando's open-source platform monitoring tool.
 
-Running Locally
+Running locally
 ===============
 
 Please use the `main ZMON repository`_ to start a Vagrant demo box.
