@@ -8,7 +8,6 @@ import org.zalando.zmon.domain.DefinitionRuntime;
 @ConfigurationProperties(prefix = "zmon.checkruntime")
 public class CheckRuntimeConfig {
     private boolean enabled = false;
-    private DefinitionRuntime defaultRuntime = DefinitionRuntime.PYTHON_2;
 
     public boolean isEnabled() {
         return enabled;
@@ -19,10 +18,6 @@ public class CheckRuntimeConfig {
     }
 
     public DefinitionRuntime getDefaultRuntime() {
-        return defaultRuntime;
-    }
-
-    public void setDefaultRuntime(DefinitionRuntime defaultRuntime) {
-        this.defaultRuntime = defaultRuntime;
+        return enabled ? DefinitionRuntime.PYTHON_3 : DefinitionRuntime.PYTHON_2;
     }
 }

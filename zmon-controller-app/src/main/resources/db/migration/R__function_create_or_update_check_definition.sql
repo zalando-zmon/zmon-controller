@@ -11,12 +11,13 @@ CREATE OR REPLACE FUNCTION zzm_api.create_or_update_check_definition(
 ) AS
 $BODY$
 DECLARE
+    previous_runtime zzm_data.definition_runtime;
     initial_runtime zzm_data.definition_runtime;
 BEGIN
+    permission_denied = false;
     check_definition_import.runtime = COALESCE(check_definition_import.runtime, runtime_default);
 
     -- Check if user has permissions to create/edit the check
-    permission_denied = FALSE;
     user_teams = lower(user_teams::text)::text[];
     IF check_definition_import.id IS NOT NULL AND NOT user_is_admin THEN
         IF NOT EXISTS (SELECT 1 FROM zzm_data.check_definition
@@ -28,10 +29,6 @@ BEGIN
             RETURN;
         END IF;
     ELSIF user_is_admin IS FALSE AND NOT lower(check_definition_import.owning_team) = ANY(user_teams) THEN
-        permission_denied = true;
-        RETURN;
-    -- Disallow setting the runtime to Python 3 when it is globally disabled.
-    ELSIF NOT runtime_enabled AND check_definition_import.runtime = 'PYTHON_3' THEN
         permission_denied = true;
         RETURN;
     END IF;
@@ -52,9 +49,9 @@ BEGIN
     entity.last_modified_by     = check_definition_import.last_modified_by;
     entity.runtime              = check_definition_import.runtime;
 
-    -- Find ID of the check and then lock it for update if exists.
-    SELECT cd_id
-    INTO entity.id
+    -- Find ID and previous runtime of the check and then lock it for update if exists.
+    SELECT cd_id, COALESCE(cd_runtime, 'PYTHON_2')::zzm_data.definition_runtime
+    INTO entity.id, previous_runtime
     FROM zzm_data.check_definition
     WHERE (lower(cd_source_url) = lower(check_definition_import.source_url) AND check_definition_import.id IS NULL)
        OR (lower(cd_name) = lower(check_definition_import.name) AND lower(cd_owning_team) = lower(check_definition_import.owning_team) AND check_definition_import.id IS NULL)
@@ -67,9 +64,15 @@ BEGIN
         INTO initial_runtime
         FROM zzm_data.check_definition_history
         WHERE cdh_check_definition_id = entity.id AND cdh_action = 'INSERT'::zzm_data.history_action;
-        -- disallow setting new checks' runtime back to Python 2.
-        IF (runtime_enabled AND initial_runtime = 'PYTHON_3' AND check_definition_import.runtime = 'PYTHON_2') THEN
-            permission_denied := TRUE;
+
+        -- Disallow changing runtime at all if it is globally disabled
+        IF NOT runtime_enabled AND check_definition_import.runtime != previous_runtime THEN
+            permission_denied = true;
+            RETURN;
+        END IF;
+        -- Disallow switching runtime back to Python 2 if a check was created with Python 3 initially.
+        IF runtime_enabled AND initial_runtime = 'PYTHON_3' AND check_definition_import.runtime = 'PYTHON_2' THEN
+            permission_denied = true;
             RETURN;
         END IF;
 
@@ -94,8 +97,8 @@ BEGIN
         new_entity := FALSE;
     ELSIF NOT FOUND AND check_definition_import.id IS NULL THEN
         -- Disallow of creating new checks with Python 2.
-        IF runtime_enabled AND check_definition_import.runtime = 'PYTHON_2' THEN
-            permission_denied := TRUE;
+        IF runtime_enabled AND check_definition_import.runtime != 'PYTHON_3' THEN
+            permission_denied = true;
             RETURN;
         END IF;
 
