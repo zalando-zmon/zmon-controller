@@ -2,22 +2,18 @@ package org.zalando.zmon.checkruntime;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jayway.jsonpath.TypeRef;
 import org.apache.http.client.fluent.Executor;
 import org.apache.http.client.fluent.Request;
 import org.apache.http.client.fluent.Response;
-import org.junit.After;
 import org.junit.Before;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.zalando.zmon.controller.domain.CheckRuntimeConfigDto;
 import org.zalando.zmon.domain.CheckDefinition;
 import org.zalando.zmon.domain.CheckDefinitionImport;
-import org.zalando.zmon.domain.CheckDefinitions;
 import org.zalando.zmon.domain.DefinitionRuntime;
 import org.zalando.zmon.generator.CheckDefinitionImportGenerator;
 import org.zalando.zmon.generator.RandomDataGenerator;
-import org.zalando.zmon.persistence.CheckDefinitionSProcService;
 import org.zalando.zmon.service.ZMonService;
 
 import java.util.Arrays;

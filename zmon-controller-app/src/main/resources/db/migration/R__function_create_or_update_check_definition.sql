@@ -15,6 +15,7 @@ DECLARE
     initial_runtime zzm_data.definition_runtime;
 BEGIN
     permission_denied = false;
+    new_entity = false;
     check_definition_import.runtime = COALESCE(check_definition_import.runtime, runtime_default);
 
     -- Check if user has permissions to create/edit the check
@@ -55,7 +56,8 @@ BEGIN
     FROM zzm_data.check_definition
     WHERE (lower(cd_source_url) = lower(check_definition_import.source_url) AND check_definition_import.id IS NULL)
        OR (lower(cd_name) = lower(check_definition_import.name) AND lower(cd_owning_team) = lower(check_definition_import.owning_team) AND check_definition_import.id IS NULL)
-       OR (cd_id = check_definition_import.id);
+       OR (cd_id = check_definition_import.id)
+    FOR UPDATE;
 
     IF FOUND THEN
         -- Get initial runtime of the check in order to...
@@ -93,7 +95,6 @@ BEGIN
             cd_runtime              = check_definition_import.runtime
         WHERE cd_id = entity.id
         RETURNING cd_id INTO entity.id;
-        new_entity := FALSE;
     ELSIF NOT FOUND AND check_definition_import.id IS NULL THEN
         -- Disallow of creating new checks with Python 2.
         IF runtime_enabled AND check_definition_import.runtime != 'PYTHON_3' THEN
