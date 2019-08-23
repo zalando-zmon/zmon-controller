@@ -1,7 +1,5 @@
 package org.zalando.zmon.checkruntime;
 
-import org.apache.http.client.fluent.Request;
-import org.apache.http.client.fluent.Response;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -20,7 +18,6 @@ import static org.hamcrest.Matchers.is;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(
-        webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
         properties = {"server.ssl.enabled=false", "zmon.checkruntime.enabled=false"}
 )
 @Transactional
@@ -49,9 +46,8 @@ public class CheckRuntimeDisabledIT extends BaseCheckRuntimeIT {
 
     @Test
     public void checkRuntimeConfigIsExposedInPrivateApiAccordingToConfig() throws Exception {
-        Response response = executor.execute(Request.Get(String.format("http://localhost:%s/rest/checkRuntimeConfig", serverPort)));
+        CheckRuntimeConfigDto checkRuntimeConfig = getCheckRuntimeConfigWithPrivateApi();
 
-        CheckRuntimeConfigDto checkRuntimeConfig = objectMapper.readValue(response.returnContent().asString(), CheckRuntimeConfigDto.class);
         assertThat(checkRuntimeConfig.isEnabled(), is(false));
         assertThat(checkRuntimeConfig.getDefaultRuntime(), is(DefinitionRuntime.PYTHON_2));
     }
