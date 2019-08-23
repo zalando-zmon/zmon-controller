@@ -55,8 +55,7 @@ BEGIN
     FROM zzm_data.check_definition
     WHERE (lower(cd_source_url) = lower(check_definition_import.source_url) AND check_definition_import.id IS NULL)
        OR (lower(cd_name) = lower(check_definition_import.name) AND lower(cd_owning_team) = lower(check_definition_import.owning_team) AND check_definition_import.id IS NULL)
-       OR (cd_id = check_definition_import.id)
-    FOR UPDATE;
+       OR (cd_id = check_definition_import.id);
 
     IF FOUND THEN
         -- Get initial runtime of the check in order to...
