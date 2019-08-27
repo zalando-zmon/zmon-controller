@@ -21,7 +21,7 @@
 			<span ng-hide="alert.deletable"><i class="fa fa-fw fa-trash-o semi-transparent"></i> Delete</span>
 			<a href="#/changes?alert_definition_id={{alert.id}}"><i class="fa fa-clock-o"></i> Changes</a>
 			<a class="clickable" href="#/trial-run/{{alert.check_definition_id}}?json={{alertJson}}"><i class="fa fa-play"></i> Trial Run</a>
-			<a class="clickable" ng-if="userInfo['instantaneous-alert-evaluation']" ng-click="forceAlertEvaluation()"><i class="fa fa-play"></i> Evaluate</a>
+			<a class="clickable" ng-if="userInfo['instantaneous-alert-evaluation']" ng-click="forceAlertEvaluation()"><i class="fa fa-sync-alt"></i> Re-Run</a>
 			<a class="clickable" ng-if="userInfo['instantaneous-alert-evaluation']" ng-click="forceAlertCleanup()"><i class="fa fa-eraser"></i> Cleanup</a>
 			<a class="clickable" ng-if="userInfo['add-comment']" comment-modal alert-id="alertId" count="commentsCount">
 				<i class="fa fa-fw fa-comments-o"></i>Comments
