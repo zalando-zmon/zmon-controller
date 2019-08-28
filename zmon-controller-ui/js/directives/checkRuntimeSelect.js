@@ -46,8 +46,8 @@ angular.module('zmon2App').directive('checkRuntimeSelect', ['$q', 'Communication
             };
 
             var setChoices = function(context) {
-                if (context.initialRuntime === context.defaultRuntime) {
-                    scope.choices = _.pick(context.allRuntimes, context.defaultRuntime);
+                if (context.initialRuntime === 'PYTHON_3') {
+                    scope.choices = _.pick(context.allRuntimes, 'PYTHON_3');
                 }
                 else {
                     scope.choices = context.allRuntimes;
