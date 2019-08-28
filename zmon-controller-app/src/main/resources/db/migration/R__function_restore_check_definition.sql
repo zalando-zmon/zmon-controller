@@ -39,8 +39,8 @@ BEGIN
     new_check_definition.interval = restored_fields->'cd_interval';
     new_check_definition.command = restored_fields->'cd_command';
     new_check_definition.source_url = restored_fields->'cd_source_url';
-    new_check_definition.status = restored_fields->'cd_status'::zzm_data.definition_status;
-    new_check_definition.runtime = restored_fields->'cd_runtime'::zzm_data.definition_runtime;
+    new_check_definition.status = (restored_fields->'cd_status')::zzm_data.definition_status;
+    new_check_definition.runtime = COALESCE(restored_fields->'cd_runtime', 'PYTHON_2')::zzm_data.definition_runtime;
     new_check_definition.last_modified_by = user_name;
     new_check_definition.technical_details = restored_fields->'cd_technical_details';
     new_check_definition.potential_analysis = restored_fields->'cd_potential_analysis';
