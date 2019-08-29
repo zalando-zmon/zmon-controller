@@ -97,7 +97,7 @@ BEGIN
         RETURNING cd_id INTO entity.id;
     ELSIF NOT FOUND AND check_definition_import.id IS NULL THEN
         -- Disallow of creating new checks with Python 2.
-        IF runtime_enabled AND check_definition_import.runtime != 'PYTHON_3' THEN
+        IF runtime_enabled AND check_definition_import.runtime = 'PYTHON_2' THEN
             permission_denied = true;
             RETURN;
         END IF;
