@@ -105,6 +105,7 @@ public class CheckDefinitionsApi extends AbstractZMonController {
         cImport.setLastModifiedBy(check.getLastModifiedBy());
         cImport.setSourceUrl(check.getSourceUrl());
         cImport.setStatus(check.getStatus());
+        cImport.setRuntime(check.getRuntime());
 
         cImport.setTechnicalDetails(check.getTechnicalDetails());
         cImport.setPotentialAnalysis(check.getPotentialAnalysis());

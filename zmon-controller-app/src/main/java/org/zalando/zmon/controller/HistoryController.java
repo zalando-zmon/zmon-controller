@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.zalando.zmon.domain.Activity;
 import org.zalando.zmon.domain.ActivityDiff;
+import org.zalando.zmon.domain.HistoryAction;
 import org.zalando.zmon.security.permission.DefaultZMonPermissionService;
 import org.zalando.zmon.service.HistoryService;
 
@@ -53,9 +54,10 @@ public class HistoryController extends AbstractZMonController {
             @RequestParam(value = "check_definition_id", required = true) final int checkDefinitionId,
             @RequestParam(value = "limit", required = false) final Integer limit,
             @RequestParam(value = "from", required = false) final Long from,
-            @RequestParam(value = "to", required = false) final Long to) {
+            @RequestParam(value = "to", required = false) final Long to,
+            @RequestParam(value = "action", required = false) final HistoryAction action) {
 
-        return new ResponseEntity<>(historyService.getCheckDefinitionHistory(checkDefinitionId, limit, from, to),
+        return new ResponseEntity<>(historyService.getCheckDefinitionHistory(checkDefinitionId, limit, from, to, action),
                 HttpStatus.OK);
     }
 }

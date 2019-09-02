@@ -17,18 +17,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
-import org.zalando.zmon.domain.AlertDefinition;
-import org.zalando.zmon.domain.AlertDefinitionIsEqual;
-import org.zalando.zmon.domain.AlertDefinitionsDiff;
-import org.zalando.zmon.domain.CheckDefinition;
-import org.zalando.zmon.domain.CheckDefinitionImport;
-import org.zalando.zmon.domain.CheckDefinitionIsEqual;
-import org.zalando.zmon.domain.CheckDefinitions;
-import org.zalando.zmon.domain.CheckDefinitionsDiff;
-import org.zalando.zmon.domain.DefinitionStatus;
+import org.zalando.zmon.domain.*;
 import org.zalando.zmon.generator.AlertDefinitionGenerator;
 import org.zalando.zmon.generator.CheckDefinitionImportGenerator;
 import org.zalando.zmon.generator.DataGenerator;
+import org.zalando.zmon.generator.RandomDataGenerator;
 import org.zalando.zmon.persistence.CheckDefinitionImportResult;
 import org.zalando.zmon.service.AlertService;
 import org.zalando.zmon.service.ZMonService;
@@ -48,7 +41,7 @@ public class ZMonServiceImplIT {
     @Autowired
     private AlertService alertService;
 
-    private DataGenerator<CheckDefinitionImport> checkImportGenerator;
+    private RandomDataGenerator<CheckDefinitionImport> checkImportGenerator;
     private DataGenerator<AlertDefinition> alertGenerator;
 
     private static final String USER_NAME ="default_user";
@@ -193,7 +186,7 @@ public class ZMonServiceImplIT {
 
     @Test
     public void testGetCheckDefinitionsByOwningTeam() throws Exception {
-        final CheckDefinitionImport toImport = checkImportGenerator.generate();
+        final CheckDefinitionImport toImport = checkImportGenerator.generateRandom();
         final CheckDefinition newCheckDefinition0 = service.createOrUpdateCheckDefinition(toImport, USER_NAME, USER_TEAMS).getEntity();
 
         toImport.setOwningTeam("TEST");

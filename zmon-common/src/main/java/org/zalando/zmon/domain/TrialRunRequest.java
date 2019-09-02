@@ -45,6 +45,8 @@ public class TrialRunRequest {
     @ParameterKey(message = "malformed parameter key")
     private Map<String, Parameter> parameters;
 
+    private DefinitionRuntime runtime;
+
     public String getId() {
         return id;
     }
@@ -125,6 +127,14 @@ public class TrialRunRequest {
         this.parameters = parameters;
     }
 
+    public DefinitionRuntime getRuntime() {
+        return runtime;
+    }
+
+    public void setRuntime(DefinitionRuntime checkRuntime) {
+        this.runtime = checkRuntime;
+    }
+
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("TrialRunRequest{");
@@ -138,6 +148,7 @@ public class TrialRunRequest {
         sb.append(", period='").append(period).append('\'');
         sb.append(", createdBy='").append(createdBy).append('\'');
         sb.append(", parameters=").append(parameters);
+        sb.append(", runtime=").append(runtime);
         sb.append('}');
         return sb.toString();
     }

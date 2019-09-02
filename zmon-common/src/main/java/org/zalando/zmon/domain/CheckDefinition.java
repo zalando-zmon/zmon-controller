@@ -9,6 +9,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import org.zalando.zmon.adapter.EntityListAdapter;
 import org.zalando.zmon.diff.StatusDiff;
 
@@ -16,6 +17,7 @@ import de.zalando.typemapper.annotations.DatabaseField;
 
 // TODO check command encoding
 @XmlAccessorType(XmlAccessType.NONE)
+@JsonFilter("checkRuntimeConfigFilter")
 public class CheckDefinition implements StatusDiff {
 
     @XmlElement(required = true)
@@ -81,6 +83,10 @@ public class CheckDefinition implements StatusDiff {
 
     @DatabaseField
     private Date lastModified;
+
+    @XmlElement
+    @DatabaseField
+    private DefinitionRuntime runtime;
 
     public Date getLastModified() {
         return lastModified;
@@ -202,6 +208,14 @@ public class CheckDefinition implements StatusDiff {
         this.lastModifiedBy = lastModifiedBy;
     }
 
+    public DefinitionRuntime getRuntime() {
+        return runtime;
+    }
+
+    public void setRuntime(DefinitionRuntime runtime) {
+        this.runtime = runtime;
+    }
+
     public boolean isDeleted() {
         return getStatus() == DefinitionStatus.DELETED;
     }
@@ -237,6 +251,8 @@ public class CheckDefinition implements StatusDiff {
         builder.append(sourceUrl);
         builder.append(", lastModifiedBy=");
         builder.append(lastModifiedBy);
+        builder.append(", runtime=");
+        builder.append(runtime);
         builder.append("]");
         return builder.toString();
     }

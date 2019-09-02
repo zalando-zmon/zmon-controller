@@ -11,6 +11,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import org.zalando.zmon.adapter.EntityListAdapter;
 import org.zalando.zmon.annotation.ContainsEntityKey;
 import org.zalando.zmon.annotation.NotNullEntity;
@@ -21,6 +22,7 @@ import de.zalando.typemapper.annotations.DatabaseType;
 
 @XmlAccessorType(XmlAccessType.NONE)
 @DatabaseType(name = "check_definition_import", partial = true)
+@JsonFilter("checkRuntimeConfigFilter")
 public class CheckDefinitionImport {
 
     @XmlElement(required = false)

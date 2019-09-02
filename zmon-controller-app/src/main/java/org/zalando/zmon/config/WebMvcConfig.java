@@ -5,6 +5,8 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 
+import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
+import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
@@ -28,8 +30,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Configuration
 @EnableWebMvc
 public class WebMvcConfig {
-
     private final Logger log = LoggerFactory.getLogger(WebMvcConfig.class);
+
+    private CheckRuntimeConfig checkRuntimeConfig;
+
+    public WebMvcConfig(CheckRuntimeConfig checkRuntimeConfig) {
+        this.checkRuntimeConfig = checkRuntimeConfig;
+    }
 
     @Bean
     public WebMvcConfigurer resourcesHandler() {
@@ -57,7 +64,26 @@ public class WebMvcConfig {
 
     @Bean
     public ObjectMapperProvider objectMapperProvider() {
-        return new ObjectMapperProvider();
+        return new ObjectMapperProvider() {
+            @Override
+            public ObjectMapper getObject() throws Exception {
+                ObjectMapper mapper = super.getObject();
+
+                // And checkRuntimeConfigFilter
+                SimpleFilterProvider filterProvider = new SimpleFilterProvider();
+                SimpleBeanPropertyFilter filter;
+                if (checkRuntimeConfig.isEnabled()) {
+                    filter = SimpleBeanPropertyFilter.serializeAll();
+                }
+                else {
+                    filter = SimpleBeanPropertyFilter.serializeAllExcept("runtime");
+                }
+                filterProvider.addFilter("checkRuntimeConfigFilter", filter);
+                mapper.setFilterProvider(filterProvider);
+
+                return mapper;
+            }
+        };
     }
 
     @Bean

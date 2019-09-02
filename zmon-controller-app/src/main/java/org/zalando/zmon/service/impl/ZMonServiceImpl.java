@@ -26,6 +26,7 @@ import org.zalando.zmon.api.domain.AlertResult;
 import org.zalando.zmon.api.domain.CheckChartResult;
 import org.zalando.zmon.api.domain.EntityFilterRequest;
 import org.zalando.zmon.api.domain.EntityFilterResponse;
+import org.zalando.zmon.config.CheckRuntimeConfig;
 import org.zalando.zmon.config.ControllerProperties;
 import org.zalando.zmon.config.SchedulerProperties;
 import org.zalando.zmon.diff.CheckDefinitionsDiffFactory;
@@ -95,6 +96,9 @@ public class ZMonServiceImpl implements ZMonService {
 
     @Autowired
     private NoOpEventLog eventLog;
+
+    @Autowired
+    private CheckRuntimeConfig checkRuntimeConfig;
 
     @Autowired
     private ControllerProperties config;
@@ -214,7 +218,7 @@ public class ZMonServiceImpl implements ZMonService {
 
         checkDefinition.setLastModifiedBy(userName);
 
-        return checkDefinitionSProc.createOrUpdateCheckDefinition(checkDefinition, userName, teams, isAdmin);
+        return checkDefinitionSProc.createOrUpdateCheckDefinition(checkDefinition, userName, teams, isAdmin, checkRuntimeConfig.isEnabled(), checkRuntimeConfig.getDefaultRuntime());
     }
 
     @Override
