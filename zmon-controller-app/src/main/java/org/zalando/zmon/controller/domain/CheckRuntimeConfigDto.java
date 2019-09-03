@@ -10,6 +10,7 @@ public class CheckRuntimeConfigDto {
     private boolean enabled;
     private DefinitionRuntime defaultRuntime;
     private Map<DefinitionRuntime, String> runtimeLabels;
+    private String migrationGuideUrl;
 
     public boolean isEnabled() {
         return enabled;
@@ -35,10 +36,19 @@ public class CheckRuntimeConfigDto {
         this.runtimeLabels = runtimeLabels;
     }
 
+    public String getMigrationGuideUrl() {
+        return migrationGuideUrl;
+    }
+
+    public void setMigrationGuideUrl(String migrationGuideUrl) {
+        this.migrationGuideUrl = migrationGuideUrl;
+    }
+
     public static CheckRuntimeConfigDto createFromCheckRuntimeConfig(CheckRuntimeConfig config) {
         CheckRuntimeConfigDto dto = new CheckRuntimeConfigDto();
         dto.setEnabled(config.isEnabled());
         dto.setDefaultRuntime(config.getDefaultRuntime());
+        dto.setMigrationGuideUrl(config.getMigrationGuideUrl());
         dto.setRuntimeLabels(DefinitionRuntime.labeledValues());
 
         return dto;

@@ -3,7 +3,7 @@ CREATE OR REPLACE FUNCTION zzm_api.get_check_definition_history (
     IN p_limit               int,
     IN p_from                timestamptz,
     IN p_to                  timestamptz,
-    IN p_history_action      text
+    IN p_history_action      zzm_data.history_action
 ) RETURNS SETOF zzm_api.history_entry AS
 $BODY$
 SELECT cdh_id,

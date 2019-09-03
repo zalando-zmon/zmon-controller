@@ -18,13 +18,20 @@ angular.module('zmon2App').directive('checkRuntimeSelect', ['$q', 'Communication
                 return {
                     enabled: configResource.enabled,
                     allRuntimes: configResource.runtime_labels,
-                    defaultRuntime: configResource.default_runtime
+                    defaultRuntime: configResource.default_runtime,
+                    migrationGuideUrl: configResource.migration_guide_url
                 };
             };
 
             var disableDirectiveOrContinue = function(context) {
                 scope.enabled = context.enabled;
                 if (!scope.enabled) return $q.reject();
+
+                return context;
+            };
+
+            var setMigrationGuideUrl = function(context) {
+                scope.migrationGuideUrl = context.migrationGuideUrl;
 
                 return context;
             };
@@ -39,7 +46,7 @@ angular.module('zmon2App').directive('checkRuntimeSelect', ['$q', 'Communication
 
                 return CommunicationService.getAllChanges({check_definition_id: scope.checkId, action: 'INSERT'})
                     .then(function(changesResources) {
-                        context.initialRuntime = _.clone(changesResources[0].attributes.cd_runtime);
+                        context.initialRuntime = _.clone(_.get(changesResources, '0.attributes.cd_runtime', 'PYTHON_2'));
 
                         return context;
                     });
@@ -56,15 +63,16 @@ angular.module('zmon2App').directive('checkRuntimeSelect', ['$q', 'Communication
                 return context;
             };
 
-            var setupRuntimeWatch = function(context) {
+            var setupRuntimeWatch = function() {
                 scope.$watch('runtime', function(newValue) {
-                    scope.warn = !scope.readOnly && (newValue !== context.defaultRuntime);
+                    scope.warn = !scope.readOnly && (newValue === 'PYTHON_2');
                 });
             };
 
             CommunicationService.getCheckRuntimeConfig()
                 .then(generateContextFromConfig)
                 .then(disableDirectiveOrContinue)
+                .then(setMigrationGuideUrl)
                 .then(setInitialRuntime)
                 .then(setChoices)
                 .then(setupRuntimeWatch);

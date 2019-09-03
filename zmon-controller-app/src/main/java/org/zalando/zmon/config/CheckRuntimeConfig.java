@@ -8,6 +8,7 @@ import org.zalando.zmon.domain.DefinitionRuntime;
 @ConfigurationProperties(prefix = "zmon.checkruntime")
 public class CheckRuntimeConfig {
     private boolean enabled = false;
+    private String migrationGuideUrl = "";
 
     public boolean isEnabled() {
         return enabled;
@@ -15,6 +16,14 @@ public class CheckRuntimeConfig {
 
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
+    }
+
+    public String getMigrationGuideUrl() {
+        return migrationGuideUrl;
+    }
+
+    public void setMigrationGuideUrl(String migrationGuideUrl) {
+        this.migrationGuideUrl = migrationGuideUrl;
     }
 
     public DefinitionRuntime getDefaultRuntime() {
