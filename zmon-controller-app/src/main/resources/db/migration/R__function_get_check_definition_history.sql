@@ -24,3 +24,23 @@ LIMIT p_limit;
 $BODY$
     LANGUAGE SQL VOLATILE SECURITY DEFINER
                  COST 100;
+
+-- HACK: create same sproc with different signature to work around JDBC/SProcWrapper problem/bug
+CREATE OR REPLACE FUNCTION zzm_api.get_check_definition_history (
+    IN p_check_definition_id int,
+    IN p_limit               int,
+    IN p_from                timestamptz,
+    IN p_to                  timestamptz,
+    IN p_history_action      text
+) RETURNS SETOF zzm_api.history_entry AS
+$BODY$
+    SELECT * FROM zzm_api.get_check_definition_history(
+        p_check_definition_id,
+        p_limit,
+        p_from,
+        p_to,
+        p_history_action::zzm_data.history_action
+    );
+$BODY$
+    LANGUAGE SQL VOLATILE SECURITY DEFINER
+                 COST 100;
