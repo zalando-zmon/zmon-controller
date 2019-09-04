@@ -12,23 +12,20 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.internal.util.collections.Sets;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.zalando.zmon.api.domain.AlertResult;
 import org.zalando.zmon.domain.Alert;
 import org.zalando.zmon.domain.AlertDefinitionAuth;
+import org.zalando.zmon.domain.LastCheckResult;
 import org.zalando.zmon.service.AlertService;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-
-import static org.mockito.Mockito.when;
+import java.util.stream.Collectors;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ZMonServiceImplTest {
@@ -103,7 +100,7 @@ public class ZMonServiceImplTest {
 
     @Test
     public void createAlertResultsShouldReturnEmptyListIfAlertCoverageIsNotAvailable() {
-        List<AlertResult> alertResults = service.createAlertResults(Lists.emptyList(), null, null);
+        List<AlertResult> alertResults = service.createAlertResults(Lists.emptyList(), null);
 
         MatcherAssert.assertThat(alertResults, IsNull.notNullValue());
         MatcherAssert.assertThat(alertResults.size(), Matchers.is(0));
@@ -111,10 +108,10 @@ public class ZMonServiceImplTest {
 
     @Test
     public void createAlertResults() {
-        Set<Integer> alertIds = new HashSet<>(Arrays.asList(1, 2, 3));
-        Map<Integer, Set<String>> triggeredEntitiesByAlertId = new HashMap<>();
-        triggeredEntitiesByAlertId.put(1, Sets.newSet("pod_1"));
-        triggeredEntitiesByAlertId.put(2, Sets.newSet("pod_b"));
+        Map<Integer, Alert> alerts = new HashMap<>();
+        alerts.put(1, alert(1, "ZMON is great", 1, "pod_1"));
+        alerts.put(2, alert(2, "ZMON is hot", 2, "pod_b"));
+        alerts.put(3, alert(3, "ZMON is hot", 3));
 
         List<ZMonServiceImpl.EntityGroup> alertCoverage = new LinkedList<>();
 
@@ -134,15 +131,7 @@ public class ZMonServiceImplTest {
         alertCoverage.add(entityGroup2);
         alertCoverage.add(entityGroup3);
 
-        when(service.alertService.fetchAlertsById(alertIds)).thenReturn(
-            Arrays.asList(
-                alert(1, "ZMON is great", 1),
-                alert(2, "ZMON is hot", 2),
-                alert(3, "ZMON is hot", 3)
-            )
-        );
-
-        List<AlertResult> alertResults = service.createAlertResults(alertCoverage, alertIds, triggeredEntitiesByAlertId);
+        List<AlertResult> alertResults = service.createAlertResults(alertCoverage, alerts);
 
         MatcherAssert.assertThat(alertResults, IsNull.notNullValue());
         MatcherAssert.assertThat(alertResults.size(), Matchers.is(4));
@@ -194,7 +183,7 @@ public class ZMonServiceImplTest {
         return entityInfo;
     }
 
-    private Alert alert(int id, String name, int definitionId) {
+    private Alert alert(int id, String name, int definitionId, String... entities) {
         Alert alert = new Alert();
         AlertDefinitionAuth alertDef = new AlertDefinitionAuth();
         alertDef.setId(id);
@@ -202,6 +191,7 @@ public class ZMonServiceImplTest {
         alertDef.setName(name);
         alertDef.setPriority(1);
         alert.setAlertDefinition(alertDef);
+        alert.setEntities(Arrays.stream(entities).map(e -> new LastCheckResult(e, null)).collect(Collectors.toList()));
 
         return alert;
     }
