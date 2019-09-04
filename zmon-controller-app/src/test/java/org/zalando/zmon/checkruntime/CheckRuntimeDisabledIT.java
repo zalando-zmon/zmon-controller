@@ -50,6 +50,7 @@ public class CheckRuntimeDisabledIT extends BaseCheckRuntimeIT {
 
         assertThat(checkRuntimeConfig.isEnabled(), is(false));
         assertThat(checkRuntimeConfig.getDefaultRuntime(), is(DefinitionRuntime.PYTHON_2));
+        assertThat(checkRuntimeConfig.getMigrationGuideUrl(), is(""));
     }
 
     @Test

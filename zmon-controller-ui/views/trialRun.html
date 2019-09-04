@@ -67,13 +67,15 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="inp-condition" class="col-sm-2 control-label"><a href="https://docs.zmon.io/en/latest/user/alert-definitions.html#condition" rel="help" target="docs">Alert Condition</a></label>
+                        <label for="inp-condition" class="col-sm-2 control-label"><a href="https://docs.zmon.io/en/latest/user/alert-definitions.html#condition" rel="help" target="docs">Alert Condition *</a></label>
                         <div class="col-sm-10">
                             <code-editor-modal code="alert.alert_condition" title="Alert Condition" language="python"></code-editor-modal>
                             <div id="inp-condition" name="alert_condition" class="code-editor" ng-model="alert.alert_condition" code-language="python" code-editor></div>
                             <span class="help-block">Valid Python expression to return true when alert should be "on". Use <code>value</code> to access the check result value.</span>
                         </div>
                     </div>
+
+                    <check-runtime-select runtime="alert.runtime" check-id="checkId"></check-runtime-select>
 
                     <div class="form-group" ng-class="{'has-error': trForm.submitted && trForm.parameters.$error['valid-json'] || trForm.parameters.$error.required }">
                         <label for="inp-parameters" class="col-sm-2 control-label">

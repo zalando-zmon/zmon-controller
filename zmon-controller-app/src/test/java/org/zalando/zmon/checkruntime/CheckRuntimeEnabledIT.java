@@ -19,7 +19,7 @@ import static org.hamcrest.Matchers.is;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(
-        properties = {"server.ssl.enabled=false", "zmon.checkruntime.enabled=true"}
+        properties = {"server.ssl.enabled=false", "zmon.checkruntime.enabled=true", "zmon.checkruntime.migrationGuideUrl=http://example.com"}
 )
 @Transactional
 public class CheckRuntimeEnabledIT extends BaseCheckRuntimeIT {
@@ -42,6 +42,7 @@ public class CheckRuntimeEnabledIT extends BaseCheckRuntimeIT {
 
         assertThat(checkRuntimeConfig.isEnabled(), is(true));
         assertThat(checkRuntimeConfig.getDefaultRuntime(), is(DefinitionRuntime.PYTHON_3));
+        assertThat(checkRuntimeConfig.getMigrationGuideUrl(), is("http://example.com"));
     }
 
     @Test

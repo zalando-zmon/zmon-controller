@@ -728,6 +728,10 @@ angular.module('zmon2App').factory('CommunicationService', ['$http', '$q', '$log
             return doHttpCall("GET", "/rest/user/subscriptions");
         };
 
+        service.getCheckRuntimeConfig = function() {
+            return doHttpCall("GET", "/rest/checkRuntimeConfig");
+        };
+
         return service;
     }
 ]);
