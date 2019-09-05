@@ -60,8 +60,7 @@ public class EventLogConfiguration {
     @Transactional
     public HistoryService historyService(final CheckDefinitionSProcService checkDefinitionSProc,
                                          final AlertDefinitionSProcService alertDefinitionSProc,
-                                         final EventLogService eventLog,
-                                         final DefaultZMonPermissionService authorityService) {
-        return new HistoryServiceImpl(checkDefinitionSProc, alertDefinitionSProc, eventLog, authorityService);
+                                         final EventLogService eventLog) {
+        return new HistoryServiceImpl(checkDefinitionSProc, alertDefinitionSProc, eventLog);
     }
 }

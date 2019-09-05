@@ -4,13 +4,13 @@ import com.github.difflib.DiffUtils;
 import com.github.difflib.UnifiedDiffUtils;
 import com.github.difflib.algorithm.DiffException;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
 import org.zalando.zmon.domain.*;
 import org.zalando.zmon.event.Event;
 import org.zalando.zmon.event.ZMonEventType;
 import org.zalando.zmon.persistence.AlertDefinitionSProcService;
 import org.zalando.zmon.persistence.CheckDefinitionSProcService;
-import org.zalando.zmon.security.permission.DefaultZMonPermissionService;
 import org.zalando.zmon.service.EventLogService;
 import org.zalando.zmon.service.HistoryService;
 import org.zalando.zmon.util.HistoryUtils;
@@ -33,16 +33,12 @@ public class HistoryServiceImpl implements HistoryService {
 
     private final EventLogService eventLog;
 
-    private final DefaultZMonPermissionService authorityService;
-
     public HistoryServiceImpl(final CheckDefinitionSProcService checkDefinitionSProc,
                               final AlertDefinitionSProcService alertDefinitionSProc,
-                              final EventLogService eventLog,
-                              final DefaultZMonPermissionService authorityService) {
+                              final EventLogService eventLog) {
         this.eventLog = eventLog;
         this.checkDefinitionSProc = checkDefinitionSProc;
         this.alertDefinitionSProc = alertDefinitionSProc;
-        this.authorityService = authorityService;
     }
 
     @Override
@@ -124,9 +120,8 @@ public class HistoryServiceImpl implements HistoryService {
     }
 
     @Override
-    public boolean restoreCheckDefinition(int checkDefinitionHistoryId) {
-        return checkDefinitionSProc.restoreCheckDefinition(checkDefinitionHistoryId, authorityService.getUserName(),
-                new ArrayList<>(authorityService.getTeams()), authorityService.hasAdminAuthority());
+    public boolean restoreCheckDefinition(int checkDefinitionHistoryId, String userName, List<String> teams, boolean isAdmin) {
+        return checkDefinitionSProc.restoreCheckDefinition(checkDefinitionHistoryId, userName, teams, isAdmin);
     }
 
     @Override

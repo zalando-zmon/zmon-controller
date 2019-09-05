@@ -1,6 +1,8 @@
 package org.zalando.zmon.controller;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -67,6 +69,11 @@ public class HistoryController extends AbstractZMonController {
     public ResponseEntity<Boolean> restoreCheckDefinition(
         @RequestBody(required = true) RestoreCheckDefinitionRequest request
     ) {
-        return new ResponseEntity<>(historyService.restoreCheckDefinition(request.getCheckDefinitionHistoryId()), HttpStatus.OK);
+        boolean isRestored = historyService.restoreCheckDefinition(
+                request.getCheckDefinitionHistoryId(),
+                authorityService.getUserName(),
+                new ArrayList<>(authorityService.getTeams()),
+                authorityService.hasAdminAuthority());
+        return new ResponseEntity<>(isRestored, HttpStatus.OK);
     }
 }

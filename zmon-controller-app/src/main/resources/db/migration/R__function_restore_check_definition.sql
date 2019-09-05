@@ -6,8 +6,9 @@ CREATE OR REPLACE FUNCTION zzm_api.restore_check_definition(
 ) RETURNS BOOLEAN AS $$
 DECLARE
     previous_check_definition HSTORE;
-    current_check_definition zzm_api.check_definition_type;
     new_check_definition zzm_api.check_definition_import;
+
+    check_definition_id INTEGER;
 
     changed_fields HSTORE;
     restored_fields HSTORE;
@@ -16,7 +17,7 @@ DECLARE
 BEGIN
     -- Fetch check definition change
     SELECT cdh_check_definition_id, cdh_row_data, cdh_changed_fields
-    INTO current_check_definition.id, previous_check_definition, changed_fields
+    INTO check_definition_id, previous_check_definition, changed_fields
     FROM zzm_data.check_definition_history
     WHERE cdh_id = check_definition_history_id;
     -- Return immediately if not found
@@ -32,6 +33,7 @@ BEGIN
         'cd_last_modified_by'
     ];
     -- Update check definition
+    new_check_definition.id = check_definition_id;
     new_check_definition.name = restored_fields->'cd_name';
     new_check_definition.description = restored_fields->'cd_description';
     new_check_definition.owning_team =  restored_fields->'cd_owning_team';
