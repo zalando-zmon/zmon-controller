@@ -122,7 +122,7 @@ public class HistoryServiceImplIT {
         newCheckDefinitionImport.setPotentialAnalysis("New potential analysis");
         newCheckDefinitionImport.setPotentialImpact("New potential impact");
         newCheckDefinitionImport.setPotentialSolution("New potential solution");
-         CheckDefinitionImportResult result = service.createOrUpdateCheckDefinition(newCheckDefinitionImport, USER_NAME, USER_TEAMS, true);
+        CheckDefinitionImportResult result = service.createOrUpdateCheckDefinition(newCheckDefinitionImport, USER_NAME, USER_TEAMS, true);
         int insertHistoryId = (int) historyService.getCheckDefinitionHistory(previousCheckDefinition.getId(), null, null,
                 null, HistoryAction.INSERT).get(0).getHistoryId();
         boolean isRestored = historyService.restoreCheckDefinition(insertHistoryId, USER_NAME, USER_TEAMS, true);

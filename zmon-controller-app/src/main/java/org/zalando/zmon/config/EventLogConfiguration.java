@@ -14,7 +14,6 @@ import org.springframework.web.client.RestOperations;
 import org.springframework.web.client.RestTemplate;
 import org.zalando.zmon.persistence.AlertDefinitionSProcService;
 import org.zalando.zmon.persistence.CheckDefinitionSProcService;
-import org.zalando.zmon.security.permission.DefaultZMonPermissionService;
 import org.zalando.zmon.service.EventLogService;
 import org.zalando.zmon.service.HistoryService;
 import org.zalando.zmon.service.impl.HistoryServiceImpl;
