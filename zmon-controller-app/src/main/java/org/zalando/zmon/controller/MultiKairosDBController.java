@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
+import java.nio.charset.Charset
 import org.springframework.ui.ModelMap;
 import org.springframework.util.concurrent.ListenableFuture;
 import org.springframework.util.concurrent.ListenableFutureCallback;
@@ -60,6 +61,7 @@ public class MultiKairosDBController extends AbstractZMonController {
 
     private final Map<String, KairosDBProperties.KairosDBServiceConfig> kairosdbServices = new HashMap<>();
 
+    private final MediaType ApplicationJsonUTF8 = new MediaType("application", "json", Charset.UTF_8);
     @Autowired
     public MultiKairosDBController(KairosDBProperties kairosDBProperties,
                                    MetricRegistry metricRegistry,
@@ -173,7 +175,7 @@ public class MultiKairosDBController extends AbstractZMonController {
 
     private HttpHeaders prepareHeaders(final String kairosDB) {
         HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.setContentType(ApplicationJsonUTF8);
         if (kairosdbServices.get(kairosDB).isOauth2()) {
             headers.add(AUTHORIZATION, BEARER + accessTokens.get(KAIROSDB_TOKEN_ID));
         }
