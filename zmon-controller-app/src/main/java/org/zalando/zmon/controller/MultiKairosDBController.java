@@ -173,7 +173,7 @@ public class MultiKairosDBController extends AbstractZMonController {
 
     private HttpHeaders prepareHeaders(final String kairosDB) {
         HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
         if (kairosdbServices.get(kairosDB).isOauth2()) {
             headers.add(AUTHORIZATION, BEARER + accessTokens.get(KAIROSDB_TOKEN_ID));
         }
