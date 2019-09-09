@@ -732,6 +732,13 @@ angular.module('zmon2App').factory('CommunicationService', ['$http', '$q', '$log
             return doHttpCall("GET", "/rest/checkRuntimeConfig");
         };
 
+        service.restoreCheckDefinition = function(checkDefinitionHistoryId) {
+            var params = {
+                check_definition_history_id: checkDefinitionHistoryId
+            };
+            return doHttpCall("POST", "/rest/restoreCheckDefinition", params);
+        };
+
         return service;
     }
 ]);

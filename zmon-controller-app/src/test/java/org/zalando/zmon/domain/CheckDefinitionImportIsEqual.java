@@ -31,8 +31,8 @@ public class CheckDefinitionImportIsEqual extends BaseMatcher<CheckDefinitionImp
                 && Objects.equal(toImport.getCommand(), other.getCommand())
                 && Objects.equal(toImport.getStatus(), other.getStatus())
                 && Objects.equal(toImport.getSourceUrl(), other.getSourceUrl())
-                && Objects.equal(toImport.getLastModifiedBy(), other.getLastModifiedBy());
-
+                && Objects.equal(toImport.getLastModifiedBy(), other.getLastModifiedBy())
+                && Objects.equal(toImport.getRuntime(), other.getRuntime());
     }
 
     public void describeTo(final Description desc) {
@@ -41,12 +41,12 @@ public class CheckDefinitionImportIsEqual extends BaseMatcher<CheckDefinitionImp
             .appendValue(toImport.getTechnicalDetails()).appendText(", potential analysis is ")
             .appendValue(toImport.getPotentialAnalysis()).appendText(", potential impact is ")
             .appendValue(toImport.getPotentialImpact()).appendText(", potential solution is ")
-            .appendValue(toImport.getPotentialSolution()).appendText(", owning team is ")
-            .appendValue(toImport.getOwningTeam()).appendText(", entities are ").appendValue(toImport.getEntities())
-            .appendText(", interval is ").appendValue(toImport.getInterval()).appendText(", command is ")
-            .appendValue(toImport.getCommand()).appendText(", source url is ").appendValue(toImport.getStatus())
-            .appendText(", status is ").appendValue(toImport.getSourceUrl()).appendText(", lastModified by is ")
-            .appendValue(toImport.getLastModifiedBy()).appendText("}");
+                .appendValue(toImport.getPotentialSolution()).appendText(", owning team is ")
+                .appendValue(toImport.getOwningTeam()).appendText(", entities are ").appendValue(toImport.getEntities())
+                .appendText(", interval is ").appendValue(toImport.getInterval()).appendText(", command is ")
+                .appendValue(toImport.getCommand()).appendText(", source url is ").appendValue(toImport.getStatus())
+                .appendText(", status is ").appendValue(toImport.getSourceUrl()).appendText(", lastModified by is ")
+                .appendValue(toImport.getLastModifiedBy()).appendText("}");
     }
 
     // factory methods for fluent language
