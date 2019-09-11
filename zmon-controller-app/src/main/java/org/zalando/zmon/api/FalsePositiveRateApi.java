@@ -34,7 +34,7 @@ public class FalsePositiveRateApi {
     }
 
     @ResponseBody
-    @GetMapping(value = "/{id}")
+    @GetMapping(value = "/{id}/datapoints")
     public ResponseEntity<JsonNode> getFalsePositiveRateDataPoints(
             @PathVariable(value = "id") String id,
             @RequestParam Map<String, String> query) {
