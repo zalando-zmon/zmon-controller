@@ -34,7 +34,7 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 @Service
 public class FalsePositiveRateServiceImpl implements FalsePositiveRateService {
     private final Logger log = LoggerFactory.getLogger(FalsePositiveRateServiceImpl.class);
-    private final String falsePositiveRateEndPoint = "/false-positive-rates/";
+    private final String falsePositiveRateEndPoint = "/api/false-positive-rates/";
 
     private final Executor executor;
     private MetaDataProperties metaDataProperties;
