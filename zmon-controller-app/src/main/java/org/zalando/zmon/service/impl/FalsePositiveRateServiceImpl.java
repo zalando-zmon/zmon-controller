@@ -91,7 +91,7 @@ public class FalsePositiveRateServiceImpl implements FalsePositiveRateService {
             log.info("Searching false-positive rate data points for Alert: {} From={} To={}", alertId, from, to);
 
             UriComponentsBuilder urlBuilder = UriComponentsBuilder.fromUriString(metaDataProperties.getUrl())
-                    .path(falsePositiveRateEndPoint + alertId)
+                    .path(falsePositiveRateEndPoint + alertId + "/datapoints")
                     .queryParam("from", from)
                     .queryParam("to", to);
 
