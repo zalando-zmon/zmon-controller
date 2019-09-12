@@ -64,29 +64,34 @@ public class FalsePositiveRateServiceImpl implements FalsePositiveRateService {
     }
 
     @Override
-    public ResponseEntity<JsonNode> getFalsePositiveRate(final String id) {
-        final String url = metaDataProperties.getUrl() + falsePositiveRateEndPoint + id;
+    public ResponseEntity<JsonNode> getFalsePositiveRate(final String alertId) {
+        final String url = metaDataProperties.getUrl() + falsePositiveRateEndPoint + alertId;
         try {
             Request request = Request.Get(url);
+
+            // TODO: Remove me I am for troubleshooting
+            log.info("False positive alert id: {}", alertId);
+            log.info("Access token: {}", accessTokens.get(ZMON_TOKEN_ID));
+
             request.addHeader(AUTHORIZATION, BEARER + accessTokens.get(ZMON_TOKEN_ID));
             HttpResponse response = executor.execute(request).returnResponse();
             return toResponseEntity(response);
         } catch (Exception ex) {
-            log.error("Get false positive rate for Alert: {} failed", id, ex);
+            log.error("Get false positive rate for Alert: {} failed", alertId, ex);
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @Override
-    public ResponseEntity<JsonNode> getFalsePositiveRateDataPoints(final String id, final Map<String, String> query) {
+    public ResponseEntity<JsonNode> getFalsePositiveRateDataPoints(final String alertId, final Map<String, String> query) {
         try {
             String from = query.containsKey("from") ? URLEncoder.encode(query.get("from"), "UTF-8") : "";
             String to = query.containsKey("to") ? URLEncoder.encode(query.get("to"), "UTF-8") : "";
 
-            log.info("Searching false-positive rate data points for Alert: {} From={} To={}", id, from, to);
+            log.info("Searching false-positive rate data points for Alert: {} From={} To={}", alertId, from, to);
 
             UriComponentsBuilder urlBuilder = UriComponentsBuilder.fromUriString(metaDataProperties.getUrl())
-                    .path(falsePositiveRateEndPoint + id)
+                    .path(falsePositiveRateEndPoint + alertId)
                     .queryParam("from", from)
                     .queryParam("to", to);
 
@@ -96,13 +101,13 @@ public class FalsePositiveRateServiceImpl implements FalsePositiveRateService {
 
             return toResponseEntity(response);
         } catch (Exception ex) {
-            log.error("Get false positive rate for Alert: {} failed", id, ex);
+            log.error("Get false positive rate for Alert: {} failed", alertId, ex);
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @Override
-    public ResponseEntity<JsonNode> listFalsePositiveRates(final String idList) {
+    public ResponseEntity<JsonNode> listFalsePositiveRates(final String alertIdList) {
         log.info("Bulk get of false positive rate: user={}", authService.getUserName());
         final String url = metaDataProperties.getUrl() + falsePositiveRateEndPoint;
 
@@ -110,7 +115,7 @@ public class FalsePositiveRateServiceImpl implements FalsePositiveRateService {
             Request request = Request.Post(url);
             request.addHeader(AUTHORIZATION, BEARER + accessTokens.get(ZMON_TOKEN_ID));
             HttpResponse response = executor.execute(request.bodyString(
-                    idList, ContentType.APPLICATION_JSON))
+                    alertIdList, ContentType.APPLICATION_JSON))
                     .returnResponse();
             return toResponseEntity(response);
         } catch (Exception ex) {
