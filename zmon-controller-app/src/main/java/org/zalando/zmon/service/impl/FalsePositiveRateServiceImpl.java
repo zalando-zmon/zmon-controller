@@ -71,7 +71,7 @@ public class FalsePositiveRateServiceImpl implements FalsePositiveRateService {
 
             // TODO: Remove me I am for troubleshooting
             log.info("False positive alert id: {}", alertId);
-            log.info("Access token: {}", accessTokens.get(ZMON_TOKEN_ID));
+            log.info("URL: {}", url);
 
             request.addHeader(AUTHORIZATION, BEARER + accessTokens.get(ZMON_TOKEN_ID));
             HttpResponse response = executor.execute(request).returnResponse();
@@ -95,6 +95,10 @@ public class FalsePositiveRateServiceImpl implements FalsePositiveRateService {
                     .queryParam("from", from)
                     .queryParam("to", to);
 
+            // TODO: Remove me
+            log.info("URL: {}", urlBuilder.build().toUri().toString());
+
+
             Request request = Request.Get(urlBuilder.build().toUri());
             request.addHeader(AUTHORIZATION, BEARER + accessTokens.get(ZMON_TOKEN_ID));
             HttpResponse response = executor.execute(request).returnResponse();
@@ -113,6 +117,8 @@ public class FalsePositiveRateServiceImpl implements FalsePositiveRateService {
 
         try {
             Request request = Request.Post(url);
+            log.info("URL: {}", url);
+
             request.addHeader(AUTHORIZATION, BEARER + accessTokens.get(ZMON_TOKEN_ID));
             HttpResponse response = executor.execute(request.bodyString(
                     alertIdList, ContentType.APPLICATION_JSON))
