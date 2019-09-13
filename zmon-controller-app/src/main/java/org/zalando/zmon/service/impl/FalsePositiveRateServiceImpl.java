@@ -44,7 +44,7 @@ public class FalsePositiveRateServiceImpl implements FalsePositiveRateService {
     /* Allowed status code 207 - Reason being a possible status code for bulk operations in MetadataService is 207
     with individual errors inside the response body:
     https://opensource.zalando.com/restful-api-guidelines/#152 */
-    private static final Set<Integer> allowedStatusCode = ImmutableSet.of(200, 207);
+    private static final Set<Integer> ALLOWED_STATUS_CODES = ImmutableSet.of(200, 207);
 
 
     @Autowired
@@ -90,7 +90,6 @@ public class FalsePositiveRateServiceImpl implements FalsePositiveRateService {
 
             log.debug("URL: {}", urlBuilder.build().toUri().toString());
 
-
             Request request = Request.Get(urlBuilder.build().toUri());
             request.addHeader(AUTHORIZATION, BEARER + accessTokens.get(ZMON_TOKEN_ID));
             HttpResponse response = executor.execute(request).returnResponse();
@@ -104,7 +103,7 @@ public class FalsePositiveRateServiceImpl implements FalsePositiveRateService {
 
     @Override
     public ResponseEntity<JsonNode> listFalsePositiveRates(final String alertIdList) {
-        log.info("Bulk get false positive rates");
+        log.debug("Bulk get false positive rates");
         final String url = metaDataProperties.getUrl() + FALSE_POSITIVE_RATE_END_POINT;
 
         try {
@@ -126,7 +125,7 @@ public class FalsePositiveRateServiceImpl implements FalsePositiveRateService {
         int status = response.getStatusLine().getStatusCode();
         HttpEntity entity = response.getEntity();
 
-        if (allowedStatusCode.contains(status) && entity != null) {
+        if (ALLOWED_STATUS_CODES.contains(status) && entity != null) {
             String resp = EntityUtils.toString(entity);
             JsonNode node = mapper.readTree(resp);
             return new ResponseEntity<>(node, HttpStatus.valueOf(status));
