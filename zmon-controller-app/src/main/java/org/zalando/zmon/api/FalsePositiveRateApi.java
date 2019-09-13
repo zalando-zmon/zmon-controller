@@ -19,7 +19,7 @@ import java.util.Map;
 @RequestMapping(value = "/api/v1/false-positive-rates")
 public class FalsePositiveRateApi {
 
-    private FalsePositiveRateService falsePositiveRateService;
+    private final FalsePositiveRateService falsePositiveRateService;
     private final Logger log = LoggerFactory.getLogger(FalsePositiveRateApi.class);
 
     @Autowired

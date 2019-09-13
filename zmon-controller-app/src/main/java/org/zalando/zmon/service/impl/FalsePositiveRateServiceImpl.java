@@ -34,22 +34,20 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 @Service
 public class FalsePositiveRateServiceImpl implements FalsePositiveRateService {
     private final Logger log = LoggerFactory.getLogger(FalsePositiveRateServiceImpl.class);
-    private final String falsePositiveRateEndPoint = "/api/false-positive-rates/";
-
     private final Executor executor;
-    private MetaDataProperties metaDataProperties;
-    private DefaultZMonPermissionService authService;
+    private final MetaDataProperties metaDataProperties;
+    private final DefaultZMonPermissionService authService;
     protected ObjectMapper mapper;
     private final AccessTokens accessTokens;
-
+    private static final String FALSE_POSITIVE_RATE_END_POINT = "/api/false-positive-rates/";
+    private static final String BEARER = "Bearer ";
+    private static final String ZMON_TOKEN_ID = "zmon";
 
     /* Allowed status code 207 - Reason being a possible status code for bulk operations in MetadataService is 207
     with individual errors inside the response body:
     https://opensource.zalando.com/restful-api-guidelines/#152 */
-    private final Set<Integer> allowedStatusCode = ImmutableSet.of(200, 207);
+    private static final Set<Integer> allowedStatusCode = ImmutableSet.of(200, 207);
 
-    private static final String BEARER = "Bearer ";
-    private static final String ZMON_TOKEN_ID = "zmon";
 
     @Autowired
     public FalsePositiveRateServiceImpl(MetaDataProperties metaDataProperties,
@@ -65,13 +63,12 @@ public class FalsePositiveRateServiceImpl implements FalsePositiveRateService {
 
     @Override
     public ResponseEntity<JsonNode> getFalsePositiveRate(final String alertId) {
-        final String url = metaDataProperties.getUrl() + falsePositiveRateEndPoint + alertId;
+        final String url = metaDataProperties.getUrl() + FALSE_POSITIVE_RATE_END_POINT + alertId;
         try {
             Request request = Request.Get(url);
 
-            // TODO: Remove me I am for troubleshooting
-            log.info("False positive alert id: {}", alertId);
-            log.info("URL: {}", url);
+            log.debug("False positive alert id: {}", alertId);
+            log.debug("URL: {}", url);
 
             request.addHeader(AUTHORIZATION, BEARER + accessTokens.get(ZMON_TOKEN_ID));
             HttpResponse response = executor.execute(request).returnResponse();
@@ -91,12 +88,11 @@ public class FalsePositiveRateServiceImpl implements FalsePositiveRateService {
             log.info("Searching false-positive rate data points for Alert: {} From={} To={}", alertId, from, to);
 
             UriComponentsBuilder urlBuilder = UriComponentsBuilder.fromUriString(metaDataProperties.getUrl())
-                    .path(falsePositiveRateEndPoint + alertId + "/datapoints")
+                    .path(FALSE_POSITIVE_RATE_END_POINT + alertId + "/datapoints")
                     .queryParam("from", from)
                     .queryParam("to", to);
 
-            // TODO: Remove me
-            log.info("URL: {}", urlBuilder.build().toUri().toString());
+            log.debug("URL: {}", urlBuilder.build().toUri().toString());
 
 
             Request request = Request.Get(urlBuilder.build().toUri());
@@ -113,11 +109,11 @@ public class FalsePositiveRateServiceImpl implements FalsePositiveRateService {
     @Override
     public ResponseEntity<JsonNode> listFalsePositiveRates(final String alertIdList) {
         log.info("Bulk get of false positive rate: user={}", authService.getUserName());
-        final String url = metaDataProperties.getUrl() + falsePositiveRateEndPoint;
+        final String url = metaDataProperties.getUrl() + FALSE_POSITIVE_RATE_END_POINT;
 
         try {
             Request request = Request.Post(url);
-            log.info("URL: {}", url);
+            log.debug("URL: {}", url);
 
             request.addHeader(AUTHORIZATION, BEARER + accessTokens.get(ZMON_TOKEN_ID));
             HttpResponse response = executor.execute(request.bodyString(
