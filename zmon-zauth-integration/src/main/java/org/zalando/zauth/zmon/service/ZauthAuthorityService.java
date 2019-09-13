@@ -16,6 +16,7 @@ import org.zalando.zauth.zmon.config.ZauthProperties;
 import org.zalando.zauth.zmon.domain.Group;
 import org.zalando.zmon.security.AuthorityService;
 import org.zalando.zmon.security.TeamService;
+import org.zalando.zmon.security.authority.AbstractZMonAuthority;
 import org.zalando.zmon.security.authority.ZMonAdminAuthority;
 import org.zalando.zmon.security.authority.ZMonAuthority;
 import org.zalando.zmon.security.authority.ZMonUserAuthority;
@@ -63,15 +64,18 @@ public class ZauthAuthorityService implements AuthorityService {
     public Collection<? extends GrantedAuthority> getAuthorities(String username) {
         final Set<String> groups = getGroups(username);
 
-        ZMonAuthority authority;
         if (groups.contains(zauthProperties.getAdminsGroup())) {
-            authority = new ZMonAdminAuthority(username, ImmutableSet.copyOf(teamService.getTeams(username)));
+            final ZMonAuthority authority = new ZMonAdminAuthority(username, ImmutableSet.copyOf(teamService.getTeams(username)));
+            log.info("User {} has authority {} and teams {}", username, authority.getAuthority(), authority.getTeams());
+            return Lists.newArrayList(authority);
+        } else if (groups.contains(zauthProperties.getUsersGroup())) {
+            final ZMonAuthority authority = new ZMonUserAuthority(username, ImmutableSet.copyOf(teamService.getTeams(username)));
+            log.info("User {} has authority {} and teams {}", username, authority.getAuthority(), authority.getTeams());
+            return Lists.newArrayList(authority);
         } else {
-            authority = new ZMonUserAuthority(username, ImmutableSet.copyOf(teamService.getTeams(username)));
+            log.info("User {} has no authority and no teams", username);
+            return Lists.newArrayList();
         }
 
-        log.info("User {} has authority {} and teams {}", username, authority.getAuthority(), authority.getTeams());
-
-        return Lists.newArrayList(authority);
     }
 }
