@@ -18,7 +18,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponentsBuilder;
 import org.zalando.stups.tokens.AccessTokens;
 import org.zalando.zmon.config.MetaDataProperties;
-import org.zalando.zmon.security.permission.DefaultZMonPermissionService;
 import org.zalando.zmon.service.FalsePositiveRateService;
 
 import java.io.IOException;
@@ -36,7 +35,6 @@ public class FalsePositiveRateServiceImpl implements FalsePositiveRateService {
     private final Logger log = LoggerFactory.getLogger(FalsePositiveRateServiceImpl.class);
     private final Executor executor;
     private final MetaDataProperties metaDataProperties;
-    private final DefaultZMonPermissionService authService;
     protected ObjectMapper mapper;
     private final AccessTokens accessTokens;
     private static final String FALSE_POSITIVE_RATE_END_POINT = "/api/false-positive-rates/";
@@ -51,11 +49,9 @@ public class FalsePositiveRateServiceImpl implements FalsePositiveRateService {
 
     @Autowired
     public FalsePositiveRateServiceImpl(MetaDataProperties metaDataProperties,
-                                        DefaultZMonPermissionService authService,
                                         AccessTokens accessTokens,
                                         ObjectMapper mapper) {
         this.metaDataProperties = metaDataProperties;
-        this.authService = authService;
         this.mapper = mapper;
         this.executor = Executor.newInstance(metaDataProperties.getHttpClient());
         this.accessTokens = accessTokens;
@@ -108,7 +104,7 @@ public class FalsePositiveRateServiceImpl implements FalsePositiveRateService {
 
     @Override
     public ResponseEntity<JsonNode> listFalsePositiveRates(final String alertIdList) {
-        log.info("Bulk get of false positive rate: user={}", authService.getUserName());
+        log.info("Bulk get false positive rates");
         final String url = metaDataProperties.getUrl() + FALSE_POSITIVE_RATE_END_POINT;
 
         try {
