@@ -739,6 +739,10 @@ angular.module('zmon2App').factory('CommunicationService', ['$http', '$q', '$log
             return doHttpCall("POST", "/rest/restoreCheckDefinition", params);
         };
 
+        service.getAlertStats = function(alertId) {
+            return doHttpCall("GET", `/rest/false-positive-rates/${alertId}`)
+        };
+
         return service;
     }
 ]);
