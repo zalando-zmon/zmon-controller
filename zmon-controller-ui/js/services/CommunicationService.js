@@ -743,11 +743,11 @@ angular.module('zmon2App').factory('CommunicationService', ['$http', '$q', '$log
         };
 
         service.getAlertStats = function(alertId) {
-            return doHttpCall("GET", `/rest/false-positive-rates/${alertId}`)
+            return doHttpCall("GET", `/api/v1/false-positive-rates/${alertId}`)
         };
 
         service.getFalsePositiveRates = function(alertIds) {
-            const queryUrl = alertIds.reduce((acc, curr) => `${acc}&id=${curr}` , '/rest/false-positive-rates?');
+            const queryUrl = alertIds.reduce((acc, curr) => `${acc}&id=${curr}` , '/api/v1/false-positive-rates?');
 
             return doHttpCall("GET", queryUrl)
         }
