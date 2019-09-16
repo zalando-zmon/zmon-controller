@@ -43,7 +43,7 @@ public class FalsePositiveRateApi {
 
     @ResponseBody
     @GetMapping(value = "/")
-    public ResponseEntity<JsonNode> listFalsePositiveRates(@RequestBody(required = true) String ids) {
-        return falsePositiveRateService.listFalsePositiveRates(ids);
+    public ResponseEntity<JsonNode> listFalsePositiveRates(@RequestParam(name = "id", required = true) String[] idList) {
+        return falsePositiveRateService.listFalsePositiveRates(idList);
     }
 }
