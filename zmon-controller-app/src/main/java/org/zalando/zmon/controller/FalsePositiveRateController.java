@@ -1,8 +1,6 @@
-package org.zalando.zmon.api;
+package org.zalando.zmon.controller;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -14,16 +12,13 @@ import java.util.Map;
 /**
  * @author raparida
  */
-
 @Controller
-@RequestMapping(value = "/api/v1/false-positive-rates")
-public class FalsePositiveRateApi {
-
+@RequestMapping(value = "/rest/false-positive-rates")
+public class FalsePositiveRateController {
     private final FalsePositiveRateService falsePositiveRateService;
-    private final Logger log = LoggerFactory.getLogger(FalsePositiveRateApi.class);
 
     @Autowired
-    public FalsePositiveRateApi(FalsePositiveRateService falsePositiveRateService) {
+    public FalsePositiveRateController(FalsePositiveRateService falsePositiveRateService) {
         this.falsePositiveRateService = falsePositiveRateService;
     }
 
@@ -43,7 +38,7 @@ public class FalsePositiveRateApi {
 
     @ResponseBody
     @GetMapping(value = "")
-    public ResponseEntity<JsonNode> listFalsePositiveRates(@RequestParam(name = "id", required = true) String[] idList) {
+    public ResponseEntity<JsonNode> listFalsePositiveRates(@RequestParam(name = "id") String[] idList) {
         return falsePositiveRateService.listFalsePositiveRates(idList);
     }
 }
