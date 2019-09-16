@@ -14,5 +14,5 @@ public interface FalsePositiveRateService {
 
     ResponseEntity<JsonNode> getFalsePositiveRateDataPoints(String id, Map<String, String> query);
 
-    ResponseEntity<JsonNode> listFalsePositiveRates(String ids);
+    ResponseEntity<JsonNode> listFalsePositiveRates(String[] idList);
 }
