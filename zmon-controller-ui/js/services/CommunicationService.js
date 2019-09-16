@@ -747,7 +747,12 @@ angular.module('zmon2App').factory('CommunicationService', ['$http', '$q', '$log
         };
 
         service.getFalsePositiveRates = function(alertIds) {
-            const queryUrl = alertIds.reduce((acc, curr) => `${acc}&id=${curr}` , '/api/v1/false-positive-rates?');
+            const queryUrl = alertIds.reduce((acc, curr, i) => {
+              if (i == 0) {
+                return `${acc}id=${curr}`;
+              }
+            return `${acc}&id=${curr}`
+            } , '/api/v1/false-positive-rates?');
 
             return doHttpCall("GET", queryUrl)
         }

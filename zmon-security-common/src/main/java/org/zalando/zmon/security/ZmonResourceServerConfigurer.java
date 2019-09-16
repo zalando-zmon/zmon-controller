@@ -12,7 +12,7 @@ import org.springframework.util.Assert;
 import org.zalando.stups.oauth2.spring.security.expression.ExtendedOAuth2WebSecurityExpressionHandler;
 
 /**
- * 
+ *
  * @author jbellmann
  *
  */

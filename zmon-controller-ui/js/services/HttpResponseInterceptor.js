@@ -32,10 +32,10 @@ angular.module('zmon2App').factory('HttpResponseInterceptorService', ['$q', '$lo
                     if (rejection.status === 403) { // Loged in, but insufficient rights
                         message = 'You\'re not authorized to perform this action.';
                     } else if (rejection.status === 404) {
-                        message = 'The requested resource [' + rejection.config.method + ' ' + rejection.config.url + '] could not be found.  You\'ll be redirected to the previous page.';
-                        callback = function() {
-                            window.history.back();
-                        };
+                        // message = 'The requested resource [' + rejection.config.method + ' ' + rejection.config.url + '] could not be found.  You\'ll be redirected to the previous page.';
+                        // callback = function() {
+                        //   window.history.back();
+                        //};
                     } else if (rejection.status === 500) {
                         message = 'Failed to request [' + rejection.config.method + ' ' + rejection.config.url + ']';
                     } else if (rejection.data && rejection.data.message) {
