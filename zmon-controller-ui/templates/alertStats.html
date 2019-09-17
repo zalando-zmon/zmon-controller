@@ -8,7 +8,8 @@
      ng-style="messageStyle">
 	<span>
 		{{message}}
-		<i class="fa fa-info-circle"
+		<i ng-if="title"
+		   class="fa fa-info-circle"
 		   title="{{title}}">
 		</i>
 	</span>

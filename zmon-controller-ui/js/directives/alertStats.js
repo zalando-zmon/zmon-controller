@@ -1,4 +1,4 @@
-angular.module('zmon2App').directive('alertStats', ['$q', 'CommunicationService', function($q, CommunicationService) {
+angular.module('zmon2App').directive(   'alertStats', ['$q', 'CommunicationService', function($q, CommunicationService) {
   return {
     restrict: 'E',
     templateUrl: 'templates/alertStats.html',
