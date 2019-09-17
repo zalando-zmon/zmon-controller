@@ -4,13 +4,10 @@
 </div>
 
 <div ng-show="loaded"
+     title="{{title}}"
      class="info-message"
      ng-style="messageStyle">
 	<span>
 		{{message}}
-		<i ng-if="title"
-		   class="fa fa-info-circle"
-		   title="{{title}}">
-		</i>
 	</span>
 </div>
