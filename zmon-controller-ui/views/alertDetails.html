@@ -32,6 +32,11 @@
 	</div>
 </div>
 
+<alert-stats
+		ng-if="alert && alert.notifications && alert.notifications.length > 0"
+		alert-id="{{alert.id}}">
+</alert-stats>
+
 <div class="panel panel-default">
 	<div class="panel-body">
 		<dl class="dl-horizontal">

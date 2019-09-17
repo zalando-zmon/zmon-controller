@@ -57,7 +57,10 @@ angular.module('zmon2App').factory('CommunicationService', ['$http', '$q', '$log
                 httpConfig.data = payload;
             } else {
                 // GETs & DELETEs
-                httpConfig.url = endpoint + "?" + objectToQueryString(payload);
+                httpConfig.url = endpoint;
+                if (payload) {
+                   httpConfig.url = httpConfig.url+ "?" + objectToQueryString(payload);
+                }
             }
 
             if (extraHeaders) {
@@ -738,6 +741,21 @@ angular.module('zmon2App').factory('CommunicationService', ['$http', '$q', '$log
             };
             return doHttpCall("POST", "/rest/restoreCheckDefinition", params);
         };
+
+        service.getAlertStats = function(alertId) {
+            return doHttpCall("GET", `/rest/false-positive-rates/${alertId}`)
+        };
+
+        service.getFalsePositiveRates = function(alertIds) {
+            const queryUrl = alertIds.reduce((acc, curr, i) => {
+              if (i == 0) {
+                return `${acc}id=${curr}`;
+              }
+            return `${acc}&id=${curr}`
+            } , '/rest/false-positive-rates?');
+
+            return doHttpCall("GET", queryUrl)
+        }
 
         return service;
     }

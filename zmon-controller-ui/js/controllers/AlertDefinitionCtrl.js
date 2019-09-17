@@ -2,7 +2,7 @@ angular.module('zmon2App').controller('AlertDefinitionCtrl', ['$scope', '$window
     function($scope, $window, $routeParams, $location, MainAlertService, CommunicationService, FeedbackMessageService, localStorageService, UserInfoService, LoadingIndicatorService, APP_CONST) {
         $scope.DefinitionsCtrl = this;
         $scope.initialLoading = true;
-
+        $scope.falsePositiveByID = {};
         $scope.$parent.activePage = 'alert-definitions';
         $scope.alertDefinitions = {};
         $scope.templates = {};
@@ -73,8 +73,28 @@ angular.module('zmon2App').controller('AlertDefinitionCtrl', ['$scope', '$window
                     LoadingIndicatorService.stop();
 
                     $scope.initialLoading = false;
+                    return data;
                 }
-            );
+            ).then(getAlertIds)
+              .then(getFalsePositiveRates)
+              .then(setFalsePositiveRateByID)
+        };
+
+        var setFalsePositiveRateByID = function(res) {
+            $scope.falsePositiveByID = res.data.reduce((curr, acc) => {
+                if (!curr.value) {
+                    return curr;
+                }
+                return {...acc, [curr.id]: curr.value};
+            }, {})
+        };
+
+        var getAlertIds = function(alerts) {
+            return alerts.map(alert => alert.id);
+        };
+
+        var getFalsePositiveRates = function(alertIds) {
+            return CommunicationService.getFalsePositiveRates(alertIds)
         };
 
         // Set team filter and re-fetch alerts

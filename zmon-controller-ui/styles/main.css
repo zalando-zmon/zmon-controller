@@ -379,7 +379,7 @@ pre.z-code
 
 .app-last-update.warning
 {
-    color: 'red';
+    color: red;
     font-weight: bold;
 }
 
@@ -946,7 +946,7 @@ a.non-href-anchor
 .widget-config-chart input
 {
     font-size: 13px;
-    line-height 13px;
+    line-height: 13px;
 }
 
 .widget-config-chart label
@@ -1386,14 +1386,19 @@ body.entities-page .type-col {
     cursor: pointer;
 }
   .modal.in .modal-dialog.error-popup{
-   
-    width: 90%!important; 
-     height: 94%!important; 
-     margin:   0 5%!important; 
-    position: fixed!important; 
+
+    width: 90%!important;
+     height: 94%!important;
+     margin:   0 5%!important;
+    position: fixed!important;
 
 }
 
 code{
     white-space: pre-wrap!important;
+}
+
+.info-message {
+    padding: 10px 15px;
+    margin-bottom: 20px;
 }

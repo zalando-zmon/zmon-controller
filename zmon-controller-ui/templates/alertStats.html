@@ -1,0 +1,13 @@
+<div ng-show="!loaded"
+     class="info-message"
+     ng-style="messageStyle">
+</div>
+
+<div ng-show="loaded"
+     title="{{title}}"
+     class="info-message"
+     ng-style="messageStyle">
+	<span>
+		{{message}}
+	</span>
+</div>
