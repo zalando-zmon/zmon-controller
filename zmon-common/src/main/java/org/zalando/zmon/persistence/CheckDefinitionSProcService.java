@@ -1,12 +1,13 @@
 package org.zalando.zmon.persistence;
 
+import java.util.Date;
+import java.util.List;
+
+import org.zalando.zmon.domain.*;
+
 import de.zalando.sprocwrapper.SProcCall;
 import de.zalando.sprocwrapper.SProcParam;
 import de.zalando.sprocwrapper.SProcService;
-import org.zalando.zmon.domain.*;
-
-import java.util.Date;
-import java.util.List;
 
 @SProcService
 public interface CheckDefinitionSProcService {
@@ -32,12 +33,6 @@ public interface CheckDefinitionSProcService {
                                                               @SProcParam boolean isAdmin,
                                                               @SProcParam boolean isRuntimeEnabled,
                                                               @SProcParam DefinitionRuntime defaultRuntime);
-
-    @SProcCall
-    boolean restoreCheckDefinition(@SProcParam int checkDefinitionHistoryId,
-                                   @SProcParam String userName,
-                                   @SProcParam List<String> teams,
-                                   @SProcParam boolean isAdmin);
 
     @SProcCall
     CheckDefinition deleteCheckDefinition(@SProcParam String userName, @SProcParam String name,
