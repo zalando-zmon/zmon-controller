@@ -5,29 +5,32 @@ angular.module('zmon2App').directive('alertStats', ['$q', 'CommunicationService'
     scope: {
       alertId: '@',
     },
-    link: function (scope, elem, attrs) {
+    link: function (scope) {
       scope.message = null;
       scope.loaded = false;
+      scope.title = null;
       scope.messageStyle = {background: 'linear-gradient(144deg, #dbdbdb, #4c4c4c)'};
+      const infoTitle = 'Notifications marked as "not an incident" in Jira on average over the last 2 weeks';
 
-      var setFalsePositiveInfoMessage = function(alertStats) {
+      const setFalsePositiveInfoMessage = (alertStats) => {
         scope.message = alertStats.message;
+        scope.title = infoTitle;
         scope.messageStyle = {background: 'lightblue'};
       };
 
-      var setDafaultMessage = function() {
+      const setDafaultMessage = () => {
         scope.message = "No data available regarding this alert's false positives.";
         scope.messageStyle = {background: 'lightgrey'};
-        stopLoading();
       };
-      var stopLoading = function() {
+
+      const stopLoading = () => {
         scope.loaded = true;
       };
 
       CommunicationService.getAlertStats(scope.alertId)
         .then(setFalsePositiveInfoMessage)
-        .then(stopLoading)
         .catch(setDafaultMessage)
+        .then(stopLoading)
     }
   }
 }]);

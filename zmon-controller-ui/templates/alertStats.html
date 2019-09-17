@@ -1,9 +1,15 @@
-<div ng-show="!loaded" style="padding: 10px 15px; margin-bottom: 20px;" ng-style="messageStyle">
+<div ng-show="!loaded"
+     class="info-message"
+     ng-style="messageStyle">
 </div>
 
-<div ng-show="loaded" style="padding: 10px 15px; margin-bottom: 20px;" ng-style="messageStyle">
+<div ng-show="loaded"
+     class="info-message"
+     ng-style="messageStyle">
 	<span>
 		{{message}}
-		<i class="fa fa-info-circle" title="Notifications marked as &quot;not an incident&quot; in Jira on average over the last 6 weeks"></i>
+		<i class="fa fa-info-circle"
+		   title="{{title}}">
+		</i>
 	</span>
 </div>

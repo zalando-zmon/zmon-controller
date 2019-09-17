@@ -105,7 +105,7 @@
                     <td><status status="def.status"></status><i id="star" class='fa fa-star' ng-show="def.star" title="new alert"></i></td>
                     <td class="text-center">
                         <span ng-if="falsePositiveByID && falsePositiveByID[def.id]">{{falsePositiveByID[def.id]}}%</span>
-                        <span ng-if="!falsePositiveByID">loading...</span>
+                        <span ng-if="!falsePositiveByID">-</span>
                     </td>
                 </tr>
                 <tr ng-show="!initialLoading && alertDefinitionsByStatus.length < 1">
