@@ -102,18 +102,19 @@ public class FalsePositiveRateServiceImpl implements FalsePositiveRateService {
     }
 
     @Override
-    public ResponseEntity<JsonNode> listFalsePositiveRates(final String alertIdList) {
+    public ResponseEntity<JsonNode> listFalsePositiveRates(final String[] idList) {
         log.debug("Bulk get false positive rates");
         final String url = metaDataProperties.getUrl() + FALSE_POSITIVE_RATE_END_POINT;
-
         try {
-            Request request = Request.Post(url);
+            UriComponentsBuilder urlBuilder = UriComponentsBuilder.fromUriString(url)
+                    .queryParam("id", idList);
             log.debug("URL: {}", url);
 
+            Request request = Request.Get(urlBuilder.build().toUri());
+
             request.addHeader(AUTHORIZATION, BEARER + accessTokens.get(ZMON_TOKEN_ID));
-            HttpResponse response = executor.execute(request.bodyString(
-                    alertIdList, ContentType.APPLICATION_JSON))
-                    .returnResponse();
+            HttpResponse response = executor.execute(request).returnResponse();
+
             return toResponseEntity(response);
         } catch (Exception ex) {
             log.error("Bulk get of false positive rate failed", ex);
