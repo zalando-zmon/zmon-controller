@@ -102,34 +102,19 @@
     <table class="zmon-data-table table table-striped table-bordered table-hover table-condensed">
         <thead>
             <tr>
+                <th class="event-name-col">Event Name</th>
+                <th class="modified-by-col">Modified by</th>
+                <th class="timestamp-col">Time (UTC)</th>
                 <th>Changes</th>
                 <th class="link-icon-col">Changed in Parent</th>
             </tr>
         </thead>
         <tbody>
-            <tr ng-repeat="record in changes| filter:search | limitTo:limit track by $index">
-                <td expand>
-                    <div class="d2h-wrapper">
-                        <div class="d2h-file-wrapper">
-                            <div class="d2h-file-header">
-                                <span class="d2h-file-name-wrapper">
-                                    <span class="history-tag" style="background-color: {{hslFromEventType(record.type_id)}}">{{record.action}}</span>
-                                    <span class="d2h-file-name">
-                                        by <em>{{ record.changed_attributes.cd_last_modified_by || record.changed_attributes.adt_last_modified_by || record.attributes.cd_last_modified_by || record.attributes.adt_last_modified_by}}</em>
-                                        on <em>{{record.time | epochToDate | UTC}}</em>
-                                    </span>
-                                    <a ng-click="restoreCheckDefinition(record.history_id);"
-                                       class="restore-link"
-                                       ng-show="mode == 'check' && $index != 0 && !isDiffEmpty(record.unified_diff)">
-                                        <i class="fa fa-fw fa-undo" title="Restore this check definition"></i>
-                                        Restore this check definition
-                                    </a>
-                                </span>
-                            </div>
-                            <div ng-bind-html="getHtmlDiff(record.unified_diff)" class="cl"></div>
-                        </div>
-                    </div>
-                </td>
+            <tr ng-repeat="record in changes| filter:search | limitTo:limit">
+                <td><span class="history-tag" style="background-color: {{hslFromEventType(record.type_id)}}">{{record.action}}</span></td>
+                <td>{{ record.changed_attributes.cd_last_modified_by || record.changed_attributes.adt_last_modified_by || record.attributes.cd_last_modified_by || record.attributes.adt_last_modified_by}}</td>
+                <td class="no-wrap">{{record.time | epochToDate | UTC}}</td>
+                <td class="ellipsis" expand ng-bind-html="record.action == 'INSERT' ? getChanges(record.attributes) : getChanges(record.changed_attributes)"></td>
                 <td><a ng-show="record.type_name == 'ALERT_DEFINITION_UPDATED' && record.attributes.adt_id !== alert_definition_id" href="#/alert-details/{{record.attributes.adt_parent_id}}"><i class="fa fa-sitemap"></i></a></td>
             </tr>
         </tbody>
