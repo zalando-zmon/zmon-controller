@@ -743,7 +743,7 @@ angular.module('zmon2App').factory('CommunicationService', ['$http', '$q', '$log
         };
 
         service.getAlertStats = function(alertId) {
-            return doHttpCall("GET", `/api/v1/false-positive-rates/${alertId}`)
+            return doHttpCall("GET", `/rest/false-positive-rates/${alertId}`)
         };
 
         service.getFalsePositiveRates = function(alertIds) {
@@ -752,7 +752,7 @@ angular.module('zmon2App').factory('CommunicationService', ['$http', '$q', '$log
                 return `${acc}id=${curr}`;
               }
             return `${acc}&id=${curr}`
-            } , '/api/v1/false-positive-rates?');
+            } , '/rest/false-positive-rates?');
 
             return doHttpCall("GET", queryUrl)
         }

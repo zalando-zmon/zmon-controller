@@ -133,7 +133,7 @@ public class ZauthSecurityConfig extends WebSecurityConfigurerAdapter {
                     .permitAll()
         .and()
             .authorizeRequests()
-                .antMatchers("/rest/kairosdbs/**", "/rest/checkAlertResults", "/rest/checkResultsWithoutEntities", "/rest/alertDetails", "/rest/alertHistory", "/api/v1/false-positive-rates")
+                .antMatchers("/rest/kairosdbs/**", "/rest/checkAlertResults", "/rest/checkResultsWithoutEntities", "/rest/alertDetails", "/rest/alertHistory")
                     .authenticated()
                 .anyRequest()
                     .access("authenticated AND !hasAuthority('"+ZMonRole.KAIROS_READER.getRoleName()+"')")
