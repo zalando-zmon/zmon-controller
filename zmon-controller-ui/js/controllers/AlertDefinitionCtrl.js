@@ -2,7 +2,7 @@ angular.module('zmon2App').controller('AlertDefinitionCtrl', ['$scope', '$window
     function($scope, $window, $routeParams, $location, MainAlertService, CommunicationService, FeedbackMessageService, localStorageService, UserInfoService, LoadingIndicatorService, APP_CONST) {
         $scope.DefinitionsCtrl = this;
         $scope.initialLoading = true;
-        $scope.falsePositiveByID = null;
+        $scope.falsePositiveByID = {};
         $scope.$parent.activePage = 'alert-definitions';
         $scope.alertDefinitions = {};
         $scope.templates = {};
