@@ -70,7 +70,7 @@ angular.module('zmon2App').controller('AlertDefinitionCtrl', ['$scope', '$window
                     });
 
                     // Stop loading indicator!
-                    LoadingIndicatorService.stop();
+
 
                     $scope.initialLoading = false;
                     return data;
@@ -83,7 +83,7 @@ angular.module('zmon2App').controller('AlertDefinitionCtrl', ['$scope', '$window
                 return getFalsePositiveRates([], ids, 0, 200)
               })
               .then(setFalsePositiveRateByID)
-                .then(addFalsePositiveToAlertDefs);
+                .then(addFalsePositiveToAlertDefs).catch(() => LoadingIndicatorService.stop());
         };
 
         var addFalsePositiveToAlertDefs = function() {
@@ -96,8 +96,9 @@ angular.module('zmon2App').controller('AlertDefinitionCtrl', ['$scope', '$window
                     }
                     return def;
                 });
-                return {...acc, [key]: alertDefs};
+                return {...acc, [curr]: alertDefs};
             }, {});
+            LoadingIndicatorService.stop();
         };
 
         var getFalsePositiveRates = function(res, alertIds, start, offset) {
