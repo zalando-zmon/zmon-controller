@@ -105,10 +105,10 @@
                     <td class="text-center"><priority prio="def.priority"></priority></td>
                     <td><status status="def.status"></status><i id="star" class='fa fa-star' ng-show="def.star" title="new alert"></i></td>
                     <td class="text-center">
-                        <span ng-if="falsePositiveByID && falsePositiveByID[def.id] !== undefined && falsePositiveByID[def.id] !== null">
-                            {{falsePositiveByID[def.id]}}
+                        <span ng-if="def.falsePositive !== -1 && def.falsePositive !== undefined && def.falsePositive !== null">
+                            {{def.falsePositive}}
                         </span>
-                        <span ng-if="falsePositiveByID[def.id] === null || falsePositiveByID[def.id] === undefined">-</span>
+                        <span ng-if="def.falsePositive < 0 || def.falsePositive === null || def.falsePositive === undefined">-</span>
                     </td>
                 </tr>
                 <tr ng-show="!initialLoading && alertDefinitionsByStatus.length < 1">

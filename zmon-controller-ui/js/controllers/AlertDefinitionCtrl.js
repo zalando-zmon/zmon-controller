@@ -83,6 +83,21 @@ angular.module('zmon2App').controller('AlertDefinitionCtrl', ['$scope', '$window
                 return getFalsePositiveRates([], ids, 0, 200)
               })
               .then(setFalsePositiveRateByID)
+                .then(addFalsePositiveToAlertDefs);
+        };
+
+        var addFalsePositiveToAlertDefs = function() {
+            $scope.alertDefinitions = Object.keys($scope.alertDefinitions).reduce((acc, curr) => {
+                const alertDefs = _.map($scope.alertDefinitions[curr], def => {
+                    if ($scope.falsePositiveByID[def.id] !== undefined && $scope.falsePositiveByID[def.id] !== null) {
+                        def.falsePositive = $scope.falsePositiveByID[def.id] ;
+                    } else {
+                        def.falsePositive = -1;
+                    }
+                    return def;
+                });
+                return {...acc, [key]: alertDefs};
+            }, {});
         };
 
         var getFalsePositiveRates = function(res, alertIds, start, offset) {
@@ -107,6 +122,7 @@ angular.module('zmon2App').controller('AlertDefinitionCtrl', ['$scope', '$window
         var getAlertIds = function(alerts) {
             return alerts.map(alert => alert.id);
         };
+
 
         // Set team filter and re-fetch alerts
         $scope.setTeamFilter = function(team) {
