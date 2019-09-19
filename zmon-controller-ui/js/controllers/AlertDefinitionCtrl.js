@@ -76,15 +76,30 @@ angular.module('zmon2App').controller('AlertDefinitionCtrl', ['$scope', '$window
                     return data;
                 }
             ).then(getAlertIds)
-              .then(getFalsePositiveRates)
+              .then(ids => {
+                if (ids.length === 0) {
+                  return [];
+                }
+                return getFalsePositiveRates([], ids, 0, 450)
+              })
               .then(setFalsePositiveRateByID)
         };
 
-        var setFalsePositiveRateByID = function(res) {
-            if (!res) {
-                return
-            }
-            $scope.falsePositiveByID = res.data.reduce((acc, curr) => {
+        var getFalsePositiveRates = function(res, alertIds, start, offset) {
+          if (start > alertIds.length()) {
+            return res;
+          }
+
+          const ids = alertIds.slice(start, start + offset);
+          return CommunicationService.getFalsePositiveRates(ids)
+            .then((fprRes) => {
+              res = res.concat(fprRes.data);
+              return getFalsePositiveRates(res, alertIds, start + offset, offset);
+            });
+        };
+
+        var setFalsePositiveRateByID = function(falsePositiveRates) {
+            $scope.falsePositiveByID = falsePositiveRates.reduce((acc, curr) => {
                 if (!curr.value) {
                     return curr;
                 }
@@ -94,13 +109,6 @@ angular.module('zmon2App').controller('AlertDefinitionCtrl', ['$scope', '$window
 
         var getAlertIds = function(alerts) {
             return alerts.map(alert => alert.id);
-        };
-
-        var getFalsePositiveRates = function(alertIds) {
-            if (alertIds.length === 0) {
-                return
-            }
-            return CommunicationService.getFalsePositiveRates(alertIds)
         };
 
         // Set team filter and re-fetch alerts
@@ -206,6 +214,7 @@ angular.module('zmon2App').controller('AlertDefinitionCtrl', ['$scope', '$window
 
         $scope.incLimit = function() {
             $scope.limit += 20;
+
         };
 
         $scope.$watch('alertFilter', function(newVal) {
