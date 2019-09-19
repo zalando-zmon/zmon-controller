@@ -86,7 +86,7 @@ angular.module('zmon2App').controller('AlertDefinitionCtrl', ['$scope', '$window
         };
 
         var getFalsePositiveRates = function(res, alertIds, start, offset) {
-          if (start > alertIds.length()) {
+          if (start > alertIds.length) {
             return res;
           }
 
