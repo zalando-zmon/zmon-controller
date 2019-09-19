@@ -81,7 +81,10 @@ angular.module('zmon2App').controller('AlertDefinitionCtrl', ['$scope', '$window
         };
 
         var setFalsePositiveRateByID = function(res) {
-            $scope.falsePositiveByID = res.data.reduce((curr, acc) => {
+            if (!res) {
+                return
+            }
+            $scope.falsePositiveByID = res.data.reduce((acc, curr) => {
                 if (!curr.value) {
                     return curr;
                 }
@@ -94,6 +97,9 @@ angular.module('zmon2App').controller('AlertDefinitionCtrl', ['$scope', '$window
         };
 
         var getFalsePositiveRates = function(alertIds) {
+            if (alertIds.length === 0) {
+                return
+            }
             return CommunicationService.getFalsePositiveRates(alertIds)
         };
 
