@@ -39,7 +39,7 @@ public class FalsePositiveRateServiceImpl implements FalsePositiveRateService {
     private final AccessTokens accessTokens;
     private static final String FALSE_POSITIVE_RATE_END_POINT = "/api/false-positive-rates/";
     private static final String BEARER = "Bearer ";
-    private static final String METADATA_TOKEN_ID = "metadata-service";
+    private static final String ZMON_TOKEN_ID = "zmon";
 
     /* Allowed status code 207 - Reason being a possible status code for bulk operations in MetadataService is 207
     with individual errors inside the response body:
@@ -65,7 +65,7 @@ public class FalsePositiveRateServiceImpl implements FalsePositiveRateService {
             log.debug("False positive alert id: {}", alertId);
             log.debug("URL: {}", url);
 
-            request.addHeader(AUTHORIZATION, BEARER + accessTokens.get(METADATA_TOKEN_ID));
+            request.addHeader(AUTHORIZATION, BEARER + accessTokens.get(ZMON_TOKEN_ID));
             HttpResponse response = executor.execute(request).returnResponse();
             return toResponseEntity(response);
         } catch (Exception ex) {
@@ -90,7 +90,7 @@ public class FalsePositiveRateServiceImpl implements FalsePositiveRateService {
             log.debug("URL: {}", urlBuilder.build().toUri().toString());
 
             Request request = Request.Get(urlBuilder.build().toUri());
-            request.addHeader(AUTHORIZATION, BEARER + accessTokens.get(METADATA_TOKEN_ID));
+            request.addHeader(AUTHORIZATION, BEARER + accessTokens.get(ZMON_TOKEN_ID));
             HttpResponse response = executor.execute(request).returnResponse();
 
             return toResponseEntity(response);
@@ -111,7 +111,7 @@ public class FalsePositiveRateServiceImpl implements FalsePositiveRateService {
 
             Request request = Request.Get(urlBuilder.build().toUri());
 
-            request.addHeader(AUTHORIZATION, BEARER + accessTokens.get(METADATA_TOKEN_ID));
+            request.addHeader(AUTHORIZATION, BEARER + accessTokens.get(ZMON_TOKEN_ID));
             HttpResponse response = executor.execute(request).returnResponse();
 
             return toResponseEntity(response);
