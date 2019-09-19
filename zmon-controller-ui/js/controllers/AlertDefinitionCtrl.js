@@ -80,7 +80,7 @@ angular.module('zmon2App').controller('AlertDefinitionCtrl', ['$scope', '$window
                 if (ids.length === 0) {
                   return [];
                 }
-                return getFalsePositiveRates([], ids, 0, 450)
+                return getFalsePositiveRates([], ids, 0, 200)
               })
               .then(setFalsePositiveRateByID)
         };
@@ -101,9 +101,9 @@ angular.module('zmon2App').controller('AlertDefinitionCtrl', ['$scope', '$window
         var setFalsePositiveRateByID = function(falsePositiveRates) {
             $scope.falsePositiveByID = falsePositiveRates.reduce((acc, curr) => {
                 if (!curr.value) {
-                    return curr;
+                    return acc;
                 }
-                return {...acc, [curr.id]: curr.value};
+                return {...acc, [curr.alertId]: (curr.value * 100) >> 0};
             }, {})
         };
 
