@@ -105,6 +105,11 @@
     width: 5%;
 }
 
+.zmon-data-table th.false-positive-col
+{
+    width: 5%;
+}
+
 .zmon-data-table th.check-id-col
 {
     width: 7%;

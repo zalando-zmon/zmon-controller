@@ -100,9 +100,6 @@ angular.module('zmon2App').controller('AlertDefinitionCtrl', ['$scope', '$window
 
         var setFalsePositiveRateByID = function(falsePositiveRates) {
             $scope.falsePositiveByID = falsePositiveRates.reduce((acc, curr) => {
-                if (!curr.value) {
-                    return acc;
-                }
                 return {...acc, [curr.alertId]: (curr.value * 100) >> 0};
             }, {})
         };
