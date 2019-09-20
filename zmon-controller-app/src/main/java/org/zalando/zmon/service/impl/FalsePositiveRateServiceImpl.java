@@ -11,7 +11,6 @@ import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -48,7 +47,7 @@ public class FalsePositiveRateServiceImpl implements FalsePositiveRateService {
 
     @Autowired
     public FalsePositiveRateServiceImpl(MetaDataProperties metaDataProperties,
-                                        @Qualifier("accessTokensBean") AccessTokens accessTokens,
+                                        AccessTokens accessTokens,
                                         ObjectMapper mapper) {
         this.metaDataProperties = metaDataProperties;
         this.mapper = mapper;
