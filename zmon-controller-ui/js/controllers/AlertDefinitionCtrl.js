@@ -70,22 +70,53 @@ angular.module('zmon2App').controller('AlertDefinitionCtrl', ['$scope', '$window
                     });
 
                     // Stop loading indicator!
-                    LoadingIndicatorService.stop();
+
 
                     $scope.initialLoading = false;
                     return data;
                 }
             ).then(getAlertIds)
-              .then(getFalsePositiveRates)
+              .then(ids => {
+                if (ids.length === 0) {
+                  return [];
+                }
+                return getFalsePositiveRates([], ids, 0, 200)
+              })
               .then(setFalsePositiveRateByID)
+                .then(addFalsePositiveToAlertDefs).catch(() => LoadingIndicatorService.stop());
         };
 
-        var setFalsePositiveRateByID = function(res) {
-            $scope.falsePositiveByID = res.data.reduce((curr, acc) => {
-                if (!curr.value) {
-                    return curr;
-                }
-                return {...acc, [curr.id]: curr.value};
+        var addFalsePositiveToAlertDefs = function() {
+            $scope.alertDefinitions = Object.keys($scope.alertDefinitions).reduce((acc, curr) => {
+                const alertDefs = _.map($scope.alertDefinitions[curr], def => {
+                    if ($scope.falsePositiveByID[def.id] !== undefined && $scope.falsePositiveByID[def.id] !== null) {
+                        def.falsePositive = $scope.falsePositiveByID[def.id] ;
+                    } else {
+                        def.falsePositive = -1;
+                    }
+                    return def;
+                });
+                return {...acc, [curr]: alertDefs};
+            }, {});
+            LoadingIndicatorService.stop();
+        };
+
+        var getFalsePositiveRates = function(res, alertIds, start, offset) {
+          if (start > alertIds.length) {
+            return res;
+          }
+
+          const ids = alertIds.slice(start, start + offset);
+          return CommunicationService.getFalsePositiveRates(ids)
+            .then((fprRes) => {
+              res = res.concat(fprRes.data);
+              return getFalsePositiveRates(res, alertIds, start + offset, offset);
+            });
+        };
+
+        var setFalsePositiveRateByID = function(falsePositiveRates) {
+            $scope.falsePositiveByID = falsePositiveRates.reduce((acc, curr) => {
+                return {...acc, [curr.alertId]: (curr.value * 100) >> 0};
             }, {})
         };
 
@@ -93,9 +124,6 @@ angular.module('zmon2App').controller('AlertDefinitionCtrl', ['$scope', '$window
             return alerts.map(alert => alert.id);
         };
 
-        var getFalsePositiveRates = function(alertIds) {
-            return CommunicationService.getFalsePositiveRates(alertIds)
-        };
 
         // Set team filter and re-fetch alerts
         $scope.setTeamFilter = function(team) {
@@ -200,6 +228,7 @@ angular.module('zmon2App').controller('AlertDefinitionCtrl', ['$scope', '$window
 
         $scope.incLimit = function() {
             $scope.limit += 20;
+
         };
 
         $scope.$watch('alertFilter', function(newVal) {

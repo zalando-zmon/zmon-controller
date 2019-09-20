@@ -80,9 +80,10 @@
                         <i class="fa fa-fw fa-sort-asc sort-arrow" ng-show="sortType === 'status' && sortOrder"></i>
                         <i class="fa fa-fw fa-sort-desc sort-arrow" ng-show="sortType === 'status' && !sortOrder"></i>
                     </th>
-                    <th class="status-col" ng-click="sortType = 'status'; sortOrder = !sortOrder">False Positives
-                        <i class="fa fa-fw fa-sort-asc sort-arrow" ng-show="sortType === 'status' && sortOrder"></i>
-                        <i class="fa fa-fw fa-sort-desc sort-arrow" ng-show="sortType === 'status' && !sortOrder"></i>
+                    <th class="false-positive-col" ng-click="sortType = 'falsePositive'; sortOrder = !sortOrder">False Positives
+                        (%)
+                        <i class="fa fa-fw fa-sort-asc sort-arrow" ng-show="sortType === 'falsePositive' && sortOrder"></i>
+                        <i class="fa fa-fw fa-sort-desc sort-arrow" ng-show="sortType === 'falsePositive' && !sortOrder"></i>
                     </th>
                 </tr>
             </thead>
@@ -104,8 +105,10 @@
                     <td class="text-center"><priority prio="def.priority"></priority></td>
                     <td><status status="def.status"></status><i id="star" class='fa fa-star' ng-show="def.star" title="new alert"></i></td>
                     <td class="text-center">
-                        <span ng-if="falsePositiveByID && falsePositiveByID[def.id]">{{falsePositiveByID[def.id]}}%</span>
-                        <span ng-if="!falsePositiveByID[def.id]">-</span>
+                        <span ng-if="def.falsePositive !== -1 && def.falsePositive !== undefined && def.falsePositive !== null">
+                            {{def.falsePositive}}
+                        </span>
+                        <span ng-if="def.falsePositive < 0 || def.falsePositive === null || def.falsePositive === undefined">-</span>
                     </td>
                 </tr>
                 <tr ng-show="!initialLoading && alertDefinitionsByStatus.length < 1">

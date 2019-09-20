@@ -22,3 +22,5 @@ tokens:
       scopes: uid
     - token-id: notification-service
       scopes: uid
+    - token-id: zmon
+      scopes: uid

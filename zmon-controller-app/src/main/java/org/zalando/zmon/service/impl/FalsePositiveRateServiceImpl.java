@@ -7,7 +7,6 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.fluent.Executor;
 import org.apache.http.client.fluent.Request;
-import org.apache.http.entity.ContentType;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,7 +44,6 @@ public class FalsePositiveRateServiceImpl implements FalsePositiveRateService {
     with individual errors inside the response body:
     https://opensource.zalando.com/restful-api-guidelines/#152 */
     private static final Set<Integer> ALLOWED_STATUS_CODES = ImmutableSet.of(200, 207);
-
 
     @Autowired
     public FalsePositiveRateServiceImpl(MetaDataProperties metaDataProperties,
