@@ -3,20 +3,22 @@ angular.module('zmon2App', [
     // 'ngResource',
     'ngSanitize',
     'ngRoute',
+    'angulartics',
+    'angulartics.google.analytics',
     'LocalStorageModule',
     'ui.bootstrap',
-    'angulartics',
     'infinite-scroll',
     'ngclipboard',
     'ui.select',
     'hljs',
-    'ngDebounce'
-])
-    .config(['$routeProvider', '$compileProvider',
-        function($routeProvider, $compileProvider) {
+    'ngDebounce',
+]).config(['$routeProvider', '$compileProvider', '$analyticsProvider',
+        function($routeProvider, $compileProvider, $analyticsProvider) {
+            $analyticsProvider.firstPageview(true); /*Records pages that don't use $state or $route*/
+            $analyticsProvider.withAutoBase(true); /*Records full path*/
+
             // Whitelist "blob:" URLs for the anchor "href" to download check-definition YAML file in Trial Runs page
             $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|tel|file|blob):/);
-
             $routeProvider
                 .when('/', {
                     templateUrl: 'views/dashboard.html',

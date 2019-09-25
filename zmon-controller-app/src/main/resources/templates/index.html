@@ -19,7 +19,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="#303F9F">
 
     <title>ZMON</title>
-
+    <base href="/">
     <link rel="stylesheet" type="text/css" th:href="${staticUrl} + '/asset/css/zalando-bootstrap.css?t=@buildTime@'" />
     <link rel="stylesheet" type="text/css" th:href="${staticUrl} + '/asset/css/font-awesome.min.css?t=@buildTime@'" />
     <link rel="stylesheet" type="text/css" th:href="${staticUrl} + '/asset/css/angular-ui-select.min.css?t=@buildTime@'" />
@@ -63,6 +63,7 @@
     <script th:src="${staticUrl} + '/lib/jsonpath-dchester/jsonpath.min.js?t=@buildTime@'" charset="utf-8"></script>
     <script th:src="${staticUrl} + '/lib/js-yaml/js-yaml.min.js?t=@buildTime@'"></script>
     <script th:src="${staticUrl} + '/lib/angulartics/angulartics.min.js?t=@buildTime@'" charset="utf-8"></script>
+    <script th:src="${staticUrl} + '/lib/angulartics/angulartics-ga.min.js?t=@buildTime@'" charset="utf-8"></script>
     <script th:src="${staticUrl} + '/lib/colorhash/colorhash.js?t=@buildTime@'" charset="utf-8"></script>
     <script th:src="${staticUrl} + '/lib/d3/d3.min.js?t=@buildTime@'" chartset="utf-8"></script>
     <script th:src="${staticUrl} + '/lib/nvd3/build/nv.d3.min.js?t=@buildTime@'" chartset="utf-8"></script>
@@ -82,7 +83,6 @@
       m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
       })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
       ga('create', googleanalyticsConfig.apiKey, 'auto');
-      ga('send', 'pageview');
     </script>
 
     <!-- AngularJS Bootstrap -->
