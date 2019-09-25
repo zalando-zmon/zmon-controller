@@ -48,10 +48,6 @@
                         <i class="fa fa-fw fa-sort-asc sort-arrow" ng-show="sortType === 'name' && sortOrder"></i>
                         <i class="fa fa-fw fa-sort-desc sort-arrow" ng-show="sortType === 'name' && !sortOrder"></i>
                     </th>
-                    <th ng-click="sortType = 'condition'; sortOrder = !sortOrder">Condition
-                        <i class="fa fa-fw fa-sort-asc sort-arrow" ng-show="sortType === 'condition' && sortOrder"></i>
-                        <i class="fa fa-fw fa-sort-desc sort-arrow" ng-show="sortType === 'condition' && !sortOrder"></i>
-                    </th>
                     <th class="entities-col" ng-click="sortType = 'entities'; sortOrder = !sortOrder">Entities
                         <i class="fa fa-fw fa-sort-asc sort-arrow" ng-show="sortType === 'entities' && sortOrder"></i>
                         <i class="fa fa-fw fa-sort-desc sort-arrow" ng-show="sortType === 'entities' && !sortOrder"></i>
@@ -94,7 +90,6 @@
                         <i ng-switch-default class="fa fa-fw fa-edit semi-transparent"></i>
                     </td>
                     <td><a href="#/alert-details/{{def.id}}">{{def.name || '(no name)'}}</a></td>
-                    <td class="ellipsis">{{def.condition}}</td>
                     <td><span class="text-muted" ng-show="def.entities.length === 0">(no entity filter)</span><div ng-bind-html="def.entities | entities"></div></td>
                     <td><a href="#/check-definitions/view/{{def.check_definition_id}}">{{def.check_definition_id}}</a></td>
                     <td>{{def.team}}</td>
@@ -112,7 +107,7 @@
                     </td>
                 </tr>
                 <tr ng-show="!initialLoading && alertDefinitionsByStatus.length < 1">
-                    <td colspan="9" class="text-center">
+                    <td colspan="10" class="text-center">
                         No alert definitions found for the specified team / filter.
                     </td>
                 </tr>
