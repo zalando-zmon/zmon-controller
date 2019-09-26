@@ -77,35 +77,30 @@ public class ZMonServiceImpl implements ZMonService {
 
     private static final long MAX_ACTIVE_WORKER_TIMESTAMP_MILLIS_AGO = 24 * 1000;
 
-    @Autowired
     protected CheckDefinitionSProcService checkDefinitionSProc;
-
-    @Autowired
     protected AlertDefinitionSProcService alertDefinitionSProc;
-
-    @Autowired
     protected ZMonSProcService zmonSProc;
-
-    @Autowired
     protected EntitySProcService entitySProc;
-
-    @Autowired
     protected JedisPool redisPool;
-
-    @Autowired
     protected ObjectMapper mapper;
-
-    @Autowired
     private NoOpEventLog eventLog;
-
-    @Autowired
     private CheckRuntimeConfig checkRuntimeConfig;
-
-    @Autowired
     private ControllerProperties config;
+    protected AlertService alertService;
 
     @Autowired
-    protected AlertService alertService;
+    public ZMonServiceImpl(CheckDefinitionSProcService checkDefinitionSProc, AlertDefinitionSProcService alertDefinitionSProc, ZMonSProcService zmonSProc, EntitySProcService entitySProc, JedisPool redisPool, ObjectMapper mapper, NoOpEventLog eventLog, CheckRuntimeConfig checkRuntimeConfig, ControllerProperties config, AlertService alertService) {
+        this.checkDefinitionSProc = checkDefinitionSProc;
+        this.alertDefinitionSProc = alertDefinitionSProc;
+        this.zmonSProc = zmonSProc;
+        this.entitySProc = entitySProc;
+        this.redisPool = redisPool;
+        this.mapper = mapper;
+        this.eventLog = eventLog;
+        this.checkRuntimeConfig = checkRuntimeConfig;
+        this.config = config;
+        this.alertService = alertService;
+    }
 
     @Override
     public ExecutionStatus getStatus() {
@@ -218,6 +213,12 @@ public class ZMonServiceImpl implements ZMonService {
 
         checkDefinition.setLastModifiedBy(userName);
 
+        validateInterval(checkDefinition);
+
+        return checkDefinitionSProc.createOrUpdateCheckDefinition(checkDefinition, userName, teams, isAdmin, checkRuntimeConfig.isEnabled(), checkRuntimeConfig.getDefaultRuntime());
+    }
+
+    private void validateInterval(CheckDefinitionImport checkDefinition) {
         if (checkDefinition.getInterval() < 60) {
             Integer checkId = checkDefinition.getId();
             if (null == checkId) {
@@ -231,6 +232,9 @@ public class ZMonServiceImpl implements ZMonService {
                         if (!config.data.contains(checkId)) {
                             throw new SerializationException("check is not whitelisted for sub-minute interval");
                         }
+                        if (checkDefinition.getInterval() < 15) {
+                            throw new SerializationException("check interval below 15s is disallowed");
+                        }
                     }
                 } catch (IOException e) {
                     log.error("Cannot read zmon-sub-minute-checks entity, continuing");
@@ -240,8 +244,6 @@ public class ZMonServiceImpl implements ZMonService {
                 log.warn("zmon-sub-minute-checks is empty!");
             }
         }
-
-        return checkDefinitionSProc.createOrUpdateCheckDefinition(checkDefinition, userName, teams, isAdmin, checkRuntimeConfig.isEnabled(), checkRuntimeConfig.getDefaultRuntime());
     }
 
     @Override
