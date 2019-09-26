@@ -33,10 +33,7 @@ import org.zalando.zmon.diff.CheckDefinitionsDiffFactory;
 import org.zalando.zmon.domain.*;
 import org.zalando.zmon.event.ZMonEventType;
 import org.zalando.zmon.exception.SerializationException;
-import org.zalando.zmon.persistence.AlertDefinitionSProcService;
-import org.zalando.zmon.persistence.CheckDefinitionImportResult;
-import org.zalando.zmon.persistence.CheckDefinitionSProcService;
-import org.zalando.zmon.persistence.ZMonSProcService;
+import org.zalando.zmon.persistence.*;
 import org.zalando.zmon.redis.RedisPattern;
 import org.zalando.zmon.redis.ResponseHolder;
 import org.zalando.zmon.service.AlertService;
@@ -88,6 +85,9 @@ public class ZMonServiceImpl implements ZMonService {
 
     @Autowired
     protected ZMonSProcService zmonSProc;
+
+    @Autowired
+    protected EntitySProcService entitySProc;
 
     @Autowired
     protected JedisPool redisPool;
@@ -208,7 +208,6 @@ public class ZMonServiceImpl implements ZMonService {
     @Override
     public CheckDefinitionsDiff getCheckDefinitionsDiff(final Long snapshotId) {
         return CheckDefinitionsDiffFactory.create(checkDefinitionSProc.getCheckDefinitionsDiff(snapshotId));
-
     }
 
     @Override
@@ -218,6 +217,29 @@ public class ZMonServiceImpl implements ZMonService {
                 checkDefinition.getOwningTeam(), userName, teams, isAdmin);
 
         checkDefinition.setLastModifiedBy(userName);
+
+        if (checkDefinition.getInterval() < 60) {
+            Integer checkId = checkDefinition.getId();
+            if (null == checkId) {
+                throw new SerializationException("check is not whitelisted for sub-minute interval");
+            }
+            List<String> entities = entitySProc.getEntities("[{\"type\":\"zmon_config\", \"id\":\"zmon-sub-minute-checks\"}]");
+            if (entities.size() == 1) {
+                try {
+                    SumMinuteChecks config = mapper.readValue(entities.get(0), SumMinuteChecks.class);
+                    if (null != config.data) {
+                        if (!config.data.contains(checkId)) {
+                            throw new SerializationException("check is not whitelisted for sub-minute interval");
+                        }
+                    }
+                } catch (IOException e) {
+                    log.error("Cannot read zmon-sub-minute-checks entity, continuing");
+                }
+            }
+            else {
+                log.warn("zmon-sub-minute-checks is empty!");
+            }
+        }
 
         return checkDefinitionSProc.createOrUpdateCheckDefinition(checkDefinition, userName, teams, isAdmin, checkRuntimeConfig.isEnabled(), checkRuntimeConfig.getDefaultRuntime());
     }

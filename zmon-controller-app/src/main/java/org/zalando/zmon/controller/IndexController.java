@@ -10,6 +10,7 @@ import org.zalando.zmon.config.*;
 import org.zalando.zmon.security.permission.DefaultZMonPermissionService;
 
 import com.google.common.base.Joiner;
+import org.zalando.zmon.service.FrontendBootDataService;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -51,6 +52,7 @@ public class IndexController {
     private static final String TEAMS = "teams";
 
     private static final String FEEDBACK_REDIRECT_URL = "feedbackRedirectUrl";
+    private static final String ZMON_BOOT_DATA = "zmonBootData";
 
     @Autowired
     private DefaultZMonPermissionService authorityService;
@@ -78,6 +80,9 @@ public class IndexController {
 
     @Autowired
     private FeedbackMetadataProperties feedbackMetadataProperties;
+
+    @Autowired
+    private FrontendBootDataService frontendBootDataService;
 
     @Value("${zmon.cloud.checkid}")
     private int cloudCheckId;
@@ -118,6 +123,8 @@ public class IndexController {
         model.addAttribute(SENTRY_CONFIG, sentryProperties);
         model.addAttribute(SENTRY_ENABLED, controllerProperties.enableSentry);
         model.addAttribute(FEEDBACK_REDIRECT_URL, feedbackMetadataProperties.url);
+
+        model.addAttribute(ZMON_BOOT_DATA, frontendBootDataService.getFrontendBootData());
 
         return "index";
     }

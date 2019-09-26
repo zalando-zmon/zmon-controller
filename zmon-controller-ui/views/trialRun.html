@@ -34,21 +34,21 @@
                     <div class="form-group" ng-class="{'has-error': trForm.submitted && trForm.name.$error.required}">
                         <label for="inp-name" class="col-sm-2 control-label">Name *</label>
                         <div class="col-sm-10">
-                            <input type="text" class="form-control" id="inp-name" name="name" placeholder="Choose a name that clearly identifies the function of your check" ng-model="alert.name" required ng-focus="trForm.submitted && trForm.name.$error.required">
+                            <input type="text" class="form-control" id="inp-name" name="name" placeholder="Choose a name that clearly identifies the function of your check" ng-model="alert.name" required>
                         </div>
                     </div>
 
                     <div class="form-group" ng-class="{'has-error': trForm.submitted && trForm.description.$error.required}">
                         <label for="inp-description" class="col-sm-2 control-label">Description *</label>
                         <div class="col-sm-10">
-                            <textarea class="form-control" id="inp-description" name="description" placeholder="Short descriptive text about the check" ng-model="alert.description" ng-focus="trForm.submitted && trForm.description.$error.required" ng-required="!onRun"></textarea>
+                            <textarea class="form-control" id="inp-description" name="description" placeholder="Short descriptive text about the check" ng-model="alert.description" ng-required="!onRun"></textarea>
                         </div>
                     </div>
 
                     <div class="form-group" ng-class="{'has-error': trForm.submitted && trForm.owningTeam.$error.required}">
                         <label for="inp-owning-team" class="col-sm-2 control-label">Owner Team *</label>
                         <div class="col-sm-10">
-                            <ui-select name="owningTeam" ng-model="alert.owning_team" theme="select2" ng-focus="trForm.submitted && trForm.owningTeam.$error.required" required>
+                            <ui-select name="owningTeam" ng-model="alert.owning_team" theme="select2" required>
                                 <ui-select-match placeholder="Select or search a team in the list...">{{$select.selected}}</ui-select-match>
                                 <ui-select-choices repeat="item in getItems(alert.owning_team, $select.search) | filter: $select.search">
                                     <div ng-bind="item"></div>
@@ -61,7 +61,7 @@
                         <label for="inp-command" class="col-sm-2 control-label"><a href="https://docs.zmon.io/en/latest/user/check-commands.html" rel="help" target="docs">Check Command *</a></label>
                         <div class="col-sm-10">
                             <code-editor-modal code="alert.check_command" title="Check Command" language="python"></code-editor-modal>
-                            <div id="inp-command" name="check_command" class="code-editor" ng-model="alert.check_command" code-language="python" code-editor required ng-focus="trForm.submitted && trForm.check_command.$error.required"></div>
+                            <div id="inp-command" name="check_command" class="code-editor" ng-model="alert.check_command" code-language="python" code-editor required></div>
                             <span class="help-block">Valid Python expression used to query the instances specified in entities filter.</span>
                         </div>
                     </div>
@@ -166,9 +166,10 @@
                     </div>
 
                     <div class="form-group" ng-class="{'has-error': trForm.submitted && (trForm.interval.$error.required || trForm.interval.$error.number)}">
-                        <label for="inp-interval" class="col-sm-2 control-label"><a href="https://docs.zmon.io/en/latest/user/check-definitions.html#interval" rel="help" target="docs">Interval</a></label>
+                        <label for="inp-interval" class="col-sm-2 control-label"><a href="https://docs.zmon.io/en/latest/user/check-definitions.html#interval" rel="help" target="docs">Interval *</a></label>
                         <div class="col-sm-10">
-                            <input id="inp-interval" name="interval" type="number" min="5" class="form-control" ng-model="alert.interval" placeholder="Please type interval in seconds" required>
+                            <input id="inp-interval" name="interval" type="number" min="60" class="form-control" ng-model="alert.interval" placeholder="Please type interval in seconds" required ng-if="whitelistedSubInterval">
+                            <input id="inp-interval" name="interval" type="number" min="15" class="form-control" ng-model="alert.interval" placeholder="Please type interval in seconds" required ng-if="!whitelistedSubInterval">
                         </div>
                     </div>
 

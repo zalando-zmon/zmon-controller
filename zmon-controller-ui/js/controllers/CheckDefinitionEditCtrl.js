@@ -45,6 +45,8 @@ angular.module('zmon2App').controller('CheckDefinitionEditCtrl', ['$scope', '$ro
         // for route '/check-definitions/edit/:checkId' [edit existing check]
         $scope.checkId = $routeParams.checkId;
 
+        $scope.whitelistedSubInterval = window.zmonBootData.subMinuteChecks.indexOf($scope.checkId);
+
         $scope.check = {};
 
         $scope.mode = 'edit';

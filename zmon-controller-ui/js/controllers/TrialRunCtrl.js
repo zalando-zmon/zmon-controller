@@ -197,7 +197,9 @@ var TrialRunCtrl = function ($scope, $interval, $timeout, timespanFilter, Commun
         exclude_filters: [[]]
     };
 
-    $scope.alert = _.extend($scope.alert || {}, {
+    $scope.alert = _.extend($scope.alert || {
+        alert_condition: 'False'
+    }, {
         entities: [],
         entities_exclude: [],
         parameters: [],
@@ -297,6 +299,7 @@ var TrialRunCtrl = function ($scope, $interval, $timeout, timespanFilter, Commun
 
     if ($routeParams.checkId) {
         $scope.checkId = $routeParams.checkId;
+        $scope.whitelistedSubInterval = window.zmonBootData.subMinuteChecks.indexOf($scope.checkId);
         CommunicationService.getCheckDefinition($scope.checkId).then(
             function (response) {
                 $scope.alert = response;
@@ -372,6 +375,10 @@ var TrialRunCtrl = function ($scope, $interval, $timeout, timespanFilter, Commun
             obj.technical_details = $scope.alert.technical_details;
             obj.status = isNew ? "ACTIVE" : $scope.alert.status;
             obj.id = isNew ? undefined : $scope.alert.id // this id is actually the check id
+
+            if(obj.interval < 60 && isNew) {
+                return FeedbackMessageService.showErrorMessage('New check is not whitelisted for sub-minute interval');
+            }
 
             MainAlertService.isValidCheckName(obj).then((valid)=>{
                 if(valid){
