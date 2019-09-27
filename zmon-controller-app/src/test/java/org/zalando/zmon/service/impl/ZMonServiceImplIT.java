@@ -98,6 +98,12 @@ public class ZMonServiceImplIT {
     public void testCreateCheckDefinitionWithSubMinuteInterval() throws Exception {
         CheckDefinitionImport newCheck = checkImportGenerator.generate();
         newCheck.setInterval(15L);
+
+        EntitySProcService entitySProcMock = mock(EntitySProcService.class);
+        service = new ZMonServiceImpl(checkDefinitionSProc, alertDefinitionSProc, zmonSProc, entitySProcMock, redisPool, mapper, eventLog, checkRuntimeConfig, config, alertService);
+        when(entitySProcMock.getEntities(eq("[{\"type\":\"zmon_config\", \"id\":\"zmon-min-check-interval\"}]")))
+                .thenReturn(Collections.singletonList("{\"lastModified\":\"\",\"lastModifiedBy\":\"\",\"data\":{\"whitelistedChecks\": [1,2,3]}}"));
+
         service.createOrUpdateCheckDefinition(newCheck, USER_NAME, USER_TEAMS);
     }
 
