@@ -45,9 +45,9 @@ angular.module('zmon2App').controller('CheckDefinitionEditCtrl', ['$scope', '$ro
         // for route '/check-definitions/edit/:checkId' [edit existing check]
         $scope.checkId = $routeParams.checkId;
 
-        $scope.whitelistedForInterval = window.zmonBootData.minCheckInterval.whitelistedChecks.indexOf(parseInt($scope.checkId));
-        $scope.minCheckInterval = window.zmonBootData.minCheckInterval.minCheckInterval;
-        $scope.minWhitelistedCheckInterval = window.zmonBootData.minCheckInterval.minWhitelistedCheckInterval;
+        $scope.whitelistedForInterval = window.zmonBootData.min_check_interval.whitelisted_checks.indexOf(parseInt($scope.checkId));
+        $scope.minCheckInterval = window.zmonBootData.min_check_interval.min_check_interval;
+        $scope.minWhitelistedCheckInterval = window.zmonBootData.min_check_interval.min_whitelisted_check_interval;
 
         $scope.check = {};
 
