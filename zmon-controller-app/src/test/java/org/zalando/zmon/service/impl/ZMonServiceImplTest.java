@@ -15,10 +15,17 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zalando.zmon.api.domain.AlertResult;
+import org.zalando.zmon.config.CheckRuntimeConfig;
+import org.zalando.zmon.config.ControllerProperties;
 import org.zalando.zmon.domain.Alert;
 import org.zalando.zmon.domain.AlertDefinitionAuth;
 import org.zalando.zmon.domain.LastCheckResult;
+import org.zalando.zmon.persistence.AlertDefinitionSProcService;
+import org.zalando.zmon.persistence.CheckDefinitionSProcService;
+import org.zalando.zmon.persistence.EntitySProcService;
+import org.zalando.zmon.persistence.ZMonSProcService;
 import org.zalando.zmon.service.AlertService;
+import redis.clients.jedis.JedisPool;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -37,12 +44,27 @@ public class ZMonServiceImplTest {
     private AlertService alertService;
 
     @Autowired
+    protected CheckDefinitionSProcService checkDefinitionSProc;
+    @Autowired
+    protected AlertDefinitionSProcService alertDefinitionSProc;
+    @Autowired
+    protected ZMonSProcService zmonSProc;
+    @Autowired
+    protected EntitySProcService entitySProc;
+    @Autowired
+    protected JedisPool redisPool;
+    @Autowired
+    private NoOpEventLog eventLog;
+    @Autowired
+    private CheckRuntimeConfig checkRuntimeConfig;
+    @Autowired
+    private ControllerProperties config;
+
     private ZMonServiceImpl service;
 
     @Before
     public void setUp() {
-        service.mapper = new ObjectMapper();
-        service.alertService = alertService;
+        service = new ZMonServiceImpl(checkDefinitionSProc, alertDefinitionSProc, zmonSProc, entitySProc, redisPool, new ObjectMapper(), eventLog, checkRuntimeConfig, config, alertService);
     }
 
     @Test
