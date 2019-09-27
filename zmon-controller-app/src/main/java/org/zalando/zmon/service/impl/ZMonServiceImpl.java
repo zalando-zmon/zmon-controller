@@ -229,7 +229,6 @@ public class ZMonServiceImpl implements ZMonService {
                         if (null == checkId) {
                             throw new SerializationException("check interval is too low");
                         }
-
                         if (!config.getData().getWhitelistedChecks().contains(checkId)) {
                             throw new SerializationException("check interval is too low");
                         }
@@ -237,14 +236,15 @@ public class ZMonServiceImpl implements ZMonService {
                             throw new SerializationException("check interval is too low");
                         }
                     }
+                } else {
+                    log.error("zmon-min-check-interval has no data!");
+                    throw new SerializationException("zmon-min-check-interval has no data!");
                 }
             } catch (IOException e) {
                 log.error("Cannot read zmon-min-check-interval entity, continuing");
-                throw new SerializationException("Cannot read zmon-min-check-interval entity");
             }
         } else {
             log.error("zmon-min-check-interval is empty!");
-            throw new SerializationException("zmon-min-check-interval is empty!");
         }
     }
 
