@@ -32,9 +32,10 @@ public class FrontendBootDataServiceImpl implements FrontendBootDataService {
     @Override
     public FrontendBootData getFrontendBootData() {
         FrontendBootData data = new FrontendBootData();
+
         data.setMinCheckInterval(minCheckInterval);
 
-        return null;
+        return data;
     }
 
     @Scheduled(fixedRate = 60_000)
