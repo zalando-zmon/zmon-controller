@@ -8,7 +8,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.zalando.zmon.controller.CheckRuntimeController;
 import org.zalando.zmon.controller.domain.FrontendBootData;
-import org.zalando.zmon.domain.SumMinuteChecks;
+import org.zalando.zmon.domain.MinCheckInterval;
 import org.zalando.zmon.persistence.EntitySProcService;
 import org.zalando.zmon.service.FrontendBootDataService;
 
@@ -18,10 +18,10 @@ import java.util.List;
 @Service
 public class FrontendBootDataServiceImpl implements FrontendBootDataService {
     private final Logger log = LoggerFactory.getLogger(CheckRuntimeController.class);
-    private String lastModifiedForSumMinuteChecks = null;
+    private String lastModifiedForMinCheckInterval = null;
     private final EntitySProcService entityService;
     private final ObjectMapper mapper;
-    private List<Integer> subMinuteChecks = null;
+    private MinCheckInterval.Data minCheckInterval = null;
 
     @Autowired
     public FrontendBootDataServiceImpl(EntitySProcService entityService, ObjectMapper mapper) {
@@ -32,37 +32,31 @@ public class FrontendBootDataServiceImpl implements FrontendBootDataService {
     @Override
     public FrontendBootData getFrontendBootData() {
         FrontendBootData data = new FrontendBootData();
-        data.setSubMinuteChecks(subMinuteChecks);
+        data.setMinCheckInterval(minCheckInterval);
 
         return null;
     }
 
     @Scheduled(fixedRate = 60_000)
-    public void refreshSubMinuteChecks() {
-        try {
-            doRefresh();
-        }
-        catch(Throwable t) {
-            log.error("Failed to refresh whitelisted sub-minute checks from entityId=zmon-sub-minute-checks", t.getMessage());
-        }
-    }
-
-    private void doRefresh() throws IOException {
-        List<String> entities = entityService.getEntities("[{\"type\":\"zmon_config\", \"id\":\"zmon-sub-minute-checks\"}]");
+    public void refreshMinCheckInterval() {
+        List<String> entities = entityService.getEntities("[{\"type\":\"zmon_config\", \"id\":\"zmon-min-check-interval\"}]");
         if (entities.size() != 1) {
             return;
         }
 
-        SumMinuteChecks config = mapper.readValue(entities.get(0), SumMinuteChecks.class);
-        if (null != config.data) {
-            if (!config.lastModified.equals(lastModifiedForSumMinuteChecks)) {
-                log.info("Updating whitelisted sub-minute checks: lastModifiedForSumMinuteChecks={} by={}", config.lastModified, config.lastModifiedBy);
-                lastModifiedForSumMinuteChecks = config.lastModified;
-                subMinuteChecks = config.data;
+        try {
+            MinCheckInterval config = mapper.readValue(entities.get(0), MinCheckInterval.class);
+            if (null != config.getData()) {
+                if (!config.getLastModified().equals(lastModifiedForMinCheckInterval)) {
+                    log.info("Updating min check interval: lastModifiedForMinCheckInterval={} by={}", config.getLastModified(), config.getLastModifiedBy());
+                    lastModifiedForMinCheckInterval = config.getLastModified();
+                    minCheckInterval = config.getData();
+                }
+            } else {
+                log.warn("zmon-min-check-interval is empty!");
             }
-        }
-        else {
-            log.warn("zmon-sub-minute-checks is empty!");
+        } catch (IOException e) {
+            log.error("Failed to refresh whitelisted sub-minute checks from entityId=zmon-min-check-interval", e.getMessage());
         }
     }
 }

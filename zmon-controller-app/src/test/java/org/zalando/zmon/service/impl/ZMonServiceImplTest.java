@@ -13,6 +13,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.zalando.zmon.api.domain.AlertResult;
 import org.zalando.zmon.domain.Alert;
 import org.zalando.zmon.domain.AlertDefinitionAuth;
@@ -35,7 +36,8 @@ public class ZMonServiceImplTest {
     @Mock
     private AlertService alertService;
 
-    private ZMonServiceImpl service = new ZMonServiceImpl();
+    @Autowired
+    private ZMonServiceImpl service;
 
     @Before
     public void setUp() {

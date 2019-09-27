@@ -1,14 +1,14 @@
 package org.zalando.zmon.controller.domain;
 
-import java.util.List;
+import org.zalando.zmon.domain.MinCheckInterval;
 
 public class FrontendBootData {
-    private List<Integer> subMinuteChecks;
+    private MinCheckInterval.Data minCheckInterval;
 
-    public List<Integer> getSubMinuteChecks() {
-        return subMinuteChecks;
+    public MinCheckInterval.Data getMinCheckInterval() {
+        return minCheckInterval;
     }
-    public void setSubMinuteChecks(List<Integer> subMinuteChecks) {
-        this.subMinuteChecks = subMinuteChecks;
+    public void setMinCheckInterval(MinCheckInterval.Data minCheckInterval) {
+        this.minCheckInterval = minCheckInterval;
     }
 }

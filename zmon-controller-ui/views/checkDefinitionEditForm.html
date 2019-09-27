@@ -82,8 +82,8 @@
     <div class="form-group" ng-class="{'has-error': cdForm.submitted && (cdForm.interval.$error.required || cdForm.interval.$error.number || cdForm.interval.$error.min)}">
         <label for="inp-interval" class="col-sm-2 control-label"><a href="https://docs.zmon.io/en/latest/user/check-definitions.html#interval" rel="help" target="docs">Interval *</a></label>
         <div class="col-sm-10">
-            <input id="inp-interval" name="interval" type="number" min="15" class="form-control" ng-model="check.interval" placeholder="Please type interval in seconds" required ng-if="whitelistedSubInterval">
-            <input id="inp-interval" name="interval" type="number" min="60" class="form-control" ng-model="check.interval" placeholder="Please type interval in seconds" required ng-if="!whitelistedSubInterval">
+            <input id="inp-interval" name="interval" type="number" min="{{minWhitelistedCheckInterval}}" class="form-control" ng-model="check.interval" placeholder="Please type interval in seconds" required ng-if="whitelistedForInterval">
+            <input id="inp-interval" name="interval" type="number" min="{{minCheckInterval}}" class="form-control" ng-model="check.interval" placeholder="Please type interval in seconds" required ng-if="!whitelistedForInterval">
         </div>
     </div>
 
