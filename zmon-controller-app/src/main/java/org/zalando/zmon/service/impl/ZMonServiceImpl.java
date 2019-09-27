@@ -238,7 +238,6 @@ public class ZMonServiceImpl implements ZMonService {
                     }
                 } else {
                     log.error("zmon-min-check-interval has no data!");
-                    throw new SerializationException("zmon-min-check-interval has no data! " + entities.get(0));
                 }
             } catch (IOException e) {
                 log.error("Cannot read zmon-min-check-interval entity, continuing");

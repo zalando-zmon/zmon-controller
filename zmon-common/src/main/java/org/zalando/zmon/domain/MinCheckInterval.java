@@ -3,14 +3,14 @@ package org.zalando.zmon.domain;
 import java.util.List;
 
 public class MinCheckInterval {
-    private Data data = null;
+    private MinCheckIntervalData data;
     private String lastModified;
     private String lastModifiedBy;
 
-    public static class Data {
+    public class MinCheckIntervalData {
         private List<Integer> whitelistedChecks;
-        private Integer minCheckInterval = 60;
-        private Integer minWhitelistedCheckInterval = 15;
+        private Integer minCheckInterval;
+        private Integer minWhitelistedCheckInterval;
 
         public List<Integer> getWhitelistedChecks() {
             return whitelistedChecks;
@@ -37,11 +37,11 @@ public class MinCheckInterval {
         }
     }
 
-    public Data getData() {
+    public MinCheckIntervalData getData() {
         return data;
     }
 
-    public void setData(Data data) {
+    public void setData(MinCheckIntervalData data) {
         this.data = data;
     }
 

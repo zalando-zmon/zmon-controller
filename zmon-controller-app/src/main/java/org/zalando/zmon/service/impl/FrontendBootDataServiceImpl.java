@@ -21,7 +21,7 @@ public class FrontendBootDataServiceImpl implements FrontendBootDataService {
     private String lastModifiedForMinCheckInterval = null;
     private final EntitySProcService entityService;
     private final ObjectMapper mapper;
-    private MinCheckInterval.Data minCheckInterval = null;
+    private MinCheckInterval.MinCheckIntervalData minCheckInterval = null;
 
     @Autowired
     public FrontendBootDataServiceImpl(EntitySProcService entityService, ObjectMapper mapper) {

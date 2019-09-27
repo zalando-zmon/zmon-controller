@@ -102,7 +102,7 @@ public class ZMonServiceImplIT {
         EntitySProcService entitySProcMock = mock(EntitySProcService.class);
         service = new ZMonServiceImpl(checkDefinitionSProc, alertDefinitionSProc, zmonSProc, entitySProcMock, redisPool, mapper, eventLog, checkRuntimeConfig, config, alertService);
         when(entitySProcMock.getEntities(eq("[{\"type\":\"zmon_config\", \"id\":\"zmon-min-check-interval\"}]")))
-                .thenReturn(Collections.singletonList("{\"lastModified\":\"\",\"lastModifiedBy\":\"\",\"data\":{\"whitelistedChecks\": [1,2,3], \"minCheckInterval\": 60, \"minWhitelistedCheckInterval\": 15}}"));
+                .thenReturn(Collections.singletonList("{\"last_modified\":\"\",\"last_modified_by\":\"\",\"data\":{\"whitelisted_checks\": [1,2,3], \"min_check_interval\": 60, \"min_whitelisted_check_interval\": 15}}"));
 
         service.createOrUpdateCheckDefinition(newCheck, USER_NAME, USER_TEAMS);
     }
@@ -116,7 +116,7 @@ public class ZMonServiceImplIT {
         EntitySProcService entitySProcMock = mock(EntitySProcService.class);
         service = new ZMonServiceImpl(checkDefinitionSProc, alertDefinitionSProc, zmonSProc, entitySProcMock, redisPool, mapper, eventLog, checkRuntimeConfig, config, alertService);
         when(entitySProcMock.getEntities(eq("[{\"type\":\"zmon_config\", \"id\":\"zmon-min-check-interval\"}]")))
-                .thenReturn(Collections.singletonList("{\"lastModified\":\"\",\"lastModifiedBy\":\"\",\"data\":{\"whitelistedChecks\": [1,2,3], \"minCheckInterval\": 60, \"minWhitelistedCheckInterval\": 15}}"));
+                .thenReturn(Collections.singletonList("{\"last_modified\":\"\",\"last_modified_by\":\"\",\"data\":{\"whitelisted_checks\": [1,2,3], \"min_check_interval\": 60, \"min_whitelisted_check_interval\": 15}}"));
 
         CheckDefinitionImportResult result = service.createOrUpdateCheckDefinition(newCheck, USER_NAME, USER_TEAMS);
         MatcherAssert.assertThat("Whitelisted checks can be saved", !result.isNewEntity());
@@ -131,7 +131,7 @@ public class ZMonServiceImplIT {
         EntitySProcService entitySProcMock = mock(EntitySProcService.class);
         service = new ZMonServiceImpl(checkDefinitionSProc, alertDefinitionSProc, zmonSProc, entitySProcMock, redisPool, mapper, eventLog, checkRuntimeConfig, config, alertService);
         when(entitySProcMock.getEntities(eq("[{\"type\":\"zmon_config\", \"id\":\"zmon-min-check-interval\"}]")))
-                .thenReturn(Collections.singletonList("{\"lastModified\":\"\",\"lastModifiedBy\":\"\",\"data\":{\"whitelistedChecks\": [1,2,3], \"minCheckInterval\": 60, \"minWhitelistedCheckInterval\": 15}}"));
+                .thenReturn(Collections.singletonList("{\"last_modified\":\"\",\"last_modified_by\":\"\",\"data\":{\"whitelisted_checks\": [1,2,3], \"min_check_interval\": 60, \"min_whitelisted_check_interval\": 15}}"));
 
         service.createOrUpdateCheckDefinition(newCheck, USER_NAME, USER_TEAMS);
     }
