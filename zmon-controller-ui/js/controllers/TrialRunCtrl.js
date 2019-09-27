@@ -382,7 +382,7 @@ var TrialRunCtrl = function ($scope, $interval, $timeout, timespanFilter, Commun
             obj.id = isNew ? undefined : $scope.alert.id // this id is actually the check id
 
             if (obj.interval < $scope.minCheckInterval && isNew) {
-                return FeedbackMessageService.showErrorMessage('New check is not whitelisted for sub-minute interval');
+                return FeedbackMessageService.showErrorMessage('New check is not whitelisted for this interval. Use at least ' + $scope.minCheckInterval + ' seconds.');
             }
 
             MainAlertService.isValidCheckName(obj).then((valid) => {
