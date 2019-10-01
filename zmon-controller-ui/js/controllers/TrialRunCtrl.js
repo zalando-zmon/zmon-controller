@@ -1,4 +1,4 @@
-var TrialRunCtrl = function ($scope, $interval, $timeout, timespanFilter, CommunicationService, MainAlertService, FeedbackMessageService, UserInfoService, $window, $location, $routeParams) {
+var TrialRunCtrl = function ($scope, $interval, $timeout, timespanFilter, CommunicationService, MainAlertService, FeedbackMessageService, UserInfoService, $window, $location, $routeParams, BootConfig) {
 
     $scope.$parent.activePage = 'trial-run';
     MainAlertService.removeDataRefresh();
@@ -299,12 +299,12 @@ var TrialRunCtrl = function ($scope, $interval, $timeout, timespanFilter, Commun
         var urlJson = JSON.parse($location.search().json)
     }
 
-    $scope.minCheckInterval = window.zmonBootData.minCheckInterval.minCheckInterval;
-    $scope.minWhitelistedCheckInterval = window.zmonBootData.minCheckInterval.minWhitelistedCheckInterval;
+    $scope.minCheckInterval = BootConfig.check.minInterval.normal;
+    $scope.minWhitelistedCheckInterval = BootConfig.check.minInterval.whitelisted;
 
     if ($routeParams.checkId) {
         $scope.checkId = $routeParams.checkId;
-        $scope.whitelistedForInterval = window.zmonBootData.minCheckInterval.whitelistedChecks.indexOf(parseInt($scope.checkId)) >= 0;
+        $scope.whitelistedForInterval = BootConfig.check.minInterval.whitelistedChecks.indexOf(parseInt($scope.checkId)) >= 0;
         CommunicationService.getCheckDefinition($scope.checkId).then(
             function (response) {
                 $scope.alert = response;

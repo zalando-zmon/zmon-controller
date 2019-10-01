@@ -1,5 +1,5 @@
-angular.module('zmon2App').controller('CheckDefinitionEditCtrl', ['$scope', '$routeParams', '$location', 'MainAlertService', 'CommunicationService', 'FeedbackMessageService', 'UserInfoService', 'APP_CONST',
-    function ($scope, $routeParams, $location, MainAlertService, CommunicationService, FeedbackMessageService, UserInfoService, APP_CONST) {
+angular.module('zmon2App').controller('CheckDefinitionEditCtrl', ['$scope', '$routeParams', '$location', 'MainAlertService', 'CommunicationService', 'FeedbackMessageService', 'UserInfoService', 'BootConfig',
+    function ($scope, $routeParams, $location, MainAlertService, CommunicationService, FeedbackMessageService, UserInfoService, BootConfig) {
 
         MainAlertService.removeDataRefresh();
 
@@ -45,9 +45,9 @@ angular.module('zmon2App').controller('CheckDefinitionEditCtrl', ['$scope', '$ro
         // for route '/check-definitions/edit/:checkId' [edit existing check]
         $scope.checkId = $routeParams.checkId;
 
-        $scope.whitelistedForInterval = window.zmonBootData.minCheckInterval.whitelistedChecks.indexOf(parseInt($scope.checkId)) >= 0;
-        $scope.minCheckInterval = window.zmonBootData.minCheckInterval.minCheckInterval;
-        $scope.minWhitelistedCheckInterval = window.zmonBootData.minCheckInterval.minWhitelistedCheckInterval;
+        $scope.whitelistedForInterval = BootConfig.check.minInterval.whitelistedChecks.indexOf(parseInt($scope.checkId)) >= 0;
+        $scope.minCheckInterval = BootConfig.check.minInterval.normal;
+        $scope.minWhitelistedCheckInterval = BootConfig.check.minInterval.whitelisted;
 
         $scope.check = {};
 

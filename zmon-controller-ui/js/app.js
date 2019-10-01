@@ -120,6 +120,7 @@ angular.module('zmon2App', [
         }
     ])
 // Add app constants.
+// DEPRECATED please use BootConfig
 .constant('APP_CONST', {
     'DASHBOARD_REFRESH_RATE': 30000, //in ms
     'DASHBOARD_WIDGETS_REFRESH_RATE': 30000, //in ms
