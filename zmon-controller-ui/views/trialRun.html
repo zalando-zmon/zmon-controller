@@ -168,9 +168,10 @@
                     <div class="form-group" ng-class="{'has-error': trForm.submitted && (trForm.interval.$error.required || trForm.interval.$error.number || trForm.interval.$error.min)}">
                         <label for="inp-interval" class="col-sm-2 control-label"><a href="https://docs.zmon.io/en/latest/user/check-definitions.html#interval" rel="help" target="docs">Interval *</a></label>
                         <div class="col-sm-10">
-                            <input id="inp-interval" name="interval" type="number" min="{{minWhitelistedCheckInterval}}" class="form-control" ng-model="alert.interval" placeholder="Please type interval in seconds" required ng-if="whitelistedForInterval">
-                            <input id="inp-interval" name="interval" type="number" min="{{minCheckInterval}}" class="form-control" ng-model="alert.interval" placeholder="Please type interval in seconds" required ng-if="!whitelistedForInterval">
-                            <span class="help-block">Must be at least {{whitelistedForInterval ? minWhitelistedCheckInterval : minCheckInterval}} seconds.</span>
+                            <input id="inp-interval" name="interval" type="number" min="{{cdForm.interval.$dirty ? minWhitelistedCheckInterval : interval}}" class="form-control" ng-model="alert.interval" placeholder="Please type interval in seconds" required ng-if="whitelistedForInterval">
+                            <input id="inp-interval" name="interval" type="number" min="{{cdForm.interval.$dirty ? minCheckInterval : interval}}" class="form-control" ng-model="alert.interval" placeholder="Please type interval in seconds" required ng-if="!whitelistedForInterval">
+                            <span class="help-block" ng-if="whitelistedForInterval">This check is whitelisted to have interval as low as {{minWhitelistedCheckInterval}} seconds.</span>
+                            <span class="help-block" ng-if="!whitelistedForInterval">Must be at least {{minCheckInterval}} seconds. If lower interval is needed, please apply for whitelisting.</span>
                         </div>
                     </div>
 
