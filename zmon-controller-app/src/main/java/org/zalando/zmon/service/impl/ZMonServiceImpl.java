@@ -227,13 +227,20 @@ public class ZMonServiceImpl implements ZMonService {
                     if (checkDefinition.getInterval() < config.getData().getMinCheckInterval()) {
                         Integer checkId = checkDefinition.getId();
                         if (null == checkId) {
-                            throw new SerializationException("check interval is too low");
+                            throw new SerializationException("Check interval is too low. New checks must use minimum interval of " + config.getData().getMinCheckInterval() + " seconds.");
                         }
+
+                        List<CheckDefinition> oldCheckDefinition = checkDefinitionSProc.getCheckDefinitions(null, Collections.singletonList(checkId));
+                        if (oldCheckDefinition.size() == 1 && oldCheckDefinition.get(0).getInterval().equals(checkDefinition.getInterval())) {
+                            log.info("Interval is not checked since it wasn't modified");
+                            return;
+                        }
+
                         if (!config.getData().getWhitelistedChecks().contains(checkId)) {
-                            throw new SerializationException("check interval is too low");
+                            throw new SerializationException("Check interval is too low. Non-whitelisted checks must use default minimum interval of " + config.getData().getMinCheckInterval() + " seconds.");
                         }
                         if (checkDefinition.getInterval() < config.getData().getMinWhitelistedCheckInterval()) {
-                            throw new SerializationException("check interval is too low");
+                            throw new SerializationException("Check interval is too low. Whitelisted checks must use minimum interval of " + config.getData().getMinWhitelistedCheckInterval() + " seconds.");
                         }
                     }
                 } else {
