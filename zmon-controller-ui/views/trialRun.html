@@ -172,6 +172,7 @@
                             <input id="inp-interval" name="interval" type="number" min="{{cdForm.interval.$dirty ? minCheckInterval : interval}}" class="form-control" ng-model="alert.interval" placeholder="Please type interval in seconds" required ng-if="!whitelistedForInterval">
                             <span class="help-block" ng-if="whitelistedForInterval">This check is whitelisted to have interval as low as {{minWhitelistedCheckInterval}} seconds.</span>
                             <span class="help-block" ng-if="!whitelistedForInterval">Must be at least {{minCheckInterval}} seconds. If lower interval is needed, please apply for whitelisting.</span>
+                            <span class="help-block" style="color: white; background-color: gray" ng-if="whitelistedForInterval ? interval < minWhitelistedCheckInterval : interval < minCheckInterval">This check has an interval of {{interval}} seconds, however it is being throttled to the internal minimum of {{whitelistedForInterval ? minWhitelistedCheckInterval : minCheckInterval}} seconds.</span>
                         </div>
                     </div>
 
