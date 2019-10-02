@@ -12,8 +12,8 @@ angular.module('zmon2App').constant('BootConfig',
     angular.merge({}, {
         check: {
             minInterval: {
-                normal: 60,
-                whitelisted: 15,
+                normal: 5,
+                whitelisted: 5,
                 whitelistedChecks: []
             }
         },

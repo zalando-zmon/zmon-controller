@@ -33,7 +33,10 @@ public class FrontendBootDataServiceImpl implements FrontendBootDataService {
     public FrontendBootData getFrontendBootData() {
         FrontendBootData data = new FrontendBootData();
 
-        data.setMinCheckInterval(minCheckInterval);
+        FrontendBootData.MinInterval interval = data.getCheck().getMinInterval();
+        interval.setNormal(minCheckInterval.getMinCheckInterval());
+        interval.setWhitelisted(minCheckInterval.getMinWhitelistedCheckInterval());
+        interval.setWhitelistedChecks(minCheckInterval.getWhitelistedChecks());
 
         return data;
     }
