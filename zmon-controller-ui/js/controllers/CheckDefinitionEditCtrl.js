@@ -1,5 +1,5 @@
-angular.module('zmon2App').controller('CheckDefinitionEditCtrl', ['$scope', '$routeParams', '$location', 'MainAlertService', 'CommunicationService', 'FeedbackMessageService', 'UserInfoService', 'APP_CONST',
-    function($scope, $routeParams, $location, MainAlertService, CommunicationService, FeedbackMessageService, UserInfoService, APP_CONST) {
+angular.module('zmon2App').controller('CheckDefinitionEditCtrl', ['$scope', '$routeParams', '$location', 'MainAlertService', 'CommunicationService', 'FeedbackMessageService', 'UserInfoService', 'BootConfig',
+    function ($scope, $routeParams, $location, MainAlertService, CommunicationService, FeedbackMessageService, UserInfoService, BootConfig) {
 
         MainAlertService.removeDataRefresh();
 
@@ -13,7 +13,7 @@ angular.module('zmon2App').controller('CheckDefinitionEditCtrl', ['$scope', '$ro
 
         // Filter object for Matched Entities
         $scope.filter = {
-            "include_filters": [[],[]],
+            "include_filters": [[], []],
             "exclude_filters": [[]]
         }
 
@@ -45,13 +45,17 @@ angular.module('zmon2App').controller('CheckDefinitionEditCtrl', ['$scope', '$ro
         // for route '/check-definitions/edit/:checkId' [edit existing check]
         $scope.checkId = $routeParams.checkId;
 
+        $scope.whitelistedForInterval = BootConfig.check.minInterval.whitelistedChecks.indexOf(parseInt($scope.checkId)) >= 0;
+        $scope.minCheckInterval = BootConfig.check.minInterval.normal;
+        $scope.minWhitelistedCheckInterval = BootConfig.check.minInterval.whitelisted;
+
         $scope.check = {};
 
         $scope.mode = 'edit';
 
         $scope.focusedElement = null;
 
-        $scope.save = function() {
+        $scope.save = function () {
             if ($scope.cdForm.$valid) {
                 try {
 
@@ -61,20 +65,18 @@ angular.module('zmon2App').controller('CheckDefinitionEditCtrl', ['$scope', '$ro
                         $scope.check.entities = JSON.parse($scope.entityFilter.textEntityFilters);
                     }
 
-
-                    MainAlertService.isValidCheckName($scope.check).then((valid)=>{
-                        if(valid){
+                    MainAlertService.isValidCheckName($scope.check).then((valid) => {
+                        if (valid){
                             CommunicationService.updateCheckDefinition($scope.check).then(function(data) {
                                 FeedbackMessageService.showSuccessMessage('Saved successfully; redirecting...', 500, function() {
                                     $location.path('/check-definitions/view/' + data.id);
                                 });
                             });
-                        }else{
+                        } else {
                             $("#alertModal .modal-body").html(`A check with name <b>${$scope.check.name}</b> already exists for team <b>${$scope.check.owning_team}</b>. Please select a different name to save.`)
-                            $("#alertModal").modal();  
-                           
+                            $("#alertModal").modal();
                         }
-                    })      
+                    })
                 } catch (ex) {
                     $scope.invalidFormat = true;
                     return FeedbackMessageService.showErrorMessage('JSON format is incorrect' + ex);
@@ -85,7 +87,7 @@ angular.module('zmon2App').controller('CheckDefinitionEditCtrl', ['$scope', '$ro
             }
         };
 
-        $scope.cancel = function() {
+        $scope.cancel = function () {
             $scope.cdForm.submitted = false;
             if ($scope.mode === 'edit') {
                 $location.path('/check-definitions/view/' + $scope.checkId);
@@ -98,7 +100,7 @@ angular.module('zmon2App').controller('CheckDefinitionEditCtrl', ['$scope', '$ro
 
         // Used by ui-select in view to return list of teams for Team field dropdown
         // and allow inserting new values
-        $scope.getItems = function(prop, search) {
+        $scope.getItems = function (prop, search) {
             var teams = _.extend([], $scope.teams);
             var options = teams.indexOf(prop) === -1 ? teams.concat(prop) : teams;
             if (search && options.indexOf(search) === -1) {
@@ -108,9 +110,9 @@ angular.module('zmon2App').controller('CheckDefinitionEditCtrl', ['$scope', '$ro
         };
 
         // Get a check definition from the backend
-        var getCheckDefinition = function() {
+        var getCheckDefinition = function () {
             CommunicationService.getCheckDefinition($scope.checkId).then(
-                function(response) {
+                function (response) {
                     $scope.check = response;
 
                     if ($scope.teams.indexOf($scope.check.owning_team) === -1) {
@@ -123,7 +125,7 @@ angular.module('zmon2App').controller('CheckDefinitionEditCtrl', ['$scope', '$ro
             );
         };
 
-        var getMatchedEntities = function() {
+        var getMatchedEntities = function () {
 
             if ($scope.filter.include_filters[0].length === 0) {
                 $scope.matchedEntitiesCount = null;
@@ -131,7 +133,7 @@ angular.module('zmon2App').controller('CheckDefinitionEditCtrl', ['$scope', '$ro
                 return;
             }
 
-            CommunicationService.getMatchedEntities($scope.filter).then(function(response) {
+            CommunicationService.getMatchedEntities($scope.filter).then(function (response) {
                 $scope.matchedEntitiesCount = response.count;
                 $scope.matchedEntities = _.map(response.entities, 'id');
             })

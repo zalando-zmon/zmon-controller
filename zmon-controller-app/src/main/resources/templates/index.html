@@ -142,6 +142,10 @@
         var consent = /*[[${consentConfig}]]*/ { title: "", content: "" };
     </script>
 
+    <script th:inline="javascript">
+        var zmonBootData = /*[[${zmonBootData}]]*/ {};
+    </script>
+
     <link rel="manifest" href="/manifest.json">
 </head>
 
@@ -323,6 +327,7 @@
 <script th:src="${staticUrl} + '/js/directives/notifications.js?t=@buildTime@'"></script>
 <script th:src="${staticUrl} + '/js/directives/windowTitle.js?t=@buildTime@'"></script>
 <script th:src="${staticUrl} + '/js/services/MainAlertService.js?t=@buildTime@'"></script>
+<script th:src="${staticUrl} + '/js/services/BootConfig.js?t=@buildTime@'"></script>
 <script th:src="${staticUrl} + '/js/services/CommunicationService.js?t=@buildTime@'"></script>
 <script th:src="${staticUrl} + '/js/services/EntityFilterTypesService.js?t=@buildTime@'"></script>
 <script th:src="${staticUrl} + '/js/services/FeedbackMessageService.js?t=@buildTime@'"></script>

@@ -1,4 +1,4 @@
-var TrialRunCtrl = function ($scope, $interval, $timeout, timespanFilter, CommunicationService, MainAlertService, FeedbackMessageService, UserInfoService, $window, $location,$routeParams) {
+var TrialRunCtrl = function ($scope, $interval, $timeout, timespanFilter, CommunicationService, MainAlertService, FeedbackMessageService, UserInfoService, $window, $location, $routeParams, BootConfig) {
 
     $scope.$parent.activePage = 'trial-run';
     MainAlertService.removeDataRefresh();
@@ -69,9 +69,9 @@ var TrialRunCtrl = function ($scope, $interval, $timeout, timespanFilter, Commun
 
     var trc = $scope.TrialRunCtrl = this;
 
-    var formParametersObject = function() {
+    var formParametersObject = function () {
         var parameters = {};
-        _.each(trc.parameters, function(param) {
+        _.each(trc.parameters, function (param) {
             var val = param.value;
 
             if (param.type === 'int') {
@@ -90,9 +90,9 @@ var TrialRunCtrl = function ($scope, $interval, $timeout, timespanFilter, Commun
         return parameters;
     };
 
-    var formParametersArray = function(pObj) {
+    var formParametersArray = function (pObj) {
         var parameters = [];
-        _.each(pObj, function(p, name) {
+        _.each(pObj, function (p, name) {
             parameters.push({
                 name: name,
                 value: p.value,
@@ -103,20 +103,20 @@ var TrialRunCtrl = function ($scope, $interval, $timeout, timespanFilter, Commun
         return parameters;
     };
 
-    var updateUrlParameters = function() {
+    var updateUrlParameters = function () {
         $location.search('json', JSON.stringify($scope.alert)).replace();
     };
 
-    var getMatchedEntities = function() {
+    var getMatchedEntities = function () {
         if ($scope.filter.include_filters[0].length === 0
-          && $scope.filter.include_filters[1].length === 0
-          && $scope.filter.exclude_filters[0].length === 0) {
+            && $scope.filter.include_filters[1].length === 0
+            && $scope.filter.exclude_filters[0].length === 0) {
             $scope.matchedEntitiesCount = null;
             $scope.matchedEntities = [];
             return;
         }
 
-        CommunicationService.getMatchedEntities($scope.filter).then(function(response) {
+        CommunicationService.getMatchedEntities($scope.filter).then(function (response) {
             $scope.matchedEntitiesCount = response.count;
             $scope.matchedEntities = _.map(response.entities, 'id');
         })
@@ -133,10 +133,12 @@ var TrialRunCtrl = function ($scope, $interval, $timeout, timespanFilter, Commun
             'value': 'str',
             'label': 'String'
         },
-        {   'value': 'int',
+        {
+            'value': 'int',
             'label': 'Integer'
         },
-        {   'value': 'float',
+        {
+            'value': 'float',
             'label': 'Float'
         },
         {
@@ -193,11 +195,13 @@ var TrialRunCtrl = function ($scope, $interval, $timeout, timespanFilter, Commun
     $scope.matchedEntities = [];
 
     $scope.filter = {
-        include_filters: [[],[]],
+        include_filters: [[], []],
         exclude_filters: [[]]
     };
 
-    $scope.alert = _.extend($scope.alert || {}, {
+    $scope.alert = _.extend($scope.alert || {
+        alert_condition: 'False'
+    }, {
         entities: [],
         entities_exclude: [],
         parameters: [],
@@ -287,16 +291,20 @@ var TrialRunCtrl = function ($scope, $interval, $timeout, timespanFilter, Commun
         }
     }, true);
 
-   $scope.$watch('TrialRunCtrl.parameters', function() {
-       $scope.alert.parameters = formParametersObject($scope.TrialRunCtrl.parameters);
-   }, true);
+    $scope.$watch('TrialRunCtrl.parameters', function () {
+        $scope.alert.parameters = formParametersObject($scope.TrialRunCtrl.parameters);
+    }, true);
 
-   if ($location.search().json) {
-    var urlJson =JSON.parse($location.search().json)
+    if ($location.search().json) {
+        var urlJson = JSON.parse($location.search().json)
     }
+
+    $scope.minCheckInterval = BootConfig.check.minInterval.normal;
+    $scope.minWhitelistedCheckInterval = BootConfig.check.minInterval.whitelisted;
 
     if ($routeParams.checkId) {
         $scope.checkId = $routeParams.checkId;
+        $scope.whitelistedForInterval = BootConfig.check.minInterval.whitelistedChecks.indexOf(parseInt($scope.checkId)) >= 0;
         CommunicationService.getCheckDefinition($scope.checkId).then(
             function (response) {
                 $scope.alert = response;
@@ -319,7 +327,7 @@ var TrialRunCtrl = function ($scope, $interval, $timeout, timespanFilter, Commun
     } else if (urlJson) {
         _.extend($scope.alert, urlJson);
     }
-    
+
     // One-time set of the entityFilter.formEntityFilters and entityFilter.textEntityFilters now that we have alert definition
     trc.entityFilter.formEntityFilters = $scope.alert.entities;
     trc.entityFilter.textEntityFilters = JSON.stringify($scope.alert.entities, null, trc.INDENT);
@@ -360,7 +368,7 @@ var TrialRunCtrl = function ($scope, $interval, $timeout, timespanFilter, Commun
                 trc.invalidFormat = true;
                 return FeedbackMessageService.showErrorMessage('JSON format is incorrect' + ex);
             }
-           
+
             var obj = {};
             obj.name = $scope.alert.name.trim();
             obj.entities = $scope.alert.entities;
@@ -373,17 +381,21 @@ var TrialRunCtrl = function ($scope, $interval, $timeout, timespanFilter, Commun
             obj.status = isNew ? "ACTIVE" : $scope.alert.status;
             obj.id = isNew ? undefined : $scope.alert.id // this id is actually the check id
 
-            MainAlertService.isValidCheckName(obj).then((valid)=>{
-                if(valid){
-                    CommunicationService.updateCheckDefinition(obj).then(function(data) {
-                        FeedbackMessageService.showSuccessMessage('Saved successfully; redirecting...', 500, function() {
+            if (obj.interval < $scope.minCheckInterval && isNew) {
+                return FeedbackMessageService.showErrorMessage('New check is not whitelisted for this interval. Use at least ' + $scope.minCheckInterval + ' seconds.');
+            }
+
+            MainAlertService.isValidCheckName(obj).then((valid) => {
+                if(valid) {
+                    CommunicationService.updateCheckDefinition(obj).then(function (data) {
+                        FeedbackMessageService.showSuccessMessage('Saved successfully; redirecting...', 500, function () {
                             $location.path('/check-definitions/view/' + data.id);
                         });
                     });
-                }else{
-                    $("#alertModal .modal-body").html(`A check with name <b>${obj.name}</b> already exists for team <b>${obj.owning_team}</b>. Please select a different name to save.`)
-                    $("#alertModal").modal();  
-                   
+                } else {
+                    $("#alertModal .modal-body").html(`A check with name <b>${obj.name}</b> already exists for team <b>${obj.owning_team}</b>. Please select a different name to save.`);
+                    $("#alertModal").modal();
+
                 }
             })
         } else {
@@ -420,7 +432,7 @@ var TrialRunCtrl = function ($scope, $interval, $timeout, timespanFilter, Commun
 
         // have to wait one digest cycle before the validity of the form is set according to
         // the onRun requirements
-        $timeout(function() {
+        $timeout(function () {
 
             if (!$scope.trForm.$valid) {
                 trc.formVisible = true;
@@ -525,7 +537,7 @@ var TrialRunCtrl = function ($scope, $interval, $timeout, timespanFilter, Commun
         content += "command: |\n  " + $scope.alert.check_command.split('\n').join('\n  ');
         content += "\nowning_team: " + $scope.alert.owning_team;
         content += "\n# OPTIONAL FIELDS\n#technical_details: Optional Technical Details\n#potential_analysis: Optional Potential analysis\n#potential_impact: Optional potential impact\n#potential_solution: Optional potential solution";
-        return  content;
+        return content;
     };
 
     trc.alertNameToFilename = function () {
@@ -533,14 +545,14 @@ var TrialRunCtrl = function ($scope, $interval, $timeout, timespanFilter, Commun
     };
 
     // Add a new parameter with cleared values and type string by default
-    trc.addParameter = function() {
+    trc.addParameter = function () {
         trc.parameters.push({type: 'str'});
     };
 
     // Remove a parameter from the parameters json object
-    trc.removeParameter = function(name) {
+    trc.removeParameter = function (name) {
         var index = null;
-        _.each(trc.parameters, function(param, i) {
+        _.each(trc.parameters, function (param, i) {
             if (param.name === name) {
                 index = i;
             }
@@ -551,7 +563,7 @@ var TrialRunCtrl = function ($scope, $interval, $timeout, timespanFilter, Commun
     };
 
     // Validate a parameter's name to be a valid python variable name
-    trc.paramNameIsValid = function(name) {
+    trc.paramNameIsValid = function (name) {
         var re = /^[_a-zA-Z][_a-zA-Z0-9]*/;
         return re.test(name);
     };
@@ -565,7 +577,7 @@ var TrialRunCtrl = function ($scope, $interval, $timeout, timespanFilter, Commun
 
     // Used by ui-select in view to return list of teams for Team field dropdown
     // and allow inserting new values
-    $scope.getItems = function(prop, search) {
+    $scope.getItems = function (prop, search) {
         var teams = _.extend([], trc.teams);
         var options = teams.indexOf(prop) === -1 ? teams.concat(prop) : teams;
         if (search && options.indexOf(search) === -1) {
@@ -576,4 +588,4 @@ var TrialRunCtrl = function ($scope, $interval, $timeout, timespanFilter, Commun
 };
 
 
-angular.module('zmon2App').controller('TrialRunCtrl', ['$scope', '$interval', '$timeout', 'timespanFilter', 'CommunicationService', 'MainAlertService', 'FeedbackMessageService', 'UserInfoService', '$window', '$location','$routeParams', TrialRunCtrl]);
+angular.module('zmon2App').controller('TrialRunCtrl', ['$scope', '$interval', '$timeout', 'timespanFilter', 'CommunicationService', 'MainAlertService', 'FeedbackMessageService', 'UserInfoService', '$window', '$location', '$routeParams', TrialRunCtrl]);

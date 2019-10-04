@@ -33,10 +33,7 @@ import org.zalando.zmon.diff.CheckDefinitionsDiffFactory;
 import org.zalando.zmon.domain.*;
 import org.zalando.zmon.event.ZMonEventType;
 import org.zalando.zmon.exception.SerializationException;
-import org.zalando.zmon.persistence.AlertDefinitionSProcService;
-import org.zalando.zmon.persistence.CheckDefinitionImportResult;
-import org.zalando.zmon.persistence.CheckDefinitionSProcService;
-import org.zalando.zmon.persistence.ZMonSProcService;
+import org.zalando.zmon.persistence.*;
 import org.zalando.zmon.redis.RedisPattern;
 import org.zalando.zmon.redis.ResponseHolder;
 import org.zalando.zmon.service.AlertService;
@@ -80,32 +77,30 @@ public class ZMonServiceImpl implements ZMonService {
 
     private static final long MAX_ACTIVE_WORKER_TIMESTAMP_MILLIS_AGO = 24 * 1000;
 
-    @Autowired
     protected CheckDefinitionSProcService checkDefinitionSProc;
-
-    @Autowired
     protected AlertDefinitionSProcService alertDefinitionSProc;
-
-    @Autowired
     protected ZMonSProcService zmonSProc;
-
-    @Autowired
+    protected EntitySProcService entitySProc;
     protected JedisPool redisPool;
-
-    @Autowired
     protected ObjectMapper mapper;
-
-    @Autowired
     private NoOpEventLog eventLog;
-
-    @Autowired
     private CheckRuntimeConfig checkRuntimeConfig;
-
-    @Autowired
     private ControllerProperties config;
+    protected AlertService alertService;
 
     @Autowired
-    protected AlertService alertService;
+    public ZMonServiceImpl(CheckDefinitionSProcService checkDefinitionSProc, AlertDefinitionSProcService alertDefinitionSProc, ZMonSProcService zmonSProc, EntitySProcService entitySProc, JedisPool redisPool, ObjectMapper mapper, NoOpEventLog eventLog, CheckRuntimeConfig checkRuntimeConfig, ControllerProperties config, AlertService alertService) {
+        this.checkDefinitionSProc = checkDefinitionSProc;
+        this.alertDefinitionSProc = alertDefinitionSProc;
+        this.zmonSProc = zmonSProc;
+        this.entitySProc = entitySProc;
+        this.redisPool = redisPool;
+        this.mapper = mapper;
+        this.eventLog = eventLog;
+        this.checkRuntimeConfig = checkRuntimeConfig;
+        this.config = config;
+        this.alertService = alertService;
+    }
 
     @Override
     public ExecutionStatus getStatus() {
@@ -208,7 +203,6 @@ public class ZMonServiceImpl implements ZMonService {
     @Override
     public CheckDefinitionsDiff getCheckDefinitionsDiff(final Long snapshotId) {
         return CheckDefinitionsDiffFactory.create(checkDefinitionSProc.getCheckDefinitionsDiff(snapshotId));
-
     }
 
     @Override
@@ -219,7 +213,45 @@ public class ZMonServiceImpl implements ZMonService {
 
         checkDefinition.setLastModifiedBy(userName);
 
+        validateInterval(checkDefinition);
+
         return checkDefinitionSProc.createOrUpdateCheckDefinition(checkDefinition, userName, teams, isAdmin, checkRuntimeConfig.isEnabled(), checkRuntimeConfig.getDefaultRuntime());
+    }
+
+    private void validateInterval(CheckDefinitionImport checkDefinition) {
+        List<String> entities = entitySProc.getEntities("[{\"type\":\"zmon_config\", \"id\":\"zmon-min-check-interval\"}]");
+        if (entities.size() == 1) {
+            try {
+                MinCheckInterval config = mapper.readValue(entities.get(0), MinCheckInterval.class);
+                if (null != config.getData() && null != config.getData().getWhitelistedChecks()) {
+                    if (checkDefinition.getInterval() < config.getData().getMinCheckInterval()) {
+                        Integer checkId = checkDefinition.getId();
+                        if (null == checkId) {
+                            throw new SerializationException("Check interval is too low. New checks must use minimum interval of " + config.getData().getMinCheckInterval() + " seconds.");
+                        }
+
+                        List<CheckDefinition> oldCheckDefinition = checkDefinitionSProc.getCheckDefinitions(null, Collections.singletonList(checkId));
+                        if (oldCheckDefinition.size() == 1 && oldCheckDefinition.get(0).getInterval().equals(checkDefinition.getInterval())) {
+                            log.info("Interval is not checked since it wasn't modified");
+                            return;
+                        }
+
+                        if (!config.getData().getWhitelistedChecks().contains(checkId)) {
+                            throw new SerializationException("Check interval is too low. Non-whitelisted checks must use default minimum interval of " + config.getData().getMinCheckInterval() + " seconds.");
+                        }
+                        if (checkDefinition.getInterval() < config.getData().getMinWhitelistedCheckInterval()) {
+                            throw new SerializationException("Check interval is too low. Whitelisted checks must use minimum interval of " + config.getData().getMinWhitelistedCheckInterval() + " seconds.");
+                        }
+                    }
+                } else {
+                    log.error("zmon-min-check-interval has no data!");
+                }
+            } catch (IOException e) {
+                log.error("Cannot read zmon-min-check-interval entity, continuing");
+            }
+        } else {
+            log.error("zmon-min-check-interval is empty!");
+        }
     }
 
     @Override
@@ -590,14 +622,14 @@ public class ZMonServiceImpl implements ZMonService {
             HttpResponse r = executor.execute(Request.Head(uri)).returnResponse();
             int count = Integer.parseInt(r.getHeaders("entity-count")[0].getValue());
 
-            if(count <= 25) {
+            if (count <= 25) {
                 EntityFilterResponse response = new EntityFilterResponse(count);
                 final String entitiesString = executor.execute(Request.Get(uri)).returnContent().asString();
                 final JsonNode node = mapper.readTree(entitiesString);
                 final ArrayNode arrayNode = (ArrayNode) node;
 
-                for(JsonNode entity : arrayNode) {
-                    if(entity.has("id")) {
+                for (JsonNode entity : arrayNode) {
+                    if (entity.has("id")) {
                         EntityFilterResponse.SimpleEntity simple = new EntityFilterResponse.SimpleEntity();
                         simple.id = entity.get("id").textValue();
                         simple.type = entity.get("type").textValue();
@@ -606,8 +638,7 @@ public class ZMonServiceImpl implements ZMonService {
                 }
 
                 return response;
-            }
-            else {
+            } else {
                 return new EntityFilterResponse(count);
             }
 
@@ -627,12 +658,12 @@ public class ZMonServiceImpl implements ZMonService {
         final List<EntityGroup> alertCoverage = parseAlertCoverage(getAlertCoverage(filter));
 
         final Set<Integer> alertIds = alertCoverage.stream()
-                   .map(entityGroup -> entityGroup.alerts)
-                   .flatMap(alertInfos -> alertInfos.stream().map(alertInfo -> alertInfo.id))
-                   .collect(Collectors.toSet());
+                .map(entityGroup -> entityGroup.alerts)
+                .flatMap(alertInfos -> alertInfos.stream().map(alertInfo -> alertInfo.id))
+                .collect(Collectors.toSet());
 
         final Map<Integer, Alert> alerts = alertService.fetchAlertsById(alertIds).stream()
-            .collect(Collectors.toMap(a -> a.getAlertDefinition().getId(), Function.identity()));
+                .collect(Collectors.toMap(a -> a.getAlertDefinition().getId(), Function.identity()));
 
         return createAlertResults(alertCoverage, alerts);
     }
@@ -647,13 +678,13 @@ public class ZMonServiceImpl implements ZMonService {
 
                 for (EntityInfo entityInfo : eg.entities) {
                     alertResults.add(new AlertResult(
-                        String.valueOf(alertInfo.id),
-                        String.valueOf(entityInfo.id),
-                        entityInfo.type,
-                        checkDefinitionOrNull(alert),
-                        checkAlertNameOrNull(alert),
-                        isAlertTriggeredForEntity(alert, entityInfo.id),
-                        priorityOrNull(alert)));
+                            String.valueOf(alertInfo.id),
+                            String.valueOf(entityInfo.id),
+                            entityInfo.type,
+                            checkDefinitionOrNull(alert),
+                            checkAlertNameOrNull(alert),
+                            isAlertTriggeredForEntity(alert, entityInfo.id),
+                            priorityOrNull(alert)));
                 }
             }
         }
@@ -701,7 +732,7 @@ public class ZMonServiceImpl implements ZMonService {
 
         EntityGroup[] alertCoverage;
         try {
-            alertCoverage = mapper.treeToValue(coverage,  EntityGroup[].class);
+            alertCoverage = mapper.treeToValue(coverage, EntityGroup[].class);
         } catch (JsonProcessingException e) {
             log.warn("failed to parse alert coverage", e);
             return Collections.emptyList();

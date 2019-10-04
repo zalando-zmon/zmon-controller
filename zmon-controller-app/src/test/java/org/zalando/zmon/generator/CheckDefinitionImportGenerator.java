@@ -22,7 +22,7 @@ public class CheckDefinitionImportGenerator implements RandomDataGenerator<Check
         c.setPotentialSolution("Generated potential solution");
         c.setOwningTeam("Platform/Software");
         c.setEntities(ImmutableList.<Map<String, String>>of(ImmutableMap.of("type", "zomcat")));
-        c.setInterval(10L);
+        c.setInterval(60L);
         c.setCommand("zomcat().health()");
         c.setStatus(DefinitionStatus.ACTIVE);
         c.setSourceUrl(sourceUrl);

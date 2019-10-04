@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.hamcrest.core.IsNull;
@@ -12,22 +13,31 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
+import org.zalando.zmon.config.CheckRuntimeConfig;
+import org.zalando.zmon.config.ControllerProperties;
 import org.zalando.zmon.domain.*;
+import org.zalando.zmon.exception.SerializationException;
 import org.zalando.zmon.generator.AlertDefinitionGenerator;
 import org.zalando.zmon.generator.CheckDefinitionImportGenerator;
 import org.zalando.zmon.generator.DataGenerator;
 import org.zalando.zmon.generator.RandomDataGenerator;
-import org.zalando.zmon.persistence.CheckDefinitionImportResult;
+import org.zalando.zmon.persistence.*;
 import org.zalando.zmon.service.AlertService;
 import org.zalando.zmon.service.ZMonService;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import redis.clients.jedis.JedisPool;
+
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
@@ -36,10 +46,27 @@ import com.google.common.collect.Sets;
 public class ZMonServiceImplIT {
 
     @Autowired
-    private ZMonService service;
-
+    protected CheckDefinitionSProcService checkDefinitionSProc;
     @Autowired
-    private AlertService alertService;
+    protected AlertDefinitionSProcService alertDefinitionSProc;
+    @Autowired
+    protected ZMonSProcService zmonSProc;
+    @Autowired
+    protected EntitySProcService entitySProc;
+    @Autowired
+    protected JedisPool redisPool;
+    @Autowired
+    protected ObjectMapper mapper;
+    @Autowired
+    private NoOpEventLog eventLog;
+    @Autowired
+    private CheckRuntimeConfig checkRuntimeConfig;
+    @Autowired
+    private ControllerProperties config;
+    @Autowired
+    protected AlertService alertService;
+
+    private ZMonService service;
 
     private RandomDataGenerator<CheckDefinitionImport> checkImportGenerator;
     private DataGenerator<AlertDefinition> alertGenerator;
@@ -51,6 +78,7 @@ public class ZMonServiceImplIT {
     public void setup() {
         checkImportGenerator = new CheckDefinitionImportGenerator();
         alertGenerator = new AlertDefinitionGenerator();
+        service = new ZMonServiceImpl(checkDefinitionSProc, alertDefinitionSProc, zmonSProc, entitySProc, redisPool, mapper, eventLog, checkRuntimeConfig, config, alertService);
     }
 
     @Test
@@ -64,6 +92,48 @@ public class ZMonServiceImplIT {
         MatcherAssert.assertThat(checkDefinitions.getSnapshotId(), Matchers.greaterThan(0L));
         MatcherAssert.assertThat(checkDefinitions.getCheckDefinitions(),
             Matchers.contains(CheckDefinitionIsEqual.equalTo(newCheckDefinition)));
+    }
+
+    @Test(expected = SerializationException.class)
+    public void testCreateCheckDefinitionWithSubMinuteInterval() throws Exception {
+        CheckDefinitionImport newCheck = checkImportGenerator.generate();
+        newCheck.setInterval(15L);
+
+        EntitySProcService entitySProcMock = mock(EntitySProcService.class);
+        service = new ZMonServiceImpl(checkDefinitionSProc, alertDefinitionSProc, zmonSProc, entitySProcMock, redisPool, mapper, eventLog, checkRuntimeConfig, config, alertService);
+        when(entitySProcMock.getEntities(eq("[{\"type\":\"zmon_config\", \"id\":\"zmon-min-check-interval\"}]")))
+                .thenReturn(Collections.singletonList("{\"last_modified\":\"\",\"last_modified_by\":\"\",\"data\":{\"whitelisted_checks\": [1,2,3], \"min_check_interval\": 60, \"min_whitelisted_check_interval\": 15}}"));
+
+        service.createOrUpdateCheckDefinition(newCheck, USER_NAME, USER_TEAMS);
+    }
+
+    @Test
+    public void testCreateWhitelistedCheckDefinitionWithSubMinuteInterval() throws Exception {
+        CheckDefinitionImport newCheck = checkImportGenerator.generate();
+        newCheck.setInterval(15L);
+        newCheck.setId(2);
+
+        EntitySProcService entitySProcMock = mock(EntitySProcService.class);
+        service = new ZMonServiceImpl(checkDefinitionSProc, alertDefinitionSProc, zmonSProc, entitySProcMock, redisPool, mapper, eventLog, checkRuntimeConfig, config, alertService);
+        when(entitySProcMock.getEntities(eq("[{\"type\":\"zmon_config\", \"id\":\"zmon-min-check-interval\"}]")))
+                .thenReturn(Collections.singletonList("{\"last_modified\":\"\",\"last_modified_by\":\"\",\"data\":{\"whitelisted_checks\": [1,2,3], \"min_check_interval\": 60, \"min_whitelisted_check_interval\": 15}}"));
+
+        CheckDefinitionImportResult result = service.createOrUpdateCheckDefinition(newCheck, USER_NAME, USER_TEAMS);
+        MatcherAssert.assertThat("Whitelisted checks can be saved", !result.isNewEntity());
+    }
+
+    @Test(expected = SerializationException.class)
+    public void testCreateCheckDefinitionWithSubMinuteIntervalBelowWhitelisted() throws Exception {
+        CheckDefinitionImport newCheck = checkImportGenerator.generate();
+        newCheck.setInterval(1L);
+        newCheck.setId(2);
+
+        EntitySProcService entitySProcMock = mock(EntitySProcService.class);
+        service = new ZMonServiceImpl(checkDefinitionSProc, alertDefinitionSProc, zmonSProc, entitySProcMock, redisPool, mapper, eventLog, checkRuntimeConfig, config, alertService);
+        when(entitySProcMock.getEntities(eq("[{\"type\":\"zmon_config\", \"id\":\"zmon-min-check-interval\"}]")))
+                .thenReturn(Collections.singletonList("{\"last_modified\":\"\",\"last_modified_by\":\"\",\"data\":{\"whitelisted_checks\": [1,2,3], \"min_check_interval\": 60, \"min_whitelisted_check_interval\": 15}}"));
+
+        service.createOrUpdateCheckDefinition(newCheck, USER_NAME, USER_TEAMS);
     }
 
     @Test
