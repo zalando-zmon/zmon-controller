@@ -107,7 +107,7 @@
 
 .zmon-data-table th.false-positive-col
 {
-    width: 5%;
+    width: 8%;
 }
 
 .zmon-data-table th.check-id-col
@@ -117,11 +117,11 @@
 
 .zmon-data-table th.team-col
 {
-    width: 12%;
+    width: 10%;
 }
 .zmon-data-table th.tags-col
 {
-    width: 12%;
+    width: 10%;
 }
 
 
@@ -200,8 +200,8 @@
     }
     .zmon-data-table td.actions-col div
     {
-        padding-left: 0px; 
-    }   
+        padding-left: 0px;
+    }
 }
 
 /* ALERTS AND CHECK DEFINITIONS */
