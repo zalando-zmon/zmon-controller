@@ -236,6 +236,29 @@ public class ZMonServiceImplIT {
     }
 
     @Test
+    public void testEnrichCheckDefinitionWithTierInfo() {
+        final CheckDefinitionImport toImport = checkImportGenerator.generate();
+
+        EntitySProcService entitySProcMock = mock(EntitySProcService.class);
+        service = new ZMonServiceImpl(checkDefinitionSProc, alertDefinitionSProc, zmonSProc, entitySProcMock, redisPool, mapper, eventLog, checkRuntimeConfig, config, alertService);
+
+
+        final CheckDefinition newCheckDefinition = service.createOrUpdateCheckDefinition(toImport, USER_NAME, USER_TEAMS).getEntity();
+        Integer criticalCheckId = newCheckDefinition.getId();
+
+        when(entitySProcMock.getEntityById(eq("zmon-check-tiers")))
+                .thenReturn(Collections.singletonList("{\"id\":\"zmon-check-tiers\",\"data\":{\"critical\":[" + criticalCheckId + "],\"important\":[2]},\"team\":\"ZMON\",\"type\":\"zmon_config\"}"));
+
+
+        final List<CheckDefinition> checkDefinitions = service.getCheckDefinitions(null,
+                Collections.singletonList(criticalCheckId));
+
+        MatcherAssert.assertThat(checkDefinitions.size(), Matchers.is(1));
+        MatcherAssert.assertThat(checkDefinitions.get(0).getId(), Matchers.is(criticalCheckId));
+        MatcherAssert.assertThat(checkDefinitions.get(0).getTier(), Matchers.is("critical"));
+    }
+
+    @Test
     public void testGetCheckDefinitionsByMultipleIds() throws Exception {
         final List<CheckDefinition> newChecks = new ArrayList<>(2);
 
