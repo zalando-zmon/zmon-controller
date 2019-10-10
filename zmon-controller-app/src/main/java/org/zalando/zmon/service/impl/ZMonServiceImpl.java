@@ -26,6 +26,8 @@ import org.zalando.zmon.api.domain.AlertResult;
 import org.zalando.zmon.api.domain.CheckChartResult;
 import org.zalando.zmon.api.domain.EntityFilterRequest;
 import org.zalando.zmon.api.domain.EntityFilterResponse;
+import org.zalando.zmon.api.domain.EntityObject;
+import org.zalando.zmon.api.domain.entity.specific.CheckTiersEntity;
 import org.zalando.zmon.config.CheckRuntimeConfig;
 import org.zalando.zmon.config.ControllerProperties;
 import org.zalando.zmon.config.SchedulerProperties;
@@ -76,6 +78,7 @@ public class ZMonServiceImpl implements ZMonService {
     private final Logger log = LoggerFactory.getLogger(ZMonServiceImpl.class);
 
     private static final long MAX_ACTIVE_WORKER_TIMESTAMP_MILLIS_AGO = 24 * 1000;
+    private static final String CHECK_TIERS_ENTITY_NAME = "zmon-check-tiers";
 
     protected CheckDefinitionSProcService checkDefinitionSProc;
     protected AlertDefinitionSProcService alertDefinitionSProc;
@@ -177,7 +180,25 @@ public class ZMonServiceImpl implements ZMonService {
     @Override
     public List<CheckDefinition> getCheckDefinitions(final DefinitionStatus status,
                                                      final List<Integer> checkDefinitionIds) {
-        return checkDefinitionSProc.getCheckDefinitions(status, checkDefinitionIds);
+        List<CheckDefinition> checkDefinitions = checkDefinitionSProc.getCheckDefinitions(status, checkDefinitionIds);
+
+
+        List<String> entities = entitySProc.getEntityById(CHECK_TIERS_ENTITY_NAME);
+        if (entities.isEmpty()) {
+            return checkDefinitions;
+        }
+        try {
+            CheckTiersEntity.Tiers tiers = mapper.readValue(entities.get(0), CheckTiersEntity.class).getData();
+            checkDefinitions.forEach(check -> {
+                boolean isCritical = tiers.getCritical().contains(check.getId());
+                boolean isImportant = tiers.getImportant().contains(check.getId());
+                String tier = isCritical ? "critical" : isImportant ? "important" : "other";
+                check.setTier(tier);
+            });
+        } catch (Exception e) {
+            log.error("Failed to parse entity json");
+        }
+        return checkDefinitions;
     }
 
     @Override

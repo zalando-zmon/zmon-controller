@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -87,6 +88,11 @@ public class CheckDefinition implements StatusDiff {
     @XmlElement
     @DatabaseField
     private DefinitionRuntime runtime;
+
+    //Not sure, that this will work
+    @Transient
+    private String tier = "unknown";
+
 
     public Date getLastModified() {
         return lastModified;
@@ -216,6 +222,14 @@ public class CheckDefinition implements StatusDiff {
         this.runtime = runtime;
     }
 
+    public String getTier() {
+        return tier;
+    }
+
+    public void setTier(String tier) {
+        this.tier = tier;
+    }
+
     public boolean isDeleted() {
         return getStatus() == DefinitionStatus.DELETED;
     }
@@ -253,8 +267,9 @@ public class CheckDefinition implements StatusDiff {
         builder.append(lastModifiedBy);
         builder.append(", runtime=");
         builder.append(runtime);
+        builder.append(", tier=");
+        builder.append(tier);
         builder.append("]");
         return builder.toString();
     }
-
 }
