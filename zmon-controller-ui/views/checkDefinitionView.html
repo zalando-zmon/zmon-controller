@@ -8,7 +8,6 @@
         <p>
             ID: {{checkDefinition.id}},
             Status: <status status="checkDefinition.status"/>,
-            Tier: {{checkDefinition.tier}},
             Team: {{checkDefinition.owning_team}}
         </p>
         <p>
@@ -30,6 +29,8 @@
             <dd><div hljs hljs-source="checkDefinition.command" hljs-language="python"></div></dd>
             <dt>Interval</dt>
             <dd>{{checkDefinition.interval|timespan:'s'}}</dd>
+            <dt ng-if="checkDefinition.tier != 'empty'">Tier</dt>
+            <dd ng-if="checkDefinition.tier != 'empty'">{{checkDefinition.tier}}</dd>
             <dt>Entities</dt>
             <dd ng-bind-html="checkDefinition.entities | entities"></dd>
         </dl>

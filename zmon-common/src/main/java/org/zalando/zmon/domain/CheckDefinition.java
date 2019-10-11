@@ -11,6 +11,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.zalando.zmon.adapter.EntityListAdapter;
 import org.zalando.zmon.diff.StatusDiff;
 
@@ -90,7 +91,7 @@ public class CheckDefinition implements StatusDiff {
     private DefinitionRuntime runtime;
 
     @Transient
-    private Tier tier = Tier.OTHER;
+    private Tier tier = Tier.EMPTY;
 
     public Date getLastModified() {
         return lastModified;
@@ -272,17 +273,16 @@ public class CheckDefinition implements StatusDiff {
     }
 
     public enum Tier {
-        CRITICAL("critical"), IMPORTANT("important"), OTHER("other");
+        @JsonProperty("empty")
+        EMPTY,
 
-        private final String name;
+        @JsonProperty("critical")
+        CRITICAL,
 
-        Tier(String name) {
-            this.name = name;
-        }
+        @JsonProperty("important")
+        IMPORTANT,
 
-        @Override
-        public String toString() {
-            return name;
-        }
+        @JsonProperty("others")
+        OTHER;
     }
 }
