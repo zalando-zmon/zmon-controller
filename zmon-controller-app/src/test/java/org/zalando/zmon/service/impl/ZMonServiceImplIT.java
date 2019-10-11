@@ -236,7 +236,7 @@ public class ZMonServiceImplIT {
     }
 
     @Test
-    public void testEnrichCheckDefinitionWithTierInfo() {
+    public void testShowCriticalTier() {
         final CheckDefinitionImport toImport = checkImportGenerator.generate();
 
         EntitySProcService entitySProcMock = mock(EntitySProcService.class);
@@ -247,7 +247,7 @@ public class ZMonServiceImplIT {
         Integer criticalCheckId = newCheckDefinition.getId();
 
         when(entitySProcMock.getEntityById(eq("zmon-check-tiers")))
-                .thenReturn(Collections.singletonList("{\"id\":\"zmon-check-tiers\",\"data\":{\"critical\":[" + criticalCheckId + "],\"important\":[2]},\"team\":\"ZMON\",\"type\":\"zmon_config\"}"));
+                .thenReturn(Collections.singletonList("{\"id\":\"zmon-check-tiers\",\"data\":{\"critical\":[" + criticalCheckId + "],\"important\":[]},\"team\":\"ZMON\",\"type\":\"zmon_config\"}"));
 
 
         final List<CheckDefinition> checkDefinitions = service.getCheckDefinitions(null,
@@ -255,7 +255,76 @@ public class ZMonServiceImplIT {
 
         MatcherAssert.assertThat(checkDefinitions.size(), Matchers.is(1));
         MatcherAssert.assertThat(checkDefinitions.get(0).getId(), Matchers.is(criticalCheckId));
-        MatcherAssert.assertThat(checkDefinitions.get(0).getTier(), Matchers.is("critical"));
+        MatcherAssert.assertThat(checkDefinitions.get(0).getTier().toString(), Matchers.is("critical"));
+    }
+
+    @Test
+    public void testShowImportantTier() {
+        final CheckDefinitionImport toImport = checkImportGenerator.generate();
+
+        EntitySProcService entitySProcMock = mock(EntitySProcService.class);
+        service = new ZMonServiceImpl(checkDefinitionSProc, alertDefinitionSProc, zmonSProc, entitySProcMock, redisPool, mapper, eventLog, checkRuntimeConfig, config, alertService);
+
+
+        final CheckDefinition newCheckDefinition = service.createOrUpdateCheckDefinition(toImport, USER_NAME, USER_TEAMS).getEntity();
+        Integer importantCheckId = newCheckDefinition.getId();
+
+        when(entitySProcMock.getEntityById(eq("zmon-check-tiers")))
+                .thenReturn(Collections.singletonList("{\"id\":\"zmon-check-tiers\",\"data\":{\"critical\":[],\"important\":[" + importantCheckId + "]},\"team\":\"ZMON\",\"type\":\"zmon_config\"}"));
+
+
+        final List<CheckDefinition> checkDefinitions = service.getCheckDefinitions(null,
+                Collections.singletonList(importantCheckId));
+
+        MatcherAssert.assertThat(checkDefinitions.size(), Matchers.is(1));
+        MatcherAssert.assertThat(checkDefinitions.get(0).getId(), Matchers.is(importantCheckId));
+        MatcherAssert.assertThat(checkDefinitions.get(0).getTier().toString(), Matchers.is("important"));
+    }
+
+    @Test
+    public void testShowNormalTier() {
+        final CheckDefinitionImport toImport = checkImportGenerator.generate();
+
+        EntitySProcService entitySProcMock = mock(EntitySProcService.class);
+        service = new ZMonServiceImpl(checkDefinitionSProc, alertDefinitionSProc, zmonSProc, entitySProcMock, redisPool, mapper, eventLog, checkRuntimeConfig, config, alertService);
+
+
+        final CheckDefinition newCheckDefinition = service.createOrUpdateCheckDefinition(toImport, USER_NAME, USER_TEAMS).getEntity();
+        Integer regularCheckId = newCheckDefinition.getId();
+
+        when(entitySProcMock.getEntityById(eq("zmon-check-tiers")))
+                .thenReturn(Collections.singletonList("{\"id\":\"zmon-check-tiers\",\"data\":{\"critical\":[],\"important\":[]},\"team\":\"ZMON\",\"type\":\"zmon_config\"}"));
+
+
+        final List<CheckDefinition> checkDefinitions = service.getCheckDefinitions(null,
+                Collections.singletonList(regularCheckId));
+
+        MatcherAssert.assertThat(checkDefinitions.size(), Matchers.is(1));
+        MatcherAssert.assertThat(checkDefinitions.get(0).getId(), Matchers.is(regularCheckId));
+        MatcherAssert.assertThat(checkDefinitions.get(0).getTier().toString(), Matchers.is("normal"));
+    }
+
+    @Test
+    public void testShowNormalTierInCaseThereIsNoConfigWithTiers() {
+        final CheckDefinitionImport toImport = checkImportGenerator.generate();
+
+        EntitySProcService entitySProcMock = mock(EntitySProcService.class);
+        service = new ZMonServiceImpl(checkDefinitionSProc, alertDefinitionSProc, zmonSProc, entitySProcMock, redisPool, mapper, eventLog, checkRuntimeConfig, config, alertService);
+
+
+        final CheckDefinition newCheckDefinition = service.createOrUpdateCheckDefinition(toImport, USER_NAME, USER_TEAMS).getEntity();
+        Integer regularCheckId = newCheckDefinition.getId();
+
+        when(entitySProcMock.getEntityById(eq("zmon-check-tiers")))
+                .thenReturn(Collections.emptyList());
+
+
+        final List<CheckDefinition> checkDefinitions = service.getCheckDefinitions(null,
+                Collections.singletonList(regularCheckId));
+
+        MatcherAssert.assertThat(checkDefinitions.size(), Matchers.is(1));
+        MatcherAssert.assertThat(checkDefinitions.get(0).getId(), Matchers.is(regularCheckId));
+        MatcherAssert.assertThat(checkDefinitions.get(0).getTier().toString(), Matchers.is("normal"));
     }
 
     @Test

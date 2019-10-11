@@ -33,6 +33,7 @@ import org.zalando.zmon.config.ControllerProperties;
 import org.zalando.zmon.config.SchedulerProperties;
 import org.zalando.zmon.diff.CheckDefinitionsDiffFactory;
 import org.zalando.zmon.domain.*;
+import org.zalando.zmon.domain.CheckDefinition.Tier;
 import org.zalando.zmon.event.ZMonEventType;
 import org.zalando.zmon.exception.SerializationException;
 import org.zalando.zmon.persistence.*;
@@ -192,7 +193,7 @@ public class ZMonServiceImpl implements ZMonService {
             checkDefinitions.forEach(check -> {
                 boolean isCritical = tiers.getCritical().contains(check.getId());
                 boolean isImportant = tiers.getImportant().contains(check.getId());
-                String tier = isCritical ? "critical" : isImportant ? "important" : "other";
+                Tier tier = isCritical ? Tier.CRITICAL : isImportant ? Tier.IMPORTANT : Tier.OTHER;
                 check.setTier(tier);
             });
         } catch (Exception e) {

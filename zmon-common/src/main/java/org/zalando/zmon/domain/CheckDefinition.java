@@ -90,7 +90,7 @@ public class CheckDefinition implements StatusDiff {
     private DefinitionRuntime runtime;
 
     @Transient
-    private String tier = "unknown";
+    private Tier tier = Tier.OTHER;
 
     public Date getLastModified() {
         return lastModified;
@@ -220,11 +220,11 @@ public class CheckDefinition implements StatusDiff {
         this.runtime = runtime;
     }
 
-    public String getTier() {
+    public Tier getTier() {
         return tier;
     }
 
-    public void setTier(String tier) {
+    public void setTier(Tier tier) {
         this.tier = tier;
     }
 
@@ -269,5 +269,20 @@ public class CheckDefinition implements StatusDiff {
         builder.append(tier);
         builder.append("]");
         return builder.toString();
+    }
+
+    public enum Tier {
+        CRITICAL("critical"), IMPORTANT("important"), OTHER("other");
+
+        private final String name;
+
+        Tier(String name) {
+            this.name = name;
+        }
+
+        @Override
+        public String toString() {
+            return name;
+        }
     }
 }
