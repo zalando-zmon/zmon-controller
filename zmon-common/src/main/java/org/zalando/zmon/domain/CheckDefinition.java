@@ -89,10 +89,8 @@ public class CheckDefinition implements StatusDiff {
     @DatabaseField
     private DefinitionRuntime runtime;
 
-    //Not sure, that this will work
     @Transient
     private String tier = "unknown";
-
 
     public Date getLastModified() {
         return lastModified;
