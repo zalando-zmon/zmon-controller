@@ -13,7 +13,6 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
@@ -22,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.zalando.zmon.config.CheckRuntimeConfig;
 import org.zalando.zmon.config.ControllerProperties;
 import org.zalando.zmon.domain.*;
+import org.zalando.zmon.domain.CheckDefinition.Tier;
 import org.zalando.zmon.exception.SerializationException;
 import org.zalando.zmon.generator.AlertDefinitionGenerator;
 import org.zalando.zmon.generator.CheckDefinitionImportGenerator;
@@ -255,7 +255,7 @@ public class ZMonServiceImplIT {
 
         MatcherAssert.assertThat(checkDefinitions.size(), Matchers.is(1));
         MatcherAssert.assertThat(checkDefinitions.get(0).getId(), Matchers.is(criticalCheckId));
-        MatcherAssert.assertThat(checkDefinitions.get(0).getTier().toString(), Matchers.is("critical"));
+        MatcherAssert.assertThat(checkDefinitions.get(0).getTier(), Matchers.is(Tier.CRITICAL));
     }
 
     @Test
@@ -278,11 +278,11 @@ public class ZMonServiceImplIT {
 
         MatcherAssert.assertThat(checkDefinitions.size(), Matchers.is(1));
         MatcherAssert.assertThat(checkDefinitions.get(0).getId(), Matchers.is(importantCheckId));
-        MatcherAssert.assertThat(checkDefinitions.get(0).getTier().toString(), Matchers.is("important"));
+        MatcherAssert.assertThat(checkDefinitions.get(0).getTier(), Matchers.is(Tier.IMPORTANT));
     }
 
     @Test
-    public void testShowNormalTier() {
+    public void testShowOthersTier() {
         final CheckDefinitionImport toImport = checkImportGenerator.generate();
 
         EntitySProcService entitySProcMock = mock(EntitySProcService.class);
@@ -301,11 +301,11 @@ public class ZMonServiceImplIT {
 
         MatcherAssert.assertThat(checkDefinitions.size(), Matchers.is(1));
         MatcherAssert.assertThat(checkDefinitions.get(0).getId(), Matchers.is(regularCheckId));
-        MatcherAssert.assertThat(checkDefinitions.get(0).getTier().toString(), Matchers.is("normal"));
+        MatcherAssert.assertThat(checkDefinitions.get(0).getTier(), Matchers.is(Tier.OTHERS));
     }
 
     @Test
-    public void testShowNormalTierInCaseThereIsNoConfigWithTiers() {
+    public void testShowEmptyTierInCaseThereIsNoConfigWithTiers() {
         final CheckDefinitionImport toImport = checkImportGenerator.generate();
 
         EntitySProcService entitySProcMock = mock(EntitySProcService.class);
@@ -324,7 +324,7 @@ public class ZMonServiceImplIT {
 
         MatcherAssert.assertThat(checkDefinitions.size(), Matchers.is(1));
         MatcherAssert.assertThat(checkDefinitions.get(0).getId(), Matchers.is(regularCheckId));
-        MatcherAssert.assertThat(checkDefinitions.get(0).getTier().toString(), Matchers.is("normal"));
+        MatcherAssert.assertThat(checkDefinitions.get(0).getTier(), Matchers.is(Tier.EMPTY));
     }
 
     @Test

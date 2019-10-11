@@ -26,7 +26,6 @@ import org.zalando.zmon.api.domain.AlertResult;
 import org.zalando.zmon.api.domain.CheckChartResult;
 import org.zalando.zmon.api.domain.EntityFilterRequest;
 import org.zalando.zmon.api.domain.EntityFilterResponse;
-import org.zalando.zmon.api.domain.EntityObject;
 import org.zalando.zmon.api.domain.entity.specific.CheckTiersEntity;
 import org.zalando.zmon.config.CheckRuntimeConfig;
 import org.zalando.zmon.config.ControllerProperties;
@@ -193,7 +192,7 @@ public class ZMonServiceImpl implements ZMonService {
             checkDefinitions.forEach(check -> {
                 boolean isCritical = tiers.getCritical().contains(check.getId());
                 boolean isImportant = tiers.getImportant().contains(check.getId());
-                Tier tier = isCritical ? Tier.CRITICAL : isImportant ? Tier.IMPORTANT : Tier.OTHER;
+                Tier tier = isCritical ? Tier.CRITICAL : isImportant ? Tier.IMPORTANT : Tier.OTHERS;
                 check.setTier(tier);
             });
         } catch (Exception e) {
