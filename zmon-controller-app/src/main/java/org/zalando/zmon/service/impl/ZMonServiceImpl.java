@@ -185,6 +185,7 @@ public class ZMonServiceImpl implements ZMonService {
 
         List<String> entities = entitySProc.getEntityById(CHECK_TIERS_ENTITY_NAME);
         if (entities.isEmpty()) {
+            log.info("The tier entity '{}' haven't been found", CHECK_TIERS_ENTITY_NAME);
             return checkDefinitions;
         }
         try {
@@ -196,7 +197,7 @@ public class ZMonServiceImpl implements ZMonService {
                 check.setTier(tier);
             });
         } catch (Exception e) {
-            log.error("Failed to parse entity json");
+            log.error("Failed to parse entity json for '{}'", CHECK_TIERS_ENTITY_NAME);
         }
         return checkDefinitions;
     }
