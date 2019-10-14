@@ -216,7 +216,10 @@ public class ZMonServiceImpl implements ZMonService {
 
     @Override
     public CheckDefinitions getCheckDefinitions(final DefinitionStatus status) {
-        return checkDefinitionSProc.getAllCheckDefinitions(status);
+        CheckDefinitions wrapperOfCheckDefinitions = checkDefinitionSProc.getAllCheckDefinitions(status);
+        List<CheckDefinition> updated = enrichCheckDefinitionsWithTier(wrapperOfCheckDefinitions.getCheckDefinitions());
+        wrapperOfCheckDefinitions.setCheckDefinitions(updated);
+        return wrapperOfCheckDefinitions;
     }
 
     @Override
