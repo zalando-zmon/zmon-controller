@@ -47,7 +47,8 @@
                         <i class="fa fa-fw fa-sort-asc sort-arrow" ng-show="sortType === 'owning_team' && sortOrder"></i>
                         <i class="fa fa-fw fa-sort-desc sort-arrow" ng-show="sortType === 'owning_team' && !sortOrder"></i>
                     </th>
-                    <th class="tier-col" ng-click="sortType = 'tier'; sortOrder = !sortOrder">Tier
+                    <th ng-if="checkDefinitions[0].tier != 'empty'" class="tier-col" ng-click="sortType = 'tier'; sortOrder = !sortOrder">Tier
+                        <i class="fa fa-fw fa-info-circle" title="Explanation"></i>
                         <i class="fa fa-fw fa-sort-asc sort-arrow" ng-show="sortType === 'tier' && sortOrder"></i>
                         <i class="fa fa-fw fa-sort-desc sort-arrow" ng-show="sortType === 'tier' && !sortOrder"></i>
                     </th>
@@ -67,7 +68,7 @@
                     <td class="ellipsis">{{def.command}}</td>
                     <td ng-bind-html="def.entities | entities"></td>
                     <td>{{def.owning_team}}</td>
-                    <td>{{def.tier}}</td>
+                    <td ng-if="def.tier != 'empty'">{{def.tier}}</td>
                     <td class="text-right">{{def.interval| timespan:'s'}}</td>
                     <td class="text-center"><status status="def.status"/></td>
                 </tr>
