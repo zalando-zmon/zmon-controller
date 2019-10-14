@@ -212,7 +212,8 @@ public class ZMonServiceImpl implements ZMonService {
         // SP doesn't support sets
         final List<String> teamList = teams.stream().map(DBUtil::prefix).collect(Collectors.toList());
 
-        return checkDefinitionSProc.getCheckDefinitionsByOwningTeam(status, teamList);
+        List<CheckDefinition> checkDefinitions = checkDefinitionSProc.getCheckDefinitionsByOwningTeam(status, teamList);
+        return enrichCheckDefinitionsWithTier(checkDefinitions);
     }
 
     @Override
