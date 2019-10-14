@@ -25,12 +25,12 @@
         <dl class="dl-horizontal">
             <dt>Description</dt>
             <dd class="form-control" ng-bind-html="checkDefinition.description | markdown"></dd>
+            <dt>Tier</dt>
+            <dd>{{checkDefinition.tier}}</dd>
             <dt>Command</dt>
             <dd><div hljs hljs-source="checkDefinition.command" hljs-language="python"></div></dd>
             <dt>Interval</dt>
             <dd>{{checkDefinition.interval|timespan:'s'}}</dd>
-            <dt ng-if="checkDefinition.tier != 'empty'">Tier</dt>
-            <dd ng-if="checkDefinition.tier != 'empty'">{{checkDefinition.tier}}</dd>
             <dt>Entities</dt>
             <dd ng-bind-html="checkDefinition.entities | entities"></dd>
         </dl>
