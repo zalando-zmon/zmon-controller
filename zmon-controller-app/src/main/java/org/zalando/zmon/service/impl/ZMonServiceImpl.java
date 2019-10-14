@@ -53,6 +53,7 @@ import java.net.URISyntaxException;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 // TODO remove CheckDefinitionImport and use CheckDefinition with optional id
 // TODO convert mandatory types into native types (Integer -> int...)
@@ -224,7 +225,8 @@ public class ZMonServiceImpl implements ZMonService {
 
     @Override
     public Optional<CheckDefinition> getCheckDefinitionById(final int id) {
-        return checkDefinitionSProc.getCheckDefinitions(null, Lists.newArrayList(id)).stream().findFirst();
+        List<CheckDefinition> checkDefinitions = checkDefinitionSProc.getCheckDefinitions(null, Lists.newArrayList(id));
+        return enrichCheckDefinitionsWithTier(checkDefinitions).stream().findFirst();
     }
 
     @Override
