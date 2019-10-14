@@ -181,8 +181,10 @@ public class ZMonServiceImpl implements ZMonService {
     public List<CheckDefinition> getCheckDefinitions(final DefinitionStatus status,
                                                      final List<Integer> checkDefinitionIds) {
         List<CheckDefinition> checkDefinitions = checkDefinitionSProc.getCheckDefinitions(status, checkDefinitionIds);
+        return enrichCheckDefinitionsWithTier(checkDefinitions);
+    }
 
-
+    private List<CheckDefinition> enrichCheckDefinitionsWithTier(List<CheckDefinition> checkDefinitions) {
         List<String> entities = entitySProc.getEntityById(CHECK_TIERS_ENTITY_NAME);
         if (entities.isEmpty()) {
             log.info("The tier entity '{}' haven't been found", CHECK_TIERS_ENTITY_NAME);
