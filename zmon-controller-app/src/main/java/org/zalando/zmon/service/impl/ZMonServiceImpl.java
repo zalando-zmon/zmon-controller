@@ -32,7 +32,7 @@ import org.zalando.zmon.config.ControllerProperties;
 import org.zalando.zmon.config.SchedulerProperties;
 import org.zalando.zmon.diff.CheckDefinitionsDiffFactory;
 import org.zalando.zmon.domain.*;
-import org.zalando.zmon.domain.CheckDefinition.Tier;
+import org.zalando.zmon.domain.CheckDefinition.Criticality;
 import org.zalando.zmon.event.ZMonEventType;
 import org.zalando.zmon.exception.SerializationException;
 import org.zalando.zmon.persistence.*;
@@ -53,7 +53,6 @@ import java.net.URISyntaxException;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 // TODO remove CheckDefinitionImport and use CheckDefinition with optional id
 // TODO convert mandatory types into native types (Integer -> int...)
@@ -182,10 +181,10 @@ public class ZMonServiceImpl implements ZMonService {
     public List<CheckDefinition> getCheckDefinitions(final DefinitionStatus status,
                                                      final List<Integer> checkDefinitionIds) {
         List<CheckDefinition> checkDefinitions = checkDefinitionSProc.getCheckDefinitions(status, checkDefinitionIds);
-        return enrichCheckDefinitionsWithTier(checkDefinitions);
+        return enrichCheckDefinitionsWithCriticality(checkDefinitions);
     }
 
-    private List<CheckDefinition> enrichCheckDefinitionsWithTier(List<CheckDefinition> checkDefinitions) {
+    private List<CheckDefinition> enrichCheckDefinitionsWithCriticality(List<CheckDefinition> checkDefinitions) {
         List<String> entities = entitySProc.getEntityById(CHECK_TIERS_ENTITY_NAME);
         if (entities.isEmpty()) {
             log.info("The tier entity '{}' haven't been found", CHECK_TIERS_ENTITY_NAME);
@@ -196,8 +195,8 @@ public class ZMonServiceImpl implements ZMonService {
             checkDefinitions.forEach(check -> {
                 boolean isCritical = tiers.getCritical().contains(check.getId());
                 boolean isImportant = tiers.getImportant().contains(check.getId());
-                Tier tier = isCritical ? Tier.CRITICAL : isImportant ? Tier.IMPORTANT : Tier.OTHERS;
-                check.setTier(tier);
+                Criticality criticality = isCritical ? Criticality.CRITICAL : isImportant ? Criticality.IMPORTANT : Criticality.OTHERS;
+                check.setCriticality(criticality);
             });
         } catch (Exception e) {
             log.error("Failed to parse entity json for '{}'", CHECK_TIERS_ENTITY_NAME);
@@ -213,13 +212,13 @@ public class ZMonServiceImpl implements ZMonService {
         final List<String> teamList = teams.stream().map(DBUtil::prefix).collect(Collectors.toList());
 
         List<CheckDefinition> checkDefinitions = checkDefinitionSProc.getCheckDefinitionsByOwningTeam(status, teamList);
-        return enrichCheckDefinitionsWithTier(checkDefinitions);
+        return enrichCheckDefinitionsWithCriticality(checkDefinitions);
     }
 
     @Override
     public CheckDefinitions getCheckDefinitions(final DefinitionStatus status) {
         CheckDefinitions wrapperOfCheckDefinitions = checkDefinitionSProc.getAllCheckDefinitions(status);
-        List<CheckDefinition> updated = enrichCheckDefinitionsWithTier(wrapperOfCheckDefinitions.getCheckDefinitions());
+        List<CheckDefinition> updated = enrichCheckDefinitionsWithCriticality(wrapperOfCheckDefinitions.getCheckDefinitions());
         wrapperOfCheckDefinitions.setCheckDefinitions(updated);
         return wrapperOfCheckDefinitions;
     }
@@ -227,7 +226,7 @@ public class ZMonServiceImpl implements ZMonService {
     @Override
     public Optional<CheckDefinition> getCheckDefinitionById(final int id) {
         List<CheckDefinition> checkDefinitions = checkDefinitionSProc.getCheckDefinitions(null, Lists.newArrayList(id));
-        return enrichCheckDefinitionsWithTier(checkDefinitions).stream().findFirst();
+        return enrichCheckDefinitionsWithCriticality(checkDefinitions).stream().findFirst();
     }
 
     @Override

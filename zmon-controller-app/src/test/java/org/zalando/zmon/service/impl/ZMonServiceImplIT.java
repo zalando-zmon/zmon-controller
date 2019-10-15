@@ -21,7 +21,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.zalando.zmon.config.CheckRuntimeConfig;
 import org.zalando.zmon.config.ControllerProperties;
 import org.zalando.zmon.domain.*;
-import org.zalando.zmon.domain.CheckDefinition.Tier;
 import org.zalando.zmon.exception.SerializationException;
 import org.zalando.zmon.generator.AlertDefinitionGenerator;
 import org.zalando.zmon.generator.CheckDefinitionImportGenerator;
@@ -255,7 +254,7 @@ public class ZMonServiceImplIT {
 
         MatcherAssert.assertThat(checkDefinitions.size(), Matchers.is(1));
         MatcherAssert.assertThat(checkDefinitions.get(0).getId(), Matchers.is(criticalCheckId));
-        MatcherAssert.assertThat(checkDefinitions.get(0).getTier(), Matchers.is(Tier.CRITICAL));
+        MatcherAssert.assertThat(checkDefinitions.get(0).getCriticality(), Matchers.is(CheckDefinition.Criticality.CRITICAL));
     }
 
     @Test
@@ -278,7 +277,7 @@ public class ZMonServiceImplIT {
 
         MatcherAssert.assertThat(checkDefinitions.size(), Matchers.is(1));
         MatcherAssert.assertThat(checkDefinitions.get(0).getId(), Matchers.is(importantCheckId));
-        MatcherAssert.assertThat(checkDefinitions.get(0).getTier(), Matchers.is(Tier.IMPORTANT));
+        MatcherAssert.assertThat(checkDefinitions.get(0).getCriticality(), Matchers.is(CheckDefinition.Criticality.IMPORTANT));
     }
 
     @Test
@@ -301,7 +300,7 @@ public class ZMonServiceImplIT {
 
         MatcherAssert.assertThat(checkDefinitions.size(), Matchers.is(1));
         MatcherAssert.assertThat(checkDefinitions.get(0).getId(), Matchers.is(regularCheckId));
-        MatcherAssert.assertThat(checkDefinitions.get(0).getTier(), Matchers.is(Tier.OTHERS));
+        MatcherAssert.assertThat(checkDefinitions.get(0).getCriticality(), Matchers.is(CheckDefinition.Criticality.OTHERS));
     }
 
     @Test
@@ -324,7 +323,7 @@ public class ZMonServiceImplIT {
 
         MatcherAssert.assertThat(checkDefinitions.size(), Matchers.is(1));
         MatcherAssert.assertThat(checkDefinitions.get(0).getId(), Matchers.is(regularCheckId));
-        MatcherAssert.assertThat(checkDefinitions.get(0).getTier(), Matchers.is(Tier.EMPTY));
+        MatcherAssert.assertThat(checkDefinitions.get(0).getCriticality(), Matchers.is(CheckDefinition.Criticality.EMPTY));
     }
 
     @Test

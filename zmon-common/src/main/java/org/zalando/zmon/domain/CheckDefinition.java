@@ -91,7 +91,7 @@ public class CheckDefinition implements StatusDiff {
     private DefinitionRuntime runtime;
 
     @Transient
-    private Tier tier = Tier.EMPTY;
+    private Criticality criticality = Criticality.EMPTY;
 
     public Date getLastModified() {
         return lastModified;
@@ -221,12 +221,12 @@ public class CheckDefinition implements StatusDiff {
         this.runtime = runtime;
     }
 
-    public Tier getTier() {
-        return tier;
+    public Criticality getCriticality() {
+        return criticality;
     }
 
-    public void setTier(Tier tier) {
-        this.tier = tier;
+    public void setCriticality(Criticality criticality) {
+        this.criticality = criticality;
     }
 
     public boolean isDeleted() {
@@ -266,13 +266,13 @@ public class CheckDefinition implements StatusDiff {
         builder.append(lastModifiedBy);
         builder.append(", runtime=");
         builder.append(runtime);
-        builder.append(", tier=");
-        builder.append(tier);
+        builder.append(", criticality=");
+        builder.append(criticality);
         builder.append("]");
         return builder.toString();
     }
 
-    public enum Tier {
+    public enum Criticality {
         @JsonProperty("empty")
         EMPTY,
 
