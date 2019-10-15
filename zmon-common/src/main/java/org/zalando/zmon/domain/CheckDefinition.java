@@ -3,6 +3,7 @@ package org.zalando.zmon.domain;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -91,7 +92,8 @@ public class CheckDefinition implements StatusDiff {
     private DefinitionRuntime runtime;
 
     @Transient
-    private Criticality criticality = Criticality.EMPTY;
+    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
+    private Optional<Criticality> criticality = Optional.empty();
 
     public Date getLastModified() {
         return lastModified;
@@ -221,12 +223,12 @@ public class CheckDefinition implements StatusDiff {
         this.runtime = runtime;
     }
 
-    public Criticality getCriticality() {
+    public Optional<Criticality> getCriticality() {
         return criticality;
     }
 
     public void setCriticality(Criticality criticality) {
-        this.criticality = criticality;
+        this.criticality = Optional.ofNullable(criticality);
     }
 
     public boolean isDeleted() {
@@ -273,9 +275,6 @@ public class CheckDefinition implements StatusDiff {
     }
 
     public enum Criticality {
-        @JsonProperty("empty")
-        EMPTY,
-
         @JsonProperty("critical")
         CRITICAL,
 

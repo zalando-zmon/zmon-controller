@@ -47,7 +47,7 @@
                         <i class="fa fa-fw fa-sort-asc sort-arrow" ng-show="sortType === 'owning_team' && sortOrder"></i>
                         <i class="fa fa-fw fa-sort-desc sort-arrow" ng-show="sortType === 'owning_team' && !sortOrder"></i>
                     </th>
-                    <th ng-if="checkDefinitions[0].criticality != 'empty'" class="criticality-col" ng-click="sortType = 'criticality'; sortOrder = !sortOrder">Criticality
+                    <th ng-if="checkDefinitions[0].criticality" class="criticality-col" ng-click="sortType = 'criticality'; sortOrder = !sortOrder">Criticality
                         <i class="fa fa-fw fa-info-circle" title="Check Criticality is a classification used to maintain high availability for operationally-critical monitoring while degrading service for other less-critical monitoring"></i>
                         <i class="fa fa-fw fa-sort-asc sort-arrow" ng-show="sortType === 'criticality' && sortOrder"></i>
                         <i class="fa fa-fw fa-sort-desc sort-arrow" ng-show="sortType === 'criticality' && !sortOrder"></i>
@@ -68,7 +68,7 @@
                     <td class="ellipsis">{{def.command}}</td>
                     <td ng-bind-html="def.entities | entities"></td>
                     <td>{{def.owning_team}}</td>
-                    <td ng-if="def.criticality != 'empty'">{{def.criticality}}</td>
+                    <td ng-if="def.criticality">{{def.criticality}}</td>
                     <td class="text-right">{{def.interval| timespan:'s'}}</td>
                     <td class="text-center"><status status="def.status"/></td>
                 </tr>

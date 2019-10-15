@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hamcrest.MatcherAssert;
@@ -21,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.zalando.zmon.config.CheckRuntimeConfig;
 import org.zalando.zmon.config.ControllerProperties;
 import org.zalando.zmon.domain.*;
+import org.zalando.zmon.domain.CheckDefinition.Criticality;
 import org.zalando.zmon.exception.SerializationException;
 import org.zalando.zmon.generator.AlertDefinitionGenerator;
 import org.zalando.zmon.generator.CheckDefinitionImportGenerator;
@@ -254,7 +256,7 @@ public class ZMonServiceImplIT {
 
         MatcherAssert.assertThat(checkDefinitions.size(), Matchers.is(1));
         MatcherAssert.assertThat(checkDefinitions.get(0).getId(), Matchers.is(criticalCheckId));
-        MatcherAssert.assertThat(checkDefinitions.get(0).getCriticality(), Matchers.is(CheckDefinition.Criticality.CRITICAL));
+        MatcherAssert.assertThat(checkDefinitions.get(0).getCriticality(), Matchers.is(Optional.of(Criticality.CRITICAL)));
     }
 
     @Test
@@ -277,7 +279,7 @@ public class ZMonServiceImplIT {
 
         MatcherAssert.assertThat(checkDefinitions.size(), Matchers.is(1));
         MatcherAssert.assertThat(checkDefinitions.get(0).getId(), Matchers.is(importantCheckId));
-        MatcherAssert.assertThat(checkDefinitions.get(0).getCriticality(), Matchers.is(CheckDefinition.Criticality.IMPORTANT));
+        MatcherAssert.assertThat(checkDefinitions.get(0).getCriticality(), Matchers.is(Optional.of(Criticality.IMPORTANT)));
     }
 
     @Test
@@ -300,7 +302,7 @@ public class ZMonServiceImplIT {
 
         MatcherAssert.assertThat(checkDefinitions.size(), Matchers.is(1));
         MatcherAssert.assertThat(checkDefinitions.get(0).getId(), Matchers.is(regularCheckId));
-        MatcherAssert.assertThat(checkDefinitions.get(0).getCriticality(), Matchers.is(CheckDefinition.Criticality.OTHERS));
+        MatcherAssert.assertThat(checkDefinitions.get(0).getCriticality(), Matchers.is(Optional.of(Criticality.OTHERS)));
     }
 
     @Test
@@ -323,7 +325,7 @@ public class ZMonServiceImplIT {
 
         MatcherAssert.assertThat(checkDefinitions.size(), Matchers.is(1));
         MatcherAssert.assertThat(checkDefinitions.get(0).getId(), Matchers.is(regularCheckId));
-        MatcherAssert.assertThat(checkDefinitions.get(0).getCriticality(), Matchers.is(CheckDefinition.Criticality.EMPTY));
+        MatcherAssert.assertThat(checkDefinitions.get(0).getCriticality(), Matchers.is(Optional.empty()));
     }
 
     @Test
