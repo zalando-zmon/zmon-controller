@@ -1,4 +1,5 @@
-var TrialRunCtrl = function ($scope, $interval, $timeout, timespanFilter, CommunicationService, MainAlertService, FeedbackMessageService, UserInfoService, $window, $location, $routeParams, BootConfig) {
+angular.module('zmon2App').controller('TrialRunCtrl', ['$scope', '$interval', '$timeout', 'timespanFilter', 'CommunicationService', 'MainAlertService', 'FeedbackMessageService', 'UserInfoService', '$window', '$location', '$routeParams', 'BootConfig',
+  function ($scope, $interval, $timeout, timespanFilter, CommunicationService, MainAlertService, FeedbackMessageService, UserInfoService, $window, $location, $routeParams, BootConfig) {
 
     $scope.$parent.activePage = 'trial-run';
     MainAlertService.removeDataRefresh();
@@ -585,7 +586,4 @@ var TrialRunCtrl = function ($scope, $interval, $timeout, timespanFilter, Commun
         }
         return options.sort();
     };
-};
-
-
-angular.module('zmon2App').controller('TrialRunCtrl', ['$scope', '$interval', '$timeout', 'timespanFilter', 'CommunicationService', 'MainAlertService', 'FeedbackMessageService', 'UserInfoService', '$window', '$location', '$routeParams', TrialRunCtrl]);
+}]);
