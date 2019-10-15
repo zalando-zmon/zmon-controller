@@ -93,7 +93,7 @@ public class CheckDefinition implements StatusDiff {
 
     @Transient
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-    private Optional<Criticality> criticality = Optional.empty();
+    private Criticality criticality = null;
 
     public Date getLastModified() {
         return lastModified;
@@ -223,12 +223,12 @@ public class CheckDefinition implements StatusDiff {
         this.runtime = runtime;
     }
 
-    public Optional<Criticality> getCriticality() {
+    public Criticality getCriticality() {
         return criticality;
     }
 
     public void setCriticality(Criticality criticality) {
-        this.criticality = Optional.ofNullable(criticality);
+        this.criticality = criticality;
     }
 
     public boolean isDeleted() {

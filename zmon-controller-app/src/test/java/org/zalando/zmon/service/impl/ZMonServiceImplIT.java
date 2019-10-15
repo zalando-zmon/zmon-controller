@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hamcrest.MatcherAssert;
@@ -256,7 +255,7 @@ public class ZMonServiceImplIT {
 
         MatcherAssert.assertThat(checkDefinitions.size(), Matchers.is(1));
         MatcherAssert.assertThat(checkDefinitions.get(0).getId(), Matchers.is(criticalCheckId));
-        MatcherAssert.assertThat(checkDefinitions.get(0).getCriticality(), Matchers.is(Optional.of(Criticality.CRITICAL)));
+        MatcherAssert.assertThat(checkDefinitions.get(0).getCriticality(), Matchers.is(Criticality.CRITICAL));
     }
 
     @Test
@@ -279,7 +278,7 @@ public class ZMonServiceImplIT {
 
         MatcherAssert.assertThat(checkDefinitions.size(), Matchers.is(1));
         MatcherAssert.assertThat(checkDefinitions.get(0).getId(), Matchers.is(importantCheckId));
-        MatcherAssert.assertThat(checkDefinitions.get(0).getCriticality(), Matchers.is(Optional.of(Criticality.IMPORTANT)));
+        MatcherAssert.assertThat(checkDefinitions.get(0).getCriticality(), Matchers.is(Criticality.IMPORTANT));
     }
 
     @Test
@@ -302,7 +301,7 @@ public class ZMonServiceImplIT {
 
         MatcherAssert.assertThat(checkDefinitions.size(), Matchers.is(1));
         MatcherAssert.assertThat(checkDefinitions.get(0).getId(), Matchers.is(regularCheckId));
-        MatcherAssert.assertThat(checkDefinitions.get(0).getCriticality(), Matchers.is(Optional.of(Criticality.OTHERS)));
+        MatcherAssert.assertThat(checkDefinitions.get(0).getCriticality(), Matchers.is(Criticality.OTHERS));
     }
 
     @Test
@@ -325,7 +324,7 @@ public class ZMonServiceImplIT {
 
         MatcherAssert.assertThat(checkDefinitions.size(), Matchers.is(1));
         MatcherAssert.assertThat(checkDefinitions.get(0).getId(), Matchers.is(regularCheckId));
-        MatcherAssert.assertThat(checkDefinitions.get(0).getCriticality(), Matchers.is(Optional.empty()));
+        MatcherAssert.assertThat(checkDefinitions.get(0).getCriticality(), Matchers.nullValue());
     }
 
     @Test
