@@ -281,7 +281,7 @@ public class CheckDefinition implements StatusDiff {
         @JsonProperty("important")
         IMPORTANT,
 
-        @JsonProperty("others")
-        OTHERS;
+        @JsonProperty("other")
+        OTHER;
     }
 }

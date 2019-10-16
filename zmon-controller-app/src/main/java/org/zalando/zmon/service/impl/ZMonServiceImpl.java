@@ -195,7 +195,7 @@ public class ZMonServiceImpl implements ZMonService {
             checkDefinitions.forEach(check -> {
                 boolean isCritical = tiers.getCritical().contains(check.getId());
                 boolean isImportant = tiers.getImportant().contains(check.getId());
-                Criticality criticality = isCritical ? Criticality.CRITICAL : isImportant ? Criticality.IMPORTANT : Criticality.OTHERS;
+                Criticality criticality = isCritical ? Criticality.CRITICAL : isImportant ? Criticality.IMPORTANT : Criticality.OTHER;
                 check.setCriticality(criticality);
             });
         } catch (Exception e) {

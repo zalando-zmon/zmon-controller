@@ -301,7 +301,7 @@ public class ZMonServiceImplIT {
 
         MatcherAssert.assertThat(checkDefinitions.size(), Matchers.is(1));
         MatcherAssert.assertThat(checkDefinitions.get(0).getId(), Matchers.is(regularCheckId));
-        MatcherAssert.assertThat(checkDefinitions.get(0).getCriticality(), Matchers.is(Criticality.OTHERS));
+        MatcherAssert.assertThat(checkDefinitions.get(0).getCriticality(), Matchers.is(Criticality.OTHER));
     }
 
     @Test
