@@ -92,7 +92,6 @@ public class CheckDefinition implements StatusDiff {
     private DefinitionRuntime runtime;
 
     @Transient
-    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     private Criticality criticality = null;
 
     public Date getLastModified() {

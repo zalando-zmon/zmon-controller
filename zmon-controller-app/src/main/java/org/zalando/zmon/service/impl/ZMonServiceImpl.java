@@ -134,41 +134,6 @@ public class ZMonServiceImpl implements ZMonService {
         return buildStatus(alertsActive, queueSize, lastUpdate, invocations);
     }
 
-    private ExecutionStatus buildStatus(int alertsActive, final Map<String, Response<Long>> queueSize,
-                                        final Map<String, Response<String>> lastUpdates, final Map<String, Response<String>> invocations) {
-
-        final ExecutionStatus.Builder builder = ExecutionStatus.builder();
-
-        builder.withAlertsActive(alertsActive);
-
-        // add queue info
-        for (final Map.Entry<String, Response<Long>> size : queueSize.entrySet()) {
-            builder.addQueue(size.getKey(), size.getValue().get());
-        }
-
-        // worker info
-        int workersActive = 0;
-        for (final Map.Entry<String, Response<String>> lastUpdate : lastUpdates.entrySet()) {
-            final String val = lastUpdate.getValue().get();
-            double ts = 0;
-            if (val != null) {
-                ts = Double.valueOf(val);
-
-                // "ts" is stored as seconds, but in Java we have Milliseconds
-                if ((long) (ts * 1000) > System.currentTimeMillis() - MAX_ACTIVE_WORKER_TIMESTAMP_MILLIS_AGO) {
-                    workersActive++;
-                }
-            }
-
-            final String invocation = invocations.get(lastUpdate.getKey()).get();
-            builder.addWorker(lastUpdate.getKey(), (long) ts, invocation == null ? 0 : Long.valueOf(invocation));
-        }
-
-        builder.withWorkersActive(workersActive);
-
-        return builder.build();
-    }
-
     @Override
     public List<String> getAllTeams() {
         final List<String> teams = zmonSProc.getAllTeams();
@@ -182,26 +147,6 @@ public class ZMonServiceImpl implements ZMonService {
                                                      final List<Integer> checkDefinitionIds) {
         List<CheckDefinition> checkDefinitions = checkDefinitionSProc.getCheckDefinitions(status, checkDefinitionIds);
         return enrichCheckDefinitionsWithCriticality(checkDefinitions);
-    }
-
-    private List<CheckDefinition> enrichCheckDefinitionsWithCriticality(List<CheckDefinition> checkDefinitions) {
-        List<String> entities = entitySProc.getEntityById(CHECK_TIERS_ENTITY_NAME);
-        if (entities.isEmpty()) {
-            log.info("The tier entity '{}' haven't been found", CHECK_TIERS_ENTITY_NAME);
-            return checkDefinitions;
-        }
-        try {
-            CheckTiersEntity.Tiers tiers = mapper.readValue(entities.get(0), CheckTiersEntity.class).getData();
-            checkDefinitions.forEach(check -> {
-                boolean isCritical = tiers.getCritical().contains(check.getId());
-                boolean isImportant = tiers.getImportant().contains(check.getId());
-                Criticality criticality = isCritical ? Criticality.CRITICAL : isImportant ? Criticality.IMPORTANT : Criticality.OTHER;
-                check.setCriticality(criticality);
-            });
-        } catch (Exception e) {
-            log.error("Failed to parse entity json for '{}'", CHECK_TIERS_ENTITY_NAME);
-        }
-        return checkDefinitions;
     }
 
     @Override
@@ -245,42 +190,6 @@ public class ZMonServiceImpl implements ZMonService {
         validateInterval(checkDefinition);
 
         return checkDefinitionSProc.createOrUpdateCheckDefinition(checkDefinition, userName, teams, isAdmin, checkRuntimeConfig.isEnabled(), checkRuntimeConfig.getDefaultRuntime());
-    }
-
-    private void validateInterval(CheckDefinitionImport checkDefinition) {
-        List<String> entities = entitySProc.getEntities("[{\"type\":\"zmon_config\", \"id\":\"zmon-min-check-interval\"}]");
-        if (entities.size() == 1) {
-            try {
-                MinCheckInterval config = mapper.readValue(entities.get(0), MinCheckInterval.class);
-                if (null != config.getData() && null != config.getData().getWhitelistedChecks()) {
-                    if (checkDefinition.getInterval() < config.getData().getMinCheckInterval()) {
-                        Integer checkId = checkDefinition.getId();
-                        if (null == checkId) {
-                            throw new SerializationException("Check interval is too low. New checks must use minimum interval of " + config.getData().getMinCheckInterval() + " seconds.");
-                        }
-
-                        List<CheckDefinition> oldCheckDefinition = checkDefinitionSProc.getCheckDefinitions(null, Collections.singletonList(checkId));
-                        if (oldCheckDefinition.size() == 1 && oldCheckDefinition.get(0).getInterval().equals(checkDefinition.getInterval())) {
-                            log.info("Interval is not checked since it wasn't modified");
-                            return;
-                        }
-
-                        if (!config.getData().getWhitelistedChecks().contains(checkId)) {
-                            throw new SerializationException("Check interval is too low. Non-whitelisted checks must use default minimum interval of " + config.getData().getMinCheckInterval() + " seconds.");
-                        }
-                        if (checkDefinition.getInterval() < config.getData().getMinWhitelistedCheckInterval()) {
-                            throw new SerializationException("Check interval is too low. Whitelisted checks must use minimum interval of " + config.getData().getMinWhitelistedCheckInterval() + " seconds.");
-                        }
-                    }
-                } else {
-                    log.error("zmon-min-check-interval has no data!");
-                }
-            } catch (IOException e) {
-                log.error("Cannot read zmon-min-check-interval entity, continuing");
-            }
-        } else {
-            log.error("zmon-min-check-interval is empty!");
-        }
     }
 
     @Override
@@ -475,49 +384,6 @@ public class ZMonServiceImpl implements ZMonService {
         }
     }
 
-    private String getEntityPropertiesFromRedis() {
-        try (Jedis jedis = redisPool.getResource()) {
-            try {
-                byte[] bs = jedis.get(RedisPattern.entityProperties().getBytes());
-                if (null == bs)
-                    return null;
-                return new String(Snappy.uncompress(bs), "UTF-8");
-            } catch (IOException ex) {
-                log.error("Failed retrieving auto complete properties");
-            }
-        }
-        return null;
-    }
-
-    private List<CheckResults> buildCheckResults(final List<ResponseHolder<String, List<String>>> results) {
-
-        final List<CheckResults> checkResults = new LinkedList<>();
-
-        // process checks
-        for (final ResponseHolder<String, List<String>> entry : results) {
-            final List<String> entityResults = entry.getResponse().get();
-
-            if (!entityResults.isEmpty()) {
-                final CheckResults result = new CheckResults();
-                result.setEntity(entry.getKey());
-
-                final List<JsonNode> jsonResult = new LinkedList<>();
-                for (final String json : entityResults) {
-                    try {
-                        jsonResult.add(mapper.readTree(json));
-                    } catch (final IOException e) {
-                        throw new SerializationException("Could not read JSON: " + json, e);
-                    }
-                }
-
-                result.setResults(jsonResult);
-                checkResults.add(result);
-            }
-        }
-
-        return checkResults;
-    }
-
     @Override
     public CheckChartResult getChartResults(int checkId, String entity, int limit) {
         CheckChartResult result = new CheckChartResult();
@@ -570,14 +436,6 @@ public class ZMonServiceImpl implements ZMonService {
                 });
 
         return result;
-    }
-
-    private JsonNode parseJson(String json) {
-        try {
-            return mapper.readTree(json);
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
-        }
     }
 
     @Override
@@ -721,6 +579,179 @@ public class ZMonServiceImpl implements ZMonService {
         return alertResults;
     }
 
+    @VisibleForTesting
+    List<EntityGroup> parseAlertCoverage(final JsonNode coverage) {
+        if (coverage == null) {
+            return Collections.emptyList();
+        }
+
+        EntityGroup[] alertCoverage;
+        try {
+            alertCoverage = mapper.treeToValue(coverage, EntityGroup[].class);
+        } catch (JsonProcessingException e) {
+            log.warn("failed to parse alert coverage", e);
+            return Collections.emptyList();
+        }
+        return Arrays.asList(alertCoverage);
+    }
+
+    protected static class EntityGroup {
+        public List<EntityInfo> entities;
+        public List<AlertInfo> alerts;
+    }
+
+    protected static class EntityInfo {
+        public String id;
+        public String type;
+    }
+
+    protected static class AlertInfo {
+        public String name;
+        public int id;
+    }
+
+    private ExecutionStatus buildStatus(int alertsActive, final Map<String, Response<Long>> queueSize,
+                                        final Map<String, Response<String>> lastUpdates, final Map<String, Response<String>> invocations) {
+
+        final ExecutionStatus.Builder builder = ExecutionStatus.builder();
+
+        builder.withAlertsActive(alertsActive);
+
+        // add queue info
+        for (final Map.Entry<String, Response<Long>> size : queueSize.entrySet()) {
+            builder.addQueue(size.getKey(), size.getValue().get());
+        }
+
+        // worker info
+        int workersActive = 0;
+        for (final Map.Entry<String, Response<String>> lastUpdate : lastUpdates.entrySet()) {
+            final String val = lastUpdate.getValue().get();
+            double ts = 0;
+            if (val != null) {
+                ts = Double.valueOf(val);
+
+                // "ts" is stored as seconds, but in Java we have Milliseconds
+                if ((long) (ts * 1000) > System.currentTimeMillis() - MAX_ACTIVE_WORKER_TIMESTAMP_MILLIS_AGO) {
+                    workersActive++;
+                }
+            }
+
+            final String invocation = invocations.get(lastUpdate.getKey()).get();
+            builder.addWorker(lastUpdate.getKey(), (long) ts, invocation == null ? 0 : Long.valueOf(invocation));
+        }
+
+        builder.withWorkersActive(workersActive);
+
+        return builder.build();
+    }
+
+    private List<CheckDefinition> enrichCheckDefinitionsWithCriticality(List<CheckDefinition> checkDefinitions) {
+        List<String> entities = entitySProc.getEntityById(CHECK_TIERS_ENTITY_NAME);
+        if (entities.isEmpty()) {
+            log.info("The tier entity '{}' haven't been found", CHECK_TIERS_ENTITY_NAME);
+            return checkDefinitions;
+        }
+        try {
+            CheckTiersEntity.Tiers tiers = mapper.readValue(entities.get(0), CheckTiersEntity.class).getData();
+            checkDefinitions.forEach(check -> {
+                boolean isCritical = tiers.getCritical().contains(check.getId());
+                boolean isImportant = tiers.getImportant().contains(check.getId());
+                Criticality criticality = isCritical ? Criticality.CRITICAL : isImportant ? Criticality.IMPORTANT : Criticality.OTHER;
+                check.setCriticality(criticality);
+            });
+        } catch (Exception e) {
+            log.error("Failed to parse entity json for '{}'", CHECK_TIERS_ENTITY_NAME);
+        }
+        return checkDefinitions;
+    }
+
+    private void validateInterval(CheckDefinitionImport checkDefinition) {
+        List<String> entities = entitySProc.getEntities("[{\"type\":\"zmon_config\", \"id\":\"zmon-min-check-interval\"}]");
+        if (entities.size() == 1) {
+            try {
+                MinCheckInterval config = mapper.readValue(entities.get(0), MinCheckInterval.class);
+                if (null != config.getData() && null != config.getData().getWhitelistedChecks()) {
+                    if (checkDefinition.getInterval() < config.getData().getMinCheckInterval()) {
+                        Integer checkId = checkDefinition.getId();
+                        if (null == checkId) {
+                            throw new SerializationException("Check interval is too low. New checks must use minimum interval of " + config.getData().getMinCheckInterval() + " seconds.");
+                        }
+
+                        List<CheckDefinition> oldCheckDefinition = checkDefinitionSProc.getCheckDefinitions(null, Collections.singletonList(checkId));
+                        if (oldCheckDefinition.size() == 1 && oldCheckDefinition.get(0).getInterval().equals(checkDefinition.getInterval())) {
+                            log.info("Interval is not checked since it wasn't modified");
+                            return;
+                        }
+
+                        if (!config.getData().getWhitelistedChecks().contains(checkId)) {
+                            throw new SerializationException("Check interval is too low. Non-whitelisted checks must use default minimum interval of " + config.getData().getMinCheckInterval() + " seconds.");
+                        }
+                        if (checkDefinition.getInterval() < config.getData().getMinWhitelistedCheckInterval()) {
+                            throw new SerializationException("Check interval is too low. Whitelisted checks must use minimum interval of " + config.getData().getMinWhitelistedCheckInterval() + " seconds.");
+                        }
+                    }
+                } else {
+                    log.error("zmon-min-check-interval has no data!");
+                }
+            } catch (IOException e) {
+                log.error("Cannot read zmon-min-check-interval entity, continuing");
+            }
+        } else {
+            log.error("zmon-min-check-interval is empty!");
+        }
+    }
+
+    private String getEntityPropertiesFromRedis() {
+        try (Jedis jedis = redisPool.getResource()) {
+            try {
+                byte[] bs = jedis.get(RedisPattern.entityProperties().getBytes());
+                if (null == bs)
+                    return null;
+                return new String(Snappy.uncompress(bs), "UTF-8");
+            } catch (IOException ex) {
+                log.error("Failed retrieving auto complete properties");
+            }
+        }
+        return null;
+    }
+
+    private List<CheckResults> buildCheckResults(final List<ResponseHolder<String, List<String>>> results) {
+
+        final List<CheckResults> checkResults = new LinkedList<>();
+
+        // process checks
+        for (final ResponseHolder<String, List<String>> entry : results) {
+            final List<String> entityResults = entry.getResponse().get();
+
+            if (!entityResults.isEmpty()) {
+                final CheckResults result = new CheckResults();
+                result.setEntity(entry.getKey());
+
+                final List<JsonNode> jsonResult = new LinkedList<>();
+                for (final String json : entityResults) {
+                    try {
+                        jsonResult.add(mapper.readTree(json));
+                    } catch (final IOException e) {
+                        throw new SerializationException("Could not read JSON: " + json, e);
+                    }
+                }
+
+                result.setResults(jsonResult);
+                checkResults.add(result);
+            }
+        }
+
+        return checkResults;
+    }
+
+    private JsonNode parseJson(String json) {
+        try {
+            return mapper.readTree(json);
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+    }
+
     private String checkDefinitionOrNull(Alert alert) {
         if (alert == null || alert.getAlertDefinition() == null) {
             return null;
@@ -753,34 +784,4 @@ public class ZMonServiceImpl implements ZMonService {
         return String.valueOf(alert.getAlertDefinition().getPriority());
     }
 
-    @VisibleForTesting
-    List<EntityGroup> parseAlertCoverage(final JsonNode coverage) {
-        if (coverage == null) {
-            return Collections.emptyList();
-        }
-
-        EntityGroup[] alertCoverage;
-        try {
-            alertCoverage = mapper.treeToValue(coverage, EntityGroup[].class);
-        } catch (JsonProcessingException e) {
-            log.warn("failed to parse alert coverage", e);
-            return Collections.emptyList();
-        }
-        return Arrays.asList(alertCoverage);
-    }
-
-    protected static class EntityGroup {
-        public List<EntityInfo> entities;
-        public List<AlertInfo> alerts;
-    }
-
-    protected static class EntityInfo {
-        public String id;
-        public String type;
-    }
-
-    protected static class AlertInfo {
-        public String name;
-        public int id;
-    }
 }
