@@ -35,6 +35,8 @@
     <link rel="stylesheet" type="text/css" th:href="${staticUrl} + '/styles/select2/select2-bootstrap.css?t=@buildTime@'" />
     <link rel="stylesheet" type="text/css" th:href="${staticUrl} + '/styles/select2/select2.css?t=@buildTime@'" />
     <link rel="stylesheet" type="text/css" th:href="${staticUrl} + '/styles/nvd3/nv.d3.min.css?t=@buildTime@'" />
+    <link rel="stylesheet" type="text/css" th:href="${staticUrl} + '/styles/diff2html/diff2html.min.css?t=@buildTime@'" />
+    <link rel="stylesheet" type="text/css" th:href="${staticUrl} + '/styles/diff.css?t=@buildTime@'" />
 
     <script th:src="${staticUrl} + '/lib/stacktrace/stacktrace.js?t=@buildTime@'"></script>
     <script th:src="${staticUrl} + '/lib/jquery/jquery.min.js?t=@buildTime@'"></script>
@@ -74,6 +76,7 @@
     <script th:src="${staticUrl} + '/lib/highlightjs/highlight.pack.min.js?t=@buildTime@'" chartset="utf-8"></script>
     <script th:src="${staticUrl} + '/lib/angular-highlightjs/angular-highlightjs.min.js?t=@buildTime@'" chartset="utf-8"></script>
     <script th:src="${staticUrl} + '/lib/ng-debounce/ng-debounce.js?t=@buildTime@'" chartset="utf-8"></script>
+    <script th:src="${staticUrl} + '/lib/diff2html/diff2html.min.js?t=@buildTime@'" chartset="utf-8"></script>
 
     <!-- Google Analytics -->
     <script charset='UTF-8' th:inline="javascript" th:if="${googleanalyticsEnabled}">
