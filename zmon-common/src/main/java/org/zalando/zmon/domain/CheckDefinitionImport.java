@@ -25,17 +25,9 @@ import de.zalando.typemapper.annotations.DatabaseType;
 @JsonFilter("checkRuntimeConfigFilter")
 public class CheckDefinitionImport {
 
-    @XmlElement(required = false)
+    @XmlElement
     @DatabaseField
     private Integer id;
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
 
     @XmlElement(required = true)
     @DatabaseField
@@ -106,6 +98,17 @@ public class CheckDefinitionImport {
     @XmlElement
     @DatabaseField
     private DefinitionRuntime runtime;
+
+    @XmlElement
+    private CheckDefinition.Criticality criticality;
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
     public String getName() {
         return name;
@@ -219,6 +222,14 @@ public class CheckDefinitionImport {
         this.runtime = runtime;
     }
 
+    public void setCriticality(CheckDefinition.Criticality criticality) {
+        this.criticality = criticality;
+    }
+
+    public CheckDefinition.Criticality getCriticality() {
+        return criticality;
+    }
+
     @Override
     public String toString() {
         final StringBuilder builder = new StringBuilder();
@@ -252,8 +263,9 @@ public class CheckDefinitionImport {
         builder.append(lastModifiedBy);
         builder.append(", runtime=");
         builder.append(runtime);
+        builder.append(", criticality=");
+        builder.append(criticality);
         builder.append("]");
         return builder.toString();
     }
-
 }
