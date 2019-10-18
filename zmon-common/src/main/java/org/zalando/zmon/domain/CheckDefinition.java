@@ -3,13 +3,16 @@ package org.zalando.zmon.domain;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
+import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.zalando.zmon.adapter.EntityListAdapter;
 import org.zalando.zmon.diff.StatusDiff;
 
@@ -87,6 +90,9 @@ public class CheckDefinition implements StatusDiff {
     @XmlElement
     @DatabaseField
     private DefinitionRuntime runtime;
+
+    @Transient
+    private Criticality criticality = null;
 
     public Date getLastModified() {
         return lastModified;
@@ -216,6 +222,14 @@ public class CheckDefinition implements StatusDiff {
         this.runtime = runtime;
     }
 
+    public Criticality getCriticality() {
+        return criticality;
+    }
+
+    public void setCriticality(Criticality criticality) {
+        this.criticality = criticality;
+    }
+
     public boolean isDeleted() {
         return getStatus() == DefinitionStatus.DELETED;
     }
@@ -253,8 +267,20 @@ public class CheckDefinition implements StatusDiff {
         builder.append(lastModifiedBy);
         builder.append(", runtime=");
         builder.append(runtime);
+        builder.append(", criticality=");
+        builder.append(criticality);
         builder.append("]");
         return builder.toString();
     }
 
+    public enum Criticality {
+        @JsonProperty("critical")
+        CRITICAL,
+
+        @JsonProperty("important")
+        IMPORTANT,
+
+        @JsonProperty("other")
+        OTHER;
+    }
 }

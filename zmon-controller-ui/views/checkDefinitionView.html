@@ -23,6 +23,11 @@
 
     <div class="panel-body">
         <dl class="dl-horizontal">
+            <dt style="margin-bottom: 10px" ng-if="checkDefinition.criticality">
+                Criticality
+                <span class="fa fa-fw fa-info-circle" title="Check Criticality is a classification used to maintain high availability for operationally-critical monitoring while degrading service for other less-critical monitoring"></span>
+            </dt>
+            <dd ng-if="checkDefinition.criticality">{{checkDefinition.criticality}}</dd>
             <dt>Description</dt>
             <dd class="form-control" ng-bind-html="checkDefinition.description | markdown"></dd>
             <dt>Command</dt>

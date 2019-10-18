@@ -13,7 +13,6 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
@@ -22,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.zalando.zmon.config.CheckRuntimeConfig;
 import org.zalando.zmon.config.ControllerProperties;
 import org.zalando.zmon.domain.*;
+import org.zalando.zmon.domain.CheckDefinition.Criticality;
 import org.zalando.zmon.exception.SerializationException;
 import org.zalando.zmon.generator.AlertDefinitionGenerator;
 import org.zalando.zmon.generator.CheckDefinitionImportGenerator;
@@ -233,6 +233,98 @@ public class ZMonServiceImplIT {
         MatcherAssert.assertThat(newCheckDefinition0.getId(), Matchers.not(newCheckDefinition1.getId()));
         MatcherAssert.assertThat(checkDefinitions,
             Matchers.contains(CheckDefinitionIsEqual.equalTo(newCheckDefinition0)));
+    }
+
+    @Test
+    public void testShowCriticalTier() {
+        final CheckDefinitionImport toImport = checkImportGenerator.generate();
+
+        EntitySProcService entitySProcMock = mock(EntitySProcService.class);
+        service = new ZMonServiceImpl(checkDefinitionSProc, alertDefinitionSProc, zmonSProc, entitySProcMock, redisPool, mapper, eventLog, checkRuntimeConfig, config, alertService);
+
+
+        final CheckDefinition newCheckDefinition = service.createOrUpdateCheckDefinition(toImport, USER_NAME, USER_TEAMS).getEntity();
+        Integer criticalCheckId = newCheckDefinition.getId();
+
+        when(entitySProcMock.getEntityById(eq("zmon-check-tiers")))
+                .thenReturn(Collections.singletonList("{\"id\":\"zmon-check-tiers\",\"data\":{\"critical\":[" + criticalCheckId + "],\"important\":[]},\"team\":\"ZMON\",\"type\":\"zmon_config\"}"));
+
+
+        final List<CheckDefinition> checkDefinitions = service.getCheckDefinitions(null,
+                Collections.singletonList(criticalCheckId));
+
+        MatcherAssert.assertThat(checkDefinitions.size(), Matchers.is(1));
+        MatcherAssert.assertThat(checkDefinitions.get(0).getId(), Matchers.is(criticalCheckId));
+        MatcherAssert.assertThat(checkDefinitions.get(0).getCriticality(), Matchers.is(Criticality.CRITICAL));
+    }
+
+    @Test
+    public void testShowImportantTier() {
+        final CheckDefinitionImport toImport = checkImportGenerator.generate();
+
+        EntitySProcService entitySProcMock = mock(EntitySProcService.class);
+        service = new ZMonServiceImpl(checkDefinitionSProc, alertDefinitionSProc, zmonSProc, entitySProcMock, redisPool, mapper, eventLog, checkRuntimeConfig, config, alertService);
+
+
+        final CheckDefinition newCheckDefinition = service.createOrUpdateCheckDefinition(toImport, USER_NAME, USER_TEAMS).getEntity();
+        Integer importantCheckId = newCheckDefinition.getId();
+
+        when(entitySProcMock.getEntityById(eq("zmon-check-tiers")))
+                .thenReturn(Collections.singletonList("{\"id\":\"zmon-check-tiers\",\"data\":{\"critical\":[],\"important\":[" + importantCheckId + "]},\"team\":\"ZMON\",\"type\":\"zmon_config\"}"));
+
+
+        final List<CheckDefinition> checkDefinitions = service.getCheckDefinitions(null,
+                Collections.singletonList(importantCheckId));
+
+        MatcherAssert.assertThat(checkDefinitions.size(), Matchers.is(1));
+        MatcherAssert.assertThat(checkDefinitions.get(0).getId(), Matchers.is(importantCheckId));
+        MatcherAssert.assertThat(checkDefinitions.get(0).getCriticality(), Matchers.is(Criticality.IMPORTANT));
+    }
+
+    @Test
+    public void testShowOthersTier() {
+        final CheckDefinitionImport toImport = checkImportGenerator.generate();
+
+        EntitySProcService entitySProcMock = mock(EntitySProcService.class);
+        service = new ZMonServiceImpl(checkDefinitionSProc, alertDefinitionSProc, zmonSProc, entitySProcMock, redisPool, mapper, eventLog, checkRuntimeConfig, config, alertService);
+
+
+        final CheckDefinition newCheckDefinition = service.createOrUpdateCheckDefinition(toImport, USER_NAME, USER_TEAMS).getEntity();
+        Integer regularCheckId = newCheckDefinition.getId();
+
+        when(entitySProcMock.getEntityById(eq("zmon-check-tiers")))
+                .thenReturn(Collections.singletonList("{\"id\":\"zmon-check-tiers\",\"data\":{\"critical\":[],\"important\":[]},\"team\":\"ZMON\",\"type\":\"zmon_config\"}"));
+
+
+        final List<CheckDefinition> checkDefinitions = service.getCheckDefinitions(null,
+                Collections.singletonList(regularCheckId));
+
+        MatcherAssert.assertThat(checkDefinitions.size(), Matchers.is(1));
+        MatcherAssert.assertThat(checkDefinitions.get(0).getId(), Matchers.is(regularCheckId));
+        MatcherAssert.assertThat(checkDefinitions.get(0).getCriticality(), Matchers.is(Criticality.OTHER));
+    }
+
+    @Test
+    public void testShowEmptyTierInCaseThereIsNoConfigWithTiers() {
+        final CheckDefinitionImport toImport = checkImportGenerator.generate();
+
+        EntitySProcService entitySProcMock = mock(EntitySProcService.class);
+        service = new ZMonServiceImpl(checkDefinitionSProc, alertDefinitionSProc, zmonSProc, entitySProcMock, redisPool, mapper, eventLog, checkRuntimeConfig, config, alertService);
+
+
+        final CheckDefinition newCheckDefinition = service.createOrUpdateCheckDefinition(toImport, USER_NAME, USER_TEAMS).getEntity();
+        Integer regularCheckId = newCheckDefinition.getId();
+
+        when(entitySProcMock.getEntityById(eq("zmon-check-tiers")))
+                .thenReturn(Collections.emptyList());
+
+
+        final List<CheckDefinition> checkDefinitions = service.getCheckDefinitions(null,
+                Collections.singletonList(regularCheckId));
+
+        MatcherAssert.assertThat(checkDefinitions.size(), Matchers.is(1));
+        MatcherAssert.assertThat(checkDefinitions.get(0).getId(), Matchers.is(regularCheckId));
+        MatcherAssert.assertThat(checkDefinitions.get(0).getCriticality(), Matchers.nullValue());
     }
 
     @Test
