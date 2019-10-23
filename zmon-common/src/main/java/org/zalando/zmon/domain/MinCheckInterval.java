@@ -1,5 +1,6 @@
 package org.zalando.zmon.domain;
 
+import java.util.Collections;
 import java.util.List;
 
 public class MinCheckInterval {
@@ -7,10 +8,10 @@ public class MinCheckInterval {
     private String lastModified;
     private String lastModifiedBy;
 
-    public class MinCheckIntervalData {
-        private List<Integer> whitelistedChecks;
-        private Integer minCheckInterval;
-        private Integer minWhitelistedCheckInterval;
+    public static class MinCheckIntervalData {
+        private List<Integer> whitelistedChecks = Collections.emptyList();
+        private Integer minCheckInterval = 5;
+        private Integer minWhitelistedCheckInterval = 5;
 
         public List<Integer> getWhitelistedChecks() {
             return whitelistedChecks;
