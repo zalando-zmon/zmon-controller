@@ -17,12 +17,14 @@ public class ExecutionStatus {
     private final int queueSize;
     private final Set<Worker> workers;
     private final Set<Queue> queues;
+    private final ServiceLevelStatus.ServiceLevelStatusData serviceLevelStatus;
 
     private ExecutionStatus(final Builder builder) {
         this.alertsActive = builder.alertsActive;
         this.workersActive = builder.workersActive;
         this.workers = builder.workers.build();
         this.queues = builder.queues.build();
+        this.serviceLevelStatus = builder.serviceLevelStatus;
         this.workersTotal = this.workers.size();
         this.checkInvocations = checkInvocations(this.workers);
         this.queueSize = totalQueueSize(this.queues);
@@ -48,6 +50,10 @@ public class ExecutionStatus {
         return queueSize;
     }
 
+    public ServiceLevelStatus.ServiceLevelStatusData getServiceLevelStatus() {
+        return serviceLevelStatus;
+    }
+
     public Set<Worker> getWorkers() {
         return workers;
     }
@@ -65,6 +71,7 @@ public class ExecutionStatus {
         sb.append(", queueSize=").append(queueSize);
         sb.append(", workers=").append(workers);
         sb.append(", queues=").append(queues);
+        sb.append(", serviceLevelStatus=").append(serviceLevelStatus);
         sb.append('}');
         return sb.toString();
     }
@@ -96,6 +103,7 @@ public class ExecutionStatus {
         // optional
         private int alertsActive = 0;
         private int workersActive = 0;
+        private ServiceLevelStatus.ServiceLevelStatusData serviceLevelStatus = new ServiceLevelStatus.ServiceLevelStatusData();
         private final ImmutableSet.Builder<Worker> workers = ImmutableSet.builder();
         private final ImmutableSet.Builder<Queue> queues = ImmutableSet.builder();
 
@@ -111,6 +119,13 @@ public class ExecutionStatus {
         public Builder withWorkersActive(final int workersActive) {
             Preconditions.checkNotNull(workersActive >= 0);
             this.workersActive = workersActive;
+
+            return this;
+        }
+
+        public Builder withServiceLevelStatus(final ServiceLevelStatus.ServiceLevelStatusData status) {
+            Preconditions.checkNotNull(status);
+            this.serviceLevelStatus = status;
 
             return this;
         }
