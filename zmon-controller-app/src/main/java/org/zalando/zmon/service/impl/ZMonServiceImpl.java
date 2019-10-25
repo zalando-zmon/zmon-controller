@@ -113,8 +113,6 @@ public class ZMonServiceImpl implements ZMonService {
         final Map<String, Response<String>> lastUpdate = new HashMap<>();
         final Map<String, Response<String>> invocations = new HashMap<>();
 
-        ServiceLevelStatus.ServiceLevelStatusData serviceLevelStatus = new ServiceLevelStatus.ServiceLevelStatusData();
-
         try (Jedis jedis = redisPool.getResource()) {
             final Set<String> workerNames = jedis.smembers(RedisPattern.workerNames());
             alertsActive = Optional.of(jedis.scard(RedisPattern.alertIds())).orElse(0L).intValue();
@@ -133,7 +131,7 @@ public class ZMonServiceImpl implements ZMonService {
             p.sync();
         }
 
-        return buildStatus(alertsActive, queueSize, lastUpdate, invocations, serviceLevelStatus);
+        return buildStatus(alertsActive, queueSize, lastUpdate, invocations);
     }
 
     @Override
@@ -613,7 +611,7 @@ public class ZMonServiceImpl implements ZMonService {
     }
 
     private ExecutionStatus buildStatus(int alertsActive, final Map<String, Response<Long>> queueSize,
-                                        final Map<String, Response<String>> lastUpdates, final Map<String, Response<String>> invocations, final ServiceLevelStatus.ServiceLevelStatusData serviceLevelStatus) {
+                                        final Map<String, Response<String>> lastUpdates, final Map<String, Response<String>> invocations) {
 
         final ExecutionStatus.Builder builder = ExecutionStatus.builder();
 
@@ -644,14 +642,13 @@ public class ZMonServiceImpl implements ZMonService {
         builder.withWorkersActive(workersActive);
 
         List<String> entities = entitySProc.getEntityById("zmon-service-level-config");
-        log.info(entities.get(0));
+
         if (entities.size() == 1) {
             try {
                 final ServiceLevelStatus.ServiceLevelStatusData status = mapper.readValue(entities.get(0), ServiceLevelStatus.class).getData();
-                log.info(status.toString());
                 builder.withServiceLevelStatus(status);
             } catch (IOException e) {
-                log.error("Cannot read zmon-min-check-interval entity, continuing");
+                log.error("Cannot read zmon-service-level-config entity,", e);
             }
         }
 
