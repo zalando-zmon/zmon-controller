@@ -70,8 +70,9 @@
                     <td>{{def.owning_team}}</td>
                     <td ng-if="def.criticality">{{def.criticality}}</td>
                     <td class="text-right">
-                        <span ng-if="def.interval < getMinCheckInterval(def.id)">
-                            <span class="fa fa-warning warning" title="Implicitly changed to {{ getMinCheckInterval(checkDefinition.id)|timespan:'s'}}"></span>
+                        <span ng-if="def.interval < getMinCheckInterval(def.id)" 
+                              class="fa fa-warning warning" 
+                              title="Implicitly changed to {{ getMinCheckInterval(checkDefinition.id)|timespan:'s'}}">
                         </span>
                         {{def.interval| timespan:'s'}}
                     </td>
