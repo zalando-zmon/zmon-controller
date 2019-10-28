@@ -32,8 +32,13 @@
             <dd class="form-control" ng-bind-html="checkDefinition.description | markdown"></dd>
             <dt>Command</dt>
             <dd><div hljs hljs-source="checkDefinition.command" hljs-language="python"></div></dd>
-            <dt>Interval</dt>
-            <dd>{{checkDefinition.interval|timespan:'s'}}</dd>
+            <dt>Interval & Timeout</dt>
+            <dd>
+                {{checkDefinition.interval|timespan:'s'}}
+                <span ng-if="checkDefinition.interval < getMinCheckInterval(checkDefinition.id)" class="warning">
+                    &nbsp;<span class="fa fa-warning"></span> Implicitly changed to {{ getMinCheckInterval(checkDefinition.id)|timespan:'s'}}
+                </span>
+            </dd>
             <dt>Entities</dt>
             <dd ng-bind-html="checkDefinition.entities | entities"></dd>
         </dl>

@@ -69,7 +69,13 @@
                     <td ng-bind-html="def.entities | entities"></td>
                     <td>{{def.owning_team}}</td>
                     <td ng-if="def.criticality">{{def.criticality}}</td>
-                    <td class="text-right">{{def.interval| timespan:'s'}}</td>
+                    <td class="text-right">
+                        <span ng-if="def.interval < getMinCheckInterval(def.id)" 
+                              class="fa fa-warning warning" 
+                              title="Implicitly changed to {{ getMinCheckInterval(checkDefinition.id)|timespan:'s'}}">
+                        </span>
+                        {{def.interval| timespan:'s'}}
+                    </td>
                     <td class="text-center"><status status="def.status"/></td>
                 </tr>
                 <tr ng-show="!initialLoading && checkDefinitions.length < 1">
