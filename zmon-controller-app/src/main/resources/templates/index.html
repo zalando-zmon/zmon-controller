@@ -143,7 +143,7 @@
     </script>
 
     <script th:inline="javascript">
-        var zmonBootData = /*[[${zmonBootData}]]*/ {};
+        var zmonBootData = {};
     </script>
 
     <link rel="manifest" href="/manifest.json">
@@ -263,6 +263,13 @@
     <div class="main-wrapper" ng-class="{'globalSearchVisible':globalSearchVisible}">
         <div id="message-manager-wrapper">
             <span class="message"></span>
+        </div>
+        <div ng-if="serviceStatus.serviceLevelStatusMessage"
+             class="service-level-warning">
+            <div>
+                <span class="fa fa-warning"></span>
+                {{serviceStatus.serviceLevelStatusMessage}}
+            </div>
         </div>
         <div id="main" ng-view></div>
     </div>

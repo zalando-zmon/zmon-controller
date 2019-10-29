@@ -63,17 +63,15 @@ public class ServiceLevelStatus {
                 this.message = "Metric visualization is currently only available for " + this.checkTiers.get(this.ingestMaxCheckTier) + " ";
             }
 
-            if (this.ingestMaxCheckTier == 3 && this.queryMaxCheckTier != 3) {
-                this.message = "Metric storage is currently only available for " + this.checkTiers.get(this.ingestMaxCheckTier) + " ";
-            }
-
             if (this.queryDistanceHoursLimit != 0) {
-                if (this.ingestMaxCheckTier != 3 || this.queryMaxCheckTier != 3) {
+                if (this.queryMaxCheckTier != 3) {
                     this.message += " and ";
-                } else {
-                  this.message = "Metric visualization ";
                 }
                 this.message += "is temporarily limited to a " + this.queryDistanceHoursLimit + " hour span.";
+            }
+
+            if (this.ingestMaxCheckTier == 3 && this.queryMaxCheckTier != 3) {
+                this.message = "Metric storage is currently only available for " + this.checkTiers.get(this.ingestMaxCheckTier) + " ";
             }
 
         }
