@@ -31,9 +31,9 @@ public class ServiceLevelStatus {
 
 
     public static class ServiceLevelStatusData {
-        private Integer ingestMaxCheckTier = 0;
+        private Integer ingestMaxCheckTier = 3;
         private Integer queryDistanceHoursLimit = 0;
-        private Integer queryMaxCheckTier = 0;
+        private Integer queryMaxCheckTier = 3;
 
         public Integer getIngestMaxCheckTier() {
             return ingestMaxCheckTier;
