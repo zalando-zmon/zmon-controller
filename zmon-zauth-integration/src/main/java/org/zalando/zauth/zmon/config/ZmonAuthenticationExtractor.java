@@ -7,6 +7,7 @@ import org.springframework.util.Assert;
 import org.zalando.stups.oauth2.spring.server.DefaultAuthenticationExtractor;
 import org.zalando.zmon.security.AuthorityService;
 import org.zalando.zmon.security.DynamicTeamService;
+import org.zalando.zmon.security.authority.ZMonAdminAuthority;
 import org.zalando.zmon.security.authority.ZMonAuthority;
 import org.zalando.zmon.security.authority.ZMonUserAuthority;
 
@@ -40,9 +41,13 @@ public class ZmonAuthenticationExtractor extends DefaultAuthenticationExtractor 
             return Lists.newArrayList(userService.getAuthorities(uid));
         } else {
             final List<String> teams = dynamicTeamService.getTeams(uid).orElse(Collections.emptyList());
-            final ZMonAuthority authority = new ZMonUserAuthority(uid, ImmutableSet.copyOf(teams));
+            final ZMonAuthority authority;
+            if (teams.contains("ZMON")) {
+                authority = new ZMonAdminAuthority(uid, ImmutableSet.copyOf(teams));
+            } else {
+                authority = new ZMonUserAuthority(uid, ImmutableSet.copyOf(teams));
+            }
             return Lists.newArrayList(authority);
         }
     }
-
 }
