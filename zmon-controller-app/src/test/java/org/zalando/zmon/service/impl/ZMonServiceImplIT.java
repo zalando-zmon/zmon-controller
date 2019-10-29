@@ -553,16 +553,4 @@ public class ZMonServiceImplIT {
         MatcherAssert.assertThat(teams,
             Matchers.containsInAnyOrder("Platform/Software", "Platform/RQM", "Platform/Database", "Platform/System"));
     }
-
-    @Test
-    public void testGetStatus() throws Exception {
-        EntitySProcService entitySProcMock = mock(EntitySProcService.class);
-        service = new ZMonServiceImpl(checkDefinitionSProc, alertDefinitionSProc, zmonSProc, entitySProcMock, redisPool, mapper, eventLog, checkRuntimeConfig, config, alertService);
-        when(entitySProcMock.getEntityById(eq("zmon-service-level-config")))
-                .thenReturn(Collections.singletonList("{\"last_modified\":\"\",\"last_modified_by\":\"\",\"data\":{\"query_max_check_tier\": 3, \"ingest_max_check_tier\": 3, \"query_distance_hours_limit\": 0}}"));
-        final ExecutionStatus status = service.getStatus();
-        MatcherAssert.assertThat(status.getServiceLevelStatus().getIngestMaxCheckTier(), Matchers.equalTo(3));
-        MatcherAssert.assertThat(status.getServiceLevelStatus().getQueryDistanceHoursLimit(), Matchers.equalTo(0));
-        MatcherAssert.assertThat(status.getServiceLevelStatus().getQueryMaxCheckTier(), Matchers.equalTo(3));
-    }
 }
