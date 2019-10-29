@@ -646,6 +646,7 @@ public class ZMonServiceImpl implements ZMonService {
         if (entities.size() == 1) {
             try {
                 final ServiceLevelStatus.ServiceLevelStatusData status = mapper.readValue(entities.get(0), ServiceLevelStatus.class).getData();
+                status.setMessage();
                 builder.withServiceLevelStatus(status);
             } catch (IOException e) {
                 log.error("Cannot read zmon-service-level-config entity,", e);
