@@ -1402,3 +1402,19 @@ code{
     padding: 10px 15px;
     margin-bottom: 20px;
 }
+
+
+.service-level-warning {
+    min-height: 30px;
+    background: #d40018;
+    font-weight: bold;
+    color: white;
+    display: flex;
+    justify-content: center;
+}
+
+.service-level-warning div {
+    margin: 10px;
+    font-size: 16px;
+    align-self: center;
+}

@@ -33,6 +33,7 @@ import org.zalando.zmon.config.SchedulerProperties;
 import org.zalando.zmon.diff.CheckDefinitionsDiffFactory;
 import org.zalando.zmon.domain.*;
 import org.zalando.zmon.domain.CheckDefinition.Criticality;
+import org.zalando.zmon.domain.ServiceLevelStatus.ServiceLevelStatusData;
 import org.zalando.zmon.event.ZMonEventType;
 import org.zalando.zmon.exception.SerializationException;
 import org.zalando.zmon.persistence.*;
@@ -639,8 +640,19 @@ public class ZMonServiceImpl implements ZMonService {
             final String invocation = invocations.get(lastUpdate.getKey()).get();
             builder.addWorker(lastUpdate.getKey(), (long) ts, invocation == null ? 0 : Long.valueOf(invocation));
         }
-
         builder.withWorkersActive(workersActive);
+
+        List<String> entities = entitySProc.getEntityById("zmon-service-level-config");
+
+        if (entities.size() == 1) {
+            try {
+                final ServiceLevelStatusData status = mapper.readValue(entities.get(0), ServiceLevelStatus.class).getData();
+                status.fillMessage();
+                builder.withServiceLevelStatus(status);
+            } catch (IOException e) {
+                log.error("Cannot read zmon-service-level-config entity,", e);
+            }
+        }
 
         return builder.build();
     }
