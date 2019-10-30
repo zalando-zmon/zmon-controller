@@ -52,7 +52,7 @@ public class ServiceLevelStatus {
             return message;
         }
 
-        public void setMessage() {
+        public void fillMessage() {
             this.message = "";
 
             if (this.queryMaxCheckTier != 3 || this.ingestMaxCheckTier != 3 || this.queryDistanceHoursLimit != 0) {

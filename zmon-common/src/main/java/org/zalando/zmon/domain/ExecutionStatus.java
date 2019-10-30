@@ -4,6 +4,7 @@ import java.util.Set;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSet;
+import org.zalando.zmon.domain.ServiceLevelStatus.ServiceLevelStatusData;
 
 /**
  * Created by pribeiro on 17/07/14.
@@ -17,7 +18,7 @@ public class ExecutionStatus {
     private final int queueSize;
     private final Set<Worker> workers;
     private final Set<Queue> queues;
-    private final ServiceLevelStatus.ServiceLevelStatusData serviceLevelStatus;
+    private final ServiceLevelStatusData serviceLevelStatus;
 
     private ExecutionStatus(final Builder builder) {
         this.alertsActive = builder.alertsActive;
@@ -50,7 +51,7 @@ public class ExecutionStatus {
         return queueSize;
     }
 
-    public ServiceLevelStatus.ServiceLevelStatusData getServiceLevelStatus() {
+    public ServiceLevelStatusData getServiceLevelStatus() {
         return serviceLevelStatus;
     }
 
@@ -103,7 +104,7 @@ public class ExecutionStatus {
         // optional
         private int alertsActive = 0;
         private int workersActive = 0;
-        private ServiceLevelStatus.ServiceLevelStatusData serviceLevelStatus = new ServiceLevelStatus.ServiceLevelStatusData();
+        private ServiceLevelStatusData serviceLevelStatus = new ServiceLevelStatusData();
         private final ImmutableSet.Builder<Worker> workers = ImmutableSet.builder();
         private final ImmutableSet.Builder<Queue> queues = ImmutableSet.builder();
 
@@ -123,7 +124,7 @@ public class ExecutionStatus {
             return this;
         }
 
-        public Builder withServiceLevelStatus(final ServiceLevelStatus.ServiceLevelStatusData status) {
+        public Builder withServiceLevelStatus(final ServiceLevelStatusData status) {
             Preconditions.checkNotNull(status);
             this.serviceLevelStatus = status;
 
