@@ -40,6 +40,7 @@ public class ServiceLevelStatus {
         private Integer queryDistanceHoursLimit = 0;
         private Integer queryMaxCheckTier = 3;
         private final HashMap<Integer, String> checkTiers;
+        private String message;
 
         public ServiceLevelStatusData() {
             this.checkTiers = new HashMap<>();
@@ -70,10 +71,7 @@ public class ServiceLevelStatus {
             if (this.ingestMaxCheckTier != 3) {
                 this.message += " Metric storage is currently only available for " + this.checkTiers.get(this.ingestMaxCheckTier) + ".";
             }
-
         }
-
-        private String message;
 
         public Integer getIngestMaxCheckTier() {
             return ingestMaxCheckTier;
