@@ -204,7 +204,7 @@ angular.module('zmon2App').factory('MainAlertService', ['$http', '$q', '$log', '
                 that.serviceStatus.isStatusRefreshing = true;
                 that.serviceStatus.workers = data.workers;
                 that.serviceStatus.queues = data.queues;
-                that.serviceStatus.serviceLevelStatusMessage = data.service_level_status.message;
+                that.serviceStatus.serviceLevelStatusMessage = data.service_level_status && data.service_level_status.message ? data.service_level_status.message : "";
 
                 // Calculate checks per second for each worker.
                 _.each(that.serviceStatus.workers, function(worker) {
