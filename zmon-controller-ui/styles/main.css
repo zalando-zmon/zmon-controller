@@ -1406,7 +1406,7 @@ code{
 
 .service-level-warning {
     min-height: 30px;
-    background: #ee771a;
+    background: #d40018;
     font-weight: bold;
     color: white;
     display: flex;
