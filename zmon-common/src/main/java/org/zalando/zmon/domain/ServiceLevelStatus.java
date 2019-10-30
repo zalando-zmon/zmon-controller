@@ -53,7 +53,11 @@ public class ServiceLevelStatus {
         }
 
         public void setMessage() {
-            this.message = "SERVICE DEGRADATION: ";
+            this.message = "";
+
+            if (this.queryMaxCheckTier != 3 || this.ingestMaxCheckTier != 3 || this.queryDistanceHoursLimit != 0) {
+                this.message = "SERVICE DEGRADATION: ";
+            }
 
             if (this.queryMaxCheckTier != 3) {
                 this.message += "Metric visualization is currently only available for " + this.checkTiers.get(this.ingestMaxCheckTier) + " ";
