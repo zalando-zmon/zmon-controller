@@ -36,6 +36,12 @@ public class ServiceLevelStatus {
 
 
     public static class ServiceLevelStatusData {
+        public static final String FIRST_LEVEL_WARNING = "Metrics visualization is currently limited to the last 12 hours.";
+        public static final String SECOND_LEVEL_WARNING = "Metrics visualization is currently only enabled for metrics classified as \"important\" or \"critical\" and is temporarily limited to the last 12 hours.";
+        public static final String THIRD_LEVEL_WARNING = "Metrics visualization & storage is currently only available for metrics classified as \"important\" or \"critical\" and is temporarily limited to the last 12 hours.";
+        public static final String FOURTH_LEVEL_WARNING = "Storage of metrics is currently only available for metrics classified as \"important\" or \"critical\". Metrics visualization is currently only enabled for metrics classified as \"critical\" and is temporarily limited to the last 12 hours.";
+        public static final String FIFTH_LEVEL_WARNING = "Metrics visualization & storage is currently only available for metrics classified as \"critical\" and is temporarily limited to the last 12 hours.";
+
         private Integer ingestMaxCheckTier = 3;
         private Integer queryDistanceHoursLimit = 0;
         private Integer queryMaxCheckTier = 3;
@@ -59,21 +65,24 @@ public class ServiceLevelStatus {
                 this.message = "SERVICE DEGRADATION: ";
             }
 
-            if (this.queryMaxCheckTier != 3) {
-                this.message += "Metric visualization is currently only available for " + this.checkTiers.get(this.ingestMaxCheckTier) + " ";
+            if (this.queryDistanceHoursLimit == 12 && this.ingestMaxCheckTier == 3 && this.queryMaxCheckTier == 3) {
+                this.message += FIRST_LEVEL_WARNING;
             }
 
-            if (this.queryDistanceHoursLimit != 0) {
-                if (this.queryMaxCheckTier != 3) {
-                    this.message += " and ";
-                } else {
-                    this.message += "Metric visualization ";
-                }
-                this.message += "is temporarily limited to a " + this.queryDistanceHoursLimit + " hour span.";
+            if (this.queryDistanceHoursLimit == 12 && this.ingestMaxCheckTier == 3 && this.queryMaxCheckTier == 2) {
+                this.message += SECOND_LEVEL_WARNING;
             }
 
-            if (this.ingestMaxCheckTier != 3) {
-                this.message += " Metric storage is currently only available for " + this.checkTiers.get(this.ingestMaxCheckTier) + ".";
+            if (this.queryDistanceHoursLimit == 12 && this.ingestMaxCheckTier == 2 && this.queryMaxCheckTier == 2) {
+                this.message += THIRD_LEVEL_WARNING;
+            }
+
+            if (this.queryDistanceHoursLimit == 12 && this.ingestMaxCheckTier == 2 && this.queryMaxCheckTier == 1) {
+                this.message += FOURTH_LEVEL_WARNING;
+            }
+
+            if (this.queryDistanceHoursLimit == 12 && this.ingestMaxCheckTier == 1 && this.queryMaxCheckTier == 1) {
+                this.message += FIFTH_LEVEL_WARNING;
             }
         }
 
