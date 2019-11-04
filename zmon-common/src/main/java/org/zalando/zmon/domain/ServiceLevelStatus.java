@@ -36,8 +36,8 @@ public class ServiceLevelStatus {
 
 
     public static class ServiceLevelStatusData {
-        public static final String SECOND_LEVEL_WARNING = "Metrics visualization is currently only enabled for metrics classified as \"important\" or \"critical\" and is temporarily limited to a 12 hour span.";
         public static final String FIRST_LEVEL_WARNING = "Metrics visualization is currently limited to a 12 hour span.";
+        public static final String SECOND_LEVEL_WARNING = "Metrics visualization is currently only enabled for metrics classified as \"important\" or \"critical\" and is temporarily limited to a 12 hour span.";
         public static final String THIRD_LEVEL_WARNING = "Metrics visualization & storage is currently only available for metrics classified as \"important\" or \"critical\" and is limited to a 12 hour span.";
         public static final String FOURTH_LEVEL_WARNING = "Storage of metrics is currently only available for metrics classified as \"important\" or \"critical\". Metrics visualization is currently only enabled for metrics classified as \"critical\" and is limited to a 12 hour span.";
         public static final String FIFTH_LEVEL_WARNING = "Metrics visualization & storage is currently only available for metrics classified as \"critical\" and is limited to a 12 hour span.";
