@@ -65,28 +65,23 @@ public class ServiceLevelStatus {
                 this.message = "SERVICE DEGRADATION: ";
             }
 
-            if (this.queryDistanceHoursLimit == 12 && this.ingestMaxCheckTier == 3 && this.ingestMaxCheckTier == 3) {
-                // level 1
+            if (this.queryDistanceHoursLimit == 12 && this.ingestMaxCheckTier == 3 && this.queryMaxCheckTier == 3) {
                 this.message += FIRST_LEVEL_WARNING;
             }
 
-            if (this.queryDistanceHoursLimit == 12 && this.ingestMaxCheckTier == 3 && this.ingestMaxCheckTier == 2) {
-                // level 2
+            if (this.queryDistanceHoursLimit == 12 && this.ingestMaxCheckTier == 3 && this.queryMaxCheckTier == 2) {
                 this.message += SECOND_LEVEL_WARNING;
             }
 
-            if (this.queryDistanceHoursLimit == 12 && this.ingestMaxCheckTier == 2 && this.ingestMaxCheckTier == 2) {
-                // level 3
+            if (this.queryDistanceHoursLimit == 12 && this.ingestMaxCheckTier == 2 && this.queryMaxCheckTier == 2) {
                 this.message += THIRD_LEVEL_WARNING;
             }
 
-            if (this.queryDistanceHoursLimit == 12 && this.ingestMaxCheckTier == 3 && this.ingestMaxCheckTier == 2) {
-                // level 4
+            if (this.queryDistanceHoursLimit == 12 && this.ingestMaxCheckTier == 2 && this.queryMaxCheckTier == 1) {
                 this.message += FOURTH_LEVEL_WARNING;
             }
 
-            if (this.queryDistanceHoursLimit == 12 && this.ingestMaxCheckTier == 3 && this.ingestMaxCheckTier == 2) {
-                // level 5
+            if (this.queryDistanceHoursLimit == 12 && this.ingestMaxCheckTier == 1 && this.queryMaxCheckTier == 1) {
                 this.message += FIFTH_LEVEL_WARNING;
             }
         }
