@@ -1,5 +1,5 @@
-angular.module('zmon2App').controller('CheckDefinitionCtrl', ['$scope', '$routeParams', '$location', 'MainAlertService', 'CommunicationService', 'FeedbackMessageService', 'APP_CONST', 'UserInfoService', 'LoadingIndicatorService', 'localStorageService', 'BootConfig',
-    function($scope, $routeParams, $location, MainAlertService, CommunicationService, FeedbackMessageService, APP_CONST, UserInfoService, LoadingIndicatorService, localStorageService, BootConfig) {
+angular.module('zmon2App').controller('CheckDefinitionCtrl', ['$scope', '$routeParams', '$location', 'MainAlertService', 'CommunicationService', 'FeedbackMessageService', 'APP_CONST', 'UserInfoService', 'LoadingIndicatorService', 'localStorageService', 'ConfigurationService',
+    function($scope, $routeParams, $location, MainAlertService, CommunicationService, FeedbackMessageService, APP_CONST, UserInfoService, LoadingIndicatorService, localStorageService, ConfigurationService) {
         $scope.DefinitionsCtrl = this;
         $scope.initialLoading = true;
 
@@ -13,13 +13,7 @@ angular.module('zmon2App').controller('CheckDefinitionCtrl', ['$scope', '$routeP
         $scope.sortOrder = false;
         $scope.limit = 100;
 
-        $scope.getMinCheckInterval = function(checkId) {
-            if (BootConfig.check.minInterval.whitelistedChecks.indexOf(parseInt(checkId)) >= 0) {
-                return BootConfig.check.minInterval.whitelisted;
-            }
-            return BootConfig.check.minInterval.normal;
-        }
-
+        $scope.getMinCheckInterval = ConfigurationService.getMinCheckInterval;
 
         var userInfo = UserInfoService.get();
 
@@ -40,7 +34,7 @@ angular.module('zmon2App').controller('CheckDefinitionCtrl', ['$scope', '$routeP
         this.fetchCheckDefinitions = function() {
 
             // Start loading animation
-            LoadingIndicatorService.start();
+        LoadingIndicatorService.start();
 
             // Get all teams from backend to generate filter by team menu.
             CommunicationService.getAllTeams().then(

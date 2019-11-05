@@ -1,4 +1,4 @@
-angular.module('zmon2App').controller('AlertDetailsCtrl', [ '$location', '$routeParams', '$scope', 'timespanFilter', 'CommunicationService', 'DowntimesService', 'FeedbackMessageService', 'localStorageService', 'MainAlertService', 'UserInfoService', 'APP_CONST', function($location, $routeParams, $scope, timespanFilter, CommunicationService, DowntimesService, FeedbackMessageService, localStorageService, MainAlertService, UserInfoService, APP_CONST) {
+angular.module('zmon2App').controller('AlertDetailsCtrl', [ '$location', '$routeParams', '$scope', 'timespanFilter', 'CommunicationService', 'DowntimesService', 'FeedbackMessageService', 'localStorageService', 'MainAlertService', 'UserInfoService', 'ConfigurationService', 'APP_CONST', function($location, $routeParams, $scope, timespanFilter, CommunicationService, DowntimesService, FeedbackMessageService, localStorageService, MainAlertService, UserInfoService, ConfigurationService, APP_CONST) {
 
     // infinite-scroll initial limit
     $scope.limit = APP_CONST.INFINITE_SCROLL_VISIBLE_ENTITIES_INCREMENT;
@@ -38,6 +38,8 @@ angular.module('zmon2App').controller('AlertDetailsCtrl', [ '$location', '$route
     $scope.sortOrderChildren = false;
 
     $scope.userInfo = UserInfoService.get();
+
+    $scope.getMinCheckInterval = ConfigurationService.getMinCheckInterval;
 
     var alertDetails = { entities: [] };
 

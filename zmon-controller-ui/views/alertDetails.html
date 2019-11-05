@@ -71,7 +71,12 @@
 			<dt>Check Command</dt>
 			<dd><div hljs hljs-source="check.command" hljs-language="python"></div></dd>
 			<dt>Check Interval</dt>
-			<dd>{{check.interval|timespan:'s'}}</dd>
+			<dd>
+				{{check.interval|timespan:'s'}}
+				<span ng-if="check.interval < getMinCheckInterval(check.id)" class="warning">
+                    &nbsp;<span class="fa fa-warning"></span> Implicitly changed to {{ getMinCheckInterval(check.id)|timespan:'s'}}
+                </span>
+			</dd>
 			<dt>Check Entities</dt>
 			<dd ng-bind-html="check.entities | entities"></dd>
 			<dt>Parameters</dt>
