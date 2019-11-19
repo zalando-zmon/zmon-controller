@@ -42,9 +42,7 @@
                 <directory>${basedir}</directory>
                 <includes>
                     <include>favicon.ico</include>
-                    <include>favicon-16x16.png</include>
-                    <include>favicon-32x32.png</include>
-                    <include>logo.svg</include>
+                    <include>logo.png</include>
                     <include>warning.png</include>
                     <include>clean.png</include>
                 </includes>
