@@ -1,5 +1,7 @@
 package org.zalando.zmon.domain;
 
+import java.util.HashMap;
+
 public class ServiceLevelStatus {
     private ServiceLevelStatusData data;
     private String lastModified;
@@ -41,47 +43,56 @@ public class ServiceLevelStatus {
         static final String FIFTH_LEVEL_WARNING = "Storage of metrics is currently only available for metrics classified as \"important\" or \"critical\". Metrics visualization is currently only enabled for metrics classified as \"critical\" and is temporarily limited to the last 12 hours.";
         static final String SIXTH_LEVEL_WARNING = "Metrics visualization & storage is currently only available for metrics classified as \"critical\" and is temporarily limited to the last 12 hours.";
 
-        private Integer ingestMaxCheckTier = 3;
+        private Integer ingestMaxCheckTier = 0;
         private Integer queryDistanceHoursLimit = 0;
-        private Integer queryMaxCheckTier = 3;
+        private Integer queryMaxCheckTier = 0;
         private Integer sampledCheckTier = 0;
         private Double sampledCheckRate = 0d;
         private String message;
+        private final HashMap<Integer, String> checkTiers;
+
+        public ServiceLevelStatusData(){
+            this.checkTiers = new HashMap<>();
+            this.checkTiers.put(2, "\"important\" and \"critical\"");
+            this.checkTiers.put(1, "\"critical\"");
+        }
 
         public String getMessage() {
             return message;
         }
 
         public void fillMessage() {
-            this.message = "";
+            if (this.queryMaxCheckTier != 0 || this.ingestMaxCheckTier != 0 || this.queryDistanceHoursLimit != 0) {
+                this.message = "SERVICE DEGRADATION: " + this.getQueryPathMessage() + this.getWritePathMessage();
+            } else {
+                this.message = "";
+            }
+        }
 
-            if (this.queryMaxCheckTier != 3 || this.ingestMaxCheckTier != 3 || this.queryDistanceHoursLimit != 0) {
-                this.message = "SERVICE DEGRADATION: ";
+        private String getQueryPathMessage() {
+            String message = "";
+
+            if (this.queryMaxCheckTier != 0) {
+                message += "Metrics visualization is only available for metrics classified as " + this.checkTiers.get(this.queryMaxCheckTier);
             }
 
-            if (this.queryDistanceHoursLimit == 12 && this.ingestMaxCheckTier == 3 && this.queryMaxCheckTier == 3) {
-                this.message += FIRST_LEVEL_WARNING;
+            if (this.queryDistanceHoursLimit != 0) {
+                if (this.queryMaxCheckTier != 0) {
+                    message += "and will temporarily be limited to " + this.queryDistanceHoursLimit + " hours.";
+                } else {
+                    message += "Metrics visualization is temporarily limited to " + this.queryDistanceHoursLimit + " hours.";
+                }
             }
+            return message + "\n";
+        }
 
-            if (this.queryDistanceHoursLimit == 12 && this.ingestMaxCheckTier == 3 && this.queryMaxCheckTier == 2 && this.sampledCheckTier == 0) {
-                this.message += SECOND_LEVEL_WARNING;
-            }
+        private String getWritePathMessage() {
+            String message = "";
 
-            if (this.queryDistanceHoursLimit == 12 && this.ingestMaxCheckTier == 3 && this.queryMaxCheckTier == 2 && this.sampledCheckTier == 3) {
-                this.message += THIRD_LEVEL_WARNING;
+            if (this.ingestMaxCheckTier != 3) {
+                message += "Only metrics classified as " + this.checkTiers.get(this.ingestMaxCheckTier) + " are being stored";
             }
-
-            if (this.queryDistanceHoursLimit == 12 && this.ingestMaxCheckTier == 2 && this.queryMaxCheckTier == 2) {
-                this.message += FOURTH_LEVEL_WARNING;
-            }
-
-            if (this.queryDistanceHoursLimit == 12 && this.ingestMaxCheckTier == 2 && this.queryMaxCheckTier == 1) {
-                this.message += FIFTH_LEVEL_WARNING;
-            }
-
-            if (this.queryDistanceHoursLimit == 12 && this.ingestMaxCheckTier == 1 && this.queryMaxCheckTier == 1) {
-                this.message += SIXTH_LEVEL_WARNING;
-            }
+            return message;
         }
 
         public Integer getIngestMaxCheckTier() {
