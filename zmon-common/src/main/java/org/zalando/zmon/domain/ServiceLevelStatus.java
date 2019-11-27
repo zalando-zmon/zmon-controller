@@ -83,7 +83,7 @@ public class ServiceLevelStatus {
                     message += "Metrics visualization is temporarily limited to " + this.queryDistanceHoursLimit + " hours.";
                 }
             }
-            return message + "\n";
+            return message;
         }
 
         private String getWritePathMessage() {
