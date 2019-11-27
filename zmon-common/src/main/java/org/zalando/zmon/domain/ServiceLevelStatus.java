@@ -73,7 +73,7 @@ public class ServiceLevelStatus {
             String message = "";
 
             if (isEnabled(this.queryMaxCheckTier)) {
-                message += "Metrics visualization is only available for metrics classified as " + this.checkTiers.get(this.queryMaxCheckTier);
+                message += "Metrics visualization is currently only available for metrics classified as " + this.checkTiers.get(this.queryMaxCheckTier);
                 if (this.queryDistanceHoursLimit == 0) {
                     message += ".";
                 }
@@ -81,7 +81,7 @@ public class ServiceLevelStatus {
 
             if (this.queryDistanceHoursLimit != 0) {
                 if (isEnabled(this.queryMaxCheckTier)) {
-                    message += " and will temporarily be limited to " + this.queryDistanceHoursLimit + " hours.";
+                    message += " and is temporarily be limited to the last" + this.queryDistanceHoursLimit + " hours.";
                 } else {
                     message += "Metrics visualization is temporarily limited to the last " + this.queryDistanceHoursLimit + " hours.";
                 }
