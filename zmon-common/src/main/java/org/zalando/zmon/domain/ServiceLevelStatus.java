@@ -36,22 +36,15 @@ public class ServiceLevelStatus {
 
 
     public static class ServiceLevelStatusData {
-        static final String FIRST_LEVEL_WARNING = "Metrics visualization is currently limited to the last 12 hours.";
-        static final String SECOND_LEVEL_WARNING = "Metrics visualization is currently only enabled for metrics classified as \"important\" or \"critical\" and is temporarily limited to the last 12 hours.";
-        static final String THIRD_LEVEL_WARNING = "Storage of metrics classified as \"other\" is currently sampled by 50%. Metrics visualization is currently only enabled for metrics classified as \"important\" or \"critical\" and is temporarily limited to the last 12 hours.";
-        static final String FOURTH_LEVEL_WARNING = "Metrics visualization & storage is currently only available for metrics classified as \"important\" or \"critical\" and is temporarily limited to the last 12 hours.";
-        static final String FIFTH_LEVEL_WARNING = "Storage of metrics is currently only available for metrics classified as \"important\" or \"critical\". Metrics visualization is currently only enabled for metrics classified as \"critical\" and is temporarily limited to the last 12 hours.";
-        static final String SIXTH_LEVEL_WARNING = "Metrics visualization & storage is currently only available for metrics classified as \"critical\" and is temporarily limited to the last 12 hours.";
-
-        private Integer ingestMaxCheckTier = 0;
-        private Integer queryDistanceHoursLimit = 0;
-        private Integer queryMaxCheckTier = 0;
-        private Integer sampledCheckTier = 0;
-        private Double sampledCheckRate = 0d;
+        private int ingestMaxCheckTier;
+        private int queryDistanceHoursLimit;
+        private int queryMaxCheckTier;
+        private int sampledCheckTier;
+        private double sampledCheckRate;
         private String message;
         private final HashMap<Integer, String> checkTiers;
 
-        public ServiceLevelStatusData(){
+        public ServiceLevelStatusData() {
             this.checkTiers = new HashMap<>();
             this.checkTiers.put(2, "\"important\" and \"critical\"");
             this.checkTiers.put(1, "\"critical\"");
@@ -63,13 +56,14 @@ public class ServiceLevelStatus {
 
         public void fillMessage() {
             if (isEnabled(this.queryMaxCheckTier) || isEnabled(this.ingestMaxCheckTier) || this.queryDistanceHoursLimit != 0) {
-                this.message = "SERVICE DEGRADATION: " + this.getQueryPathMessage() + " " +this.getWritePathMessage();
+                this.message = "SERVICE DEGRADATION: " + this.getQueryPathMessage() + " " + this.getWritePathMessage();
+                this.message = this.message.trim();
             } else {
                 this.message = "";
             }
         }
 
-        private String getQueryPathMessage() {
+        String getQueryPathMessage() {
             String message = "";
 
             if (isEnabled(this.queryMaxCheckTier)) {
@@ -81,7 +75,7 @@ public class ServiceLevelStatus {
 
             if (this.queryDistanceHoursLimit != 0) {
                 if (isEnabled(this.queryMaxCheckTier)) {
-                    message += " and is temporarily be limited to the last" + this.queryDistanceHoursLimit + " hours.";
+                    message += " and is temporarily be limited to the last " + this.queryDistanceHoursLimit + " hours.";
                 } else {
                     message += "Metrics visualization is temporarily limited to the last " + this.queryDistanceHoursLimit + " hours.";
                 }
@@ -89,7 +83,7 @@ public class ServiceLevelStatus {
             return message;
         }
 
-        private String getWritePathMessage() {
+        String getWritePathMessage() {
             String message = "";
 
             if (isEnabled(this.ingestMaxCheckTier)) {
@@ -98,7 +92,7 @@ public class ServiceLevelStatus {
             return message;
         }
 
-        private Boolean isEnabled(final Integer serviceDegradationLevelValue)  {
+        private Boolean isEnabled(final Integer serviceDegradationLevelValue) {
             return serviceDegradationLevelValue == 2 || serviceDegradationLevelValue == 1;
         }
 
