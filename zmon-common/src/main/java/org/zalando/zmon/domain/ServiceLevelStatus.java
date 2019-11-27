@@ -63,7 +63,7 @@ public class ServiceLevelStatus {
 
         public void fillMessage() {
             if (this.queryMaxCheckTier != 0 || this.ingestMaxCheckTier != 0 || this.queryDistanceHoursLimit != 0) {
-                this.message = "SERVICE DEGRADATION: " + this.getQueryPathMessage() + this.getWritePathMessage();
+                this.message = "SERVICE DEGRADATION: " + this.getQueryPathMessage() + " " +this.getWritePathMessage();
             } else {
                 this.message = "";
             }
@@ -74,13 +74,16 @@ public class ServiceLevelStatus {
 
             if (this.queryMaxCheckTier != 0) {
                 message += "Metrics visualization is only available for metrics classified as " + this.checkTiers.get(this.queryMaxCheckTier);
+                if (this.queryDistanceHoursLimit == 0) {
+                    message += ".";
+                }
             }
 
             if (this.queryDistanceHoursLimit != 0) {
                 if (this.queryMaxCheckTier != 0) {
-                    message += "and will temporarily be limited to " + this.queryDistanceHoursLimit + " hours.";
+                    message += " and will temporarily be limited to " + this.queryDistanceHoursLimit + " hours.";
                 } else {
-                    message += "Metrics visualization is temporarily limited to " + this.queryDistanceHoursLimit + " hours.";
+                    message += "Metrics visualization is temporarily limited to the last " + this.queryDistanceHoursLimit + " hours.";
                 }
             }
             return message;
@@ -90,7 +93,7 @@ public class ServiceLevelStatus {
             String message = "";
 
             if (this.ingestMaxCheckTier != 3) {
-                message += "Only metrics classified as " + this.checkTiers.get(this.ingestMaxCheckTier) + " are being stored";
+                message += "Only metrics classified as " + this.checkTiers.get(this.ingestMaxCheckTier) + " are being stored.";
             }
             return message;
         }
