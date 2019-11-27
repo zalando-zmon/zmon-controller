@@ -93,7 +93,7 @@ public class ServiceLevelStatus {
             String message = "";
 
             if (isEnabled(this.ingestMaxCheckTier)) {
-                message += "Only metrics classified as " + this.checkTiers.get(this.ingestMaxCheckTier) + " are being stored.";
+                message += "Metrics storage & visualization is currently only enabled for metrics classified as " + this.checkTiers.get(this.ingestMaxCheckTier) + ".";
             }
             return message;
         }
