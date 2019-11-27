@@ -62,7 +62,7 @@ public class ServiceLevelStatus {
         }
 
         public void fillMessage() {
-            if (this.queryMaxCheckTier != 0 || this.ingestMaxCheckTier != 0 || this.queryDistanceHoursLimit != 0) {
+            if (isEnabled(this.queryMaxCheckTier) || isEnabled(this.ingestMaxCheckTier) || this.queryDistanceHoursLimit != 0) {
                 this.message = "SERVICE DEGRADATION: " + this.getQueryPathMessage() + " " +this.getWritePathMessage();
             } else {
                 this.message = "";
@@ -72,7 +72,7 @@ public class ServiceLevelStatus {
         private String getQueryPathMessage() {
             String message = "";
 
-            if (this.queryMaxCheckTier != 0) {
+            if (isEnabled(this.queryMaxCheckTier)) {
                 message += "Metrics visualization is only available for metrics classified as " + this.checkTiers.get(this.queryMaxCheckTier);
                 if (this.queryDistanceHoursLimit == 0) {
                     message += ".";
@@ -80,7 +80,7 @@ public class ServiceLevelStatus {
             }
 
             if (this.queryDistanceHoursLimit != 0) {
-                if (this.queryMaxCheckTier != 0) {
+                if (isEnabled(this.queryMaxCheckTier)) {
                     message += " and will temporarily be limited to " + this.queryDistanceHoursLimit + " hours.";
                 } else {
                     message += "Metrics visualization is temporarily limited to the last " + this.queryDistanceHoursLimit + " hours.";
@@ -92,10 +92,14 @@ public class ServiceLevelStatus {
         private String getWritePathMessage() {
             String message = "";
 
-            if (this.ingestMaxCheckTier != 3) {
+            if (isEnabled(this.ingestMaxCheckTier)) {
                 message += "Only metrics classified as " + this.checkTiers.get(this.ingestMaxCheckTier) + " are being stored.";
             }
             return message;
+        }
+
+        private Boolean isEnabled(final Integer serviceDegradationLevelValue)  {
+            return serviceDegradationLevelValue == 2 || serviceDegradationLevelValue == 1;
         }
 
         public Integer getIngestMaxCheckTier() {
