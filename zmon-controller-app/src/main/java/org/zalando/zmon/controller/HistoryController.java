@@ -74,6 +74,7 @@ public class HistoryController extends AbstractZMonController {
                 authorityService.getUserName(),
                 new ArrayList<>(authorityService.getTeams()),
                 authorityService.hasAdminAuthority());
-        return new ResponseEntity<>(isRestored, HttpStatus.OK);
+
+        return new ResponseEntity<>(isRestored ? HttpStatus.NO_CONTENT : HttpStatus.UNPROCESSABLE_ENTITY);
     }
 }
