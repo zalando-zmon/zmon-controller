@@ -180,7 +180,7 @@ public class MultiKairosDBController extends AbstractZMonController {
         return headers;
     }
 
-    private void alignQueriesToFullMinutes(final JsonNode node, final int queryWindow) {
+    private void alignQueriesToFullMinutes(final JsonNode node, final int maxQueryWindow) {
         if (node instanceof ObjectNode) {
             ObjectNode q = (ObjectNode) node;
             q.put("cache_time", 60);
@@ -189,10 +189,13 @@ public class MultiKairosDBController extends AbstractZMonController {
                 start = start - (start % 60000);
                 q.put("start_absolute", start);
             } else if (q.has("start_relative")) {
-                if (queryWindow != 0) {
-                    ObjectNode r = (ObjectNode) q.get("start_relative");
-                    r.put("value", queryWindow);
-                    r.put("unit", "minutes");
+                if (maxQueryWindow != 0) {
+                    int curWindow = q.get("start_relative").asInt();
+                    if curWindow > maxQueryWindow {
+                        ObjectNode r = (ObjectNode) q.get("start_relative");
+                        r.put("value", maxQueryWindow);
+                        r.put("unit", "minutes");
+                    }
                 }
             }
         }
