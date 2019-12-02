@@ -191,7 +191,7 @@ public class MultiKairosDBController extends AbstractZMonController {
             } else if (q.has("start_relative")) {
                 if (maxQueryWindow != 0) {
                     int curWindow = q.get("start_relative").asInt();
-                    if curWindow > maxQueryWindow {
+                    if (curWindow > maxQueryWindow) {
                         ObjectNode r = (ObjectNode) q.get("start_relative");
                         r.put("value", maxQueryWindow);
                         r.put("unit", "minutes");
