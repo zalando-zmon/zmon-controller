@@ -1,22 +1,22 @@
 package org.zalando.zmon.controller;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-
 import org.springframework.stereotype.Controller;
-
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.zalando.zmon.domain.Activity;
 import org.zalando.zmon.domain.ActivityDiff;
 import org.zalando.zmon.domain.HistoryAction;
+import org.zalando.zmon.domain.RestoreCheckDefinitionRequest;
 import org.zalando.zmon.security.permission.DefaultZMonPermissionService;
 import org.zalando.zmon.service.HistoryService;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Controller
 @RequestMapping(value="/rest")
@@ -59,5 +59,18 @@ public class HistoryController extends AbstractZMonController {
 
         return new ResponseEntity<>(historyService.getCheckDefinitionHistory(checkDefinitionId, limit, from, to, action),
                 HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/restoreCheckDefinition", method = RequestMethod.POST)
+    public ResponseEntity<Boolean> restoreCheckDefinition(
+        @RequestBody(required = true) RestoreCheckDefinitionRequest request
+    ) {
+        boolean isRestored = historyService.restoreCheckDefinition(
+                request.getCheckDefinitionHistoryId(),
+                authorityService.getUserName(),
+                new ArrayList<>(authorityService.getTeams()),
+                authorityService.hasAdminAuthority());
+
+        return new ResponseEntity<>(isRestored, isRestored ? HttpStatus.NO_CONTENT : HttpStatus.UNPROCESSABLE_ENTITY);
     }
 }

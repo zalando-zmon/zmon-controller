@@ -1,16 +1,14 @@
 package org.zalando.zmon.domain;
 
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
-
+import com.google.common.base.Objects;
+import com.google.common.base.Preconditions;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
-import org.zalando.zmon.domain.CheckDefinition;
 
-import com.google.common.base.Objects;
-import com.google.common.base.Preconditions;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
 
 public class CheckDefinitionIsEqual extends BaseMatcher<CheckDefinition> {
 
@@ -52,9 +50,10 @@ public class CheckDefinitionIsEqual extends BaseMatcher<CheckDefinition> {
             .appendValue(checkDefinition.getEntities()).appendText(", interval is ")
             .appendValue(checkDefinition.getInterval()).appendText(", command is ")
             .appendValue(checkDefinition.getCommand()).appendText(", source url is ")
-            .appendValue(checkDefinition.getStatus()).appendText(", status is ")
             .appendValue(checkDefinition.getSourceUrl()).appendText(", last modified by ")
-            .appendValue(checkDefinition.getLastModifiedBy()).appendText("}");
+            .appendValue(checkDefinition.getLastModifiedBy()).appendText(", status is ")
+            .appendValue(checkDefinition.getStatus()).appendText(", runtime is ")
+            .appendValue(checkDefinition.getRuntime()).appendText("}");
     }
 
     // factory methods for fluent language
