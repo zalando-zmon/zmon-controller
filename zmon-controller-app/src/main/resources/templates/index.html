@@ -7,7 +7,8 @@
     <meta charset="utf-8"></meta>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"></meta>
     <meta property="sessionExpiredUrl" content="logout?error=session_expired" ></meta>
-
+    <link rel="icon" type="image/png" href="favicon-16x16.png" sizes="16x16">
+    <link rel="icon" type="image/png" href="favicon-32x32.png" sizes="32x32">
     <!-- Add to homescreen for Chrome on Android -->
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="application-name" content="ZMON">
@@ -179,7 +180,10 @@
     <nav class="navbar navbar-inverse" role="navigation">
         <div class="span12">
             <div class="navbar-header">
-                <a class="navbar-brand" href="#/"><img src="/logo.png" th:src="@{/logo.png}" /> ZMON</a>
+                <a class="navbar-brand" href="#/">
+                    <img src="/logo.svg" th:src="@{/logo.svg}" style="width: 36px;"/>
+                    <span>ZMON</span>
+                </a>
                 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
                   <span class="sr-only">Toggle navigation</span>
                   <span class="icon-bar"></span>
