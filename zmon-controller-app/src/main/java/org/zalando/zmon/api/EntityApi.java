@@ -5,6 +5,7 @@ import com.codahale.metrics.Timer;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
+import de.zalando.sprocwrapper.proxy.SProcCallHandler;
 import org.postgresql.util.PSQLException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,17 +69,25 @@ public class EntityApi {
     @RequestMapping(value = {"/", ""}, method = {RequestMethod.PUT, RequestMethod.POST})
     public ResponseEntity<String> addEntity(@RequestBody JsonNode entity) {
 
-        if (entity.has("type")) {
-            if ("global".equals(entity.get("type").textValue().toLowerCase())) {
-                return new ResponseEntity<>("Creating entity with type - GLOBAL is not allowed.", HttpStatus.FORBIDDEN);
-            }
+        if (!entity.has("type")) {
+            return new ResponseEntity<>("Creating entity without a type is not possible.", HttpStatus.BAD_REQUEST);
+        }
+        if (!entity.has("id")) {
+            return new ResponseEntity<>("Creating entity without an id is not possible.", HttpStatus.BAD_REQUEST);
+        }
 
-            if ("zmon_config".equals(entity.get("type").textValue())) {
-                if (!authService.hasAdminAuthority()) {
-                    throw new AccessDeniedException("No ADMIN privileges present to update configuration.");
-                }
-                log.info("Modifying config entity: id={} user={}", entity.get("id"), authService.getUserName());
+        if ("global".equals(entity.get("type").textValue().toLowerCase())) {
+            return new ResponseEntity<>("Creating entity with type 'GLOBAL' is not allowed.", HttpStatus.FORBIDDEN);
+        }
+        if ("global".equals(entity.get("id").textValue().toLowerCase())) {
+            return new ResponseEntity<>("Creating entity with id 'GLOBAL' is not allowed.", HttpStatus.FORBIDDEN);
+        }
+
+        if ("zmon_config".equals(entity.get("type").textValue())) {
+            if (!authService.hasAdminAuthority()) {
+                throw new AccessDeniedException("No ADMIN privileges present to update configuration.");
             }
+            log.info("Modifying config entity: id={} user={}", entity.get("id"), authService.getUserName());
         }
 
         try {
@@ -91,6 +100,11 @@ public class EntityApi {
         } catch (IOException ex) {
             log.error("Entity not serializable", ex);
             return new ResponseEntity<>("Entity not serializable.", HttpStatus.BAD_REQUEST);
+        } catch (org.springframework.jdbc.UncategorizedSQLException ex) {
+            log.error("attempt to modify type: ", ex);
+            org.postgresql.util.PSQLException rc = (PSQLException) ex.getRootCause();
+
+            return new ResponseEntity<>(rc.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
 

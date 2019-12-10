@@ -1,3 +1,5 @@
+SET SEARCH_PATH TO zzm_api;
+
 CREATE OR REPLACE FUNCTION create_or_update_entity(entity_data text, teams text[], user_name text) RETURNS text AS
 $$
 DECLARE
@@ -5,10 +7,10 @@ DECLARE
   _data jsonb;
 BEGIN
   SELECT e_data INTO _data FROM zzm_data.entity WHERE (e_data->'id')::text = ((entity_data::jsonb)->'id')::text;
-  IF (entity_data::json->'type')::text IS DISTINCT FROM (_data->'type')::text THEN
+
+  IF (_data->'type')::text <> '' AND (entity_data::json->'type')::text IS DISTINCT FROM (_data->'type')::text THEN
       RAISE EXCEPTION 'Cannot update "type" of an entity'
-          USING HINT = 'Please check your "id" and "type"',
-                ERRORCODE = '23001'; -- restrict_violation
+          USING HINT = 'Please check your "id" and "type"';
   END IF;
 
   IF (entity_data::json->'type')::text IS DISTINCT FROM '"local"' AND _data IS NOT DISTINCT FROM entity_data::jsonb THEN
