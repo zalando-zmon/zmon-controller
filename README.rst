@@ -31,9 +31,9 @@ ZMON Controller is the frontend UI and REST API for Zalando's open-source platfo
 Running Locally
 ===============
 
-Please use the `main ZMON repository`_ to start a Vagrant demo box.
+Please use the docker-compose that is in the compose directory of the `main ZMON repository`_.
 
-Make sure the provided Vagrant-Box is up and all services are running.
+Make sure the provided docker-compose is up and all services are running.
 
 .. code-block:: bash
 
