@@ -24,7 +24,7 @@ public class HistoryServiceImpl implements HistoryService {
     private static final int DEFAULT_HISTORY_LIMIT = 50;
     private static final Comparator<Activity> ACTIVITY_TIME_COMPARATOR = Comparator.comparing(Activity::getTime);
     private static final List<String> UNIFIED_DIFF_IGNORED_FIELDS = Arrays.asList("last_modified", "last_modified_by");
-    private static final List<String> UNIFIED_DIFF_CODE_FIELDS = Arrays.asList("command", "condition");
+    private static final List<String> UNIFIED_DIFF_CODE_FIELDS = Arrays.asList("command", "condition", "description");
 
     private final CheckDefinitionSProcService checkDefinitionSProc;
 
