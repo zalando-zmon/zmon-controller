@@ -28,7 +28,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Date;
 import java.time.Duration;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Stream;
 
 /**
  * Created by jmussler on 1/28/15.
@@ -67,13 +69,15 @@ public class EntityApi {
     @ResponseBody
     @RequestMapping(value = {"/", ""}, method = {RequestMethod.PUT, RequestMethod.POST})
     public ResponseEntity<String> addEntity(@RequestBody JsonNode entity) {
-
-        if (entity.has("type")) {
-            if ("global".equals(entity.get("type").textValue().toLowerCase())) {
+        Optional<String> maybeNewType = Optional.ofNullable(entity.get("type")).map(JsonNode::textValue);
+        Optional<String> maybeId = Optional.ofNullable(entity.get("id")).map(JsonNode::textValue);
+        if (maybeNewType.isPresent()) {
+            String type = maybeNewType.get();
+            if ("global".equals(type.toLowerCase())) {
                 return new ResponseEntity<>("Creating entity with type - GLOBAL is not allowed.", HttpStatus.FORBIDDEN);
             }
 
-            if ("zmon_config".equals(entity.get("type").textValue())) {
+            if ("zmon_config".equals(type)) {
                 if (!authService.hasAdminAuthority()) {
                     throw new AccessDeniedException("No ADMIN privileges present to update configuration.");
                 }
@@ -82,6 +86,23 @@ public class EntityApi {
         }
 
         try {
+            Optional<String> maybeOldType = maybeId.map(entitySprocs::getEntityById)
+                    .map(List::stream)
+                    .flatMap(Stream::findFirst)
+                    .flatMap(str -> {
+                        try {
+                            return Optional.ofNullable(mapper.readTree(str));
+                        } catch (IOException e) {
+                            return Optional.empty();
+                        }
+                    })
+                    .flatMap(jsonNode -> Optional.ofNullable(jsonNode.get("type")))
+                    .map(JsonNode::textValue);
+            if (maybeOldType.isPresent() && !maybeOldType.equals(maybeNewType)) {
+                return new ResponseEntity<>("Changing the 'type' of an entity is prohibited (entity type implicitly " +
+                        "defines the structure of the entity; changes could lead to confusing behavior and/or errors). " +
+                        "Please create a new entity instead (with a different id).", HttpStatus.CONFLICT);
+            }
             String data = mapper.writeValueAsString(entity);
             String id = entitySprocs.createOrUpdateEntity(data, Lists.newArrayList(authService.getTeams()), authService.getUserName());
             if (id == null) {

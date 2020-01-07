@@ -108,4 +108,20 @@ public class EntityApiIT {
         response = executor.execute(getEntity("testentity"));
         assertThat(response.returnResponse().getStatusLine().getStatusCode()).isEqualTo(404);
     }
+
+    @Test
+    public void updateEntityWithTypeGlobalIsForbidden() throws IOException {
+        Executor executor = Executor.newInstance();
+        String initialType = "whatever";
+        String typeToUpdate = "new_whatever";
+        String jsonTemplate = "{\"id\":\"any_id\",\"type\":\"%s\"}";
+
+        Response createResponse = executor.execute(updateEntity(String.format(jsonTemplate, initialType)));
+        int okStatusCode = createResponse.returnResponse().getStatusLine().getStatusCode();
+        assertThat(okStatusCode).isEqualTo(200).as("Entity should be created");
+
+        Response updateResponse = executor.execute(updateEntity(String.format(jsonTemplate, typeToUpdate)));
+        int forbiddenStatusCode = updateResponse.returnResponse().getStatusLine().getStatusCode();
+        assertThat(forbiddenStatusCode).isEqualTo(409).as("Updating entity should be prohibited");
+    }
 }
