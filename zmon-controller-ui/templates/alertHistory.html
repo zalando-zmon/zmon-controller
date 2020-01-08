@@ -12,6 +12,7 @@
             <th class="col-sm-2">Type</th>
             <th class="col-sm-1">Entity</th>
             <th>Value</th>
+            <th class="col-sm-1">Captures</th>
         </tr>
     </thead>
     <tbody>
@@ -23,6 +24,9 @@
             <td>{{::entry.attributes.entity}}</td>
             <td>
                 <div alert-value-modal name="entry.attributes.entity" value="entry.attributes.value">{{ entry.attributes.value!=null ? entry.attributes.value : entry.attributes }}</div>
+            </td>
+            <td>
+                <div alert-value-modal name="entry.attributes.entity" value="entry.attributes.captures">{{ entry.attributes.captures!=null ? entry.attributes.captures : "" }}</div>
             </td>
         </tr>
     </tbody>
