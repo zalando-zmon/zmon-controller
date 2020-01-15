@@ -16,6 +16,8 @@ import org.zalando.zmon.ZmonApplication;
 import org.zalando.zmon.config.TestSecurityConfig;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.Writer;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -57,7 +59,8 @@ public class EntityApiIT {
         assertThat(response.returnResponse().getStatusLine().getStatusCode()).isEqualTo(200);
 
         String content = executor.execute(getEntity("testentity")).returnContent().asString();
-        assertThat(content).contains("\"id\": \"testentity\"");
+        // System.out.println("RESPONSE=" + content);
+        assertThat(content).contains("\"id\":\"testentity\"");
         assertThat(content).doesNotContain("\"foo\": \"bar\"");
 
         // now update one entity property
@@ -71,7 +74,7 @@ public class EntityApiIT {
         assertThat(response.returnResponse().getStatusLine().getStatusCode()).isEqualTo(200);
 
         content = executor.execute(getEntity("testentity")).returnContent().asString();
-        assertThat(content).contains("\"foo\": \"bar\"");
+        assertThat(content).contains("\"foo\":\"bar\"");
 
         // Creating entity of "type" GLOBAL is not allowed
         response = executor.execute(updateEntity(
