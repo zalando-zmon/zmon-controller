@@ -156,7 +156,7 @@ public class ZMonRestService extends AbstractZMonController {
 
 
     @ResponseBody
-    @RequestMapping(value = "/entities")
+    @RequestMapping(value = "/entities", produces = "application/json")
     public List<EntityObject> getEntities(@RequestParam(value = "query", defaultValue = "{}") String data, @RequestParam(value = "exclude", defaultValue="") String exclude) throws IOException {
         return entityApi.getEntities(data, exclude);
     }
