@@ -117,7 +117,7 @@ public class EntityApi {
 
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    @RequestMapping(value = {"/", ""}, method = RequestMethod.GET)
+    @RequestMapping(value = {"/", ""}, method = RequestMethod.GET, produces = "application/json; charset=UTF-8")
     public List<EntityObject> getEntities(@RequestParam(value = "query", defaultValue = "[{}]") String data, @RequestParam(value = "exclude", defaultValue = "") String exclude) throws IOException {
         List<String> entitiesString;
 
@@ -143,7 +143,7 @@ public class EntityApi {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     @RequestMapping(value = {"/{id}/", "/{id}"})
-    public void getEntity(@PathVariable(value = "id") String id, final Writer writer) {
+    public void getEntity(@PathVariable(value = "id") String id, final Writer writer, final HttpServletResponse response) {
         List<String> entities = entitySprocs.getEntityById(id);
         if (entities.isEmpty()) {
             throw new ResourceNotFoundException();
@@ -152,6 +152,7 @@ public class EntityApi {
             for (String s : entities) {
                 writer.write(s);// there is at most one entity
             }
+            response.setHeader("Content-Type", "application/json; charset=UTF-8");
         } catch (IOException ex) {
             log.error("", ex);
         }
@@ -168,8 +169,8 @@ public class EntityApi {
             try {
                 JsonNode e = mapper.readValue(deleted.get(0), JsonNode.class);
                 String type = e.get("type").textValue().toLowerCase();
-                Double created = new Double(e.get("created").doubleValue() * 1000);
-                long duration = (new Date()).getTime() - created.longValue();
+                long created = e.get("created").longValue() * 1000;
+                long duration = System.currentTimeMillis() - created;
                 Timer timer = metricRegistry.timer("controller.entity-lifetime." + type);
                 timer.update(duration, TimeUnit.MILLISECONDS);
             } catch (Exception ex) {
