@@ -20,11 +20,14 @@ import org.zalando.zmon.api.domain.ResourceNotFoundException;
 import org.zalando.zmon.persistence.EntitySProcService;
 import org.zalando.zmon.security.permission.DefaultZMonPermissionService;
 
+import java.lang.Double;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
+import java.util.Date;
+import java.time.Duration;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
@@ -139,19 +142,20 @@ public class EntityApi {
 
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    @RequestMapping(value = {"/{id}/", "/{id}"}, produces = "application/json; charset=UTF-8")
-    public EntityObject getEntity(@PathVariable(value = "id") String id) {
+    @RequestMapping(value = {"/{id}/", "/{id}"})
+    public void getEntity(@PathVariable(value = "id") String id, final Writer writer, final HttpServletResponse response) {
         List<String> entities = entitySprocs.getEntityById(id);
         if (entities.isEmpty()) {
             throw new ResourceNotFoundException();
         }
-        EntityObject o = new EntityObject();
         try {
-            o = mapper.readValue(entities.get(0), EntityObject.class);
-        } catch (IOException e) {
-            log.error("", e);
+            response.setHeader("Content-Type", "application/json; charset=UTF-8");
+            for (String s : entities) {
+                writer.write(s);// there is at most one entity
+            }
+        } catch (IOException ex) {
+            log.error("", ex);
         }
-        return o;
     }
 
     @ResponseStatus(HttpStatus.OK)
@@ -165,8 +169,8 @@ public class EntityApi {
             try {
                 JsonNode e = mapper.readValue(deleted.get(0), JsonNode.class);
                 String type = e.get("type").textValue().toLowerCase();
-                Double created = e.get("created").doubleValue() * 1000;
-                long duration = (new Date()).getTime() - created.longValue();
+                long created = e.get("created").longValue() * 1000;
+                long duration = System.currentTimeMillis() - created;
                 Timer timer = metricRegistry.timer("controller.entity-lifetime." + type);
                 timer.update(duration, TimeUnit.MILLISECONDS);
             } catch (Exception ex) {
