@@ -149,10 +149,10 @@ public class EntityApi {
             throw new ResourceNotFoundException();
         }
         try {
+            response.setHeader("Content-Type", "application/json; charset=UTF-8");
             for (String s : entities) {
                 writer.write(s);// there is at most one entity
             }
-            response.setHeader("Content-Type", "application/json; charset=UTF-8");
         } catch (IOException ex) {
             log.error("", ex);
         }
