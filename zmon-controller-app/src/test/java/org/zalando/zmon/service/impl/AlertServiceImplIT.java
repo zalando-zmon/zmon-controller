@@ -16,7 +16,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
-import org.zalando.zmon.domain.AlertComment;
+import org.zalando.zmon.domain.AlertCommentImport;
 import org.zalando.zmon.domain.AlertCommentIsEqual;
 import org.zalando.zmon.domain.AlertDefinition;
 import org.zalando.zmon.domain.AlertDefinitionIsEqual;
@@ -55,7 +55,7 @@ public class AlertServiceImplIT {
 
     private DataGenerator<CheckDefinitionImport> checkImportGenerator;
     private DataGenerator<AlertDefinition> alertGenerator;
-    private DataGenerator<AlertComment> commentGenerator;
+    private DataGenerator<AlertCommentImport> commentGenerator;
 
     private static final String USER_NAME ="default_user";
     private static final List<String> USER_TEAMS = Arrays.asList("Platform/Software");
@@ -510,18 +510,18 @@ public class AlertServiceImplIT {
         alertDefinition.setCheckDefinitionId(newCheckDefinition.getId());
         alertDefinition = alertService.createOrUpdateAlertDefinition(alertDefinition);
 
-        final AlertComment comment = commentGenerator.generate();
+        final AlertCommentImport comment = commentGenerator.generate();
         comment.setAlertDefinitionId(alertDefinition.getId());
 
-        final AlertComment result = alertService.addComment(comment);
-        final List<AlertComment> comments = alertService.getComments(alertDefinition.getId(), Integer.MAX_VALUE, 0);
+        final AlertCommentImport result = alertService.addComment(comment);
+        final List<AlertCommentImport> comments = alertService.getComments(alertDefinition.getId(), Integer.MAX_VALUE, 0);
 
         MatcherAssert.assertThat(comments, Matchers.contains(AlertCommentIsEqual.equalTo(result)));
     }
 
     @Test(expected = AlertDefinitionNotFoundException.class)
     public void testAddCommentWithNonExistingAlertDefinitionId() throws Exception {
-        final AlertComment comment = commentGenerator.generate();
+        final AlertCommentImport comment = commentGenerator.generate();
         comment.setAlertDefinitionId(-1);
 
         alertService.addComment(comment);
@@ -529,7 +529,7 @@ public class AlertServiceImplIT {
 
     @Test
     public void testEmptyComments() throws Exception {
-        final List<AlertComment> comments = alertService.getComments(1, 1, 0);
+        final List<AlertCommentImport> comments = alertService.getComments(1, 1, 0);
 
         MatcherAssert.assertThat(comments, Matchers.hasSize(0));
     }
@@ -542,13 +542,13 @@ public class AlertServiceImplIT {
         alertDefinition.setCheckDefinitionId(newCheckDefinition.getId());
         alertDefinition = alertService.createOrUpdateAlertDefinition(alertDefinition);
 
-        final AlertComment comment = commentGenerator.generate();
+        final AlertCommentImport comment = commentGenerator.generate();
         comment.setAlertDefinitionId(alertDefinition.getId());
 
-        final AlertComment result = alertService.addComment(comment);
+        final AlertCommentImport result = alertService.addComment(comment);
 
         // get comment
-        final List<AlertComment> comments = alertService.getComments(alertDefinition.getId(), 1, 0);
+        final List<AlertCommentImport> comments = alertService.getComments(alertDefinition.getId(), 1, 0);
 
         MatcherAssert.assertThat(comments, Matchers.contains(AlertCommentIsEqual.equalTo(result)));
     }
@@ -561,17 +561,17 @@ public class AlertServiceImplIT {
         alertDefinition.setCheckDefinitionId(newCheckDefinition.getId());
         alertDefinition = alertService.createOrUpdateAlertDefinition(alertDefinition);
 
-        final AlertComment comment = commentGenerator.generate();
+        final AlertCommentImport comment = commentGenerator.generate();
         comment.setAlertDefinitionId(alertDefinition.getId());
 
-        final AlertComment comment0 = alertService.addComment(comment);
+        final AlertCommentImport comment0 = alertService.addComment(comment);
 
         comment.setComment(comment.getComment() + " NEW");
 
-        final AlertComment comment1 = alertService.addComment(comment);
+        final AlertCommentImport comment1 = alertService.addComment(comment);
 
         // get comment number 1
-        List<AlertComment> comments = alertService.getComments(alertDefinition.getId(), 1, 0);
+        List<AlertCommentImport> comments = alertService.getComments(alertDefinition.getId(), 1, 0);
         MatcherAssert.assertThat(comments, Matchers.contains(AlertCommentIsEqual.equalTo(comment1)));
 
         // get comment number 0
@@ -588,14 +588,14 @@ public class AlertServiceImplIT {
         alertDefinition.setCheckDefinitionId(newCheckDefinition.getId());
         alertDefinition = alertService.createOrUpdateAlertDefinition(alertDefinition);
 
-        AlertComment comment = commentGenerator.generate();
+        AlertCommentImport comment = commentGenerator.generate();
         comment.setAlertDefinitionId(alertDefinition.getId());
 
         comment = alertService.addComment(comment);
 
         alertService.deleteAlertComment(comment.getId());
 
-        final List<AlertComment> comments = alertService.getComments(alertDefinition.getId(), 1, 0);
+        final List<AlertCommentImport> comments = alertService.getComments(alertDefinition.getId(), 1, 0);
         MatcherAssert.assertThat(comments, Matchers.hasSize(0));
     }
 

@@ -408,11 +408,11 @@ public class AlertServiceImpl implements AlertService {
     }
 
     @Override
-    public AlertComment addComment(final AlertComment comment) throws ZMonException {
+    public AlertCommentImport addComment(final AlertCommentImport comment) throws ZMonException {
         Preconditions.checkNotNull(comment, "comment");
         log.info("Adding new comment to alert definition '{}'", comment.getAlertDefinitionId());
 
-        final AlertComment result = this.alertDefinitionSProc.addAlertComment(comment).getEntity();
+        final AlertCommentImport result = this.alertDefinitionSProc.addAlertCommentImport(comment).getEntity();
 
         eventLog.log(ZMonEventType.ALERT_COMMENT_CREATED, result.getId(), result.getComment(),
                 result.getAlertDefinitionId(), result.getEntityId(), result.getCreatedBy());
@@ -421,15 +421,15 @@ public class AlertServiceImpl implements AlertService {
     }
 
     @Override
-    public List<AlertComment> getComments(final int alertDefinitionId, final int limit, final int offset) {
-        return alertDefinitionSProc.getAlertComments(alertDefinitionId, limit, offset);
+    public List<AlertCommentImport> getComments(final int alertDefinitionId, final int limit, final int offset) {
+        return alertDefinitionSProc.getAlertCommentImports(alertDefinitionId, limit, offset);
     }
 
     @Override
     public void deleteAlertComment(final int id) {
         log.info("Deleting comment with id '{}'", id);
 
-        final AlertComment comment = alertDefinitionSProc.deleteAlertComment(id);
+        final AlertCommentImport comment = alertDefinitionSProc.deleteAlertCommentImport(id);
 
         if (comment != null) {
             eventLog.log(ZMonEventType.ALERT_COMMENT_REMOVED, comment.getId(), comment.getComment(),

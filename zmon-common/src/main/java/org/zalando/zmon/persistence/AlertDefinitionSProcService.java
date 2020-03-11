@@ -3,11 +3,7 @@ package org.zalando.zmon.persistence;
 import java.util.Date;
 import java.util.List;
 
-import org.zalando.zmon.domain.AlertComment;
-import org.zalando.zmon.domain.AlertDefinition;
-import org.zalando.zmon.domain.AlertDefinitions;
-import org.zalando.zmon.domain.DefinitionStatus;
-import org.zalando.zmon.domain.HistoryEntry;
+import org.zalando.zmon.domain.*;
 
 import de.zalando.sprocwrapper.SProcCall;
 import de.zalando.sprocwrapper.SProcParam;
@@ -43,17 +39,17 @@ public interface AlertDefinitionSProcService {
     AlertDefinitionOperationResult deleteAlertDefinition(@SProcParam int alertDefinitionId);
 
     @SProcCall
-    AlertCommentOperationResult addAlertComment(@SProcParam AlertComment comment);
+    AlertCommentOperationResult addAlertCommentImport(@SProcParam AlertCommentImport comment);
 
     @SProcCall
-    AlertComment getAlertCommentById(@SProcParam int id);
+    AlertCommentImport getAlertCommentImportById(@SProcParam int id);
 
     @SProcCall
-    List<AlertComment> getAlertComments(@SProcParam int alertDefinitionId, @SProcParam int limit,
-            @SProcParam int offset);
+    List<AlertCommentImport> getAlertCommentImports(@SProcParam int alertDefinitionId, @SProcParam int limit,
+                                              @SProcParam int offset);
 
     @SProcCall
-    AlertComment deleteAlertComment(@SProcParam int commentId);
+    AlertCommentImport deleteAlertCommentImport(@SProcParam int commentId);
 
     @SProcCall
     List<HistoryEntry> getAlertDefinitionHistory(@SProcParam int alertDefinitionId, @SProcParam int limit,

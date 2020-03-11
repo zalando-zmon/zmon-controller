@@ -88,14 +88,14 @@ public class DefaultZMonPermissionService {
         }
     }
 
-    public boolean hasDeleteCommentPermission(final AlertComment comment) {
+    public boolean hasDeleteCommentPermission(final AlertCommentImport comment) {
         Preconditions.checkNotNull(comment, "comment");
 
         return hasAnyAuthority(new HasDeleteCommentPermission(comment));
     }
 
     public void verifyDeleteCommentPermission(final int commentId) {
-        final AlertComment comment = alertDefinitionSProc.getAlertCommentById(commentId);
+        final AlertCommentImport comment = alertDefinitionSProc.getAlertCommentImportById(commentId);
 
         if (comment == null || !hasDeleteCommentPermission(comment)) {
             throw new ZMonAuthorizationException(getUserName(), getUserAuthorities(),
@@ -206,24 +206,24 @@ public class DefaultZMonPermissionService {
         return hasAnyAuthority(AuthorityFunctions.ADD_DASHBOARD_PERMISSION_FUNCTION);
     }
 
-    public boolean hasEditDashboardPermission(final Dashboard dashboard) {
+    public boolean hasEditDashboardPermission(final DashboardImport dashboard) {
         Preconditions.checkNotNull(dashboard, "dashboard");
 
         return hasAnyAuthority(new HasEditDashboardPermission(dashboard));
     }
 
-    public boolean hasDashboardEditModePermission(final Dashboard dashboard) {
+    public boolean hasDashboardEditModePermission(final DashboardImport dashboard) {
         Preconditions.checkNotNull(dashboard, "dashboard");
 
         return hasAnyAuthority(new HasDashboardEditModePermission(dashboard));
     }
 
-    public void verifyEditDashboardPermission(final Dashboard dashboard) {
+    public void verifyEditDashboardPermission(final DashboardImport dashboard) {
         Preconditions.checkNotNull(dashboard, "dashboard");
 
         boolean isAllowed = hasAddDashboardPermission();
         if (isAllowed && dashboard.getId() != null) {
-            final List<Dashboard> dashboards = dashboardSProc.getDashboards(Collections.singletonList(
+            final List<DashboardImport> dashboards = dashboardSProc.getDashboardImports(Collections.singletonList(
                     dashboard.getId()));
             isAllowed = dashboards.size() == 1 && hasEditDashboardPermission(dashboards.get(0))
                     && (hasDashboardEditModePermission(dashboards.get(0))

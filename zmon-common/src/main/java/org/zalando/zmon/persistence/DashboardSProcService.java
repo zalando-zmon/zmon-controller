@@ -2,7 +2,7 @@ package org.zalando.zmon.persistence;
 
 import java.util.List;
 
-import org.zalando.zmon.domain.Dashboard;
+import org.zalando.zmon.domain.DashboardImport;
 
 import de.zalando.sprocwrapper.SProcCall;
 import de.zalando.sprocwrapper.SProcParam;
@@ -12,15 +12,15 @@ import de.zalando.sprocwrapper.SProcService;
 public interface DashboardSProcService {
 
     @SProcCall
-    List<Dashboard> getDashboards(@SProcParam List<Integer> dashboardIds);
+    List<DashboardImport> getDashboardImports(@SProcParam List<Integer> dashboardIds);
 
     @SProcCall
-    List<Dashboard> getAllDashboards();
+    List<DashboardImport> getAllDashboardImports();
 
     @SProcCall
-    DashboardOperationResult createOrUpdateDashboard(@SProcParam Dashboard dashboard);
+    DashboardOperationResult createOrUpdateDashboardImport(@SProcParam DashboardImport dashboard);
 
     @SProcCall
-    void deleteDashboard(@SProcParam Integer dashboardId);
+    void deleteDashboardImport(@SProcParam Integer dashboardId);
 
 }

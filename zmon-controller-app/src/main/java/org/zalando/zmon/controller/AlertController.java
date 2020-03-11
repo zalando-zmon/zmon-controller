@@ -168,7 +168,7 @@ public class AlertController extends AbstractZMonController {
     @RequestMapping(value = "/comment", method = RequestMethod.POST)
     public ResponseEntity<AlertCommentAuth> addComment(@Valid
                                                        @RequestBody(required = true)
-                                                       final AlertComment comment) throws ZMonException {
+                                                       final AlertCommentImport comment) throws ZMonException {
 
         authorityService.verifyAddCommentPermission();
 
@@ -186,7 +186,7 @@ public class AlertController extends AbstractZMonController {
             @RequestParam(value = "limit", defaultValue = "20") final int limit,
             @RequestParam(value = "offset", defaultValue = "0") final int offset) {
 
-        final List<AlertComment> currentComments = service.getComments(alertDefinitionId, limit, offset);
+        final List<AlertCommentImport> currentComments = service.getComments(alertDefinitionId, limit, offset);
 
         final List<AlertCommentAuth> comments = currentComments.stream().map(
                 comment -> AlertCommentAuth.from(comment, authorityService.hasDeleteCommentPermission(comment))).collect(Collectors.toList());

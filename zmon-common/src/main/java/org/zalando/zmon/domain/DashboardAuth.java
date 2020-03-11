@@ -2,7 +2,7 @@ package org.zalando.zmon.domain;
 
 import org.springframework.beans.BeanUtils;
 
-public class DashboardAuth extends Dashboard {
+public class DashboardAuth extends DashboardImport {
 
     private boolean editable;
 
@@ -47,8 +47,8 @@ public class DashboardAuth extends Dashboard {
         return builder.toString();
     }
 
-    public static DashboardAuth from(final Dashboard dashboard, final boolean editable, final boolean cloneable,
-            final boolean editOptionEditable) {
+    public static DashboardAuth from(final DashboardImport dashboard, final boolean editable, final boolean cloneable,
+                                     final boolean editOptionEditable) {
 
         DashboardAuth result = null;
         if (dashboard != null) {

@@ -1,15 +1,15 @@
 package org.zalando.zmon.security.permission;
 
-import org.zalando.zmon.domain.AlertComment;
+import org.zalando.zmon.domain.AlertCommentImport;
 import org.zalando.zmon.security.authority.ZMonAuthority;
 
 import com.google.common.base.Function;
 
 class HasDeleteCommentPermission implements Function<ZMonAuthority, Boolean> {
 
-	private final AlertComment comment;
+	private final AlertCommentImport comment;
 
-	HasDeleteCommentPermission(AlertComment comment) {
+	HasDeleteCommentPermission(AlertCommentImport comment) {
 		this.comment = comment;
 	}
 

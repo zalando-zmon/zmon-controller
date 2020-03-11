@@ -1,6 +1,6 @@
 package org.zalando.zmon.persistence;
 
-import org.zalando.zmon.domain.AlertComment;
+import org.zalando.zmon.domain.AlertCommentImport;
 import org.zalando.zmon.exception.ZMonException;
 
 import de.zalando.typemapper.annotations.DatabaseField;
@@ -8,14 +8,14 @@ import de.zalando.typemapper.annotations.DatabaseField;
 public class AlertCommentOperationResult extends OperationResult {
 
     @DatabaseField
-    private AlertComment entity;
+    private AlertCommentImport entity;
 
-    public AlertComment getEntity() throws ZMonException {
+    public AlertCommentImport getEntity() throws ZMonException {
         throwExceptionOnFailure();
         return entity;
     }
 
-    public void setEntity(final AlertComment entity) {
+    public void setEntity(final AlertCommentImport entity) {
         this.entity = entity;
     }
 
