@@ -16,8 +16,6 @@
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <!-- IMPORTANT: we pin the version to 9.3-.. here
-            as zalando-sprocwrapper is broken with 9.4.. JDBC driver -->
             <version>${postgresql-driver.version}</version>
         </dependency>
 
@@ -178,7 +176,7 @@
             <!-- this artifact is already open-source -->
             <groupId>de.zalando</groupId>
             <artifactId>zalando-sprocwrapper</artifactId>
-            <version>1.4.0.M2</version>
+            <version>2.0.0</version>
             <exclusions>
                 <exclusion>
                     <artifactId>slf4j-log4j12</artifactId>
