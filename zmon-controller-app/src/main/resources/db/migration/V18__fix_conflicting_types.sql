@@ -23,8 +23,6 @@ CREATE TYPE dashboard_record AS (
     tags                    text[]
 );
 
-#######
-
 CREATE OR REPLACE FUNCTION add_alert_comment_record (
      IN comment           alert_comment_record,
      OUT status           operation_status,
