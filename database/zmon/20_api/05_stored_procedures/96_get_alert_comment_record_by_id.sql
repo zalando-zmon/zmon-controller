@@ -1,6 +1,6 @@
-CREATE OR REPLACE FUNCTION get_alert_comment_record_by_id (
+CREATE OR REPLACE FUNCTION zzm_api.get_alert_comment_record_by_id (
      IN comment_id int
-) RETURNS alert_comment_record AS
+) RETURNS zzm_api.alert_comment_record AS
 $BODY$
     SELECT ac_id,
            ac_created,

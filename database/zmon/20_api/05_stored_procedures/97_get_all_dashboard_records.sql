@@ -1,5 +1,5 @@
-CREATE OR REPLACE FUNCTION get_all_dashboard_records()
- RETURNS SETOF dashboard_record AS
+CREATE OR REPLACE FUNCTION zzm_api.get_all_dashboard_records()
+ RETURNS SETOF zzm_api.dashboard_record AS
 $BODY$
 BEGIN
 

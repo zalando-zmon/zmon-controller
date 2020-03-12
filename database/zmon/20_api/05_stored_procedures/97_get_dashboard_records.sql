@@ -1,6 +1,6 @@
-CREATE OR REPLACE FUNCTION get_dashboard_records(
+CREATE OR REPLACE FUNCTION zzm_api.get_dashboard_records(
      IN dashboard_ids    int[]
-) RETURNS SETOF dashboard_record AS
+) RETURNS SETOF zzm_api.dashboard_record AS
 $BODY$
 BEGIN
     RETURN QUERY

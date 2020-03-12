@@ -1,9 +1,9 @@
-CREATE OR REPLACE FUNCTION delete_alert_comment_record (
+CREATE OR REPLACE FUNCTION zzm_api.delete_alert_comment_record (
      IN comment_id    int
-) RETURNS alert_comment_record AS
+) RETURNS zzm_api.alert_comment_record AS
 $BODY$
 DECLARE
-    l_comment alert_comment_record;
+    l_comment zzm_api.alert_comment_record;
 BEGIN
     DELETE FROM zzm_data.alert_comment
           WHERE ac_id = comment_id

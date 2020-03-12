@@ -1,4 +1,4 @@
-CREATE TYPE alert_comment_record AS (
+CREATE TYPE zzm_api.alert_comment_record AS (
     id                  int,
     created             timestamptz,
     created_by          text,
@@ -9,7 +9,7 @@ CREATE TYPE alert_comment_record AS (
     entity_id           text
 );
 
-CREATE TYPE dashboard_record AS (
+CREATE TYPE zzm_api.dashboard_record AS (
     id                      int,
     name                    text,
     created_by              text,
@@ -23,11 +23,11 @@ CREATE TYPE dashboard_record AS (
     tags                    text[]
 );
 
-CREATE OR REPLACE FUNCTION add_alert_comment_record (
-     IN comment           alert_comment_record,
+CREATE OR REPLACE FUNCTION zzm_api.add_alert_comment_record (
+     IN comment           zzm_api.alert_comment_record,
      OUT status           operation_status,
      OUT error_message    text,
-     OUT entity           alert_comment_record
+     OUT entity           zzm_api.alert_comment_record
 ) AS
 $BODY$
 BEGIN
@@ -72,12 +72,12 @@ $BODY$
 LANGUAGE 'plpgsql' VOLATILE SECURITY DEFINER
 COST 100;
 
-CREATE OR REPLACE FUNCTION delete_alert_comment_record (
+CREATE OR REPLACE FUNCTION zzm_api.delete_alert_comment_record (
      IN comment_id    int
-) RETURNS alert_comment_record AS
+) RETURNS zzm_api.alert_comment_record AS
 $BODY$
 DECLARE
-    l_comment alert_comment_record;
+    l_comment zzm_api.alert_comment_record;
 BEGIN
     DELETE FROM zzm_data.alert_comment
           WHERE ac_id = comment_id
@@ -104,9 +104,9 @@ $BODY$
 LANGUAGE 'plpgsql' VOLATILE SECURITY DEFINER
 COST 100;
 
-CREATE OR REPLACE FUNCTION get_alert_comment_record_by_id (
+CREATE OR REPLACE FUNCTION zzm_api.get_alert_comment_record_by_id (
      IN comment_id int
-) RETURNS alert_comment_record AS
+) RETURNS zzm_api.alert_comment_record AS
 $BODY$
     SELECT ac_id,
            ac_created,
@@ -122,11 +122,11 @@ $BODY$
 LANGUAGE SQL VOLATILE SECURITY DEFINER
 COST 100;
 
-CREATE OR REPLACE FUNCTION get_alert_comment_records (
+CREATE OR REPLACE FUNCTION zzm_api.get_alert_comment_records (
      IN p_alert_definition_id int,
      IN p_limit               int,
      IN p_offset              int
-) RETURNS SETOF alert_comment_record AS
+) RETURNS SETOF zzm_api.alert_comment_record AS
 $BODY$
     SELECT ac_id,
            ac_created,
@@ -145,9 +145,9 @@ $BODY$
 LANGUAGE SQL VOLATILE SECURITY DEFINER
 COST 100;
 
-CREATE OR REPLACE FUNCTION create_or_update_dashboard_record (
-     IN dashboard         dashboard_record,
-     OUT entity           dashboard_record,
+CREATE OR REPLACE FUNCTION zzm_api.create_or_update_dashboard_record (
+     IN dashboard         zzm_api.dashboard_record,
+     OUT entity           zzm_api.dashboard_record,
      OUT status           operation_status,
      OUT error_message    text
 ) AS
@@ -156,26 +156,26 @@ DECLARE
     l_view_mode   zzm_data.view_mode;
     l_edit_option zzm_data.edit_option;
 BEGIN
-    l_view_mode   = COALESCE(dashboard_record.view_mode, 'FULL');
-    l_edit_option = COALESCE(dashboard_record.edit_option, 'PRIVATE');
+    l_view_mode   = COALESCE(dashboard.view_mode, 'FULL');
+    l_edit_option = COALESCE(dashboard.edit_option, 'PRIVATE');
 
-    IF dashboard_record.id IS NOT NULL THEN
+    IF dashboard.id IS NOT NULL THEN
         UPDATE zzm_data.dashboard
-           SET d_id                     = dashboard_record.id,
-               d_name                   = dashboard_record.name,
+           SET d_id                     = dashboard.id,
+               d_name                   = dashboard.name,
                d_last_modified          = now(),
-               d_last_modified_by       = dashboard_record.last_modified_by,
-               d_widget_configuration   = dashboard_record.widget_configuration::json,
-               d_alert_teams            = dashboard_record.alert_teams,
+               d_last_modified_by       = dashboard.last_modified_by,
+               d_widget_configuration   = dashboard.widget_configuration::json,
+               d_alert_teams            = dashboard.alert_teams,
                d_view_mode              = l_view_mode,
                d_edit_option            = l_edit_option,
                -- only update shared teams when edit option is changed to team
                d_shared_teams           = CASE WHEN d_edit_option <> l_edit_option AND l_edit_option = 'TEAM'
-                                               THEN dashboard_record.shared_teams
+                                               THEN dashboard.shared_teams
                                                ELSE d_shared_teams
                                           END,
-               d_tags                   = dashboard_record.tags
-         WHERE d_id  = dashboard_record.id
+               d_tags                   = dashboard.tags
+         WHERE d_id  = dashboard.id
      RETURNING d_id,
                d_name,
                d_created_by,
@@ -212,15 +212,15 @@ BEGIN
             d_tags
         )
         VALUES (
-            dashboard_record.name,
-            dashboard_record.created_by,
-            dashboard_record.last_modified_by,
-            dashboard_record.widget_configuration::json,
-            dashboard_record.alert_teams,
+            dashboard.name,
+            dashboard.created_by,
+            dashboard.last_modified_by,
+            dashboard.widget_configuration::json,
+            dashboard.alert_teams,
             l_view_mode,
             l_edit_option,
-            dashboard_record.shared_teams,
-            dashboard_record.tags
+            dashboard.shared_teams,
+            dashboard.tags
         )
          RETURNING d_id,
                d_name,
@@ -252,8 +252,8 @@ $BODY$
 LANGUAGE 'plpgsql' VOLATILE SECURITY DEFINER
 COST 100;
 
-CREATE OR REPLACE FUNCTION get_all_dashboard_records()
- RETURNS SETOF dashboard_record AS
+CREATE OR REPLACE FUNCTION zzm_api.get_all_dashboard_records()
+ RETURNS SETOF zzm_api.dashboard_record AS
 $BODY$
 BEGIN
 
@@ -275,9 +275,9 @@ $BODY$
 LANGUAGE 'plpgsql' VOLATILE SECURITY DEFINER
 COST 100;
 
-CREATE OR REPLACE FUNCTION get_dashboard_records(
+CREATE OR REPLACE FUNCTION zzm_api.get_dashboard_records(
      IN dashboard_ids    int[]
-) RETURNS SETOF dashboard_record AS
+) RETURNS SETOF zzm_api.dashboard_record AS
 $BODY$
 BEGIN
     RETURN QUERY
