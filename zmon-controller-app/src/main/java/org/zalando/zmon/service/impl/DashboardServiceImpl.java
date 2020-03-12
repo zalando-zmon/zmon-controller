@@ -74,6 +74,6 @@ public class DashboardServiceImpl implements DashboardService {
         Preconditions.checkNotNull(dashboardId);
         log.info("Delete dashboard '{}' request from user '{}'", dashboardId);
 
-        dashboardSProc.deleteDashboardRecord(dashboardId);
+        dashboardSProc.deleteDashboard(dashboardId);
     }
 }

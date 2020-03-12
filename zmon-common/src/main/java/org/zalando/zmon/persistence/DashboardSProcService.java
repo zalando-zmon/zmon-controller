@@ -21,6 +21,6 @@ public interface DashboardSProcService {
     DashboardOperationResult createOrUpdateDashboardRecord(@SProcParam DashboardRecord dashboard);
 
     @SProcCall
-    void deleteDashboardRecord(@SProcParam Integer dashboardId);
+    void deleteDashboard(@SProcParam Integer dashboardId);
 
 }
