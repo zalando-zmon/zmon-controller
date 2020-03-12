@@ -34,7 +34,7 @@ public class ZMonUserAuthority extends AbstractZMonAuthority {
     }
 
     @Override
-    public boolean hasDeleteCommentPermission(final AlertComment comment) {
+    public boolean hasDeleteCommentPermission(final AlertCommentRecord comment) {
         Preconditions.checkNotNull(comment, "comment");
         return getUserName().equals(comment.getCreatedBy());
     }
@@ -55,7 +55,7 @@ public class ZMonUserAuthority extends AbstractZMonAuthority {
     }
 
     @Override
-    public boolean hasEditDashboardPermission(final Dashboard dashboard) {
+    public boolean hasEditDashboardPermission(final DashboardRecord dashboard) {
         Preconditions.checkNotNull(dashboard, "dashboard");
 
         switch (dashboard.getEditOption()) {
@@ -81,7 +81,7 @@ public class ZMonUserAuthority extends AbstractZMonAuthority {
     }
 
     @Override
-    public boolean hasDashboardEditModePermission(final Dashboard dashboard) {
+    public boolean hasDashboardEditModePermission(final DashboardRecord dashboard) {
         Preconditions.checkNotNull(dashboard, "dashboard");
 
         return getUserName().equals(dashboard.getCreatedBy());

@@ -8,7 +8,7 @@ import java.util.Set;
 import javax.annotation.Nullable;
 
 import org.zalando.zmon.domain.Alert;
-import org.zalando.zmon.domain.AlertComment;
+import org.zalando.zmon.domain.AlertCommentRecord;
 import org.zalando.zmon.domain.AlertDefinition;
 import org.zalando.zmon.domain.AlertDefinitions;
 import org.zalando.zmon.domain.AlertDefinitionsDiff;
@@ -41,9 +41,9 @@ public interface AlertService {
 
     AlertDefinition deleteAlertDefinition(int id) throws ZMonException;
 
-    AlertComment addComment(AlertComment comment) throws ZMonException;
+    AlertCommentRecord addComment(AlertCommentRecord comment) throws ZMonException;
 
-    List<AlertComment> getComments(int alertDefinitionId, int limit, int offset);
+    List<AlertCommentRecord> getComments(int alertDefinitionId, int limit, int offset);
 
     void deleteAlertComment(int id);
 

@@ -2,16 +2,16 @@ package org.zalando.zmon.service;
 
 import java.util.List;
 
-import org.zalando.zmon.domain.Dashboard;
+import org.zalando.zmon.domain.DashboardRecord;
 import org.zalando.zmon.exception.ZMonException;
 
 public interface DashboardService {
 
-    List<Dashboard> getDashboards(List<Integer> dashboardIds);
+    List<DashboardRecord> getDashboards(List<Integer> dashboardIds);
 
-    List<Dashboard> getAllDashboards();
+    List<DashboardRecord> getAllDashboards();
 
-    Dashboard createOrUpdateDashboard(Dashboard dashboard) throws ZMonException;
+    DashboardRecord createOrUpdateDashboard(DashboardRecord dashboard) throws ZMonException;
 
     void deleteDashboard(Integer dashboardId);
 

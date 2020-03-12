@@ -32,7 +32,7 @@ public class ZMonViewerAuthority extends AbstractZMonAuthority {
     }
 
     @Override
-    public boolean hasDeleteCommentPermission(final AlertComment comment) {
+    public boolean hasDeleteCommentPermission(final AlertCommentRecord comment) {
         return false;
     }
 
@@ -52,12 +52,12 @@ public class ZMonViewerAuthority extends AbstractZMonAuthority {
     }
 
     @Override
-    public boolean hasEditDashboardPermission(final Dashboard dashboard) {
+    public boolean hasEditDashboardPermission(final DashboardRecord dashboard) {
         return false;
     }
 
     @Override
-    public boolean hasDashboardEditModePermission(final Dashboard dashboard) {
+    public boolean hasDashboardEditModePermission(final DashboardRecord dashboard) {
         return false;
     }
 

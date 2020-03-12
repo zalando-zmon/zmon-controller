@@ -8,7 +8,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 import de.zalando.typemapper.annotations.DatabaseField;
 
-public class AlertComment {
+public class AlertCommentRecord {
 
     @DatabaseField
     private Integer id;
@@ -103,7 +103,7 @@ public class AlertComment {
     @Override
     public String toString() {
         final StringBuilder builder = new StringBuilder();
-        builder.append("AlertComment [id=");
+        builder.append("AlertCommentRecord [id=");
         builder.append(id);
         builder.append(", created=");
         builder.append(created);

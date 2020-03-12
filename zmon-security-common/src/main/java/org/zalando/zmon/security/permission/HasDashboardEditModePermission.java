@@ -1,11 +1,11 @@
 package org.zalando.zmon.security.permission;
 
-import org.zalando.zmon.domain.Dashboard;
+import org.zalando.zmon.domain.DashboardRecord;
 import org.zalando.zmon.security.authority.ZMonAuthority;
 
 class HasDashboardEditModePermission extends DashBoardPermission {
 
-	HasDashboardEditModePermission(Dashboard dashboard) {
+	HasDashboardEditModePermission(DashboardRecord dashboard) {
 		super(dashboard);
 	}
 

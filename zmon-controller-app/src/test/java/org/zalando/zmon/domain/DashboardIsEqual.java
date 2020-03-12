@@ -7,21 +7,21 @@ import java.util.List;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
-import org.zalando.zmon.domain.Dashboard;
+import org.zalando.zmon.domain.DashboardRecord;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
-public class DashboardIsEqual extends BaseMatcher<Dashboard> {
+public class DashboardIsEqual extends BaseMatcher<DashboardRecord> {
 
-    private final Dashboard dashboard;
+    private final DashboardRecord dashboard;
 
-    public DashboardIsEqual(final Dashboard dashboard) {
+    public DashboardIsEqual(final DashboardRecord dashboard) {
         this.dashboard = dashboard;
     }
 
     public boolean matches(final Object o) {
-        final Dashboard other = (Dashboard) o;
+        final DashboardRecord other = (DashboardRecord) o;
 
         return Objects.equal(dashboard.getId(), other.getId()) && Objects.equal(dashboard.getName(), other.getName())
                 && Objects.equal(dashboard.getCreatedBy(), other.getCreatedBy())
@@ -46,16 +46,16 @@ public class DashboardIsEqual extends BaseMatcher<Dashboard> {
     }
 
     // factory methods for fluent language
-    public static Matcher<? super Dashboard> equalTo(final Dashboard dashboard) {
+    public static Matcher<? super DashboardRecord> equalTo(final DashboardRecord dashboard) {
         Preconditions.checkNotNull(dashboard, "dashboard");
         return new DashboardIsEqual(dashboard);
     }
 
-    public static Collection<Matcher<? super Dashboard>> equalTo(final Iterable<Dashboard> dashboards) {
+    public static Collection<Matcher<? super DashboardRecord>> equalTo(final Iterable<DashboardRecord> dashboards) {
         Preconditions.checkNotNull(dashboards, "dashboard");
 
-        final List<Matcher<? super Dashboard>> matchers = new LinkedList<>();
-        for (final Dashboard dashboard : dashboards) {
+        final List<Matcher<? super DashboardRecord>> matchers = new LinkedList<>();
+        for (final DashboardRecord dashboard : dashboards) {
             matchers.add(new DashboardIsEqual(dashboard));
         }
 

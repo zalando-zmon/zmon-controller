@@ -2,9 +2,9 @@ package org.zalando.zmon.security;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.zalando.zmon.domain.AlertComment;
+import org.zalando.zmon.domain.AlertCommentRecord;
 import org.zalando.zmon.domain.AlertDefinition;
-import org.zalando.zmon.domain.Dashboard;
+import org.zalando.zmon.domain.DashboardRecord;
 import org.zalando.zmon.domain.DefinitionStatus;
 import org.zalando.zmon.domain.EditOption;
 import org.zalando.zmon.security.authority.ZMonUserAuthority;
@@ -17,7 +17,7 @@ public class ZMonUserAuthorityTest {
     public void testDeleteOwnComment() {
         final ZMonUserAuthority authority = new ZMonUserAuthority("foo", ImmutableSet.<String>of());
 
-        final AlertComment toDelete = new AlertComment();
+        final AlertCommentRecord toDelete = new AlertCommentRecord();
         toDelete.setCreatedBy("foo");
 
         Assert.assertTrue(authority.hasDeleteCommentPermission(toDelete));
@@ -28,7 +28,7 @@ public class ZMonUserAuthorityTest {
 
         final ZMonUserAuthority authority = new ZMonUserAuthority("foobar", ImmutableSet.<String>of());
 
-        final AlertComment toDelete = new AlertComment();
+        final AlertCommentRecord toDelete = new AlertCommentRecord();
         toDelete.setCreatedBy("foo");
 
         Assert.assertFalse(authority.hasDeleteCommentPermission(toDelete));
@@ -38,7 +38,7 @@ public class ZMonUserAuthorityTest {
     public void testEditOwnDashboard() {
         final ZMonUserAuthority authority = new ZMonUserAuthority("foo", ImmutableSet.<String>of());
 
-        final Dashboard toEdit = new Dashboard();
+        final DashboardRecord toEdit = new DashboardRecord();
         toEdit.setEditOption(EditOption.PRIVATE);
         toEdit.setCreatedBy("foo");
 
@@ -49,7 +49,7 @@ public class ZMonUserAuthorityTest {
     public void testEditUserDashboard() {
         final ZMonUserAuthority authority = new ZMonUserAuthority("foobar", ImmutableSet.<String>of());
 
-        final Dashboard toEdit = new Dashboard();
+        final DashboardRecord toEdit = new DashboardRecord();
         toEdit.setEditOption(EditOption.PRIVATE);
         toEdit.setCreatedBy("foo");
 

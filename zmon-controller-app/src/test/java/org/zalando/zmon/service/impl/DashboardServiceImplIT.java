@@ -12,7 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
-import org.zalando.zmon.domain.Dashboard;
+import org.zalando.zmon.domain.DashboardRecord;
 import org.zalando.zmon.domain.DashboardIsEqual;
 import org.zalando.zmon.generator.DashboardGenerator;
 import org.zalando.zmon.generator.DataGenerator;
@@ -28,28 +28,28 @@ public class DashboardServiceImplIT {
     @Autowired
     private DashboardService service;
 
-    private final DataGenerator<Dashboard> dashboardGenerator = new DashboardGenerator();
+    private final DataGenerator<DashboardRecord> dashboardGenerator = new DashboardGenerator();
 
     @Test
     public void testCreateDashboard() throws Exception {
-        final Dashboard dashboard = service.createOrUpdateDashboard(dashboardGenerator.generate());
-        final List<Dashboard> allDashboards = service.getAllDashboards();
+        final DashboardRecord dashboard = service.createOrUpdateDashboard(dashboardGenerator.generate());
+        final List<DashboardRecord> allDashboards = service.getAllDashboards();
 
         MatcherAssert.assertThat(allDashboards, Matchers.contains(DashboardIsEqual.equalTo(dashboard)));
     }
 
     @Test
     public void testUpdateDashboard() throws Exception {
-        final Dashboard genDashboard = dashboardGenerator.generate();
+        final DashboardRecord genDashboard = dashboardGenerator.generate();
 
         // create first dashboard
-        final Dashboard dashboard0 = service.createOrUpdateDashboard(genDashboard);
+        final DashboardRecord dashboard0 = service.createOrUpdateDashboard(genDashboard);
 
         // change the name of the new dashboard
         genDashboard.setName(genDashboard.getName() + " NEW");
 
         // and create the second dashboard
-        Dashboard dashboard1 = service.createOrUpdateDashboard(genDashboard);
+        DashboardRecord dashboard1 = service.createOrUpdateDashboard(genDashboard);
 
         // update the name of the dasboard
         dashboard1.setName(genDashboard.getName() + " UPDATE");
@@ -57,7 +57,7 @@ public class DashboardServiceImplIT {
         // and update the second dashboard
         dashboard1 = service.createOrUpdateDashboard(dashboard1);
 
-        final List<Dashboard> allDashboards = service.getAllDashboards();
+        final List<DashboardRecord> allDashboards = service.getAllDashboards();
 
         // Assertions.assertThat(allDashboards).contains(dashboard0,
         // dashboard1);
@@ -68,18 +68,18 @@ public class DashboardServiceImplIT {
 
     @Test
     public void testGetAllDashboards() throws Exception {
-        final Dashboard genDashboard = dashboardGenerator.generate();
+        final DashboardRecord genDashboard = dashboardGenerator.generate();
 
         // create first dashboard
-        final Dashboard dashboard0 = service.createOrUpdateDashboard(genDashboard);
+        final DashboardRecord dashboard0 = service.createOrUpdateDashboard(genDashboard);
 
         // change the name of the new dashboard
         genDashboard.setName(genDashboard.getName() + " NEW");
 
         // and create the second dashboard
-        final Dashboard dashboard1 = service.createOrUpdateDashboard(genDashboard);
+        final DashboardRecord dashboard1 = service.createOrUpdateDashboard(genDashboard);
 
-        final List<Dashboard> allDashboards = service.getAllDashboards();
+        final List<DashboardRecord> allDashboards = service.getAllDashboards();
 
         MatcherAssert.assertThat(allDashboards,
             Matchers.containsInAnyOrder(DashboardIsEqual.equalTo(dashboard0), DashboardIsEqual.equalTo(dashboard1)));
@@ -88,20 +88,20 @@ public class DashboardServiceImplIT {
     @Test
     public void testDeleteDashboard() throws Exception {
 
-        final Dashboard genDashboard = dashboardGenerator.generate();
+        final DashboardRecord genDashboard = dashboardGenerator.generate();
 
         // create first dashboard
-        final Dashboard dashboard0 = service.createOrUpdateDashboard(genDashboard);
+        final DashboardRecord dashboard0 = service.createOrUpdateDashboard(genDashboard);
 
         // change the name of the new dashboard
         genDashboard.setName(genDashboard.getName() + " NEW");
 
         // and create the second dashboard
-        final Dashboard dashboard1 = service.createOrUpdateDashboard(genDashboard);
+        final DashboardRecord dashboard1 = service.createOrUpdateDashboard(genDashboard);
 
         service.deleteDashboard(dashboard1.getId());
 
-        final List<Dashboard> allDashboards = service.getAllDashboards();
+        final List<DashboardRecord> allDashboards = service.getAllDashboards();
 
         Assertions.assertThat(allDashboards).doesNotContain(dashboard1);
         Assertions.assertThat(allDashboards).contains(dashboard0);

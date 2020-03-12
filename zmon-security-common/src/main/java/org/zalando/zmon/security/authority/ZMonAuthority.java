@@ -3,10 +3,10 @@ package org.zalando.zmon.security.authority;
 import java.util.Set;
 
 import org.springframework.security.core.GrantedAuthority;
-import org.zalando.zmon.domain.AlertComment;
+import org.zalando.zmon.domain.AlertCommentRecord;
 import org.zalando.zmon.domain.AlertDefinition;
 import org.zalando.zmon.domain.CheckDefinition;
-import org.zalando.zmon.domain.Dashboard;
+import org.zalando.zmon.domain.DashboardRecord;
 
 public interface ZMonAuthority extends GrantedAuthority {
 
@@ -16,7 +16,7 @@ public interface ZMonAuthority extends GrantedAuthority {
 
     boolean hasAddCommentPermission();
 
-    boolean hasDeleteCommentPermission(AlertComment comment);
+    boolean hasDeleteCommentPermission(AlertCommentRecord comment);
 
     boolean hasScheduleDowntimePermission();
 
@@ -24,9 +24,9 @@ public interface ZMonAuthority extends GrantedAuthority {
 
     boolean hasAddDashboardPermission();
 
-    boolean hasEditDashboardPermission(Dashboard dashboard);
+    boolean hasEditDashboardPermission(DashboardRecord dashboard);
 
-    boolean hasDashboardEditModePermission(Dashboard dashboard);
+    boolean hasDashboardEditModePermission(DashboardRecord dashboard);
 
     boolean hasAddAlertDefinitionPermission();
 

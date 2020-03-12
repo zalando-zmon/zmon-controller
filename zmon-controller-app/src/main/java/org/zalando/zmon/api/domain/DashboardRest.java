@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.zalando.zmon.domain.Dashboard;
+import org.zalando.zmon.domain.DashboardRecord;
 import org.zalando.zmon.domain.EditOption;
 import org.zalando.zmon.domain.ViewMode;
 
@@ -32,7 +32,7 @@ public class DashboardRest {
     public List<String> sharedTeams;
     public List<JsonNode> widgetConfiguration;
 
-    public static DashboardRest from(Dashboard d, ObjectMapper mapper) {
+    public static DashboardRest from(DashboardRecord d, ObjectMapper mapper) {
         DashboardRest a = new DashboardRest();
 
         a.id = d.getId();
@@ -57,8 +57,8 @@ public class DashboardRest {
         return a;
     }
 
-    public Dashboard toDashboard(ObjectMapper mapper) {
-        Dashboard d = new Dashboard();
+    public DashboardRecord toDashboard(ObjectMapper mapper) {
+        DashboardRecord d = new DashboardRecord();
 
         d.setId(id);
         d.setName(name);
