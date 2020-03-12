@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.zalando.zmon.domain.DashboardImport;
+import org.zalando.zmon.domain.DashboardRecord;
 import org.zalando.zmon.domain.DashboardAuth;
 import org.zalando.zmon.domain.EditOption;
 import org.zalando.zmon.exception.DashboardNotFoundException;
@@ -42,7 +42,7 @@ public class DashboardController extends AbstractZMonController {
     @RequestMapping(value = "/dashboard", method = RequestMethod.GET)
     public ResponseEntity<DashboardAuth> getDashboard(@RequestParam(value = "id", required = true) final int id) throws ZMonException{
 
-        final List<DashboardImport> dashboards = service.getDashboards(Lists.newArrayList(id));
+        final List<DashboardRecord> dashboards = service.getDashboards(Lists.newArrayList(id));
         if (dashboards.isEmpty()) {
             throw new DashboardNotFoundException("Dashboard doesn't exsits. Please check dashboard Id!");
         }
@@ -53,8 +53,8 @@ public class DashboardController extends AbstractZMonController {
     @ResponseBody
     @RequestMapping(value = "/deleteDashboard", method = RequestMethod.DELETE)
     public void deleteDashboard(@RequestParam(value = "id", required = true) final int id) throws ZMonException {
-        final List<DashboardImport> dashboards = service.getDashboards(Lists.newArrayList(id));
-        for (final DashboardImport dashboard : dashboards) {
+        final List<DashboardRecord> dashboards = service.getDashboards(Lists.newArrayList(id));
+        for (final DashboardRecord dashboard : dashboards) {
             authorityService.verifyEditDashboardPermission(dashboard);
         }
         this.service.deleteDashboard(id);
@@ -65,11 +65,11 @@ public class DashboardController extends AbstractZMonController {
 
         List<DashboardAuth> response = Collections.emptyList();
 
-        final List<DashboardImport> dashboards = service.getAllDashboards();
+        final List<DashboardRecord> dashboards = service.getAllDashboards();
 
         if (dashboards != null && !dashboards.isEmpty()) {
             response = new ArrayList<>(dashboards.size());
-            for (final DashboardImport dashboard : dashboards) {
+            for (final DashboardRecord dashboard : dashboards) {
                 response.add(addDashboardPermissions(dashboard));
             }
         }
@@ -80,7 +80,7 @@ public class DashboardController extends AbstractZMonController {
     @RequestMapping(value = "/updateDashboard", method = RequestMethod.POST)
     public ResponseEntity<Integer> updateDashboard(@Valid
             @RequestBody(required = true)
-            final DashboardImport dashboard) throws ZMonException {
+            final DashboardRecord dashboard) throws ZMonException {
 
         final String currentUser = authorityService.getUserName();
         if (dashboard.getId() == null) {
@@ -100,7 +100,7 @@ public class DashboardController extends AbstractZMonController {
         return new ResponseEntity<>(service.createOrUpdateDashboard(dashboard).getId(), HttpStatus.OK);
     }
 
-    private DashboardAuth addDashboardPermissions(final DashboardImport dashboard) {
+    private DashboardAuth addDashboardPermissions(final DashboardRecord dashboard) {
         return DashboardAuth.from(dashboard, authorityService.hasEditDashboardPermission(dashboard),
                 authorityService.hasAddDashboardPermission(),
                 authorityService.hasDashboardEditModePermission(dashboard));

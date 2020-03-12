@@ -39,17 +39,17 @@ public interface AlertDefinitionSProcService {
     AlertDefinitionOperationResult deleteAlertDefinition(@SProcParam int alertDefinitionId);
 
     @SProcCall
-    AlertCommentOperationResult addAlertCommentImport(@SProcParam AlertCommentImport comment);
+    AlertCommentOperationResult addAlertCommentRecord(@SProcParam AlertCommentRecord comment);
 
     @SProcCall
-    AlertCommentImport getAlertCommentImportById(@SProcParam int id);
+    AlertCommentRecord getAlertCommentRecordById(@SProcParam int id);
 
     @SProcCall
-    List<AlertCommentImport> getAlertCommentImports(@SProcParam int alertDefinitionId, @SProcParam int limit,
+    List<AlertCommentRecord> getAlertCommentRecords(@SProcParam int alertDefinitionId, @SProcParam int limit,
                                               @SProcParam int offset);
 
     @SProcCall
-    AlertCommentImport deleteAlertCommentImport(@SProcParam int commentId);
+    AlertCommentRecord deleteAlertCommentRecord(@SProcParam int commentId);
 
     @SProcCall
     List<HistoryEntry> getAlertDefinitionHistory(@SProcParam int alertDefinitionId, @SProcParam int limit,

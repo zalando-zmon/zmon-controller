@@ -2,14 +2,14 @@ package org.zalando.zmon.generator;
 
 import java.util.Date;
 
-import org.zalando.zmon.domain.AlertCommentImport;
+import org.zalando.zmon.domain.AlertCommentRecord;
 
-public class AlertCommentGenerator implements DataGenerator<AlertCommentImport> {
+public class AlertCommentGenerator implements DataGenerator<AlertCommentRecord> {
 
     @Override
-    public AlertCommentImport generate() {
+    public AlertCommentRecord generate() {
         final Date now = new Date();
-        final AlertCommentImport comment = new AlertCommentImport();
+        final AlertCommentRecord comment = new AlertCommentRecord();
         comment.setCreated(now);
         comment.setCreatedBy("pribeiro");
         comment.setLastModified(now);

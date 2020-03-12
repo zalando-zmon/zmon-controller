@@ -1,8 +1,8 @@
-CREATE OR REPLACE FUNCTION get_dashboard_imports(
-     IN dashboard_ids    int[]
-) RETURNS SETOF dashboard_import AS
+CREATE OR REPLACE FUNCTION get_all_dashboard_records()
+ RETURNS SETOF dashboard_record AS
 $BODY$
 BEGIN
+
     RETURN QUERY
         SELECT d_id,
                d_name,
@@ -15,8 +15,7 @@ BEGIN
                d_edit_option,
                d_shared_teams,
                d_tags
-          FROM zzm_data.dashboard
-         WHERE (d_id = ANY (dashboard_ids));
+          FROM zzm_data.dashboard;
 END
 $BODY$
 LANGUAGE 'plpgsql' VOLATILE SECURITY DEFINER

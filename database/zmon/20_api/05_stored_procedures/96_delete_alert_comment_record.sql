@@ -1,9 +1,9 @@
-CREATE OR REPLACE FUNCTION delete_alert_comment_import (
+CREATE OR REPLACE FUNCTION delete_alert_comment_record (
      IN comment_id    int
-) RETURNS alert_comment_import AS
+) RETURNS alert_comment_record AS
 $BODY$
 DECLARE
-    l_comment alert_comment_import;
+    l_comment alert_comment_record;
 BEGIN
     DELETE FROM zzm_data.alert_comment
           WHERE ac_id = comment_id

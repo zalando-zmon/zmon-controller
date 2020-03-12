@@ -1,8 +1,8 @@
-CREATE OR REPLACE FUNCTION add_alert_comment_import (
-     IN comment           alert_comment_import,
+CREATE OR REPLACE FUNCTION add_alert_comment_record (
+     IN comment           alert_comment_record,
      OUT status           operation_status,
      OUT error_message    text,
-     OUT entity           alert_comment_import
+     OUT entity           alert_comment_record
 ) AS
 $BODY$
 BEGIN

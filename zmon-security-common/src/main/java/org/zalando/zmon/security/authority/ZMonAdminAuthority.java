@@ -3,10 +3,10 @@ package org.zalando.zmon.security.authority;
 import java.util.Set;
 
 import org.springframework.security.core.GrantedAuthority;
-import org.zalando.zmon.domain.AlertCommentImport;
+import org.zalando.zmon.domain.AlertCommentRecord;
 import org.zalando.zmon.domain.AlertDefinition;
 import org.zalando.zmon.domain.CheckDefinition;
-import org.zalando.zmon.domain.DashboardImport;
+import org.zalando.zmon.domain.DashboardRecord;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -36,7 +36,7 @@ public class ZMonAdminAuthority extends AbstractZMonAuthority {
     }
 
     @Override
-    public boolean hasDeleteCommentPermission(final AlertCommentImport comment) {
+    public boolean hasDeleteCommentPermission(final AlertCommentRecord comment) {
         return true;
     }
 
@@ -56,12 +56,12 @@ public class ZMonAdminAuthority extends AbstractZMonAuthority {
     }
 
     @Override
-    public boolean hasEditDashboardPermission(final DashboardImport dashboard) {
+    public boolean hasEditDashboardPermission(final DashboardRecord dashboard) {
         return true;
     }
 
     @Override
-    public boolean hasDashboardEditModePermission(final DashboardImport dashboard) {
+    public boolean hasDashboardEditModePermission(final DashboardRecord dashboard) {
         return true;
     }
 

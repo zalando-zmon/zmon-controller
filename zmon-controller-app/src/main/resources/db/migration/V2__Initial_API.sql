@@ -1836,7 +1836,7 @@ $BODY$
 LANGUAGE SQL VOLATILE SECURITY DEFINER
 COST 100;
 
-CREATE TYPE alert_comment_import AS (
+CREATE TYPE alert_comment_record AS (
     id                  int,
     created             timestamptz,
     created_by          text,
@@ -1847,7 +1847,7 @@ CREATE TYPE alert_comment_import AS (
     entity_id           text
 );
 
-CREATE TYPE dashboard_import AS (
+CREATE TYPE dashboard_record AS (
     id                      int,
     name                    text,
     created_by              text,
@@ -1863,11 +1863,11 @@ CREATE TYPE dashboard_import AS (
 
 #######
 
-CREATE OR REPLACE FUNCTION add_alert_comment_import (
-     IN comment           alert_comment_import,
+CREATE OR REPLACE FUNCTION add_alert_comment_record (
+     IN comment           alert_comment_record,
      OUT status           operation_status,
      OUT error_message    text,
-     OUT entity           alert_comment_import
+     OUT entity           alert_comment_record
 ) AS
 $BODY$
 BEGIN
@@ -1912,12 +1912,12 @@ $BODY$
 LANGUAGE 'plpgsql' VOLATILE SECURITY DEFINER
 COST 100;
 
-CREATE OR REPLACE FUNCTION delete_alert_comment_import (
+CREATE OR REPLACE FUNCTION delete_alert_comment_record (
      IN comment_id    int
-) RETURNS alert_comment_import AS
+) RETURNS alert_comment_record AS
 $BODY$
 DECLARE
-    l_comment alert_comment_import;
+    l_comment alert_comment_record;
 BEGIN
     DELETE FROM zzm_data.alert_comment
           WHERE ac_id = comment_id
@@ -1944,9 +1944,9 @@ $BODY$
 LANGUAGE 'plpgsql' VOLATILE SECURITY DEFINER
 COST 100;
 
-CREATE OR REPLACE FUNCTION get_alert_comment_import_by_id (
+CREATE OR REPLACE FUNCTION get_alert_comment_record_by_id (
      IN comment_id int
-) RETURNS alert_comment_import AS
+) RETURNS alert_comment_record AS
 $BODY$
     SELECT ac_id,
            ac_created,
@@ -1962,11 +1962,11 @@ $BODY$
 LANGUAGE SQL VOLATILE SECURITY DEFINER
 COST 100;
 
-CREATE OR REPLACE FUNCTION get_alert_comment_imports (
+CREATE OR REPLACE FUNCTION get_alert_comment_records (
      IN p_alert_definition_id int,
      IN p_limit               int,
      IN p_offset              int
-) RETURNS SETOF alert_comment_import AS
+) RETURNS SETOF alert_comment_record AS
 $BODY$
     SELECT ac_id,
            ac_created,
@@ -1985,9 +1985,9 @@ $BODY$
 LANGUAGE SQL VOLATILE SECURITY DEFINER
 COST 100;
 
-CREATE OR REPLACE FUNCTION create_or_update_dashboard_import (
-     IN dashboard         dashboard_import,
-     OUT entity           dashboard_import,
+CREATE OR REPLACE FUNCTION create_or_update_dashboard_record (
+     IN dashboard         dashboard_record,
+     OUT entity           dashboard_record,
      OUT status           operation_status,
      OUT error_message    text
 ) AS
@@ -1996,26 +1996,26 @@ DECLARE
     l_view_mode   zzm_data.view_mode;
     l_edit_option zzm_data.edit_option;
 BEGIN
-    l_view_mode   = COALESCE(dashboard_import.view_mode, 'FULL');
-    l_edit_option = COALESCE(dashboard_import.edit_option, 'PRIVATE');
+    l_view_mode   = COALESCE(dashboard_record.view_mode, 'FULL');
+    l_edit_option = COALESCE(dashboard_record.edit_option, 'PRIVATE');
 
-    IF dashboard_import.id IS NOT NULL THEN
+    IF dashboard_record.id IS NOT NULL THEN
         UPDATE zzm_data.dashboard
-           SET d_id                     = dashboard_import.id,
-               d_name                   = dashboard_import.name,
+           SET d_id                     = dashboard_record.id,
+               d_name                   = dashboard_record.name,
                d_last_modified          = now(),
-               d_last_modified_by       = dashboard_import.last_modified_by,
-               d_widget_configuration   = dashboard_import.widget_configuration::json,
-               d_alert_teams            = dashboard_import.alert_teams,
+               d_last_modified_by       = dashboard_record.last_modified_by,
+               d_widget_configuration   = dashboard_record.widget_configuration::json,
+               d_alert_teams            = dashboard_record.alert_teams,
                d_view_mode              = l_view_mode,
                d_edit_option            = l_edit_option,
                -- only update shared teams when edit option is changed to team
                d_shared_teams           = CASE WHEN d_edit_option <> l_edit_option AND l_edit_option = 'TEAM'
-                                               THEN dashboard_import.shared_teams
+                                               THEN dashboard_record.shared_teams
                                                ELSE d_shared_teams
                                           END,
-               d_tags                   = dashboard_import.tags
-         WHERE d_id  = dashboard_import.id
+               d_tags                   = dashboard_record.tags
+         WHERE d_id  = dashboard_record.id
      RETURNING d_id,
                d_name,
                d_created_by,
@@ -2052,15 +2052,15 @@ BEGIN
             d_tags
         )
         VALUES (
-            dashboard_import.name,
-            dashboard_import.created_by,
-            dashboard_import.last_modified_by,
-            dashboard_import.widget_configuration::json,
-            dashboard_import.alert_teams,
+            dashboard_record.name,
+            dashboard_record.created_by,
+            dashboard_record.last_modified_by,
+            dashboard_record.widget_configuration::json,
+            dashboard_record.alert_teams,
             l_view_mode,
             l_edit_option,
-            dashboard_import.shared_teams,
-            dashboard_import.tags
+            dashboard_record.shared_teams,
+            dashboard_record.tags
         )
          RETURNING d_id,
                d_name,
@@ -2092,8 +2092,8 @@ $BODY$
 LANGUAGE 'plpgsql' VOLATILE SECURITY DEFINER
 COST 100;
 
-CREATE OR REPLACE FUNCTION get_all_dashboard_imports()
- RETURNS SETOF dashboard_import AS
+CREATE OR REPLACE FUNCTION get_all_dashboard_records()
+ RETURNS SETOF dashboard_record AS
 $BODY$
 BEGIN
 
@@ -2115,9 +2115,9 @@ $BODY$
 LANGUAGE 'plpgsql' VOLATILE SECURITY DEFINER
 COST 100;
 
-CREATE OR REPLACE FUNCTION get_dashboard_imports(
+CREATE OR REPLACE FUNCTION get_dashboard_records(
      IN dashboard_ids    int[]
-) RETURNS SETOF dashboard_import AS
+) RETURNS SETOF dashboard_record AS
 $BODY$
 BEGIN
     RETURN QUERY

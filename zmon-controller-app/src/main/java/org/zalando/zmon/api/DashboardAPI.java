@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import org.zalando.zmon.domain.DashboardImport;
+import org.zalando.zmon.domain.DashboardRecord;
 import org.zalando.zmon.domain.EditOption;
 import org.zalando.zmon.exception.ZMonException;
 import org.zalando.zmon.api.domain.DashboardRest;
@@ -39,7 +39,7 @@ public class DashboardAPI {
     @RequestMapping(value = "/", method = RequestMethod.POST)
     public int postDashboard(@RequestBody DashboardRest dashboardRest) throws ZMonException {
 
-        DashboardImport dashboard = dashboardRest.toDashboard(mapper);
+        DashboardRecord dashboard = dashboardRest.toDashboard(mapper);
 
         final String currentUser = authorityService.getUserName();
         if (dashboard.getId() == null) {
@@ -71,7 +71,7 @@ public class DashboardAPI {
             throw new ZMonException("Dashboard ID in JSON and path does not match!");
         }
 
-        DashboardImport dashboard = dashboardRest.toDashboard(mapper);
+        DashboardRecord dashboard = dashboardRest.toDashboard(mapper);
 
         final String currentUser = authorityService.getUserName();
         if (dashboard.getId() == null) {
@@ -95,7 +95,7 @@ public class DashboardAPI {
     @ResponseBody
     @RequestMapping(value = "/{id}")
     public DashboardRest getDashboard(@PathVariable(value="id") int dashboardId) {
-        final List<DashboardImport> dashboards = service.getDashboards(Lists.newArrayList(dashboardId));
+        final List<DashboardRecord> dashboards = service.getDashboards(Lists.newArrayList(dashboardId));
 
         if (dashboards.isEmpty()) {
             return null;

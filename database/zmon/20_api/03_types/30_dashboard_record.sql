@@ -1,4 +1,4 @@
-CREATE TYPE dashboard_import AS (
+CREATE TYPE dashboard_record AS (
     id                      int,
     name                    text,
     created_by              text,

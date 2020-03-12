@@ -7,21 +7,21 @@ import java.util.List;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
-import org.zalando.zmon.domain.DashboardImport;
+import org.zalando.zmon.domain.DashboardRecord;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
-public class DashboardIsEqual extends BaseMatcher<DashboardImport> {
+public class DashboardIsEqual extends BaseMatcher<DashboardRecord> {
 
-    private final DashboardImport dashboard;
+    private final DashboardRecord dashboard;
 
-    public DashboardIsEqual(final DashboardImport dashboard) {
+    public DashboardIsEqual(final DashboardRecord dashboard) {
         this.dashboard = dashboard;
     }
 
     public boolean matches(final Object o) {
-        final DashboardImport other = (DashboardImport) o;
+        final DashboardRecord other = (DashboardRecord) o;
 
         return Objects.equal(dashboard.getId(), other.getId()) && Objects.equal(dashboard.getName(), other.getName())
                 && Objects.equal(dashboard.getCreatedBy(), other.getCreatedBy())
@@ -46,16 +46,16 @@ public class DashboardIsEqual extends BaseMatcher<DashboardImport> {
     }
 
     // factory methods for fluent language
-    public static Matcher<? super DashboardImport> equalTo(final DashboardImport dashboard) {
+    public static Matcher<? super DashboardRecord> equalTo(final DashboardRecord dashboard) {
         Preconditions.checkNotNull(dashboard, "dashboard");
         return new DashboardIsEqual(dashboard);
     }
 
-    public static Collection<Matcher<? super DashboardImport>> equalTo(final Iterable<DashboardImport> dashboards) {
+    public static Collection<Matcher<? super DashboardRecord>> equalTo(final Iterable<DashboardRecord> dashboards) {
         Preconditions.checkNotNull(dashboards, "dashboard");
 
-        final List<Matcher<? super DashboardImport>> matchers = new LinkedList<>();
-        for (final DashboardImport dashboard : dashboards) {
+        final List<Matcher<? super DashboardRecord>> matchers = new LinkedList<>();
+        for (final DashboardRecord dashboard : dashboards) {
             matchers.add(new DashboardIsEqual(dashboard));
         }
 

@@ -1,6 +1,6 @@
 package org.zalando.zmon.persistence;
 
-import org.zalando.zmon.domain.DashboardImport;
+import org.zalando.zmon.domain.DashboardRecord;
 
 import de.zalando.typemapper.annotations.DatabaseField;
 
@@ -10,13 +10,13 @@ import de.zalando.typemapper.annotations.DatabaseField;
 public class DashboardOperationResult extends OperationResult {
 
     @DatabaseField
-    private DashboardImport entity;
+    private DashboardRecord entity;
 
-    public DashboardImport getEntity() {
+    public DashboardRecord getEntity() {
         return entity;
     }
 
-    public void setEntity(final DashboardImport entity) {
+    public void setEntity(final DashboardRecord entity) {
         this.entity = entity;
     }
 }

@@ -3,21 +3,21 @@ package org.zalando.zmon.domain;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
-import org.zalando.zmon.domain.AlertCommentImport;
+import org.zalando.zmon.domain.AlertCommentRecord;
 
 import com.google.common.base.Objects;
 
-public class AlertCommentIsEqual extends BaseMatcher<AlertCommentImport> {
+public class AlertCommentIsEqual extends BaseMatcher<AlertCommentRecord> {
 
-    private final AlertCommentImport alertComment;
+    private final AlertCommentRecord alertComment;
 
-    public AlertCommentIsEqual(final AlertCommentImport alertComment) {
+    public AlertCommentIsEqual(final AlertCommentRecord alertComment) {
         this.alertComment = alertComment;
     }
 
     @Override
     public boolean matches(final Object item) {
-        final AlertCommentImport other = (AlertCommentImport) item;
+        final AlertCommentRecord other = (AlertCommentRecord) item;
 
         return Objects.equal(alertComment.getId(), other.getId())
                 && Objects.equal(alertComment.getCreated(), other.getCreated())
@@ -43,7 +43,7 @@ public class AlertCommentIsEqual extends BaseMatcher<AlertCommentImport> {
     }
 
     // factory methods for fluent language
-    public static Matcher<? super AlertCommentImport> equalTo(final AlertCommentImport alertComment) {
+    public static Matcher<? super AlertCommentRecord> equalTo(final AlertCommentRecord alertComment) {
         return new AlertCommentIsEqual(alertComment);
     }
 

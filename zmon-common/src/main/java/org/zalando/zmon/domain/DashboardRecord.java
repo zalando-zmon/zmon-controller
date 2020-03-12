@@ -10,7 +10,7 @@ import javax.validation.constraints.NotNull;
 
 import de.zalando.typemapper.annotations.DatabaseField;
 
-public class DashboardImport {
+public class DashboardRecord {
 
     @DatabaseField
     private Integer id;
@@ -135,7 +135,7 @@ public class DashboardImport {
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("DashboardImport{");
+        final StringBuilder sb = new StringBuilder("DashboardRecord{");
         sb.append("id=").append(id);
         sb.append(", name='").append(name).append('\'');
         sb.append(", createdBy='").append(createdBy).append('\'');
@@ -172,11 +172,11 @@ public class DashboardImport {
         if (this == obj) {
             return true;
         }
-        if (!(obj instanceof DashboardImport)) {
+        if (!(obj instanceof DashboardRecord)) {
             return false;
         }
 
-        final DashboardImport other = (DashboardImport) obj;
+        final DashboardRecord other = (DashboardRecord) obj;
         return null == this.getId() ? false : this.getId().equals(other.id);
     }
 

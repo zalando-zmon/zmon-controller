@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.zalando.zmon.domain.DashboardImport;
+import org.zalando.zmon.domain.DashboardRecord;
 import org.zalando.zmon.event.ZMonEventType;
 import org.zalando.zmon.exception.ZMonException;
 import org.zalando.zmon.persistence.DashboardOperationResult;
@@ -25,7 +25,7 @@ public class DashboardServiceImpl implements DashboardService {
 
     private final Logger log = LoggerFactory.getLogger(DashboardServiceImpl.class);
 
-    private static final Comparator<DashboardImport> DASHBOARD_ID_COMPARATOR = (o1, o2) -> Ints.compare(o1.getId(), o2.getId());
+    private static final Comparator<DashboardRecord> DASHBOARD_ID_COMPARATOR = (o1, o2) -> Ints.compare(o1.getId(), o2.getId());
 
     private final NoOpEventLog eventLog;
 
@@ -38,29 +38,29 @@ public class DashboardServiceImpl implements DashboardService {
     }
 
     @Override
-    public List<DashboardImport> getDashboards(final List<Integer> dashboardIds) {
-        final List<DashboardImport> dashboards = dashboardSProc.getDashboardImports(dashboardIds);
+    public List<DashboardRecord> getDashboards(final List<Integer> dashboardIds) {
+        final List<DashboardRecord> dashboards = dashboardSProc.getDashboardRecords(dashboardIds);
         Collections.sort(dashboards, DASHBOARD_ID_COMPARATOR);
 
         return dashboards;
     }
 
     @Override
-    public List<DashboardImport> getAllDashboards() {
-        final List<DashboardImport> dashboards = dashboardSProc.getAllDashboardImports();
+    public List<DashboardRecord> getAllDashboards() {
+        final List<DashboardRecord> dashboards = dashboardSProc.getAllDashboardRecords();
         Collections.sort(dashboards, DASHBOARD_ID_COMPARATOR);
 
         return dashboards;
     }
 
     @Override
-    public DashboardImport createOrUpdateDashboard(final DashboardImport dashboard) throws ZMonException {
+    public DashboardRecord createOrUpdateDashboard(final DashboardRecord dashboard) throws ZMonException {
         Preconditions.checkNotNull(dashboard);
         log.info("Saving dashboard '{}' request from user '{}'", dashboard.getId(), dashboard.getLastModifiedBy());
 
-        final DashboardOperationResult result = dashboardSProc.createOrUpdateDashboardImport(dashboard)
+        final DashboardOperationResult result = dashboardSProc.createOrUpdateDashboardRecord(dashboard)
                                                               .throwExceptionOnFailure();
-        final DashboardImport entity = result.getEntity();
+        final DashboardRecord entity = result.getEntity();
 
         eventLog.log(dashboard.getId() == null ? ZMonEventType.DASHBOARD_CREATED : ZMonEventType.DASHBOARD_UPDATED,
             entity.getId(), entity.getName(), entity.getWidgetConfiguration(), entity.getAlertTeams(),
@@ -74,6 +74,6 @@ public class DashboardServiceImpl implements DashboardService {
         Preconditions.checkNotNull(dashboardId);
         log.info("Delete dashboard '{}' request from user '{}'", dashboardId);
 
-        dashboardSProc.deleteDashboardImport(dashboardId);
+        dashboardSProc.deleteDashboardRecord(dashboardId);
     }
 }

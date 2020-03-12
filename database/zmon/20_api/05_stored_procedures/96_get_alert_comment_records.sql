@@ -1,8 +1,8 @@
-CREATE OR REPLACE FUNCTION get_alert_comment_imports (
+CREATE OR REPLACE FUNCTION get_alert_comment_records (
      IN p_alert_definition_id int,
      IN p_limit               int,
      IN p_offset              int
-) RETURNS SETOF alert_comment_import AS
+) RETURNS SETOF alert_comment_record AS
 $BODY$
     SELECT ac_id,
            ac_created,

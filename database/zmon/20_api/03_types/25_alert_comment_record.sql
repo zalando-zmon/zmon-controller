@@ -1,4 +1,4 @@
-CREATE TYPE alert_comment_import AS (
+CREATE TYPE alert_comment_record AS (
     id                  int,
     created             timestamptz,
     created_by          text,

@@ -2,7 +2,7 @@ package org.zalando.zmon.domain;
 
 import org.springframework.beans.BeanUtils;
 
-public class AlertCommentAuth extends AlertCommentImport {
+public class AlertCommentAuth extends AlertCommentRecord {
 
     private boolean deletable;
 
@@ -19,13 +19,13 @@ public class AlertCommentAuth extends AlertCommentImport {
         final StringBuilder builder = new StringBuilder();
         builder.append("DashboardAuth [deletable=");
         builder.append(deletable);
-        builder.append(", DashboardImport=");
+        builder.append(", DashboardRecord=");
         builder.append(super.toString());
         builder.append("]");
         return builder.toString();
     }
 
-    public static AlertCommentAuth from(final AlertCommentImport comment, final boolean deletable) {
+    public static AlertCommentAuth from(final AlertCommentRecord comment, final boolean deletable) {
 
         AlertCommentAuth result = null;
         if (comment != null) {

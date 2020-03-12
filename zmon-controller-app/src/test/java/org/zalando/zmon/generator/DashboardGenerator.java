@@ -2,16 +2,16 @@ package org.zalando.zmon.generator;
 
 import java.util.Collections;
 
-import org.zalando.zmon.domain.DashboardImport;
+import org.zalando.zmon.domain.DashboardRecord;
 import org.zalando.zmon.domain.EditOption;
 import org.zalando.zmon.domain.ViewMode;
 
-public class DashboardGenerator implements DataGenerator<DashboardImport> {
+public class DashboardGenerator implements DataGenerator<DashboardRecord> {
 
     @Override
-    public DashboardImport generate() {
+    public DashboardRecord generate() {
 
-        final DashboardImport dashboard = new DashboardImport();
+        final DashboardRecord dashboard = new DashboardRecord();
         dashboard.setName("Generated dashboard");
         dashboard.setCreatedBy("pribeiro");
         dashboard.setLastModifiedBy(dashboard.getCreatedBy());
